@@ -32,7 +32,7 @@ namespace clientdb
 	public:
 		virtual void import(void* row) = 0;
 	};
-		
+    
     class Connector
     {
     private:
@@ -50,8 +50,7 @@ namespace clientdb
         void rollback() throw(toolkit::Exception);
         void* getServerConnector();
         const Datconection* getDatconection() const;  
-    };
-    
+    };    
 }
 
 #endif

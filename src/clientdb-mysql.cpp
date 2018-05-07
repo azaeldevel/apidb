@@ -16,7 +16,7 @@ namespace clientdb
 			while((row = mysql_fetch_row(result)))
 			{
 				rows.import(&row);
-			};
+			}
 			
 			return true;
 		}

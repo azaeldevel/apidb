@@ -12,12 +12,21 @@ namespace apidb
 	
 	namespace internal
 	{
-		struct RowShowTables
+		struct Table: public clientdb::Rows
 		{
+            struct Attribute 
+            {
+                std::string type;
+                std::string name;
+                bool required;   
+            };
 			std::string table_name;
+            std::list<Attribute*> attributes;        
+            
+            virtual void import(void*);
 		};
 		
-		class RowsShowTables: public clientdb::Rows, public std::list<RowShowTables*>
+		class RowsShowTables: public clientdb::Rows, public std::list<Table*>
 		{
 		public:
 			virtual void import(void* row);
@@ -27,7 +36,7 @@ namespace apidb
 	class Driver
 	{
 	public:		
-		virtual bool listTables() = 0;
+		virtual bool parse() = 0;
 		virtual std::vector<std::string> listAttrib(std::string table) = 0;
 		virtual std::string getTypeAttrib(std::string attrib) = 0;
 	};
@@ -36,7 +45,7 @@ namespace apidb
 	{
 	public:
 		const internal::RowsShowTables* getListTable();
-		virtual bool listTables();
+		virtual bool parse();
 		virtual std::vector<std::string> listAttrib(std::string table);
 		virtual std::string getTypeAttrib(std::string attrib);
 		MySQLDriver();
