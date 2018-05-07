@@ -3,7 +3,6 @@
 
 namespace clientdb
 {
-
 	const char* getPakageName()
 	{
 		return PAKAGENAME;
@@ -12,6 +11,6 @@ namespace clientdb
 	{
 		return toolkit::Version(VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,VERSION_STAGE);		
 	}
-}	
+}
 
 

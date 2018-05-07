@@ -37,7 +37,7 @@ namespace apidb
 		mysqlConnector.password = "k3yL0c41";
 		mysqlConnector.port = 3306;    
 		
-		
+		connector = new clientdb::Connector();
 		toolkit::Message flag = connector->connect(mysqlConnector);
 		if(flag.isPass())
 		{
