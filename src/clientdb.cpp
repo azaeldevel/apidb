@@ -3,6 +3,7 @@
 
 namespace clientdb
 {
+
 	const char* getPakageName()
 	{
 		return PAKAGENAME;

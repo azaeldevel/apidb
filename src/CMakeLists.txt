@@ -17,5 +17,5 @@ IF(TOOLKIT_COMMON_FOUND)
 ENDIF()
 
 
-ADD_EXECUTABLE(testing apidb.cpp clientdb.cpp clientdb-mysql.cpp testing.cpp)
+ADD_EXECUTABLE(testing apidb.cpp apidb-mysql.cpp clientdb.cpp clientdb-mysql.cpp testing.cpp)
 TARGET_LINK_LIBRARIES(testing ${TOOLKIT_COMMON_LIBRARY} ${MYSQL_LIBRARY})

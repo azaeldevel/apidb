@@ -6,7 +6,24 @@
 
 
 namespace clientdb
-{
+{	
+	bool Connector::query(std::string sql,Rows& rows)
+	{
+		if(query(sql.c_str()))
+		{
+			MYSQL_RES *result = mysql_store_result((MYSQL*)serverConnector);
+			MYSQL_ROW row;
+			while((row = mysql_fetch_row(result)))
+			{
+				rows.import(&row);
+			};
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
     const Datconection* Connector::getDatconection() const
     {
         return datconection;

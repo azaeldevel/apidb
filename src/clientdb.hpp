@@ -26,7 +26,13 @@ namespace clientdb
         int last_errono;
         const char * last_errmsg;
     };
-
+	
+	class Rows
+	{
+	public:
+		virtual void import(void* row) = 0;
+	};
+		
     class Connector
     {
     private:
@@ -38,12 +44,14 @@ namespace clientdb
         toolkit::Message connect(DatconectionMySQL& connector);
         const char* serverDescription();
         bool query(const char*);
+        bool query(std::string,Rows&);
         ID insert(const char*);
         bool commit() throw(toolkit::Exception);
         void rollback() throw(toolkit::Exception);
         void* getServerConnector();
-        const Datconection* getDatconection() const;
+        const Datconection* getDatconection() const;  
     };
+    
 }
 
 #endif

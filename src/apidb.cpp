@@ -1,20 +1,33 @@
 
 #include "apidb.hpp"
-#include "clientdb.hpp"
 #include "toolkit.hpp"
 
 #include <iostream>
 
 namespace apidb
 {
-	void MySQLDriver::listTables()
+	const internal::RowsShowTables* MySQLDriver::getListTable()
+	{
+		return rows;
+	}
+	
+	bool MySQLDriver::listTables()
+	{
+		rows = new internal::RowsShowTables();
+		if(!connector->query("SHOW TABLES",*rows)) return false;		
+		return true;
+	}
+	
+	std::vector<std::string> MySQLDriver::listAttrib(std::string table)
 	{
 		
 	}
-	void MySQLDriver::listAttrib(std::string)
+	
+	std::string MySQLDriver::getTypeAttrib(std::string attrib)
 	{
 		
-	}	
+	}
+	
 	MySQLDriver::MySQLDriver()
 	{
 		clientdb::DatconectionMySQL mysqlConnector;
@@ -23,16 +36,18 @@ namespace apidb
 		mysqlConnector.usuario = "root";
 		mysqlConnector.password = "k3yL0c41";
 		mysqlConnector.port = 3306;    
-		clientdb::Connector connector;
 		
-		toolkit::Message flag = connector.connect(mysqlConnector);
+		
+		toolkit::Message flag = connector->connect(mysqlConnector);
 		if(flag.isPass())
 		{
-			printf("SQL Server version: %s\n", connector.serverDescription());
+			printf("SQL Server version: %s\n", connector->serverDescription());
 		}
 		else
 		{
 			std::cerr<<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
 		}
+		
+		
 	}
 } 
