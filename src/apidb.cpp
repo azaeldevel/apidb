@@ -55,8 +55,8 @@ namespace apidb
 		mysqlConnector.port = 3306;    
 		
 		connector = new clientdb::Connector();
-		toolkit::Message flag = connector->connect(mysqlConnector);
-		if(flag.isPass())
+		bool flag = connector->connect(mysqlConnector);
+		if(flag)
 		{
 			printf("SQL Server version: %s\n", connector->serverDescription());
 		}
@@ -64,7 +64,5 @@ namespace apidb
 		{
 			std::cerr<<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
 		}
-		
-		
 	}
 } 

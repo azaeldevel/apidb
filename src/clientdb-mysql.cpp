@@ -7,6 +7,18 @@
 
 namespace clientdb
 {	
+    bool Connector::rollback()
+    {
+        if (serverConnector != NULL)
+        {
+            if(mysql_rollback((MYSQL*)serverConnector) == 0)
+            {
+                return true;
+            }
+        }
+        
+        return false; 
+    }
 	bool Connector::query(const std::string& sql,Rows& rows)
 	{
 		if(query(sql.c_str()))
@@ -28,7 +40,7 @@ namespace clientdb
     {
         return datconection;
     }
-    bool Connector::commit() throw(toolkit::Exception)
+    bool Connector::commit()
     {
         if (serverConnector != NULL)
         {
@@ -61,7 +73,7 @@ namespace clientdb
     {
     }
 
-    toolkit::Message Connector::connect(DatconectionMySQL& conection)
+    bool Connector::connect(DatconectionMySQL& conection)
     {
         serverConnector = (void*)mysql_init(NULL);
         if (serverConnector == NULL)
@@ -71,7 +83,7 @@ namespace clientdb
             msg = msg + std::to_string(mysql_errno((MYSQL*)serverConnector));
             msg = msg + "' ";
             msg = msg + mysql_error((MYSQL*)serverConnector);
-            return toolkit::Exception(toolkit::Message::FAIL_SERVER_DATABASE,msg.c_str());            
+            return false;//return toolkit::Exception(toolkit::Message::FAIL_SERVER_DATABASE,msg.c_str());            
         }
 
         if (mysql_real_connect((MYSQL*)serverConnector, conection.host, conection.usuario, conection.password,conection.database,conection.port, NULL, 0) == NULL)
@@ -81,17 +93,17 @@ namespace clientdb
             msg = msg + std::to_string(mysql_errno((MYSQL*)serverConnector));
             msg = msg + "' ";
             msg = msg + mysql_error((MYSQL*)serverConnector);
-            return toolkit::Exception(toolkit::Message::FAIL_SERVER_DATABASE,msg.c_str());
+            return false;//return toolkit::Exception(toolkit::Message::FAIL_SERVER_DATABASE,msg.c_str());
         }
         
         if(mysql_autocommit((MYSQL*)serverConnector,0) != 0)
         {
-            return toolkit::Exception(toolkit::Message::FAIL_SERVER_DATABASE,"Fail on disable commit.");
+            return false;//return toolkit::Exception(toolkit::Message::FAIL_SERVER_DATABASE,"Fail on disable commit.");
         }
         
         datconection = &conection;
         
-        return toolkit::Confirmation(toolkit::Message::SUCCEED,"Conexion completa");
+        return true;//return toolkit::Confirmation(toolkit::Message::SUCCEED,"Conexion completa");
     }
     
     void* Connector::getServerConnector()

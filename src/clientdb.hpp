@@ -13,6 +13,7 @@ namespace clientdb
     {        
         
     };
+    
     struct DatconectionMySQL : public Datconection
     {
         const char *host;
@@ -41,13 +42,13 @@ namespace clientdb
     public:
         Connector();
         Connector(DatconectionMySQL& connector);
-        toolkit::Message connect(DatconectionMySQL& connector);
+        bool connect(DatconectionMySQL& connector);
         const char* serverDescription();
         bool query(const std::string&);
         bool query(const std::string&,Rows&);
         ID insert(const std::string&);
-        bool commit() throw(toolkit::Exception);
-        void rollback() throw(toolkit::Exception);
+        bool commit();
+        bool rollback();
         void* getServerConnector();
         const Datconection* getDatconection() const;  
     };    
