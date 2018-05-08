@@ -24,7 +24,67 @@
 
 namespace apidb
 {
-	const internal::RowsShowTables* MySQLDriver::getListTable()
+    void CPPGenerator::createClassMethodes(const internal::Table* table,std::ofstream& ofile)
+    {
+    }
+    void CPPGenerator::createClassAttributes(const internal::Table* table,std::ofstream& ofile)
+    {
+        for(internal::Table::Attribute* attr : table->attributes)
+        {
+            ofile <<" CLASS "<<attr->name<<std::endl;
+        }        
+    }
+    void CPPGenerator::createSpace(const Driver& driver,std::ofstream& file,const std::string& space)
+    {
+        file <<"namespace "<<space<<std::endl;
+        file <<"{"<<std::endl;
+        const internal::RowsShowTables* tables = driver.getListTable();
+        for (apidb::internal::Table* n : *tables) 
+        {
+            createClass(n,file,n->table_name);       
+        }
+        file <<"}"<<std::endl;
+    }
+    void CPPGenerator::createClassPublic(std::ofstream& file)
+    {
+        file << "public:" <<std::endl;
+        file <<std::endl;        
+    }
+    void CPPGenerator::createClassPrivate(std::ofstream& file)
+    {
+        file << "private:" <<std::endl;
+        file <<std::endl;        
+    }
+    void CPPGenerator::createClass(const internal::Table* cl,std::ofstream& file,const std::string& nameClass)
+    {
+        file <<"class "<<nameClass<<std::endl;
+        file <<"{"<<std::endl;
+        createClassPublic(file);
+        createClassAttributes(cl,file);
+        createClassPrivate(file);
+        createClassMethodes(cl,file);
+        file <<"};"<<std::endl;
+    }
+    
+    bool CPPGenerator::generate(const Driver& driver,std::ofstream& fout,const std::string& space)
+    {
+        
+        if(space.length() > 0)
+        {
+            createSpace(driver,fout,space);
+        }
+        else
+        {
+            const internal::RowsShowTables* tables = driver.getListTable();
+            for (apidb::internal::Table* n : *tables) 
+            {
+                createClass(n,fout,n->table_name);       
+            }
+        }
+        return true;    
+    }
+    
+	const internal::RowsShowTables* Driver::getListTable() const
 	{
 		return rows;
 	}

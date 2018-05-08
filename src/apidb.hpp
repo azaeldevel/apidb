@@ -23,12 +23,16 @@
 #include "clientdb.hpp"
 #include <list>
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 namespace apidb
 {
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
-	
+	    
+
+    
 	namespace internal
 	{
 		struct Table: public clientdb::Rows
@@ -49,35 +53,43 @@ namespace apidb
 		{
 		public:
 			virtual void import(void* row);
-		};		
+		};
 	}
-	
 	class Driver
 	{
-	public:		
+	public:
 		virtual bool read() = 0;
+		const internal::RowsShowTables* getListTable() const;
+    protected:
+		internal::RowsShowTables* rows;
 	};
-	
+    
+	class Generator
+	{
+	public:
+		virtual bool generate(const Driver& driver,std::ofstream&,const std::string& space) = 0;
+	};
+    
 	class MySQLDriver: public Driver
 	{
 	public:
-		const internal::RowsShowTables* getListTable();
 		virtual bool read();
 		MySQLDriver();
 	private:
 		clientdb::Connector* connector;
-		internal::RowsShowTables* rows;
 	};
-	
-	class Generator
-	{
-	public:
-		virtual void generate(const Driver& driver) = 0;
-	};
-	
+		
 	class CPPGenerator: public Generator
 	{
-		virtual void generate(const Driver& driver);
+    public:
+		virtual bool generate(const Driver& driver,std::ofstream&,const std::string& space);
+    private:
+        void createSpace(const Driver& driver,std::ofstream& file,const std::string& space);
+        void createClass(const internal::Table*,std::ofstream&,const std::string&);
+        void createClassPrivate(std::ofstream&);
+        void createClassAttributes(const internal::Table*,std::ofstream&);
+        void createClassPublic(std::ofstream&);
+        void createClassMethodes(const internal::Table*,std::ofstream&);
 	};	
 }
 

@@ -65,7 +65,11 @@ int main()
         std::cerr<<"Not parsin phase"<<std::endl;
     }
 	
-	
-	
+	std::ofstream outFile;
+    outFile.open ("out.txt");
+	apidb::CPPGenerator cpp;
+    std::string space = "nmq";
+    cpp.generate(driver,outFile,space);
+	outFile.flush();
 	return 0;	
 }
