@@ -22,10 +22,10 @@ int main()
             for (apidb::internal::Table* n : *(driver.getListTable())) 
             {
                 std::cout<<"" << n->table_name <<std::endl;
-                /*for(apidb::internal::Table::Attribute* m : n->attributes)
+                for(apidb::internal::Table::Attribute* m : n->attributes)
                 {
                     std::cout<<"  " << m->name<<std::endl;
-                }*/
+                }
             }
 		}	
 		else if(driver.getListTable()->size() > 1)
@@ -34,10 +34,10 @@ int main()
             for (apidb::internal::Table* n : *(driver.getListTable())) 
             {
                 std::cout<<" "<< n->table_name <<std::endl;
-                /*for(apidb::internal::Table::Attribute* m : n->attributes)
+                for(apidb::internal::Table::Attribute* m : n->attributes)
                 {
                     std::cout<<"  "<< m->name<<std::endl;
-                }*/
+                }
             }
 		}		
 	}

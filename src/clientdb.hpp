@@ -43,9 +43,9 @@ namespace clientdb
         Connector(DatconectionMySQL& connector);
         toolkit::Message connect(DatconectionMySQL& connector);
         const char* serverDescription();
-        bool query(const char*);
-        bool query(std::string,Rows&);
-        ID insert(const char*);
+        bool query(const std::string&);
+        bool query(const std::string&,Rows&);
+        ID insert(const std::string&);
         bool commit() throw(toolkit::Exception);
         void rollback() throw(toolkit::Exception);
         void* getServerConnector();

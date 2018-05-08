@@ -13,23 +13,17 @@ namespace apidb
 	
 	bool MySQLDriver::parse()
 	{
-        //getting tables
 		rows = new internal::RowsShowTables();
 		if(connector->query("SHOW TABLES",*rows)) 
         {
-            //std::cout << "Decribing tables..."<<std::endl;
-            //getting atributes by tables
-            //for(std::list<internal::Table*>::iterator it=rows->begin(); it != rows->end(); ++it) 
             for(internal::Table* n: *rows)
             {
                 std::string str = "DESCRIBE ";
                 str += n->table_name;   
-                //std::cout << str <<std::endl;
                 if(!connector->query(str.c_str(),*n))
                 {
                     return false;                
                 }
-                //std::cout<<std::endl;
             }
             return true;
         }

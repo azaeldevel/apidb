@@ -7,7 +7,7 @@
 
 namespace clientdb
 {	
-	bool Connector::query(std::string sql,Rows& rows)
+	bool Connector::query(const std::string& sql,Rows& rows)
 	{
 		if(query(sql.c_str()))
 		{
@@ -40,9 +40,9 @@ namespace clientdb
         
         return false; 
     }
-    ID Connector::insert(const char* str)
+    ID Connector::insert(const std::string& str)
     {
-		if (mysql_query((MYSQL*)serverConnector, str) == 0) 
+		if (mysql_query((MYSQL*)serverConnector, str.c_str()) == 0) 
 		{
 			return mysql_insert_id((MYSQL*)serverConnector);
 		}
@@ -96,12 +96,12 @@ namespace clientdb
     
     void* Connector::getServerConnector()
     {
-	return this->serverConnector;
+        return this->serverConnector;
     }
 	
-    bool Connector::query(const char* str)
+    bool Connector::query(const std::string& str)
     {
-		if (mysql_query((MYSQL*)serverConnector, str) == 0) 
+		if (mysql_query((MYSQL*)serverConnector, str.c_str()) == 0) 
 		{
 			return true;
 		}
