@@ -25,7 +25,7 @@ namespace apibd
 	   parse_helper( in_file );
 	   return;
 	}
-
+	
 	void Driver::parse( std::istream &stream )
 	{
 	   if( ! stream.good()  && stream.eof() )
@@ -56,8 +56,7 @@ namespace apibd
 	   delete(parser); 
 	   try
 	   {
-		  parser = new apibd::Parser( (*scanner) /* scanner */, 
-									  (*this) /* driver */ );
+		  parser = new apibd::Parser(*scanner,*this);
 	   }
 	   catch( std::bad_alloc &ba )
 	   {
@@ -65,7 +64,7 @@ namespace apibd
 			 ba.what() << "), exiting!!\n";
 		  exit( EXIT_FAILURE );
 	   }
-	   const int accept( 0 );
+	   const int accept(0);
 	   if( parser->parse() != accept )
 	   {
 		  std::cerr << "Parse failed!!\n";
@@ -73,46 +72,6 @@ namespace apibd
 	   return;
 	}
 
-	void Driver::add_upper()
-	{ 
-	   uppercase++; 
-	   chars++; 
-	   words++; 
-	}
-
-	void Driver::add_lower()
-	{ 
-	   lowercase++; 
-	   chars++; 
-	   words++; 
-	}
-
-	void Driver::add_word( const std::string &word )
-	{
-	   words++; 
-	   chars += word.length();
-	   for(const char &c : word ){
-		  if( islower( c ) )
-		  { 
-			 lowercase++; 
-		  }
-		  else if ( isupper( c ) ) 
-		  { 
-			 uppercase++; 
-		  }
-	   }
-	}
-
-	void Driver::add_newline()
-	{ 
-	   lines++; 
-	   chars++; 
-	}
-
-	void Driver::add_char()
-	{ 
-	   chars++; 
-	}
 
 	std::ostream& Driver::print( std::ostream &stream )
 	{
