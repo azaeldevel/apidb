@@ -1,2 +1,0 @@
-/usr/bin/ar qc libapidb-generator-sql.a  CMakeFiles/apidb-generator-sql.dir/driver.cpp.o CMakeFiles/apidb-generator-sql.dir/lexer.yy.cc.o CMakeFiles/apidb-generator-sql.dir/parser.tab.cc.o
-/usr/bin/ranlib libapidb-generator-sql.a

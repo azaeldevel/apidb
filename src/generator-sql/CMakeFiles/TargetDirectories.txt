@@ -1,5 +1,0 @@
-/home/areyes/softdev/apibd/src/generator-sql/CMakeFiles/rebuild_cache.dir
-/home/areyes/softdev/apibd/src/generator-sql/CMakeFiles/developing.dir
-/home/areyes/softdev/apibd/src/generator-sql/CMakeFiles/apidb-generator-sql.dir
-/home/areyes/softdev/apibd/src/generator-sql/CMakeFiles/edit_cache.dir
-/home/areyes/softdev/apibd/src/generator-sql/CMakeFiles/test.dir
