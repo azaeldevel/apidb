@@ -2,12 +2,12 @@
 %require  "3.0"
 %debug 
 %defines 
-%define api.namespace {MC}
+%define api.namespace {apibd}
 %define parser_class_name {Parser}
 
 %code requires
 {
-	namespace MC 
+	namespace apibd 
 	{
       class Driver;
       class Scanner;
@@ -106,7 +106,7 @@ declare_end : END | NEWLINE;
 
 
 void 
-MC::Parser::error( const location_type &l, const std::string &err_message )
+apibd::Parser::error( const location_type &l, const std::string &err_message )
 {
    std::cerr << "Error: " << err_message << " at " << l << "\n";
 }

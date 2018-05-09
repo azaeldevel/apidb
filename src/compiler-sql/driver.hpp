@@ -8,9 +8,11 @@
 #include "scanner.hpp"
 #include "parser.tab.hh"
 
-namespace MC{
+namespace apibd
+{
 
-class Driver{
+class Driver
+{
 public:
    Driver() = default;
 
@@ -43,8 +45,8 @@ private:
    std::size_t  lines      = 0;
    std::size_t  uppercase  = 0;
    std::size_t  lowercase  = 0;
-   MC::Parser  *parser  = nullptr;
-   MC::Scanner *scanner = nullptr;
+   apibd::Parser  *parser  = nullptr;
+   apibd::Scanner *scanner = nullptr;
    
    const std::string red   = "\033[1;31m";
    const std::string blue  = "\033[1;36m";

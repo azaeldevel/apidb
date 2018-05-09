@@ -5,10 +5,10 @@
 /* Implementation of yyFlexScanner */ 
 #include "scanner.hpp"
 #undef  YY_DECL
-#define YY_DECL int MC::Scanner::yylex( MC::Parser::semantic_type * const lval, MC::Parser::location_type *loc )
+#define YY_DECL int apibd::Scanner::yylex( apibd::Parser::semantic_type * const lval, apibd::Parser::location_type *loc )
 
 /* typedef to make the returns for the tokens shorter */
-using token = MC::Parser::token;
+using token = apibd::Parser::token;
 
 /* define yyterminate as this instead of NULL */
 #define yyterminate() return( token::END )
@@ -23,7 +23,7 @@ using token = MC::Parser::token;
 
 %option debug
 %option nodefault
-%option yyclass="MC::Scanner"
+%option yyclass="apibd::Scanner"
 %option noyywrap
 %option c++
 

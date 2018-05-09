@@ -8,7 +8,7 @@
 #include "parser.tab.hh"
 #include "location.hh"
 
-namespace MC
+namespace apibd
 {
 class Scanner : public yyFlexLexer
 {
@@ -26,14 +26,14 @@ public:
    //get rid of override virtual function warning
    using FlexLexer::yylex;
 
-   virtual int yylex( MC::Parser::semantic_type * const lval, MC::Parser::location_type *location);
+   virtual int yylex( apibd::Parser::semantic_type * const lval, apibd::Parser::location_type *location);
    // YY_DECL defined in mc_lexer.l
    // Method body created by flex in mc_lexer.yy.cc
 
 
 private:
    /* yyval ptr */
-   MC::Parser::semantic_type *yylval = nullptr;
+   apibd::Parser::semantic_type *yylval = nullptr;
 };
 
 } /* end namespace MC */
