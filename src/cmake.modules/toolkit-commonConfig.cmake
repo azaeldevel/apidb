@@ -5,7 +5,7 @@ IF (TOOLKIT_COMMON_INCLUDE_DIR)
 ENDIF (TOOLKIT_COMMON_INCLUDE_DIR)
 
 FIND_PATH(TOOLKIT_COMMON_INCLUDE_DIR toolkit.hpp
-  ${PROJECT_SOURCE_DIR}/../../../toolkit/common/src
+  ${PROJECT_SOURCE_DIR}/../../toolkit/common/src
   $ENV{HOME}/root/include/toolkit
   /usr/local/include/toolkit
   /usr/include/toolkit
@@ -14,7 +14,7 @@ FIND_PATH(TOOLKIT_COMMON_INCLUDE_DIR toolkit.hpp
 SET(TOOLKIT_COMMON_NAMES toolkit-common)
 FIND_LIBRARY(TOOLKIT_COMMON_LIBRARY
   NAMES ${TOOLKIT_COMMON_NAMES}
-  PATHS ${PROJECT_SOURCE_DIR}/../../../toolkit/common/src ${PROJECT_SOURCE_DIR}/../../../common/src $ENV{HOME}/root/usr/lib /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu
+  PATHS ${PROJECT_SOURCE_DIR}/../../toolkit/common/src ${PROJECT_SOURCE_DIR}/../../common/src $ENV{HOME}/root/usr/lib /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu
   PATH_SUFFIXES toolkit-common
 )
 

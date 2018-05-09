@@ -7,7 +7,7 @@
 
 int main( const int argc, const char **argv )
 {
-	apibd::Driver driver;	
+	apidb::Driver driver;	
 	std::string str = "VARCHAR(25)";
 	std::cout<<driver.parse(str)<<std::endl;
 	str = "INT";

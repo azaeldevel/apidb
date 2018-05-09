@@ -5,7 +5,7 @@
 
 #include "driver.hpp"
 
-namespace apibd
+namespace apidb
 {		
 	std::string Driver::parse(const std::string& line)
 	{
@@ -50,7 +50,7 @@ namespace apibd
 	   delete(scanner);
 	   try
 	   {
-		  scanner = new apibd::Scanner( &stream );
+		  scanner = new apidb::Scanner( &stream );
 	   }
 	   catch( std::bad_alloc &ba )
 	   {
@@ -62,7 +62,7 @@ namespace apibd
 	   delete(parser); 
 	   try
 	   {
-		  parser = new apibd::Parser(*scanner,*this);
+		  parser = new apidb::Parser(*scanner,*this);
 	   }
 	   catch( std::bad_alloc &ba )
 	   {

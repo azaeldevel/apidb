@@ -1,3 +1,4 @@
+
 /**
  * 
  *  This file is part of apidb.
@@ -6,12 +7,12 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
-
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
-
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
@@ -24,17 +25,17 @@
 
 namespace apidb
 {
-    void CPPGenerator::createClassMethodes(const internal::Table* table,std::ofstream& ofile)
+    void CPPGenerator::createClassMethodes(const apidb::internal::Table* table,std::ofstream& ofile)
     {
     }
-    void CPPGenerator::createClassAttributes(const internal::Table* table,std::ofstream& ofile)
+    void CPPGenerator::createClassAttributes(const apidb::internal::Table* table,std::ofstream& ofile)
     {
         for(internal::Table::Attribute* attr : table->attributes)
         {
             ofile <<" CLASS "<<attr->name<<std::endl;
         }        
     }
-    void CPPGenerator::createSpace(const Driver& driver,std::ofstream& file,const std::string& space)
+    void CPPGenerator::createSpace(const apidb::Driver& driver,std::ofstream& file,const std::string& space)
     {
         file <<"namespace "<<space<<std::endl;
         file <<"{"<<std::endl;
@@ -55,7 +56,7 @@ namespace apidb
         file << "private:" <<std::endl;
         file <<std::endl;        
     }
-    void CPPGenerator::createClass(const internal::Table* cl,std::ofstream& file,const std::string& nameClass)
+    void CPPGenerator::createClass(const apidb::internal::Table* cl,std::ofstream& file,const std::string& nameClass)
     {
         file <<"class "<<nameClass<<std::endl;
         file <<"{"<<std::endl;
@@ -66,7 +67,7 @@ namespace apidb
         file <<"};"<<std::endl;
     }
     
-    bool CPPGenerator::generate(const Driver& driver,std::ofstream& fout,const std::string& space)
+    bool CPPGenerator::generate(const apidb::Driver& driver,std::ofstream& fout,const std::string& space)
     {
         
         if(space.length() > 0)
@@ -75,7 +76,7 @@ namespace apidb
         }
         else
         {
-            const internal::RowsShowTables* tables = driver.getListTable();
+            const apidb::internal::RowsShowTables* tables = driver.getListTable();
             for (apidb::internal::Table* n : *tables) 
             {
                 createClass(n,fout,n->table_name);       
@@ -91,7 +92,7 @@ namespace apidb
 	
 	bool MySQLDriver::read()
 	{
-		rows = new internal::RowsShowTables();
+		rows = new apidb::internal::RowsShowTables();
 		if(connector->query("SHOW TABLES",*rows)) 
         {
             for(internal::Table* n: *rows)
@@ -115,14 +116,14 @@ namespace apidb
 		
 	MySQLDriver::MySQLDriver()
 	{
-		clientdb::DatconectionMySQL mysqlConnector;
+		toolkit::clientdb::DatconectionMySQL mysqlConnector;
 		mysqlConnector.host = "192.168.0.101";
 		mysqlConnector.database = "business.alpha";
 		mysqlConnector.usuario = "root";
 		mysqlConnector.password = "k3yL0c41";
 		mysqlConnector.port = 3306;    
 		
-		connector = new clientdb::Connector();
+		connector = new toolkit::clientdb::Connector();
 		bool flag = connector->connect(mysqlConnector);
 		if(flag)
 		{
