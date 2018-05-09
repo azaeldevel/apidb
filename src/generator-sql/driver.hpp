@@ -25,6 +25,7 @@
 #include <istream>
 #include <clientdb.hpp>
 #include <list>
+#include <iostream>
 
 
 #include "scanner.hpp"
@@ -61,10 +62,10 @@ namespace apidb
 	class Driver
 	{
 	public:
-		virtual bool read(){return false;};
+		virtual bool read();
 		const internal::RowsShowTables* getListTable() const;
         
-        Driver() = default;
+        Driver();
 
         virtual ~Driver();
         std::string parse(const std::string& line);
@@ -72,22 +73,25 @@ namespace apidb
 		* parse - parse from a file
 		* @param filename - valid string with input file
 		*/
-	   void parse( const char * const filename );
-	   /** 
+		void parse( const char * const filename );
+		/** 
 		* parse - parse from a c++ input stream
 		* @param is - std::istream&, valid input stream
 		*/
-	   void parse( std::istream &iss );
-
-	   std::ostream& print(std::ostream &stream);
-	   const std::string& getOutputLenguaje();
+		void parse( std::istream &iss );
+		
+		void message(const std::string&);
+		
+		std::ostream& print(std::ostream &stream);
+		const std::string& getOutputLenguaje();
+		std::string oneLine;//to get the retur from parser
+		std::ostream* oss;//out stream
     protected:
 		internal::RowsShowTables* rows;
 	private:
 	   void parse_helper( std::istream &stream );
 	   apidb::Parser  *parser  = nullptr;
 	   apidb::Scanner *scanner = nullptr;
-	   std::string oneLine;
 	   //flags
 	   std::string outputLenguaje;
 	};

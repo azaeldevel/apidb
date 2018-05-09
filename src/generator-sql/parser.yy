@@ -82,44 +82,74 @@
 %%
 
 declare_type :
-	TEXT declare_end 	{
-							if(driver.getOutputLenguaje().compare("C++"))
-							{
-								std::cout<<"std::string";
-							}
-							else if(driver.getOutputLenguaje().compare("C"))
-							{
-								std::cout<<"const char*";
-							}
-						}
-	|
-	INTEGER declare_end {std::cout<<"int";}|	
-	INT declare_end {std::cout<<"int";}|
 	stringVarible declare_end 		{
-										if(driver.getOutputLenguaje().compare("C++"))
+										if(driver.getOutputLenguaje().compare("C++") == 0)
 										{
-											std::cout<<"std::string";
+											driver.oneLine = "std::string";
 										}
-										else if(driver.getOutputLenguaje().compare("C"))
+										else if(driver.getOutputLenguaje().compare("C") == 0)
 										{
-											std::cout<<"const char*";
+											driver.oneLine ="const char*";
+										}
+										else
+										{
+											driver.message("OutputLenguaje is unknow.");
+											driver.oneLine = "";
 										}
 									}
 	|
-	integerVariable declare_end {std::cout<<"double";};
+	integerTypes declare_end    		{
+											if((driver.getOutputLenguaje().compare("C++") == 0) | (driver.getOutputLenguaje().compare("C")  == 0))
+											{
+												driver.oneLine = "int";
+											}
+											else
+											{
+												driver.message("OutputLenguaje is unknow.");
+												driver.oneLine =  "";
+											}
+										}
+	|
+	realDeclareLow declare_end	    		{
+												if((driver.getOutputLenguaje().compare("C++") == 0) | (driver.getOutputLenguaje().compare("C")  == 0))
+												{
+													driver.oneLine = "float";
+												}
+												else
+												{
+													driver.message("OutputLenguaje is unknow.");
+													driver.oneLine =  "";
+												}
+											}
+	|
+	realDeclareHigh declare_end			    {
+												if((driver.getOutputLenguaje().compare("C++") == 0) | (driver.getOutputLenguaje().compare("C")  == 0))
+												{
+													driver.oneLine = "duble";
+												}
+												else
+												{
+													driver.message("OutputLenguaje is unknow.");
+													driver.oneLine =  "";
+												}
+											}						
+	;
 
 stringVarible: stringVariableTypes PARENTHESIS_OPEN INTEGER PARENTHESIS_CLOSE;
 
 stringVariableTypes : VARCHAR | CHAR | TEXT;
 
-integerVariable : integerVariableTypes PARENTHESIS_OPEN INTEGER COMA INTEGER PARENTHESIS_CLOSE;
-	
-integerVariableTypes : DECIMAL | NUMERIC | REAL | FLOAT | DOUBLE;
+integerTypes : INT | INTEGER;
+
+realDeclareLow : realDeclareTypesLow PARENTHESIS_OPEN INTEGER COMA INTEGER PARENTHESIS_CLOSE;
+
+realDeclareHigh : realDeclareTypesHigh PARENTHESIS_OPEN INTEGER COMA INTEGER PARENTHESIS_CLOSE;
+
+realDeclareTypesLow : NUMERIC | FLOAT;
+
+realDeclareTypesHigh : DECIMAL | REAL | DOUBLE;
 
 declare_end : END | NEWLINE;
-
-
-
 
 
 %%

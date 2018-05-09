@@ -7,6 +7,20 @@
 
 namespace apidb
 {		
+	bool Driver::read()
+	{
+		return false;
+	}
+	Driver::Driver()
+	{
+	   //deafults
+	   outputLenguaje = "C++";
+	   oss = &std::cout;
+	}
+	void Driver::message(const std::string& msg)
+	{
+		(*oss)<<msg<<std::endl;
+	}
 	const std::string& Driver::getOutputLenguaje()
 	{
 		return outputLenguaje;
@@ -22,8 +36,7 @@ namespace apidb
 	   delete(scanner);
 	   scanner = nullptr;
 	   delete(parser);
-	   parser = nullptr;
-	   outputLenguaje = "C++";
+	   parser = nullptr;	   
 	}
 
 	void Driver::parse( const char * const filename )
