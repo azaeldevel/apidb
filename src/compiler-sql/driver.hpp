@@ -16,7 +16,7 @@ namespace apibd
 	   Driver() = default;
 
 	   virtual ~Driver();
-	   
+	   std::string parse(const std::string& line);
 	   /** 
 		* parse - parse from a file
 		* @param filename - valid string with input file
@@ -30,11 +30,10 @@ namespace apibd
 
 	   std::ostream& print(std::ostream &stream);
 	private:
-
 	   void parse_helper( std::istream &stream );
 	   apibd::Parser  *parser  = nullptr;
 	   apibd::Scanner *scanner = nullptr;
-	   
+	   std::string oneLine;
 	};
 
 } /* end namespace MC */

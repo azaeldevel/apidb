@@ -3,15 +3,13 @@
 #include <cstring>
 
 #include "driver.hpp"
-#include <sstream> 
 
-int 
-main( const int argc, const char **argv )
+
+int main( const int argc, const char **argv )
 {
-	apibd::Driver driver;
-	std::istringstream text("VARCHAR(25)");
-	driver.parse(text);
-	std::cout<<std::endl;
+	apibd::Driver driver;	
+	std::string str = "VARCHAR(25)";
+	std::cout<<driver.parse(str)<<std::endl;	
 	
 	return( EXIT_SUCCESS );
 }

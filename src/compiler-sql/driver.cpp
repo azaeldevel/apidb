@@ -1,11 +1,18 @@
 #include <cctype>
 #include <fstream>
 #include <cassert>
+#include <sstream> 
 
 #include "driver.hpp"
 
 namespace apibd
 {		
+	std::string Driver::parse(const std::string& line)
+	{
+		std::istringstream text(line);
+		parse(text);
+		return oneLine;
+	}
 	Driver::~Driver()
 	{
 	   delete(scanner);
@@ -40,7 +47,6 @@ namespace apibd
 
 	void Driver::parse_helper( std::istream &stream )
 	{
-	   
 	   delete(scanner);
 	   try
 	   {
@@ -60,8 +66,7 @@ namespace apibd
 	   }
 	   catch( std::bad_alloc &ba )
 	   {
-		  std::cerr << "Failed to allocate parser: (" << 
-			 ba.what() << "), exiting!!\n";
+		  std::cerr << "Failed to allocate parser: (" <<  ba.what() << "), exiting!!\n";
 		  exit( EXIT_FAILURE );
 	   }
 	   const int accept(0);
