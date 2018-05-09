@@ -124,11 +124,5 @@ MC::MC_Driver::add_char()
 std::ostream& 
 MC::MC_Driver::print( std::ostream &stream )
 {
-   stream << red  << "Results: " << norm << "\n";
-   stream << blue << "Uppercase: " << norm << uppercase << "\n";
-   stream << blue << "Lowercase: " << norm << lowercase << "\n";
-   stream << blue << "Lines: " << norm << lines << "\n";
-   stream << blue << "Words: " << norm << words << "\n";
-   stream << blue << "Characters: " << norm << chars << "\n";
    return(stream);
 }

@@ -72,11 +72,7 @@
 %token			PARENTHESIS_CLOSE
 %token			SPACE
 %token               END    0     "end of file"
-%token               UPPER
-%token               LOWER
-%token <std::string> WORD
 %token               NEWLINE
-%token               CHARTER
 %token               UNKNOW
 
 %locations
@@ -84,11 +80,11 @@
 %%
 
 declare_type :
-	TEXT declare_end|
-	INTEGER declare_end|	
-	INT declare_end|
-	stringVarible declare_end|
-	integerVariable declare_end;
+	TEXT declare_end {std::cout<<"const char*";}|
+	INTEGER declare_end {std::cout<<"int";}|	
+	INT declare_end {std::cout<<"int";}|
+	stringVarible declare_end {std::cout<<"const char*";}|
+	integerVariable declare_end {std::cout<<"double";};
 
 stringVarible: stringVariableTypes PARENTHESIS_OPEN INTEGER PARENTHESIS_CLOSE;
 
