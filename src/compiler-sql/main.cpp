@@ -10,7 +10,7 @@ main( const int argc, const char **argv )
    /** check for the right # of arguments **/
    if( argc == 2 )
    {
-      MC::MC_Driver driver;
+      MC::Driver driver;
       /** example for piping input from terminal, i.e., using cat **/ 
       if( std::strncmp( argv[ 1 ], "-o", 2 ) == 0 )
       {

@@ -10,11 +10,11 @@
 
 namespace MC{
 
-class MC_Driver{
+class Driver{
 public:
-   MC_Driver() = default;
+   Driver() = default;
 
-   virtual ~MC_Driver();
+   virtual ~Driver();
    
    /** 
     * parse - parse from a file
@@ -43,8 +43,8 @@ private:
    std::size_t  lines      = 0;
    std::size_t  uppercase  = 0;
    std::size_t  lowercase  = 0;
-   MC::MC_Parser  *parser  = nullptr;
-   MC::MC_Scanner *scanner = nullptr;
+   MC::Parser  *parser  = nullptr;
+   MC::Scanner *scanner = nullptr;
    
    const std::string red   = "\033[1;31m";
    const std::string blue  = "\033[1;36m";

@@ -3,13 +3,15 @@
 %debug 
 %defines 
 %define api.namespace {MC}
-%define parser_class_name {MC_Parser}
+%define parser_class_name {Parser}
 
-%code requires{
-   namespace MC {
-      class MC_Driver;
-      class MC_Scanner;
-   }
+%code requires
+{
+	namespace MC 
+	{
+      class Driver;
+      class Scanner;
+	}
 
 // The following definitions is missing when %locations isn't used
 # ifndef YY_NULLPTR
@@ -22,8 +24,8 @@
 
 }
 
-%parse-param { MC_Scanner  &scanner  }
-%parse-param { MC_Driver  &driver  }
+%parse-param { Scanner  &scanner  }
+%parse-param { Driver  &driver  }
 
 %code{
    #include <iostream>
@@ -104,7 +106,7 @@ declare_end : END | NEWLINE;
 
 
 void 
-MC::MC_Parser::error( const location_type &l, const std::string &err_message )
+MC::Parser::error( const location_type &l, const std::string &err_message )
 {
    std::cerr << "Error: " << err_message << " at " << l << "\n";
 }
