@@ -41,7 +41,9 @@ namespace apidb
             {
                 std::string type;
                 std::string name;
-                bool required;   
+                bool required; 
+                std::string c_type;
+                std::string cpp_type;
             };
 			std::string table_name;
             std::list<Attribute*> attributes;        
@@ -78,6 +80,7 @@ namespace apidb
 	   void parse( std::istream &iss );
 
 	   std::ostream& print(std::ostream &stream);
+	   const std::string& getOutputLenguaje();
     protected:
 		internal::RowsShowTables* rows;
 	private:
@@ -85,6 +88,8 @@ namespace apidb
 	   apidb::Parser  *parser  = nullptr;
 	   apidb::Scanner *scanner = nullptr;
 	   std::string oneLine;
+	   //flags
+	   std::string outputLenguaje;
 	};
 
 } /* end namespace MC */

@@ -69,7 +69,6 @@ namespace apidb
     
     bool CPPGenerator::generate(const apidb::Driver& driver,std::ofstream& fout,const std::string& space)
     {
-        
         if(space.length() > 0)
         {
             createSpace(driver,fout,space);
@@ -93,9 +92,9 @@ namespace apidb
 	bool MySQLDriver::read()
 	{
 		rows = new apidb::internal::RowsShowTables();
-		if(connector->query("SHOW TABLES",*rows)) 
+		if(connector->query("SHOW TABLES",*rows)) //reading tables
         {
-            for(internal::Table* n: *rows)
+            for(internal::Table* n: *rows) //reading attrubtes by table
             {
                 std::string str = "DESCRIBE ";
                 str += n->table_name;   
@@ -110,6 +109,21 @@ namespace apidb
         {
             return false;
         }  
+        
+		for(internal::Table* table: *rows) 
+		{
+			for(internal::Table::Attribute* attribute: *(table->attributes))
+			{
+				std::string str = parse(attribute->type);
+				attribute->cpp_type = str;
+			}	
+		}
+	std::ofstream outFile;
+    outFile.open ("out.txt");
+	apidb::CPPGenerator cpp;
+    std::string space = "nmq";
+    cpp.generate(driver,outFile,space);
+	outFile.flush();
         
 		return false;
 	}

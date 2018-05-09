@@ -7,6 +7,10 @@
 
 namespace apidb
 {		
+	const std::string& Driver::getOutputLenguaje()
+	{
+		return outputLenguaje;
+	}
 	std::string Driver::parse(const std::string& line)
 	{
 		std::istringstream text(line);
@@ -19,6 +23,7 @@ namespace apidb
 	   scanner = nullptr;
 	   delete(parser);
 	   parser = nullptr;
+	   outputLenguaje = "C++";
 	}
 
 	void Driver::parse( const char * const filename )

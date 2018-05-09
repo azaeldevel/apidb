@@ -82,10 +82,30 @@
 %%
 
 declare_type :
-	TEXT declare_end {std::cout<<"const char*";}|
+	TEXT declare_end 	{
+							if(driver.getOutputLenguaje().compare("C++"))
+							{
+								std::cout<<"std::string";
+							}
+							else if(driver.getOutputLenguaje().compare("C"))
+							{
+								std::cout<<"const char*";
+							}
+						}
+	|
 	INTEGER declare_end {std::cout<<"int";}|	
 	INT declare_end {std::cout<<"int";}|
-	stringVarible declare_end {std::cout<<"const char*";}|
+	stringVarible declare_end 		{
+										if(driver.getOutputLenguaje().compare("C++"))
+										{
+											std::cout<<"std::string";
+										}
+										else if(driver.getOutputLenguaje().compare("C"))
+										{
+											std::cout<<"const char*";
+										}
+									}
+	|
 	integerVariable declare_end {std::cout<<"double";};
 
 stringVarible: stringVariableTypes PARENTHESIS_OPEN INTEGER PARENTHESIS_CLOSE;

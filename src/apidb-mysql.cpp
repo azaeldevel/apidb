@@ -26,30 +26,6 @@
 
 namespace apidb
 {
-    void internal::Table::import(void* r)
-    {
-        MYSQL_ROW* row = (MYSQL_ROW*)r;
-        Attribute* attrribute = new Attribute();
-        
-        attrribute->name = (*row)[0];
-        attrribute->type = (*row)[1];
-        std::string requiered = (*row)[2];
-        if(requiered.compare("YES"))
-        {
-            attrribute->required = true;
-        }
-        else if(requiered.compare("NO"))
-        {
-            attrribute->required = false;
-        }
-        attributes.push_back(attrribute);
-    }
-    
-	void internal::RowsShowTables::import(void* r)
-	{
-		MYSQL_ROW* row = (MYSQL_ROW*)r;		
-		Table* prw = new Table();
-		prw->table_name = (*row)[0];
-		push_back(prw);
-	}
+
+
 }
