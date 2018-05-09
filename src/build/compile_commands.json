@@ -1,0 +1,31 @@
+[
+{
+  "directory": "/home/areyes/softdev/apibd/src/build",
+  "command": "/usr/x86_64-pc-linux-gnu/gcc-bin/6.4.0/c++   -I/usr/include/mysql -I/home/areyes/softdev/toolkit/common/src  -g   -std=c++14 -o CMakeFiles/testing.dir/apidb.cpp.o -c /home/areyes/softdev/apibd/src/apidb.cpp",
+  "file": "/home/areyes/softdev/apibd/src/apidb.cpp"
+},
+
+{
+  "directory": "/home/areyes/softdev/apibd/src/build",
+  "command": "/usr/x86_64-pc-linux-gnu/gcc-bin/6.4.0/c++   -I/usr/include/mysql -I/home/areyes/softdev/toolkit/common/src  -g   -std=c++14 -o CMakeFiles/testing.dir/apidb-mysql.cpp.o -c /home/areyes/softdev/apibd/src/apidb-mysql.cpp",
+  "file": "/home/areyes/softdev/apibd/src/apidb-mysql.cpp"
+},
+
+{
+  "directory": "/home/areyes/softdev/apibd/src/build",
+  "command": "/usr/x86_64-pc-linux-gnu/gcc-bin/6.4.0/c++   -I/usr/include/mysql -I/home/areyes/softdev/toolkit/common/src  -g   -std=c++14 -o CMakeFiles/testing.dir/clientdb.cpp.o -c /home/areyes/softdev/apibd/src/clientdb.cpp",
+  "file": "/home/areyes/softdev/apibd/src/clientdb.cpp"
+},
+
+{
+  "directory": "/home/areyes/softdev/apibd/src/build",
+  "command": "/usr/x86_64-pc-linux-gnu/gcc-bin/6.4.0/c++   -I/usr/include/mysql -I/home/areyes/softdev/toolkit/common/src  -g   -std=c++14 -o CMakeFiles/testing.dir/clientdb-mysql.cpp.o -c /home/areyes/softdev/apibd/src/clientdb-mysql.cpp",
+  "file": "/home/areyes/softdev/apibd/src/clientdb-mysql.cpp"
+},
+
+{
+  "directory": "/home/areyes/softdev/apibd/src/build",
+  "command": "/usr/x86_64-pc-linux-gnu/gcc-bin/6.4.0/c++   -I/usr/include/mysql -I/home/areyes/softdev/toolkit/common/src  -g   -std=c++14 -o CMakeFiles/testing.dir/testing.cpp.o -c /home/areyes/softdev/apibd/src/testing.cpp",
+  "file": "/home/areyes/softdev/apibd/src/testing.cpp"
+}
+]

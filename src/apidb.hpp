@@ -30,8 +30,6 @@ namespace apidb
 {
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
-	    
-
     
 	namespace internal
 	{
