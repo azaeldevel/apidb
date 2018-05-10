@@ -53,12 +53,12 @@ namespace apidb
     public:
 		virtual bool generate(apidb::Driver& driver);
     private:
-        void createSpace(apidb::Driver& driver,std::ofstream& file);
-        void createClass(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&,const std::string&);
-        void createClassPrivate(std::ofstream&);
-        void createClassAttributes(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
-        void createClassPublic(std::ofstream&);
-        void createClassMethodes(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
+        void createSpaceH(apidb::Driver& driver,std::ofstream& file);
+        void createClassH(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&,const std::string&);
+        void createClassPrivateH(std::ofstream&);
+        void createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
+        void createClassPublicH(std::ofstream&);
+        void createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
 	};	
 }
 

@@ -25,10 +25,29 @@
 
 namespace apidb
 {
-    void CPPGenerator::createClassMethodes(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
+    void CPPGenerator::createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
+        for(internal::Table::Attribute* attr : table->attributes)
+        {
+			if(driver.getOutputLenguaje().compare("C++") == 0)
+			{
+				if((attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
+				{
+					ofile << attr->cpp_type << " ";
+				}
+				else
+				{
+					ofile << "const " << attr->cpp_type <<"& ";
+				}
+				ofile << "get" << attr->name << "()const;"<< std::endl;
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+			}             
+        }   
     }
-    void CPPGenerator::createClassAttributes(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
+    void CPPGenerator::createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
         for(internal::Table::Attribute* attr : table->attributes)
         {
@@ -43,37 +62,36 @@ namespace apidb
 			else
 			{
 				driver.message("OutputLenguaje is unknow.");
-			}
-             
+			}             
         }        
     }
-    void CPPGenerator::createSpace(apidb::Driver& driver,std::ofstream& file)
+    void CPPGenerator::createSpaceH(apidb::Driver& driver,std::ofstream& file)
     {
         file <<"namespace "<<driver.getNameProject()<<std::endl;
         file <<"{"<<std::endl;
         const internal::RowsShowTables* tables = driver.getListTable();
         for (apidb::internal::Table* n : *tables) 
         {
-            createClass(driver,n,file,n->table_name);       
+            createClassH(driver,n,file,n->table_name);       
         }
         file <<"}"<<std::endl;
     }
-    void CPPGenerator::createClassPublic(std::ofstream& file)
+    void CPPGenerator::createClassPublicH(std::ofstream& file)
     {
         file << "public:" <<std::endl;
     }
-    void CPPGenerator::createClassPrivate(std::ofstream& file)
+    void CPPGenerator::createClassPrivateH(std::ofstream& file)
     {
         file << "private:" <<std::endl;
     }
-    void CPPGenerator::createClass(apidb::Driver& driver,const apidb::internal::Table* cl,std::ofstream& file,const std::string& nameClass)
+    void CPPGenerator::createClassH(apidb::Driver& driver,const apidb::internal::Table* cl,std::ofstream& file,const std::string& nameClass)
     {
         file <<"class "<<nameClass<<std::endl;
         file <<"{"<<std::endl;
-        createClassPublic(file);
-        createClassAttributes(driver,cl,file);
-        createClassPrivate(file);
-        createClassMethodes(driver,cl,file);
+        createClassPrivateH(file);
+        createClassAttributesH(driver,cl,file);
+        createClassPublicH(file);
+        createClassMethodesH(driver,cl,file);
         file <<"};"<<std::endl;
     }
     
@@ -81,14 +99,14 @@ namespace apidb
     {
         if(driver.getNameProject().length() > 0)
         {
-            createSpace(driver,driver.getHeaderOutput());
+            createSpaceH(driver,driver.getHeaderOutput());
         }
         else
         {
             const apidb::internal::RowsShowTables* tables = driver.getListTable();
             for (apidb::internal::Table* n : *tables) 
             {
-                createClass(driver,n,driver.getHeaderOutput(),n->table_name);       
+                createClassH(driver,n,driver.getHeaderOutput(),n->table_name);       
             }
         }
         return true;    
@@ -119,18 +137,10 @@ namespace apidb
 		{
 			for(internal::Table::Attribute* attribute: table->attributes)
 			{
-				//std::cout<<"Parsing "<<attribute->type<<std::endl;
 				attribute->cpp_type = parse(attribute->type);
 			}
 		}
-		
-		/*std::ofstream outFile;
-		outFile.open ("out.txt");
-		apidb::CPPGenerator cpp;
-		std::string space = "nmq";
-		cpp.generate(driver,outFile,space);
-		outFile.flush();*/
-        
+		        
 		return false;
 	}
 		

@@ -19,11 +19,17 @@ namespace apidb
 	{
 		nameProject = name;
 		directoryProject = directory;
-		if((outputLenguaje.compare("C++") == 0) | (outputLenguaje.compare("C")  == 0))
+		if((outputLenguaje.compare("C++") == 0))
 		{//se requiere un archo para las cabezaras y otro para el codigo
 		   writeResults = new std::ofstream[2];
 		   std::string nameH = name + ".hpp";
 		   writeResults[0].open(nameH);
+		   std::string nameCPP = name + ".cpp";
+		   writeResults[1].open(nameH);
+		}
+		else
+		{
+			message("OutputLenguaje is unknow.");
 		}
 	}
 	bool Driver::read()
