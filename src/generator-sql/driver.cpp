@@ -7,25 +7,40 @@
 
 namespace apidb
 {		
-	const std::string& Driver::getNameProject()
+	const std::string& Driver::getHeaderName() const
 	{
-		return nameProject;
+		if((outputLenguaje.compare("C++") == 0))
+		{
+			return nameProjectH;
+		}
+		else
+		{
+			
+		}
+	}
+	std::ofstream& Driver::getSourceOutput()
+	{
+		return writeResults[1];
 	}
 	std::ofstream& Driver::getHeaderOutput()
 	{
 		return writeResults[0];
+	}
+	const std::string& Driver::getNameProject()
+	{
+		return nameProject;
 	}
 	void Driver::setPramsProject(const std::string& name,const std::string& directory)
 	{
 		nameProject = name;
 		directoryProject = directory;
 		if((outputLenguaje.compare("C++") == 0))
-		{//se requiere un archo para las cabezaras y otro para el codigo
+		{//se requiere un archivo para las cabezaras y otro para el codigo
 		   writeResults = new std::ofstream[2];
-		   std::string nameH = name + ".hpp";
-		   writeResults[0].open(nameH);
-		   std::string nameCPP = name + ".cpp";
-		   writeResults[1].open(nameH);
+		   nameProjectH = nameProject + ".hpp";
+		   writeResults[0].open(nameProjectH);
+		   std::string nameCPP = nameProject + ".cpp";
+		   writeResults[1].open(nameCPP);
 		}
 		else
 		{

@@ -45,6 +45,7 @@ namespace apidb
                 bool required; 
                 std::string c_type;
                 std::string cpp_type;
+                std::string java_type;
             };
 			std::string table_name;
             std::list<Attribute*> attributes;        
@@ -59,12 +60,13 @@ namespace apidb
 		};
 	}
        
-	
 	class Driver
 	{
 	public:
-		const std::string& getNameProject();
+		const std::string& getHeaderName() const;
+		std::ofstream& getSourceOutput();
 		std::ofstream& getHeaderOutput();
+		const std::string& getNameProject();
 		void setPramsProject(const std::string& name,const std::string& directory);
 		virtual bool read();
 		const internal::RowsShowTables* getListTable() const;
@@ -92,7 +94,9 @@ namespace apidb
 		std::ostream* outputMessages;//out stream
 		std::ofstream* writeResults;//erreglo de writeoutput files
 		std::string nameProject;
+		std::string nameProjectH;
 		std::string directoryProject;
+		std::string directoryProjectH;
     protected:
 		internal::RowsShowTables* rows;
 	private:

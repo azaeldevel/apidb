@@ -59,6 +59,12 @@ namespace apidb
         void createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
         void createClassPublicH(std::ofstream&);
         void createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
+        void createSpaceCPP(apidb::Driver& driver,std::ofstream& file);
+        void createClassCPP(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&,const std::string&);
+        void createClassPrivateCPP(std::ofstream&);
+        void createClassAttributesCPP(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
+        void createClassPublicCPP(std::ofstream&);
+        void createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
 	};	
 }
 

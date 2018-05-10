@@ -25,6 +25,48 @@
 
 namespace apidb
 {
+    void CPPGenerator::createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
+    {
+        for(internal::Table::Attribute* attr : table->attributes)
+        {
+			if(driver.getOutputLenguaje().compare("C++") == 0)
+			{
+				if((attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
+				{
+					ofile << attr->cpp_type << " ";
+				}
+				else
+				{
+					ofile << "const " << attr->cpp_type <<"& ";
+				}
+				ofile << table->table_name <<"::get" << attr->name << "()const"<< std::endl;
+				ofile << "{"<<std::endl;
+				ofile << "return " <<attr->name << ";"<<std::endl;
+				ofile << "}"<<std::endl;
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+			}     
+        }
+    }
+    
+    void CPPGenerator::createSpaceCPP(apidb::Driver& driver,std::ofstream& file)
+    {
+        file <<"namespace "<<driver.getNameProject()<<std::endl;
+        file <<"{"<<std::endl;
+        const internal::RowsShowTables* tables = driver.getListTable();
+        for (apidb::internal::Table* n : *tables) 
+        {
+            createClassCPP(driver,n,file,n->table_name);       
+        }
+        file <<"}"<<std::endl;
+    }
+	void CPPGenerator::createClassCPP(apidb::Driver& driver,const apidb::internal::Table* cl,std::ofstream& file,const std::string& nameClass)
+    {
+        createClassMethodesCPP(driver,cl,file);
+    }
+    
     void CPPGenerator::createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
         for(internal::Table::Attribute* attr : table->attributes)
@@ -100,13 +142,18 @@ namespace apidb
         if(driver.getNameProject().length() > 0)
         {
             createSpaceH(driver,driver.getHeaderOutput());
+            driver.getSourceOutput()<< "#include \"" <<driver.getHeaderName() <<"\""<<std::endl<<std::endl; 
+            createSpaceCPP(driver,driver.getSourceOutput());
         }
         else
         {
             const apidb::internal::RowsShowTables* tables = driver.getListTable();
+            
+                driver.getSourceOutput()<< "#include \"" <<driver.getHeaderName() <<"\""<<std::endl<<std::endl; 
             for (apidb::internal::Table* n : *tables) 
             {
-                createClassH(driver,n,driver.getHeaderOutput(),n->table_name);       
+                createClassH(driver,n,driver.getHeaderOutput(),n->table_name);  
+                createClassCPP(driver,n,driver.getSourceOutput(),n->table_name);      
             }
         }
         return true;    
