@@ -7,6 +7,25 @@
 
 namespace apidb
 {		
+	const std::string& Driver::getNameProject()
+	{
+		return nameProject;
+	}
+	std::ofstream& Driver::getHeaderOutput()
+	{
+		return writeResults[0];
+	}
+	void Driver::setPramsProject(const std::string& name,const std::string& directory)
+	{
+		nameProject = name;
+		directoryProject = directory;
+		if((outputLenguaje.compare("C++") == 0) | (outputLenguaje.compare("C")  == 0))
+		{//se requiere un archo para las cabezaras y otro para el codigo
+		   writeResults = new std::ofstream[2];
+		   std::string nameH = name + ".hpp";
+		   writeResults[0].open(nameH);
+		}
+	}
 	bool Driver::read()
 	{
 		return false;
@@ -15,11 +34,12 @@ namespace apidb
 	{
 	   //deafults
 	   outputLenguaje = "C++";
-	   oss = &std::cout;
+	   inputLenguaje = "MySQL";
+	   outputMessages = &std::cout;	   
 	}
 	void Driver::message(const std::string& msg)
 	{
-		(*oss)<<msg<<std::endl;
+		(*outputMessages)<<msg<<std::endl;
 	}
 	const std::string& Driver::getOutputLenguaje()
 	{

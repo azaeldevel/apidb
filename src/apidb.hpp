@@ -32,11 +32,11 @@ namespace apidb
 {
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
-        
+ 
 	class Generator
 	{
 	public:
-		virtual bool generate(const apidb::Driver& driver,std::ofstream&,const std::string& space) = 0;
+		virtual bool generate(apidb::Driver& driver) = 0;
 	};
     
 	class MySQLDriver: public apidb::Driver
@@ -51,14 +51,14 @@ namespace apidb
 	class CPPGenerator: public Generator
 	{
     public:
-		virtual bool generate(const apidb::Driver& driver,std::ofstream&,const std::string& space);
+		virtual bool generate(apidb::Driver& driver);
     private:
-        void createSpace(const apidb::Driver& driver,std::ofstream& file,const std::string& space);
-        void createClass(const apidb::internal::Table*,std::ofstream&,const std::string&);
+        void createSpace(apidb::Driver& driver,std::ofstream& file);
+        void createClass(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&,const std::string&);
         void createClassPrivate(std::ofstream&);
-        void createClassAttributes(const apidb::internal::Table*,std::ofstream&);
+        void createClassAttributes(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
         void createClassPublic(std::ofstream&);
-        void createClassMethodes(const apidb::internal::Table*,std::ofstream&);
+        void createClassMethodes(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
 	};	
 }
 

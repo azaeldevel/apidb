@@ -65,13 +65,9 @@ int main()
         std::cerr<<"Not parsin phase"<<std::endl;
     }
     
-    
+    driver.setPramsProject("nmp",".");
+    apidb::CPPGenerator cpp;
+	cpp.generate(driver);
 	
-	std::ofstream outFile;
-    outFile.open ("out.txt");
-	apidb::CPPGenerator cpp;
-    std::string space = "nmq";
-    cpp.generate(driver,outFile,space);
-	outFile.flush();
 	return 0;	
 }

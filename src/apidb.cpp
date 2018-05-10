@@ -25,60 +25,70 @@
 
 namespace apidb
 {
-    void CPPGenerator::createClassMethodes(const apidb::internal::Table* table,std::ofstream& ofile)
+    void CPPGenerator::createClassMethodes(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
     }
-    void CPPGenerator::createClassAttributes(const apidb::internal::Table* table,std::ofstream& ofile)
+    void CPPGenerator::createClassAttributes(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
         for(internal::Table::Attribute* attr : table->attributes)
         {
-            ofile <<" CLASS "<<attr->name<<std::endl;
+			if(driver.getOutputLenguaje().compare("C++") == 0)
+			{
+				ofile << attr->cpp_type <<" "<<attr->name <<";"<<std::endl;
+			}
+			else if(driver.getOutputLenguaje().compare("C") == 0)
+			{
+				ofile <<attr->c_type<<" "<<attr->name <<";"<<std::endl;
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+			}
+             
         }        
     }
-    void CPPGenerator::createSpace(const apidb::Driver& driver,std::ofstream& file,const std::string& space)
+    void CPPGenerator::createSpace(apidb::Driver& driver,std::ofstream& file)
     {
-        file <<"namespace "<<space<<std::endl;
+        file <<"namespace "<<driver.getNameProject()<<std::endl;
         file <<"{"<<std::endl;
         const internal::RowsShowTables* tables = driver.getListTable();
         for (apidb::internal::Table* n : *tables) 
         {
-            createClass(n,file,n->table_name);       
+            createClass(driver,n,file,n->table_name);       
         }
         file <<"}"<<std::endl;
     }
     void CPPGenerator::createClassPublic(std::ofstream& file)
     {
         file << "public:" <<std::endl;
-        file <<std::endl;        
     }
     void CPPGenerator::createClassPrivate(std::ofstream& file)
     {
         file << "private:" <<std::endl;
-        file <<std::endl;        
     }
-    void CPPGenerator::createClass(const apidb::internal::Table* cl,std::ofstream& file,const std::string& nameClass)
+    void CPPGenerator::createClass(apidb::Driver& driver,const apidb::internal::Table* cl,std::ofstream& file,const std::string& nameClass)
     {
         file <<"class "<<nameClass<<std::endl;
         file <<"{"<<std::endl;
         createClassPublic(file);
-        createClassAttributes(cl,file);
+        createClassAttributes(driver,cl,file);
         createClassPrivate(file);
-        createClassMethodes(cl,file);
+        createClassMethodes(driver,cl,file);
         file <<"};"<<std::endl;
     }
     
-    bool CPPGenerator::generate(const apidb::Driver& driver,std::ofstream& fout,const std::string& space)
+    bool CPPGenerator::generate(apidb::Driver& driver)
     {
-        if(space.length() > 0)
+        if(driver.getNameProject().length() > 0)
         {
-            createSpace(driver,fout,space);
+            createSpace(driver,driver.getHeaderOutput());
         }
         else
         {
             const apidb::internal::RowsShowTables* tables = driver.getListTable();
             for (apidb::internal::Table* n : *tables) 
             {
-                createClass(n,fout,n->table_name);       
+                createClass(driver,n,driver.getHeaderOutput(),n->table_name);       
             }
         }
         return true;    
@@ -103,27 +113,23 @@ namespace apidb
                     return false;                
                 }
             }
-            return true;
-        }
-        else
-        {
-            return false;
         }  
         
 		for(internal::Table* table: *rows) 
 		{
-			for(internal::Table::Attribute* attribute: *(table->attributes))
+			for(internal::Table::Attribute* attribute: table->attributes)
 			{
-				std::string str = parse(attribute->type);
-				attribute->cpp_type = str;
-			}	
+				//std::cout<<"Parsing "<<attribute->type<<std::endl;
+				attribute->cpp_type = parse(attribute->type);
+			}
 		}
-	std::ofstream outFile;
-    outFile.open ("out.txt");
-	apidb::CPPGenerator cpp;
-    std::string space = "nmq";
-    cpp.generate(driver,outFile,space);
-	outFile.flush();
+		
+		/*std::ofstream outFile;
+		outFile.open ("out.txt");
+		apidb::CPPGenerator cpp;
+		std::string space = "nmq";
+		cpp.generate(driver,outFile,space);
+		outFile.flush();*/
         
 		return false;
 	}

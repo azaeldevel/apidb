@@ -33,11 +33,11 @@ using token = apidb::Parser::token;
 %}
 
 
-"TINYINT"				{return token::TINYINT;}
+"tinyint"				{return token::TINYINT;}
 "SMALLINT"				{return token::SMALLINT;}
 "MEDIUMINT"				{return token::MEDIUMINT;}
-"INT"					{return token::INT;}
-"INTEGER"				{return token::INTEGER;}
+[I|i]+[N|n]+[T|t]+								{return token::INT;}
+[I|i]+[N|n]+[T|t]+[E|e]+[G|g]+[E|e]+[R|r]+		{return token::INTEGER;}
 "BIGINT"				{return token::BIGINT;}
 "BIT"					{return token::BIT;}
 
@@ -53,7 +53,7 @@ using token = apidb::Parser::token;
 "YEAR"					{return token::YEAR;}
 
 "CHAR"					{return token::CHAR;}
-"VARCHAR"				{return token::VARCHAR;}
+[V|v]+[A|a][R|r]+[C|c]+[H|h]+[A|a]+[R|r]+		{return token::VARCHAR;}
 "BINARY"				{return token::BINARY;}
 "VARBINARY"				{return token::VARBINARY;}
 "BLOB"					{return token::BLOB;}
@@ -63,7 +63,7 @@ using token = apidb::Parser::token;
 ","						{return token::COMA;}
 "("						{return token::PARENTHESIS_OPEN;}
 ")"						{return token::PARENTHESIS_CLOSE;}
-[0123456789]+           {return token::INTEGER;}
+[0123456789]+           {return token::NUMBER;}
 [ \t]+					{return token::SPACE;}
 		
 

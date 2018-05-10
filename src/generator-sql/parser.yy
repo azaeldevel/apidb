@@ -76,27 +76,40 @@
 %token               END    0     "end of file"
 %token               NEWLINE
 %token               UNKNOW
+%token			NUMBER
 
 %locations
 
 %%
 
 declare_type :
-	stringVarible declare_end 		{
-										if(driver.getOutputLenguaje().compare("C++") == 0)
-										{
-											driver.oneLine = "std::string";
-										}
-										else if(driver.getOutputLenguaje().compare("C") == 0)
-										{
-											driver.oneLine ="const char*";
-										}
-										else
-										{
-											driver.message("OutputLenguaje is unknow.");
-											driver.oneLine = "";
-										}
-									}
+	integerDeclareVariable declare_end		{
+												if((driver.getOutputLenguaje().compare("C++") == 0) | (driver.getOutputLenguaje().compare("C")  == 0))
+												{
+													driver.oneLine = "int";
+												}
+												else
+												{
+													driver.message("OutputLenguaje is unknow.");
+													driver.oneLine =  "";
+												}
+											}
+	|
+	stringDeclareVarible declare_end 		{
+												if(driver.getOutputLenguaje().compare("C++") == 0)
+												{
+													driver.oneLine = "std::string";
+												}
+												else if(driver.getOutputLenguaje().compare("C") == 0)
+												{
+													driver.oneLine ="const char*";
+												}
+												else
+												{
+													driver.message("OutputLenguaje is unknow.");
+													driver.oneLine = "";
+												}
+											}
 	|
 	integerTypes declare_end    		{
 											if((driver.getOutputLenguaje().compare("C++") == 0) | (driver.getOutputLenguaje().compare("C")  == 0))
@@ -135,15 +148,17 @@ declare_type :
 											}						
 	;
 
-stringVarible: stringVariableTypes PARENTHESIS_OPEN INTEGER PARENTHESIS_CLOSE;
+stringDeclareVarible: stringVariableTypes PARENTHESIS_OPEN NUMBER PARENTHESIS_CLOSE;
+
+integerDeclareVariable: integerTypes PARENTHESIS_OPEN NUMBER PARENTHESIS_CLOSE;
 
 stringVariableTypes : VARCHAR | CHAR | TEXT;
 
 integerTypes : INT | INTEGER;
 
-realDeclareLow : realDeclareTypesLow PARENTHESIS_OPEN INTEGER COMA INTEGER PARENTHESIS_CLOSE;
+realDeclareLow : realDeclareTypesLow PARENTHESIS_OPEN NUMBER COMA NUMBER PARENTHESIS_CLOSE;
 
-realDeclareHigh : realDeclareTypesHigh PARENTHESIS_OPEN INTEGER COMA INTEGER PARENTHESIS_CLOSE;
+realDeclareHigh : realDeclareTypesHigh PARENTHESIS_OPEN NUMBER COMA NUMBER PARENTHESIS_CLOSE;
 
 realDeclareTypesLow : NUMERIC | FLOAT;
 
@@ -158,5 +173,6 @@ declare_end : END | NEWLINE;
 void 
 apidb::Parser::error( const location_type &l, const std::string &err_message )
 {
-   std::cerr << "Error: " << err_message << " at " << l << "\n";
+	driver.oneLine =  "";
+	std::cerr << "Error: " << err_message << " at " << l << "\n";
 }

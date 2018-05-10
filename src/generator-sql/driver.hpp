@@ -58,10 +58,14 @@ namespace apidb
 			virtual void import(void* row);
 		};
 	}
+       
 	
 	class Driver
 	{
 	public:
+		const std::string& getNameProject();
+		std::ofstream& getHeaderOutput();
+		void setPramsProject(const std::string& name,const std::string& directory);
 		virtual bool read();
 		const internal::RowsShowTables* getListTable() const;
         
@@ -85,7 +89,10 @@ namespace apidb
 		std::ostream& print(std::ostream &stream);
 		const std::string& getOutputLenguaje();
 		std::string oneLine;//to get the retur from parser
-		std::ostream* oss;//out stream
+		std::ostream* outputMessages;//out stream
+		std::ofstream* writeResults;//erreglo de writeoutput files
+		std::string nameProject;
+		std::string directoryProject;
     protected:
 		internal::RowsShowTables* rows;
 	private:
@@ -94,6 +101,7 @@ namespace apidb
 	   apidb::Scanner *scanner = nullptr;
 	   //flags
 	   std::string outputLenguaje;
+	   std::string inputLenguaje;
 	};
 
 } /* end namespace MC */
