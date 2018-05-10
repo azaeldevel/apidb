@@ -11,7 +11,7 @@ namespace apidb
 	{
 		if((outputLenguaje.compare("C++") == 0))
 		{
-			return nameProjectH;
+			return projectH;
 		}
 		else
 		{
@@ -37,10 +37,20 @@ namespace apidb
 		if((outputLenguaje.compare("C++") == 0))
 		{//se requiere un archivo para las cabezaras y otro para el codigo
 		   writeResults = new std::ofstream[2];
-		   nameProjectH = nameProject + ".hpp";
-		   writeResults[0].open(nameProjectH);
-		   std::string nameCPP = nameProject + ".cpp";
-		   writeResults[1].open(nameCPP);
+		   if((directory.empty()) | (directory.compare(".") == 0)) 
+		   {
+			   projectH = nameProject + ".hpp";
+			   writeResults[0].open(projectH);
+			   projectCPP = nameProject + ".cpp";
+			   writeResults[1].open(projectCPP);
+		   }
+		   else
+		   {
+			   projectH = nameProject + ".hpp";
+			   projectCPP = nameProject + ".cpp";
+			   writeResults[0].open(directoryProject + "/" + projectH);
+			   writeResults[1].open(directoryProject + "/" + projectCPP);
+		   }
 		}
 		else
 		{

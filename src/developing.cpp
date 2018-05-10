@@ -25,12 +25,9 @@
 
 int main()
 {	
-    //std::cout<<"Creating driver..."<<std::endl;
-	apidb::MySQLDriver driver;
-    //std::cout<<"Listing..."<<std::endl;
+	apidb::MySQLDriver driver("nmp","test");
 	if(driver.read())
 	{
-        //std::cout<<"Listing done."<<std::endl;
 		if(driver.getListTable()->size() == 0)
 		{            
 			std::cout<< "no hay elemtos" <<std::endl;
@@ -65,7 +62,7 @@ int main()
         std::cerr<<"Not parsin phase"<<std::endl;
     }
     
-    driver.setPramsProject("nmp",".");
+    //driver.setPramsProject("nmp","test");
     apidb::CPPGenerator cpp;
 	cpp.generate(driver);
 	

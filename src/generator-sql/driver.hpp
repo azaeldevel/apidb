@@ -40,12 +40,22 @@ namespace apidb
 		{
             struct Attribute 
             {
+				enum KeyType
+				{
+					PRIMARY,
+					UNIQUE,
+					NOTKEY
+				};
+				
                 std::string type;
                 std::string name;
                 bool required; 
+                KeyType keyType;
                 std::string c_type;
                 std::string cpp_type;
                 std::string java_type;
+                
+                void fillKeyType(const std::string& databse, const std::string& table);
             };
 			std::string table_name;
             std::list<Attribute*> attributes;        
@@ -94,9 +104,9 @@ namespace apidb
 		std::ostream* outputMessages;//out stream
 		std::ofstream* writeResults;//erreglo de writeoutput files
 		std::string nameProject;
-		std::string nameProjectH;
+		std::string projectH;
+		std::string projectCPP;
 		std::string directoryProject;
-		std::string directoryProjectH;
     protected:
 		internal::RowsShowTables* rows;
 	private:
