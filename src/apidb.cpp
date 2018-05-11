@@ -170,17 +170,15 @@ namespace apidb
 		if(rows->listing(*connector)) //reading tables
         {		
             for(internal::Table* table: *rows) //reading attrubtes by table
-            {
-                /*std::string str = ;
-                str += n->table_name;   
-                if(!connector->query(str.c_str(),*n))
-                {
-                    return false;                
-                } */  
+            { 
                 if(!table->basicSymbols(*connector))
                 {
 					return false;
-				}                             
+				}
+				if(!table->fillKeyType(*connector))
+                {
+					return false;
+				}                            
             }
         }  
         

@@ -51,14 +51,15 @@ namespace apidb
                 std::string name;
                 bool required; 
                 KeyType keyType;
+                std::string classReferenced;
                 std::string c_type;
                 std::string cpp_type;
                 std::string java_type;                
-                bool fillKeyType(const std::string& databse, const std::string& table);
             };
 			std::string name;
             std::list<Attribute*> attributes;
 			bool basicSymbols(toolkit::clientdb::Connector& connect);
+            bool fillKeyType(toolkit::clientdb::Connector& connect);
 		};
 		
 		class RowsShowTables: public std::list<Table*>
@@ -116,5 +117,5 @@ namespace apidb
 	   std::string inputLenguaje;
 	};
 
-} /* end namespace MC */
+}
 #endif /* END __MCDRIVER_HPP__ */
