@@ -36,7 +36,7 @@ namespace apidb
 {
 	namespace internal
 	{
-		struct Table: public toolkit::clientdb::Rows
+		struct Table
 		{
             struct Attribute 
             {
@@ -53,20 +53,18 @@ namespace apidb
                 KeyType keyType;
                 std::string c_type;
                 std::string cpp_type;
-                std::string java_type;
-                
-                void fillKeyType(const std::string& databse, const std::string& table);
+                std::string java_type;                
+                bool fillKeyType(const std::string& databse, const std::string& table);
             };
-			std::string table_name;
-            std::list<Attribute*> attributes;        
-            
-            virtual void import(void*);
+			std::string name;
+            std::list<Attribute*> attributes;
+			bool basicSymbols(toolkit::clientdb::Connector& connect);
 		};
 		
-		class RowsShowTables: public toolkit::clientdb::Rows, public std::list<Table*>
+		class RowsShowTables: public std::list<Table*>
 		{
 		public:
-			virtual void import(void* row);
+			bool listing(toolkit::clientdb::Connector& connect);
 		};
 	}
        

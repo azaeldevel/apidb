@@ -39,7 +39,7 @@ namespace apidb
 				{
 					ofile << "const " << attr->cpp_type <<"& ";
 				}
-				ofile << table->table_name <<"::get" << attr->name << "()const"<< std::endl;
+				ofile << table->name <<"::get" << attr->name << "()const"<< std::endl;
 				ofile << "{"<<std::endl;
 				ofile << "return " <<attr->name << ";"<<std::endl;
 				ofile << "}"<<std::endl;
@@ -58,7 +58,7 @@ namespace apidb
         const internal::RowsShowTables* tables = driver.getListTable();
         for (apidb::internal::Table* n : *tables) 
         {
-            createClassCPP(driver,n,file,n->table_name);       
+            createClassCPP(driver,n,file,n->name);       
         }
         file <<"}"<<std::endl;
     }
@@ -114,7 +114,7 @@ namespace apidb
         const internal::RowsShowTables* tables = driver.getListTable();
         for (apidb::internal::Table* n : *tables) 
         {
-            createClassH(driver,n,file,n->table_name);       
+            createClassH(driver,n,file,n->name);       
         }
         file <<"}"<<std::endl;
     }
@@ -152,8 +152,8 @@ namespace apidb
                 driver.getSourceOutput()<< "#include \"" <<driver.getHeaderName() <<"\""<<std::endl<<std::endl; 
             for (apidb::internal::Table* n : *tables) 
             {
-                createClassH(driver,n,driver.getHeaderOutput(),n->table_name);  
-                createClassCPP(driver,n,driver.getSourceOutput(),n->table_name);      
+                createClassH(driver,n,driver.getHeaderOutput(),n->name);  
+                createClassCPP(driver,n,driver.getSourceOutput(),n->name);      
             }
         }
         return true;    
@@ -167,16 +167,20 @@ namespace apidb
 	bool MySQLDriver::read()
 	{
 		rows = new apidb::internal::RowsShowTables();
-		if(connector->query("SHOW TABLES",*rows)) //reading tables
-        {
-            for(internal::Table* n: *rows) //reading attrubtes by table
+		if(rows->listing(*connector)) //reading tables
+        {		
+            for(internal::Table* table: *rows) //reading attrubtes by table
             {
-                std::string str = "DESCRIBE ";
+                /*std::string str = ;
                 str += n->table_name;   
                 if(!connector->query(str.c_str(),*n))
                 {
                     return false;                
-                }
+                } */  
+                if(!table->basicSymbols(*connector))
+                {
+					return false;
+				}                             
             }
         }  
         
@@ -191,7 +195,7 @@ namespace apidb
 		return false;
 	}
 		
-	MySQLDriver::MySQLDriver()
+	MySQLDriver::MySQLDriver(const std::string& name,const std::string& directory)
 	{
 		toolkit::clientdb::DatconectionMySQL mysqlConnector;
 		mysqlConnector.host = "192.168.0.101";
@@ -204,11 +208,12 @@ namespace apidb
 		bool flag = connector->connect(mysqlConnector);
 		if(flag)
 		{
-			printf("SQL Server version: %s\n", connector->serverDescription());
+			//printf("SQL Server version: %s\n", connector->serverDescription());
 		}
 		else
 		{
 			std::cerr<<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
 		}
+		setPramsProject(name,directory);
 	}
 } 

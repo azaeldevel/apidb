@@ -25,6 +25,7 @@ IF(TOOLKIT_CLIENTDB_FOUND)
 ENDIF()
 
 ADD_EXECUTABLE(developing main.cpp driver.cpp mysql.cpp ${FLEX_lexer_OUTPUTS} ${BISON_parser_OUTPUTS})
+TARGET_LINK_LIBRARIES(developing ${TOOLKIT_COMMON_LIBRARY} ${TOOLKIT_CLIENTDB_LIBRARY} ${MYSQL_LIBRARY})
 target_include_directories(developing PRIVATE . ${CMAKE_CURRENT_BINARY_DIR})
 set_property(TARGET developing PROPERTY CXX_STANDARD 14)
 

@@ -35,6 +35,15 @@ namespace apidb
  
 	class Generator
 	{
+		enum Lenguajes
+		{
+			C,
+			CPP,
+			Java,
+			CSHARP,
+			Perl,
+			Python
+		};
 	public:
 		virtual bool generate(apidb::Driver& driver) = 0;
 	};
@@ -43,7 +52,7 @@ namespace apidb
 	{
 	public:
 		virtual bool read();
-		MySQLDriver();
+		MySQLDriver(const std::string& name,const std::string& directory);
 	private:
 		toolkit::clientdb::Connector* connector;
 	};

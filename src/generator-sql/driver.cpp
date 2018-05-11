@@ -15,7 +15,7 @@ namespace apidb
 		}
 		else
 		{
-			
+			throw std::invalid_argument("OutputLenguaje is unknow.");
 		}
 	}
 	std::ofstream& Driver::getSourceOutput()
