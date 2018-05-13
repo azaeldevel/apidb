@@ -78,7 +78,9 @@ namespace apidb
     }
 	void CPPGenerator::createClassCPP(apidb::Driver& driver,const apidb::internal::Table* cl,std::ofstream& file,const std::string& nameClass)
     {
-        createClassMethodesCPP(driver,cl,file);
+		file << "const std::string " <<  nameClass << "::TABLE_NAME = \""<<  nameClass << "\";" << std::endl;
+        createClassMethodesCPP(driver,cl,file);        
+        file<< std::endl<< std::endl;
     }
     
     void CPPGenerator::createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
@@ -164,6 +166,7 @@ namespace apidb
         file <<"class "<<nameClass<<std::endl;
         file <<"{"<<std::endl;
         createClassPrivateH(file);
+        file << "static const std::string TABLE_NAME;" <<std::endl;
         createClassAttributesH(driver,cl,file);
         createClassPublicH(file);
         createClassMethodesH(driver,cl,file);
