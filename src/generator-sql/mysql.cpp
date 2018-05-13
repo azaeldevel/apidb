@@ -71,11 +71,11 @@ namespace apidb
 				attrribute->name = row[0];
 				attrribute->type = row[1];
 				std::string requiered = row[2];
-				if(requiered.compare("YES") == 0)
+				if(requiered.compare("NO") == 0)
 				{
 					attrribute->required = true;
 				}
-				else if(requiered.compare("NO") == 0)
+				else if(requiered.compare("YES") == 0)
 				{
 					attrribute->required = false;
 				}
@@ -85,10 +85,26 @@ namespace apidb
 				{
 					attrribute->keyType = internal::Table::Attribute::KeyType::PRIMARY;
 				}
-				else if((keyType.compare("UNI") == 0) | ((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") != 0)))
+				else if(((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") != 0)))//unique constraing with key primary
 				{
 					attrribute->keyType = internal::Table::Attribute::KeyType::UNIQUE;
 				}
+				else if(keyType.compare("UNI") == 0)
+				{
+					attrribute->keyType = internal::Table::Attribute::KeyType::UNIQUE;
+				}
+				
+				if((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))
+				{
+					attrribute->forInsert = false;
+				}
+				else
+				{
+					if(attrribute->required)
+					{
+						attrribute->forInsert = true;
+					}
+				}				
 				
 				attributes.push_back(attrribute);
 			}

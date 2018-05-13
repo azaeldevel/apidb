@@ -85,11 +85,12 @@ namespace apidb
     
     void CPPGenerator::createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
+		std::string insertMethode = "";
         for(internal::Table::Attribute* attr : table->attributes)
         {
 			if(driver.getOutputLenguaje().compare("C++") == 0)
 			{
-				if((attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
+				if((attr->cpp_type.compare("char") == 0) | (attr->cpp_type.compare("short") == 0) | (attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("long") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
 				{
 					if(attr->classReferenced.empty())
 					{
@@ -109,8 +110,37 @@ namespace apidb
 			else
 			{
 				driver.message("OutputLenguaje is unknow.");
-			}             
+			} 
+			
+			//parametros para insert metodo
+			if(attr->forInsert)            
+			{
+				if(!insertMethode.empty())//si hay texto en la variable
+				{
+					insertMethode += ",";//entonmces agregar coma, ya que se va a gregar otro parametro
+				}
+				if((attr->cpp_type.compare("char") == 0) | (attr->cpp_type.compare("short") == 0) | (attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("long") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
+				{
+					if(attr->classReferenced.empty())
+					{
+						insertMethode += attr->cpp_type;						
+					}
+					else
+					{
+						insertMethode +=  "const ";
+						insertMethode +=  attr->classReferenced;
+						insertMethode +=  "& ";
+					}
+				}
+				else
+				{
+					insertMethode += "const ";
+					insertMethode += attr->cpp_type; 
+					insertMethode += "& ";
+				}
+			}
         }   
+        ofile << "bool " << "insert(" << insertMethode <<");"<<std::endl;
     }
     void CPPGenerator::createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
@@ -175,13 +205,15 @@ namespace apidb
     
     bool CPPGenerator::generate(apidb::Driver& driver)
     {		
-		
+		driver.getOutputMessage() << "Generando codigo... " << std::endl;
+		driver.getOutputMessage() << "\tLenguaje resultado: " << driver.getOutputLenguaje() << std::endl;
 		//includes in header file
         std::string headers = "";
         bool stringFlag = false;
         const apidb::internal::RowsShowTables* tables = driver.getListTable();
 		for(internal::Table* table: *tables)
 		{
+			driver.getOutputMessage() << "\tCoding " << table->name << "." << std::endl;
 			for(internal::Table::Attribute* attr : table->attributes)
 			{
 				if(attr->cpp_type.compare("std::string")==0 && stringFlag == false)
@@ -225,11 +257,14 @@ namespace apidb
 	
 	bool MySQLDriver::read()
 	{
+		getOutputMessage() << "Anlising code... " << std::endl;
+		getOutputMessage() << "\tLenguaje de entradao: " << getInputLenguaje() << std::endl;
 		rows = new apidb::internal::RowsShowTables();
 		if(rows->listing(*connector)) //reading tables
         {
             for(internal::Table* table: *rows) //reading attrubtes by table
             {
+				getOutputMessage() << "\t Creating simbols for " << table->name  << "." << std::endl;
                 if(!table->basicSymbols(*connector))
                 {
 					std::cerr<<"Faill on basicSymbols"<<std::endl;

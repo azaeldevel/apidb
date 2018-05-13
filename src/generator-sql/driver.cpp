@@ -7,6 +7,15 @@
 
 namespace apidb
 {		
+			
+	const std::string& Driver::getInputLenguaje()const
+	{
+		return inputLenguaje;
+	}
+	std::ostream& Driver::getOutputMessage()
+	{
+		return *outputMessages;
+	}
 	const std::string& Driver::getHeaderName() const
 	{
 		if((outputLenguaje.compare("C++") == 0))
@@ -72,7 +81,7 @@ namespace apidb
 	{
 		(*outputMessages)<<msg<<std::endl;
 	}
-	const std::string& Driver::getOutputLenguaje()
+	const std::string& Driver::getOutputLenguaje() const
 	{
 		return outputLenguaje;
 	}

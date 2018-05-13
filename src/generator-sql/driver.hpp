@@ -54,7 +54,8 @@ namespace apidb
                 std::string classReferenced;
                 std::string c_type;
                 std::string cpp_type;
-                std::string java_type;                
+                std::string java_type; 
+                bool forInsert;               
             };
 			std::string name;
             std::list<Attribute*> attributes;
@@ -72,6 +73,9 @@ namespace apidb
 	class Driver
 	{
 	public:
+		const std::string& getOutputLenguaje()const;		
+		const std::string& getInputLenguaje()const;
+		std::ostream& getOutputMessage();		
 		const std::string& getHeaderName() const;
 		std::ofstream& getSourceOutput();
 		std::ofstream& getHeaderOutput();
@@ -98,7 +102,6 @@ namespace apidb
 		void message(const std::string&);
 		
 		std::ostream& print(std::ostream &stream);
-		const std::string& getOutputLenguaje();
 		std::string oneLine;//to get the retur from parser
 		std::ostream* outputMessages;//out stream
 		std::ofstream* writeResults;//erreglo de writeoutput files
