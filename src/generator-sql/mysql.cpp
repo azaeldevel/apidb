@@ -55,7 +55,8 @@ namespace apidb
 			
 			//mysql_free_result(result);
 			return true;	
-		}	*/
+		}
+		* 	*/
 		return false;
 	}
 	
