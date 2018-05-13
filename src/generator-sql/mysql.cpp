@@ -29,12 +29,13 @@ namespace apidb
 	{
 		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME FROM information_schema.TABLE_CONSTRAINTS i  LEFT JOIN information_schema.KEY_COLUMN_USAGE k ON i.CONSTRAINT_NAME = k.CONSTRAINT_NAME WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =";
 		fks += "'" ;
-		/*fks += ((toolkit::clientdb::DatconectionMySQL*)connect.getDatconection())->database;
+		fks += ((toolkit::clientdb::DatconectionMySQL&)(connect.getDatconection())).getDatabase();
 		fks += "'";
 		fks += " AND i.TABLE_NAME = '";
 		fks += name;
-		fks += "'";	*/
-		/*if(connect.query(fks.c_str()))
+		fks += "'";
+		//std::cout<<fks<<std::endl;
+		if(connect.query(fks.c_str()))
 		{
 			MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());
 			MYSQL_ROW row;
@@ -42,22 +43,16 @@ namespace apidb
 			{
 				for(Attribute* attribute: attributes) 
 				{
-					//if(attribute->name.compare(row[1]) == 0)
+					if(attribute->name.compare(row[0]) == 0)
 					{
-						//attribute->classReferenced = row[1];
-					}
-					//else
-					{
-						//return false;
-					}					
+						attribute->classReferenced = row[1];
+					}			
 				}
-			}
-			
-			//mysql_free_result(result);
+			}			
+			mysql_free_result(result);
 			return true;	
-		}
-		* 	*/
-		return false;
+		}		
+		return true;
 	}
 	
     bool internal::Table::basicSymbols(toolkit::clientdb::Connector& connect)
@@ -66,6 +61,7 @@ namespace apidb
 		str += name;
 		if(connect.query(str)) 
 		{
+			//std::cout<<str<<std::endl;
 			MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());
 			MYSQL_ROW row;
 			while((row = mysql_fetch_row(result)))
@@ -99,7 +95,11 @@ namespace apidb
 			mysql_free_result(result);
 			return true;			
 		}
-		return false;
+		else
+		{
+			std::cerr<<"Faill on basicSymbols  : "<< str <<std::endl;
+			return false;
+		}
     }
     
     

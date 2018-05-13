@@ -95,7 +95,15 @@ namespace apidb
         {
 			if(driver.getOutputLenguaje().compare("C++") == 0)
 			{
-				ofile << attr->cpp_type <<" "<<attr->name <<";"<<std::endl;
+				if(attr->classReferenced.empty())
+				{
+					ofile << attr->cpp_type <<" "<<attr->name <<";"<<std::endl;
+				}
+				else
+				{
+					ofile << attr->classReferenced <<"* "<<attr->name <<";"<<std::endl;
+				}
+				
 			}
 			else if(driver.getOutputLenguaje().compare("C") == 0)
 			{
@@ -173,24 +181,24 @@ namespace apidb
             { 
                 if(!table->basicSymbols(*connector))
                 {
+					std::cerr<<"Faill on basicSymbols"<<std::endl;
 					return false;
 				}
 				if(!table->fillKeyType(*connector))
                 {
+					std::cerr<<"Faill on fillKeyType"<<std::endl;
 					return false;
-				}                            
+				}  				
+				
+				//parsing imput types
+				for(internal::Table::Attribute* attribute: table->attributes)
+				{
+					attribute->cpp_type = parse(attribute->type);
+				}                          
             }
         }  
-        
-		for(internal::Table* table: *rows) 
-		{
-			for(internal::Table::Attribute* attribute: table->attributes)
-			{
-				attribute->cpp_type = parse(attribute->type);
-			}
-		}
-		        
-		return false;
+        		        
+		return true;
 	}
 		
 	MySQLDriver::MySQLDriver(const std::string& name,const std::string& directory)
