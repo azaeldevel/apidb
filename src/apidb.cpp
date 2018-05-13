@@ -31,17 +31,31 @@ namespace apidb
         {
 			if(driver.getOutputLenguaje().compare("C++") == 0)
 			{
-				if((attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
+				if(attr->classReferenced.empty())
 				{
-					ofile << attr->cpp_type << " ";
+					if((attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
+					{
+						ofile << attr->cpp_type <<" ";	
+					}
+					else
+					{
+						ofile << "const " << attr->cpp_type <<"& ";
+					}
 				}
 				else
-				{
-					ofile << "const " << attr->cpp_type <<"& ";
+				{			
+					ofile << "const " << attr->classReferenced <<"& ";	
 				}
 				ofile << table->name <<"::get" << attr->name << "()const"<< std::endl;
 				ofile << "{"<<std::endl;
-				ofile << "return " <<attr->name << ";"<<std::endl;
+				if(attr->classReferenced.empty())
+				{
+					ofile << "return " <<attr->name << ";"<<std::endl;
+				}
+				else
+				{
+					ofile << "return *" <<attr->name << ";"<<std::endl;
+				}
 				ofile << "}"<<std::endl;
 			}
 			else
@@ -75,13 +89,20 @@ namespace apidb
 			{
 				if((attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
 				{
-					ofile << attr->cpp_type << " ";
+					if(attr->classReferenced.empty())
+					{
+						ofile << attr->cpp_type << " ";						
+					}
+					else
+					{
+						ofile <<  "const " << attr->classReferenced << "& ";
+					}
 				}
 				else
 				{
 					ofile << "const " << attr->cpp_type <<"& ";
 				}
-				ofile << "get" << attr->name << "()const;"<< std::endl;
+				ofile << "get" << attr->name << "() const;"<< std::endl;
 			}
 			else
 			{
@@ -102,8 +123,7 @@ namespace apidb
 				else
 				{
 					ofile << attr->classReferenced <<"* "<<attr->name <<";"<<std::endl;
-				}
-				
+				}				
 			}
 			else if(driver.getOutputLenguaje().compare("C") == 0)
 			{
@@ -120,6 +140,11 @@ namespace apidb
         file <<"namespace "<<driver.getNameProject()<<std::endl;
         file <<"{"<<std::endl;
         const internal::RowsShowTables* tables = driver.getListTable();
+        for (apidb::internal::Table* table : *tables) 
+        {
+			file <<"class " <<table->name << ";"<<std::endl;
+		}
+		file<<std::endl;
         for (apidb::internal::Table* n : *tables) 
         {
             createClassH(driver,n,file,n->name);       
@@ -146,24 +171,47 @@ namespace apidb
     }
     
     bool CPPGenerator::generate(apidb::Driver& driver)
-    {
-        if(driver.getNameProject().length() > 0)
-        {
-            createSpaceH(driver,driver.getHeaderOutput());
-            driver.getSourceOutput()<< "#include \"" <<driver.getHeaderName() <<"\""<<std::endl<<std::endl; 
-            createSpaceCPP(driver,driver.getSourceOutput());
-        }
-        else
-        {
-            const apidb::internal::RowsShowTables* tables = driver.getListTable();
-            
-                driver.getSourceOutput()<< "#include \"" <<driver.getHeaderName() <<"\""<<std::endl<<std::endl; 
-            for (apidb::internal::Table* n : *tables) 
-            {
-                createClassH(driver,n,driver.getHeaderOutput(),n->name);  
-                createClassCPP(driver,n,driver.getSourceOutput(),n->name);      
-            }
-        }
+    {		
+		
+		//includes in header file
+        std::string headers = "";
+        bool stringFlag = false;
+        const apidb::internal::RowsShowTables* tables = driver.getListTable();
+		for(internal::Table* table: *tables)
+		{
+			for(internal::Table::Attribute* attr : table->attributes)
+			{
+				if(attr->cpp_type.compare("std::string")==0 && stringFlag == false)
+				{
+					driver.getHeaderOutput()<< "#include <string>" <<std::endl;
+					stringFlag = true;
+				}					
+			}
+		}
+			
+			
+		//inlcudes in source file
+        driver.getSourceOutput()<< "#include \"" <<driver.getHeaderName() <<"\""<<std::endl<<std::endl; 
+			
+		//writing code
+		if(!driver.getNameProject().empty())
+		{			
+			createSpaceH(driver,driver.getHeaderOutput());    
+			createSpaceCPP(driver,driver.getSourceOutput()); 
+		}   
+		else
+		{
+			for (apidb::internal::Table* n : *tables) 
+			{
+				for(internal::Table* table: *tables)
+				{
+					//declaracion adelantada
+					driver.getHeaderOutput() <<"class " <<table->name << ";"<<std::endl;
+				}
+				createClassH(driver,n,driver.getHeaderOutput(),n->name);  
+				createClassCPP(driver,n,driver.getSourceOutput(),n->name);      
+			}
+		}            
         return true;    
     }
     
@@ -176,9 +224,9 @@ namespace apidb
 	{
 		rows = new apidb::internal::RowsShowTables();
 		if(rows->listing(*connector)) //reading tables
-        {		
+        {
             for(internal::Table* table: *rows) //reading attrubtes by table
-            { 
+            {
                 if(!table->basicSymbols(*connector))
                 {
 					std::cerr<<"Faill on basicSymbols"<<std::endl;
@@ -188,14 +236,14 @@ namespace apidb
                 {
 					std::cerr<<"Faill on fillKeyType"<<std::endl;
 					return false;
-				}  				
+				}
 				
 				//parsing imput types
 				for(internal::Table::Attribute* attribute: table->attributes)
 				{
 					attribute->cpp_type = parse(attribute->type);
-				}                          
-            }
+				}
+            }            
         }  
         		        
 		return true;
