@@ -52,12 +52,12 @@ namespace apidb
         void createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
 	};	
     
-	class MySQLDriver: public apidb::Driver
+	class CG: public apidb::Driver
 	{
 	public:
 		virtual bool analyze();
 		virtual bool generate();
-		MySQLDriver(const std::string& name,const std::string& directory);
+		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection);
 	private:
 		toolkit::clientdb::Connector* connector;
 	};

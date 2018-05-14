@@ -1,4 +1,3 @@
-
 /**
  * 
  *  This file is part of apidb.
@@ -25,7 +24,8 @@
 
 int main()
 {	
-	apidb::MySQLDriver driver("nmp","test");
+	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","root","k3yL0c41");  
+	apidb::CG driver("nmp","test",mysqlConnector);
 	if(driver.analyze())
 	{
 		if(driver.getListTable()->size() == 0)

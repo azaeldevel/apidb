@@ -25,12 +25,6 @@
 
 namespace apidb
 {
-	bool MySQLDriver::generate()
-	{
-		apidb::CPPGenerator cpp;
-		cpp.generate(*this);
-		return false;
-	}
 	
     void CPPGenerator::createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
@@ -262,9 +256,26 @@ namespace apidb
 		return rows;
 	}
 	
-	bool MySQLDriver::analyze()
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	bool CG::generate()
 	{
-		getOutputMessage() << "Anlising code... " << std::endl;
+		apidb::CPPGenerator cpp;
+		cpp.generate(*this);
+		return false;
+	}
+	
+	bool CG::analyze()
+	{
+		getOutputMessage() << "Analisis de codigo..." << std::endl;
 		getOutputMessage() << "\tLenguaje de entrada: " << getInputLenguajeString() << std::endl;
 		rows = new apidb::internal::RowsShowTables();
 		if(rows->listing(*connector)) //reading tables
@@ -274,12 +285,12 @@ namespace apidb
 				getOutputMessage() << "\tCreating simbols for " << table->name  << "." << std::endl;
                 if(!table->basicSymbols(*connector))
                 {
-					std::cerr<<"Faill on basicSymbols"<<std::endl;
+					//std::cerr<<"Faill on basicSymbols"<<std::endl;
 					return false;
 				}
 				if(!table->fillKeyType(*connector))
                 {
-					std::cerr<<"Faill on fillKeyType"<<std::endl;
+					//std::cerr<<"Faill on fillKeyType"<<std::endl;
 					return false;
 				}
 				
@@ -294,16 +305,20 @@ namespace apidb
 		return true;
 	}
 		
-	MySQLDriver::MySQLDriver(const std::string& name,const std::string& directory)
-	{
-		toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","root","k3yL0c41");     
-		
+	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection)
+	{		
 		connector = new toolkit::clientdb::Connector();
-		bool flag = connector->connect(mysqlConnector);
-		if(!flag)
+		try
 		{
-			std::cerr<<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
+			bool flag = connector->connect(datconection);
+			if(flag)
+			{
+				setPramsProject(name,directory);				
+			}
 		}
-		setPramsProject(name,directory);
+		catch(toolkit::clientdb::SQLException ex)
+		{
+			getErrorMessage() <<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
+		}
 	}
 } 

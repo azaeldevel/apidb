@@ -7,6 +7,11 @@
 
 namespace apidb
 {		
+	std::ostream& Driver::getErrorMessage()
+	{
+		return *errorMessages;
+	}
+	
 	std::string Driver::getOutputLenguajeString()const
 	{
 		switch(getOutputLenguaje())
@@ -103,7 +108,8 @@ namespace apidb
 	   //deafults
 	   outputLenguaje = OutputLenguajes::CPP;
 	   inputLenguaje = InputLenguajes::MySQL_Server;
-	   outputMessages = &std::cout;	   
+	   outputMessages = &std::cout;	  
+	   errorMessages = &std::cerr; 
 	}
 	void Driver::message(const std::string& msg)
 	{

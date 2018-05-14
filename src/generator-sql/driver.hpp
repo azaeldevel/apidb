@@ -104,7 +104,9 @@ namespace apidb
 		OutputLenguajes getOutputLenguaje()const;		
 		InputLenguajes getInputLenguaje()const;
 		
-		std::ostream& getOutputMessage();		
+		std::ostream& getOutputMessage();
+		std::ostream& getErrorMessage();
+				
 		const std::string& getHeaderName() const;
 		std::ofstream& getSourceOutput();
 		std::ofstream& getHeaderOutput();
@@ -145,6 +147,7 @@ namespace apidb
 		InputLenguajes inputLenguaje;
 		OutputLenguajes outputLenguaje;
 		std::ostream* outputMessages;//out stream
+		std::ostream* errorMessages;//out stream
 		std::ofstream* writeResults;//erreglo de writeoutput files
 		std::string nameProject;
 		std::string projectH;
