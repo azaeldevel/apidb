@@ -7,6 +7,27 @@
 
 namespace apidb
 {		
+	std::string Driver::getOutputLenguajeString()const
+	{
+		switch(getOutputLenguaje())
+		{
+			case OutputLenguajes::CPP:
+				return "C++";
+			default:
+				return "Unknow";
+		}
+	}	
+	std::string Driver::getInputLenguajeString()const
+	{
+		switch(getInputLenguaje())
+		{
+			case InputLenguajes::MySQL_Server:
+				return "Servidor MySQL";
+			default:
+				return "Unknow";
+		}
+	}
+		
 	std::ostream& Driver::getOutputMessage()
 	{
 		return *outputMessages;
@@ -88,10 +109,6 @@ namespace apidb
 	{
 		(*outputMessages)<<msg<<std::endl;
 	}
-	/*const std::string& Driver::getOutputLenguaje() const
-	{
-		return outputLenguaje;
-	}*/
 	std::string Driver::parse(const std::string& line)
 	{
 		std::istringstream text(line);
@@ -139,8 +156,7 @@ namespace apidb
 	   }
 	   catch( std::bad_alloc &ba )
 	   {
-		  std::cerr << "Failed to allocate scanner: (" <<
-			 ba.what() << "), exiting!!\n";
+		  std::cerr << "Failed to allocate scanner: (" << ba.what() << "), exiting!!\n";
 		  exit( EXIT_FAILURE );
 	   }
 	   

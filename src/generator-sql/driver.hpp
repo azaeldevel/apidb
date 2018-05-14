@@ -97,15 +97,20 @@ namespace apidb
 		};
 	public:
 		virtual bool generate();
+		virtual bool analyze();
+				
+		std::string getOutputLenguajeString()const;		
+		std::string getInputLenguajeString()const;
 		OutputLenguajes getOutputLenguaje()const;		
 		InputLenguajes getInputLenguaje()const;
+		
 		std::ostream& getOutputMessage();		
 		const std::string& getHeaderName() const;
 		std::ofstream& getSourceOutput();
 		std::ofstream& getHeaderOutput();
+		
 		const std::string& getNameProject();
 		void setPramsProject(const std::string& name,const std::string& directory);
-		virtual bool analyze();
 		const internal::RowsShowTables* getListTable() const;
         
         Driver();
@@ -126,24 +131,25 @@ namespace apidb
 		void message(const std::string&);
 		
 		std::ostream& print(std::ostream &stream);
+		
 		std::string oneLine;//to get the retur from parser
+    protected:
+		internal::RowsShowTables* rows;
+	private:
+		void parse_helper( std::istream &stream );
+		apidb::Parser  *parser  = nullptr;
+		apidb::Scanner *scanner = nullptr;
+		//flags
+		//std::string outputLenguaje;
+		//std::string inputLenguaje;
+		InputLenguajes inputLenguaje;
+		OutputLenguajes outputLenguaje;
 		std::ostream* outputMessages;//out stream
 		std::ofstream* writeResults;//erreglo de writeoutput files
 		std::string nameProject;
 		std::string projectH;
 		std::string projectCPP;
 		std::string directoryProject;
-    protected:
-		internal::RowsShowTables* rows;
-	private:
-	   void parse_helper( std::istream &stream );
-	   apidb::Parser  *parser  = nullptr;
-	   apidb::Scanner *scanner = nullptr;
-	   //flags
-	   //std::string outputLenguaje;
-	   //std::string inputLenguaje;
-	   InputLenguajes inputLenguaje;
-	   OutputLenguajes outputLenguaje;
 	   
 	};
 

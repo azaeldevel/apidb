@@ -213,7 +213,7 @@ namespace apidb
     bool CPPGenerator::generate(apidb::Driver& driver)
     {		
 		driver.getOutputMessage() << "Generando codigo... " << std::endl;
-		driver.getOutputMessage() << "\tLenguaje resultado: " << driver.getOutputLenguaje() << std::endl;
+		driver.getOutputMessage() << "\tLenguaje resultado: " << driver.getOutputLenguajeString() << std::endl;
 		//includes in header file
         std::string headers = "";
         bool stringFlag = false;
@@ -265,13 +265,13 @@ namespace apidb
 	bool MySQLDriver::analyze()
 	{
 		getOutputMessage() << "Anlising code... " << std::endl;
-		getOutputMessage() << "\tLenguaje de entradao: " << getInputLenguaje() << std::endl;
+		getOutputMessage() << "\tLenguaje de entrada: " << getInputLenguajeString() << std::endl;
 		rows = new apidb::internal::RowsShowTables();
 		if(rows->listing(*connector)) //reading tables
         {
             for(internal::Table* table: *rows) //reading attrubtes by table
             {
-				getOutputMessage() << "\t Creating simbols for " << table->name  << "." << std::endl;
+				getOutputMessage() << "\tCreating simbols for " << table->name  << "." << std::endl;
                 if(!table->basicSymbols(*connector))
                 {
 					std::cerr<<"Faill on basicSymbols"<<std::endl;
