@@ -7,6 +7,20 @@
 
 namespace apidb
 {		
+	const internal::Table* internal::RowsShowTables::search(const std::string& tableName)const
+	{
+		std::list<internal::Table*>::const_iterator first = this->begin();
+		std::list<internal::Table*>::const_iterator last = this->end();
+		
+		while (first != last) 
+		{
+			if ((*first)->name.compare(tableName) == 0) break;
+			++first;
+		}
+		
+		if(first != last) return (const Table*)(*first);
+		return NULL;
+	}
 	std::ostream& Driver::getErrorMessage()
 	{
 		return *errorMessages;

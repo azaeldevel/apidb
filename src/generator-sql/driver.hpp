@@ -36,8 +36,11 @@ namespace apidb
 {
 	namespace internal
 	{
-		struct Table
+		class RowsShowTables;
+		
+		class Table
 		{
+		public:
             struct Attribute 
             {
 				enum KeyType
@@ -51,21 +54,24 @@ namespace apidb
                 std::string name;
                 bool required; 
                 KeyType keyType;
-                std::string classReferenced;
+                const Table* classReferenced;
                 std::string c_type;
                 std::string cpp_type;
                 std::string java_type; 
                 bool forInsert;               
             };
+		public:
 			std::string name;
             std::list<Attribute*> attributes;
+            Attribute* key;
 			bool basicSymbols(toolkit::clientdb::Connector& connect);
-            bool fillKeyType(toolkit::clientdb::Connector& connect);
+            bool fillKeyType(toolkit::clientdb::Connector& connect,const RowsShowTables& tables); 
 		};
 		
 		class RowsShowTables: public std::list<Table*>
 		{
-		public:
+		public:		
+            const Table* search(const std::string&)const;           
 			bool listing(toolkit::clientdb::Connector& connect);
 		};
 	}

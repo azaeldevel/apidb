@@ -25,7 +25,7 @@
 
 namespace apidb
 {
-	bool internal::Table::fillKeyType(toolkit::clientdb::Connector& connect)
+	bool internal::Table::fillKeyType(toolkit::clientdb::Connector& connect,const internal::RowsShowTables& tables)
 	{
 		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME FROM information_schema.TABLE_CONSTRAINTS i  LEFT JOIN information_schema.KEY_COLUMN_USAGE k ON i.CONSTRAINT_NAME = k.CONSTRAINT_NAME WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =";
 		fks += "'" ;
@@ -45,7 +45,11 @@ namespace apidb
 				{
 					if(attribute->name.compare(row[0]) == 0)
 					{
-						attribute->classReferenced = row[1];
+						const internal::Table* table = tables.search(row[1]);
+						if(table != NULL)
+						{
+							attribute->classReferenced = table;
+						}						
 					}			
 				}
 			}			
@@ -81,17 +85,21 @@ namespace apidb
 				}
 				std::string keyType = row[3];
 				std::string extra = row[5];
+				key = NULL;
 				if((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))
 				{
 					attrribute->keyType = internal::Table::Attribute::KeyType::PRIMARY;
+					key = attrribute;
 				}
 				else if(((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") != 0)))//unique constraing with key primary
 				{
 					attrribute->keyType = internal::Table::Attribute::KeyType::UNIQUE;
+					if(key == NULL) key = attrribute;
 				}
 				else if(keyType.compare("UNI") == 0)
 				{
 					attrribute->keyType = internal::Table::Attribute::KeyType::UNIQUE;
+					if(key == NULL) key = attrribute;
 				}
 				
 				if((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))
