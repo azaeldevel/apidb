@@ -84,7 +84,7 @@
 
 declare_type :
 	integerDeclareVariable declare_end		{
-												if((driver.getOutputLenguaje().compare("C++") == 0) | (driver.getOutputLenguaje().compare("C")  == 0))
+												if((driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP) | (driver.getOutputLenguaje() == Driver::OutputLenguajes::C))
 												{
 													driver.oneLine = "int";
 												}
@@ -96,11 +96,11 @@ declare_type :
 											}
 	|
 	stringDeclareVarible declare_end 		{
-												if(driver.getOutputLenguaje().compare("C++") == 0)
+												if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
 												{
 													driver.oneLine = "std::string";
 												}
-												else if(driver.getOutputLenguaje().compare("C") == 0)
+												else if(driver.getOutputLenguaje() == Driver::OutputLenguajes::C)
 												{
 													driver.oneLine ="const char*";
 												}
@@ -112,7 +112,7 @@ declare_type :
 											}
 	|
 	integerTypes declare_end    		{
-											if((driver.getOutputLenguaje().compare("C++") == 0) | (driver.getOutputLenguaje().compare("C")  == 0))
+											if((driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP) | (driver.getOutputLenguaje() == Driver::OutputLenguajes::C))
 											{
 												driver.oneLine = "int";
 											}
@@ -124,7 +124,7 @@ declare_type :
 										}
 	|
 	realDeclareLow declare_end	    		{
-												if((driver.getOutputLenguaje().compare("C++") == 0) | (driver.getOutputLenguaje().compare("C")  == 0))
+												if((driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP) | (driver.getOutputLenguaje() == Driver::OutputLenguajes::C))
 												{
 													driver.oneLine = "float";
 												}
@@ -136,7 +136,7 @@ declare_type :
 											}
 	|
 	realDeclareHigh declare_end			    {
-												if((driver.getOutputLenguaje().compare("C++") == 0) | (driver.getOutputLenguaje().compare("C")  == 0))
+												if((driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP) | (driver.getOutputLenguaje() == Driver::OutputLenguajes::C))
 												{
 													driver.oneLine = "duble";
 												}

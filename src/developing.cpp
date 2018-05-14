@@ -26,7 +26,7 @@
 int main()
 {	
 	apidb::MySQLDriver driver("nmp","test");
-	if(driver.read())
+	if(driver.analyze())
 	{
 		if(driver.getListTable()->size() == 0)
 		{            
@@ -56,14 +56,13 @@ int main()
                 }
             }
 		}	
-		
-		//driver.setPramsProject("nmp","test");
-		apidb::CPPGenerator cpp;
-		cpp.generate(driver);	
+			
+		if(!driver.generate()) return -1;
 	}
 	else
     {
         std::cerr<<"Not parsin phase"<<std::endl;
+        return -1;
     }
     
 	

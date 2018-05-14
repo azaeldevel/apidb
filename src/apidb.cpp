@@ -25,11 +25,18 @@
 
 namespace apidb
 {
+	bool MySQLDriver::generate()
+	{
+		apidb::CPPGenerator cpp;
+		cpp.generate(*this);
+		return false;
+	}
+	
     void CPPGenerator::createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
         for(internal::Table::Attribute* attr : table->attributes)
         {
-			if(driver.getOutputLenguaje().compare("C++") == 0)
+			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
 			{
 				if(attr->classReferenced.empty())
 				{
@@ -88,7 +95,7 @@ namespace apidb
 		std::string insertMethode = "";
         for(internal::Table::Attribute* attr : table->attributes)
         {
-			if(driver.getOutputLenguaje().compare("C++") == 0)
+			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
 			{
 				if((attr->cpp_type.compare("char") == 0) | (attr->cpp_type.compare("short") == 0) | (attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("long") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
 				{
@@ -146,7 +153,7 @@ namespace apidb
     {
         for(internal::Table::Attribute* attr : table->attributes)
         {
-			if(driver.getOutputLenguaje().compare("C++") == 0)
+			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
 			{
 				if(attr->classReferenced.empty())
 				{
@@ -157,7 +164,7 @@ namespace apidb
 					ofile << attr->classReferenced <<"* "<<attr->name <<";"<<std::endl;
 				}				
 			}
-			else if(driver.getOutputLenguaje().compare("C") == 0)
+			else if(driver.getOutputLenguaje() == Driver::OutputLenguajes::C)
 			{
 				ofile <<attr->c_type<<" "<<attr->name <<";"<<std::endl;
 			}
@@ -255,7 +262,7 @@ namespace apidb
 		return rows;
 	}
 	
-	bool MySQLDriver::read()
+	bool MySQLDriver::analyze()
 	{
 		getOutputMessage() << "Anlising code... " << std::endl;
 		getOutputMessage() << "\tLenguaje de entradao: " << getInputLenguaje() << std::endl;

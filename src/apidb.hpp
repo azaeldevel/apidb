@@ -32,30 +32,6 @@ namespace apidb
 {
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
- 
-	class Generator
-	{
-		enum Lenguajes
-		{
-			C,
-			CPP,
-			Java,
-			CSHARP,
-			Perl,
-			Python
-		};
-	public:
-		virtual bool generate(apidb::Driver& driver) = 0;
-	};
-    
-	class MySQLDriver: public apidb::Driver
-	{
-	public:
-		virtual bool read();
-		MySQLDriver(const std::string& name,const std::string& directory);
-	private:
-		toolkit::clientdb::Connector* connector;
-	};
 		
 	class CPPGenerator: public Generator
 	{
@@ -75,6 +51,16 @@ namespace apidb
         void createClassPublicCPP(std::ofstream&);
         void createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table*,std::ofstream&);
 	};	
+    
+	class MySQLDriver: public apidb::Driver
+	{
+	public:
+		virtual bool analyze();
+		virtual bool generate();
+		MySQLDriver(const std::string& name,const std::string& directory);
+	private:
+		toolkit::clientdb::Connector* connector;
+	};
 }
 
 #endif

@@ -69,19 +69,43 @@ namespace apidb
 			bool listing(toolkit::clientdb::Connector& connect);
 		};
 	}
+	
+	
+	class Generator
+	{
+	public:
+		virtual bool generate(apidb::Driver& driver) = 0;
+	};
        
 	class Driver
 	{
 	public:
-		const std::string& getOutputLenguaje()const;		
-		const std::string& getInputLenguaje()const;
+		enum InputLenguajes
+		{
+			MySQL_Server,
+			MySQL_Script,
+			PostgresSQL
+		};
+		enum OutputLenguajes
+		{
+			C,
+			CPP,
+			Java,
+			CSHARP,
+			Perl,
+			Python
+		};
+	public:
+		virtual bool generate();
+		OutputLenguajes getOutputLenguaje()const;		
+		InputLenguajes getInputLenguaje()const;
 		std::ostream& getOutputMessage();		
 		const std::string& getHeaderName() const;
 		std::ofstream& getSourceOutput();
 		std::ofstream& getHeaderOutput();
 		const std::string& getNameProject();
 		void setPramsProject(const std::string& name,const std::string& directory);
-		virtual bool read();
+		virtual bool analyze();
 		const internal::RowsShowTables* getListTable() const;
         
         Driver();
@@ -116,8 +140,11 @@ namespace apidb
 	   apidb::Parser  *parser  = nullptr;
 	   apidb::Scanner *scanner = nullptr;
 	   //flags
-	   std::string outputLenguaje;
-	   std::string inputLenguaje;
+	   //std::string outputLenguaje;
+	   //std::string inputLenguaje;
+	   InputLenguajes inputLenguaje;
+	   OutputLenguajes outputLenguaje;
+	   
 	};
 
 }

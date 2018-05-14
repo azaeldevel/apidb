@@ -7,18 +7,25 @@
 
 namespace apidb
 {		
-			
-	const std::string& Driver::getInputLenguaje()const
-	{
-		return inputLenguaje;
-	}
 	std::ostream& Driver::getOutputMessage()
 	{
 		return *outputMessages;
 	}
+	bool Driver::generate()
+	{
+		return false;
+	}
+	Driver::InputLenguajes Driver::getInputLenguaje()const
+	{
+		return inputLenguaje;
+	}
+	Driver::OutputLenguajes Driver::getOutputLenguaje()const
+	{
+		return outputLenguaje;
+	}
 	const std::string& Driver::getHeaderName() const
 	{
-		if((outputLenguaje.compare("C++") == 0))
+		if(outputLenguaje == OutputLenguajes::CPP)
 		{
 			return projectH;
 		}
@@ -43,7 +50,7 @@ namespace apidb
 	{
 		nameProject = name;
 		directoryProject = directory;
-		if((outputLenguaje.compare("C++") == 0))
+		if(outputLenguaje == OutputLenguajes::CPP)
 		{//se requiere un archivo para las cabezaras y otro para el codigo
 		   writeResults = new std::ofstream[2];
 		   if((directory.empty()) | (directory.compare(".") == 0)) 
@@ -66,25 +73,25 @@ namespace apidb
 			message("OutputLenguaje is unknow.");
 		}
 	}
-	bool Driver::read()
+	bool Driver::analyze()
 	{
 		return false;
 	}
 	Driver::Driver()
 	{
 	   //deafults
-	   outputLenguaje = "C++";
-	   inputLenguaje = "MySQL";
+	   outputLenguaje = OutputLenguajes::CPP;
+	   inputLenguaje = InputLenguajes::MySQL_Server;
 	   outputMessages = &std::cout;	   
 	}
 	void Driver::message(const std::string& msg)
 	{
 		(*outputMessages)<<msg<<std::endl;
 	}
-	const std::string& Driver::getOutputLenguaje() const
+	/*const std::string& Driver::getOutputLenguaje() const
 	{
 		return outputLenguaje;
-	}
+	}*/
 	std::string Driver::parse(const std::string& line)
 	{
 		std::istringstream text(line);
