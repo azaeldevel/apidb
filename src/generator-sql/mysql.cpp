@@ -41,7 +41,7 @@ namespace apidb
 			MYSQL_ROW row;
 			while((row = mysql_fetch_row(result)))
 			{
-				for(Attribute* attribute: attributes) 
+				for(Symbol* attribute: attributes) 
 				{
 					if(attribute->name.compare(row[0]) == 0)
 					{
@@ -70,10 +70,11 @@ namespace apidb
 			MYSQL_ROW row;
 			while((row = mysql_fetch_row(result)))
 			{
-				Attribute* attrribute = new Attribute();
-				
+				Symbol* attrribute = new Symbol();
+				attrribute->classParent = this;
 				attrribute->name = row[0];
-				attrribute->type = row[1];
+				attrribute->get = row[0];attrribute->get += "()";
+				attrribute->sqlType = row[1];
 				std::string requiered = row[2];
 				if(requiered.compare("NO") == 0)
 				{
@@ -88,17 +89,17 @@ namespace apidb
 				key = NULL;
 				if((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))
 				{
-					attrribute->keyType = internal::Table::Attribute::KeyType::PRIMARY;
+					attrribute->keyType = internal::Table::Symbol::KeyType::PRIMARY;
 					key = attrribute;
 				}
 				else if(((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") != 0)))//unique constraing with key primary
 				{
-					attrribute->keyType = internal::Table::Attribute::KeyType::UNIQUE;
+					attrribute->keyType = internal::Table::Symbol::KeyType::UNIQUE;
 					if(key == NULL) key = attrribute;
 				}
 				else if(keyType.compare("UNI") == 0)
 				{
-					attrribute->keyType = internal::Table::Attribute::KeyType::UNIQUE;
+					attrribute->keyType = internal::Table::Symbol::KeyType::UNIQUE;
 					if(key == NULL) key = attrribute;
 				}
 				

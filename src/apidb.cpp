@@ -33,7 +33,7 @@ namespace apidb
 		std::string id = "";
 		std::string insertMethode = "";
 		
-        for(internal::Table::Attribute* attr : table->attributes)
+        for(internal::Table::Symbol* attr : table->attributes)
         {
 			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
 			{
@@ -70,7 +70,7 @@ namespace apidb
 			}  
 			
 			//buscando el campo llave
-			if(attr->keyType == internal::Table::Attribute::KeyType::PRIMARY)
+			if(attr->keyType == internal::Table::Symbol::KeyType::PRIMARY)
 			{
 				id = attr->name;
 			}
@@ -89,13 +89,17 @@ namespace apidb
 					if(attr->classReferenced == NULL)
 					{
 						attrib += attr->name;
+						
 						values += attr->name;
+						
 						insertMethode += attr->cpp_type;						
 					}
 					else
 					{
 						attrib += attr->name;
-						values += attr->name;
+						
+						if(attr->classReferenced->key != NULL) values += attr->classReferenced->key->get;
+						
 						insertMethode += "const ";
 						insertMethode += attr->classReferenced->name;
 						insertMethode += "& ";
@@ -104,6 +108,10 @@ namespace apidb
 				}
 				else
 				{
+					attrib += attr->name;
+					
+					if(attr->classReferenced->key != NULL) values += attr->classReferenced->key->get;
+						
 					insertMethode += "const ";
 					insertMethode += attr->cpp_type; 
 					insertMethode += "& ";
@@ -112,11 +120,11 @@ namespace apidb
 			}   
         }
         //como no se encontro llave primaria se aceptara un campo con restrccion de unicidad.
-        for(internal::Table::Attribute* attr : table->attributes)
+        for(internal::Table::Symbol* attr : table->attributes)
         {
 			if(id.empty())
 			{
-				if(attr->keyType == internal::Table::Attribute::KeyType::UNIQUE)
+				if(attr->keyType == internal::Table::Symbol::KeyType::UNIQUE)
 				{
 					id = attr->name;
 					break; 
@@ -131,11 +139,11 @@ namespace apidb
         ofile << "str += \"(\""<<";"<<std::endl;
         ofile << "str += \""<< attrib<<"\";"<<std::endl;
         ofile << "str += \") VALUES(\";"<<std::endl;
-        ofile << "str += \""<< values<<"\";"<<std::endl;
+        ofile << "str += \""<< values <<"\";"<<std::endl;
         //ofile << "str +=\")\""<<";"<<std::endl;
         if(table->key != NULL)
         {			
-			ofile << "this->" <<table->key->name << " = new " << "table->key->classReferenced" << "(";
+			ofile << "this->" <<table->key->name << " = new " << table->key->classParent->name << "(";
 			ofile << "connector.insert(str));"<< std::endl;
 			ofile << "return (" << table->key->name << "->get" <<"> 0);"<<std::endl;	
 		}
@@ -167,7 +175,7 @@ namespace apidb
     void CPPGenerator::createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
 		std::string insertMethode = "";
-        for(internal::Table::Attribute* attr : table->attributes)
+        for(internal::Table::Symbol* attr : table->attributes)
         {
 			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
 			{
@@ -225,7 +233,7 @@ namespace apidb
     }
     void CPPGenerator::createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
-        for(internal::Table::Attribute* attr : table->attributes)
+        for(internal::Table::Symbol* attr : table->attributes)
         {
 			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
 			{
@@ -295,7 +303,7 @@ namespace apidb
 		for(internal::Table* table: *tables)
 		{
 			driver.getOutputMessage() << "\tCoding " << table->name << "." << std::endl;
-			for(internal::Table::Attribute* attr : table->attributes)
+			for(internal::Table::Symbol* attr : table->attributes)
 			{
 				if(attr->cpp_type.compare("std::string")==0 && stringFlag == false)
 				{
@@ -375,9 +383,9 @@ namespace apidb
 				}
 				
 				//parsing imput types
-				for(internal::Table::Attribute* attribute: table->attributes)
+				for(internal::Table::Symbol* attribute: table->attributes)
 				{
-					attribute->cpp_type = parse(attribute->type);
+					attribute->cpp_type = parse(attribute->sqlType);
 				}
             }            
         }  

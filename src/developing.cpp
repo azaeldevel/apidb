@@ -38,7 +38,7 @@ int main()
             for (apidb::internal::Table* n : *(driver.getListTable())) 
             {
                 //std::cout<<"" << n->name <<std::endl;
-                for(apidb::internal::Table::Attribute* m : n->attributes)
+                for(apidb::internal::Table::Symbol* m : n->attributes)
                 {
                     //std::cout<<"  " << m->name<<std::endl;
                 }
@@ -50,7 +50,7 @@ int main()
             for (apidb::internal::Table* n : *(driver.getListTable())) 
             {
                 //std::cout<<" "<< n->name <<std::endl;
-                for(apidb::internal::Table::Attribute* m : n->attributes)
+                for(apidb::internal::Table::Symbol* m : n->attributes)
                 {
                     //std::cout<<"  "<< m->name<<std::endl;
                 }

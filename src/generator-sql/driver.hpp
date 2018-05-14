@@ -41,7 +41,7 @@ namespace apidb
 		class Table
 		{
 		public:
-            struct Attribute 
+            struct Symbol 
             {
 				enum KeyType
 				{
@@ -50,11 +50,13 @@ namespace apidb
 					NOTKEY
 				};
 				
-                std::string type;
+                std::string sqlType;
                 std::string name;
+                std::string get;
                 bool required; 
                 KeyType keyType;
                 const Table* classReferenced;
+                const Table* classParent;
                 std::string c_type;
                 std::string cpp_type;
                 std::string java_type; 
@@ -62,8 +64,8 @@ namespace apidb
             };
 		public:
 			std::string name;
-            std::list<Attribute*> attributes;
-            Attribute* key;
+            std::list<Symbol*> attributes;
+            Symbol* key;
 			bool basicSymbols(toolkit::clientdb::Connector& connect);
             bool fillKeyType(toolkit::clientdb::Connector& connect,const RowsShowTables& tables); 
 		};
