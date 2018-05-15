@@ -7,6 +7,19 @@
 
 namespace apidb
 {		
+	int internal::Symbol::getID()const
+	{
+		return id;
+	}
+	internal::Symbol::Symbol()
+	{
+		counter++;
+		id = counter;
+	}
+	
+	int internal::Symbol::counter = 0;
+	
+	
 	internal::Table::~Table()
 	{
 		for (apidb::internal::Symbol* symbol : *this)

@@ -39,6 +39,9 @@ namespace apidb
 		class Table;
 		class Tables;
 		
+		/**
+		 * Informacion sobre cada symbolo
+		 * */
 		struct Symbol 
 		{
 			enum KeyType
@@ -47,27 +50,32 @@ namespace apidb
 				UNIQUE,
 				NOKEY
 			};
-				
+					
 			//in input lenguaje
             std::string inType;
             //in input lenguaje
             std::string name;                
             //in out lenguaje
             std::string get;
-			bool required; 
+			bool required;
             KeyType keyType;
             const Table* classReferenced;
             const Table* classParent;
             std::string outType; 
-            bool forInsert;               
+            bool forInsert; 
+            
+            Symbol();
+            int getID()const;
+		private:
+			static int counter;
+			int id;	
 		};
 		
 		/**
 		 * Simbolos por alcance(tabla en SQL) 
 		 **/
-		class Table : public std::list<Symbol*>
+		struct Table : public std::list<Symbol*>
 		{
-		public:
 			std::string name;
             //std::list<Symbol*> attributes;
             Symbol* key;
@@ -80,9 +88,8 @@ namespace apidb
 		/**
 		 * Conjunto de tablas
 		 * */
-		class Tables: public std::list<Table*>
+		struct Tables: public std::list<Table*>
 		{
-		public:	
 			~Tables();	
             const Table* search(const std::string&)const;           
 			bool listing(toolkit::clientdb::Connector& connect);
