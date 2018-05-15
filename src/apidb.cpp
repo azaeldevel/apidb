@@ -33,19 +33,19 @@ namespace apidb
 		std::string id = "";
 		std::string insertMethode = "";
 		
-        for(internal::Table::Symbol* attr : table->attributes)
+        for(internal::Symbol* attr : *table)
         {
 			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
 			{
 				if(attr->classReferenced == NULL)
 				{
-					if((attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
+					if((attr->outType.compare("int") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 					{
-						ofile << attr->cpp_type <<" ";	
+						ofile << attr->outType <<" ";	
 					}
 					else
 					{
-						ofile << "const " << attr->cpp_type <<"& ";
+						ofile << "const " << attr->outType <<"& ";
 					}
 				}
 				else
@@ -70,7 +70,7 @@ namespace apidb
 			}  
 			
 			//buscando el campo llave
-			if(attr->keyType == internal::Table::Symbol::KeyType::PRIMARY)
+			if(attr->keyType == internal::Symbol::KeyType::PRIMARY)
 			{
 				id = attr->name;
 			}
@@ -84,21 +84,26 @@ namespace apidb
 					values += " std::string(\",\") + ";
 					insertMethode += ",";//entonmces agregar coma, ya que se va a gregar otro parametro
 				}
-				if((attr->cpp_type.compare("char") == 0) | (attr->cpp_type.compare("short") == 0) | (attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("long") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
+				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 				{
 					if(attr->classReferenced == NULL)
 					{
 						attrib += attr->name;
 						
 						values += attr->name;
+						if(attr->classParent->key->name.compare(attr->name) == 0)
+						{
+							values += ".";
+							values += attr->classParent->key->get;
+						}
 						
-						insertMethode += attr->cpp_type;						
+						insertMethode += attr->outType;						
 					}
 					else
 					{
 						attrib += attr->name;
 						
-						if(attr->classReferenced->key != NULL) values += attr->classReferenced->key->get;
+						values += attr->name;
 						
 						insertMethode += "const ";
 						insertMethode += attr->classReferenced->name;
@@ -110,27 +115,29 @@ namespace apidb
 				{
 					attrib += attr->name;
 					
-					if(attr->classReferenced->key != NULL) values += attr->classReferenced->key->get;
-						
+					values += attr->name;
+					
 					insertMethode += "const ";
-					insertMethode += attr->cpp_type; 
+					insertMethode += attr->outType; 
 					insertMethode += "& ";
 					insertMethode += attr->name;
 				}
 			}   
         }
         //como no se encontro llave primaria se aceptara un campo con restrccion de unicidad.
-        for(internal::Table::Symbol* attr : table->attributes)
+        for(internal::Symbol* attr : *table)
         {
 			if(id.empty())
 			{
-				if(attr->keyType == internal::Table::Symbol::KeyType::UNIQUE)
+				if(attr->keyType == internal::Symbol::KeyType::UNIQUE)
 				{
 					id = attr->name;
 					break; 
 				}
 			}
 		}
+		
+		//cuerpo de la funcion insert
         ofile << "bool " << table->name << "::insert(" << insertMethode <<")"<<std::endl;
         ofile << "{"<<std::endl;
         ofile << "std::string str = \"\";"<<std::endl;
@@ -143,7 +150,7 @@ namespace apidb
         //ofile << "str +=\")\""<<";"<<std::endl;
         if(table->key != NULL)
         {			
-			ofile << "this->" <<table->key->name << " = new " << table->key->classParent->name << "(";
+			ofile << "this->" <<table->key->name << " = new " << "table->key->classParent->name" << "(";
 			ofile << "connector.insert(str));"<< std::endl;
 			ofile << "return (" << table->key->name << "->get" <<"> 0);"<<std::endl;	
 		}
@@ -158,7 +165,7 @@ namespace apidb
     {
         file <<"namespace "<<driver.getNameProject()<<std::endl;
         file <<"{"<<std::endl;
-        const internal::RowsShowTables* tables = driver.getListTable();
+        const internal::Tables* tables = driver.getListTable();
         for (apidb::internal::Table* n : *tables) 
         {
             createClassCPP(driver,n,file,n->name);       
@@ -175,15 +182,15 @@ namespace apidb
     void CPPGenerator::createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
 		std::string insertMethode = "";
-        for(internal::Table::Symbol* attr : table->attributes)
+        for(internal::Symbol* attr : *table)
         {
 			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
 			{
-				if((attr->cpp_type.compare("char") == 0) | (attr->cpp_type.compare("short") == 0) | (attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("long") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
+				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 				{
 					if(attr->classReferenced == NULL)
 					{
-						ofile << attr->cpp_type << " ";						
+						ofile << attr->outType << " ";						
 					}
 					else
 					{
@@ -192,7 +199,7 @@ namespace apidb
 				}
 				else
 				{
-					ofile << "const " << attr->cpp_type <<"& ";
+					ofile << "const " << attr->outType <<"& ";
 				}
 				ofile << "get" << attr->name << "() const;"<< std::endl;
 			}
@@ -208,11 +215,11 @@ namespace apidb
 				{
 					insertMethode += ",";//entonmces agregar coma, ya que se va a gregar otro parametro
 				}
-				if((attr->cpp_type.compare("char") == 0) | (attr->cpp_type.compare("short") == 0) | (attr->cpp_type.compare("int") == 0) | (attr->cpp_type.compare("long") == 0) | (attr->cpp_type.compare("float") == 0) | (attr->cpp_type.compare("double") == 0))
+				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 				{
 					if(attr->classReferenced == NULL)
 					{
-						insertMethode += attr->cpp_type;						
+						insertMethode += attr->outType;						
 					}
 					else
 					{
@@ -224,7 +231,7 @@ namespace apidb
 				else
 				{
 					insertMethode += "const ";
-					insertMethode += attr->cpp_type; 
+					insertMethode += attr->outType; 
 					insertMethode += "& ";
 				}
 			}
@@ -233,13 +240,13 @@ namespace apidb
     }
     void CPPGenerator::createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table* table,std::ofstream& ofile)
     {
-        for(internal::Table::Symbol* attr : table->attributes)
+        for(internal::Symbol* attr : *table)
         {
 			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
 			{
 				if(attr->classReferenced == NULL)
 				{
-					ofile << attr->cpp_type <<" "<<attr->name <<";"<<std::endl;
+					ofile << attr->outType <<" "<<attr->name <<";"<<std::endl;
 				}
 				else
 				{
@@ -248,7 +255,7 @@ namespace apidb
 			}
 			else if(driver.getOutputLenguaje() == Driver::OutputLenguajes::C)
 			{
-				ofile <<attr->c_type<<" "<<attr->name <<";"<<std::endl;
+				ofile <<attr->outType<<" "<<attr->name <<";"<<std::endl;
 			}
 			else
 			{
@@ -260,7 +267,7 @@ namespace apidb
     {
         file <<"namespace "<<driver.getNameProject()<<std::endl;
         file <<"{"<<std::endl;
-        const internal::RowsShowTables* tables = driver.getListTable();
+        const internal::Tables* tables = driver.getListTable();
         for (apidb::internal::Table* table : *tables) 
         {
 			file <<"class " <<table->name << ";"<<std::endl;
@@ -299,13 +306,13 @@ namespace apidb
 		//includes in header file
         std::string headers = "";
         bool stringFlag = false;
-        const apidb::internal::RowsShowTables* tables = driver.getListTable();
+        const apidb::internal::Tables* tables = driver.getListTable();
 		for(internal::Table* table: *tables)
 		{
 			driver.getOutputMessage() << "\tCoding " << table->name << "." << std::endl;
-			for(internal::Table::Symbol* attr : table->attributes)
+			for(internal::Symbol* attr : *table)
 			{
-				if(attr->cpp_type.compare("std::string")==0 && stringFlag == false)
+				if(attr->outType.compare("std::string")==0 && stringFlag == false)
 				{
 					driver.getHeaderOutput()<< "#include <string>" <<std::endl;
 					stringFlag = true;
@@ -339,7 +346,7 @@ namespace apidb
         return true;    
     }
     
-	const internal::RowsShowTables* Driver::getListTable() const
+	const internal::Tables* Driver::getListTable() const
 	{
 		return rows;
 	}
@@ -365,7 +372,7 @@ namespace apidb
 	{
 		getOutputMessage() << "Analisis de codigo..." << std::endl;
 		getOutputMessage() << "\tLenguaje de entrada: " << getInputLenguajeString() << std::endl;
-		rows = new apidb::internal::RowsShowTables();
+		rows = new apidb::internal::Tables();
 		if(rows->listing(*connector)) //reading tables
         {
             for(internal::Table* table: *rows) //reading attrubtes by table
@@ -383,9 +390,9 @@ namespace apidb
 				}
 				
 				//parsing imput types
-				for(internal::Table::Symbol* attribute: table->attributes)
+				for(internal::Symbol* attribute: *table)
 				{
-					attribute->cpp_type = parse(attribute->sqlType);
+					attribute->outType = parse(attribute->inType);
 				}
             }            
         }  

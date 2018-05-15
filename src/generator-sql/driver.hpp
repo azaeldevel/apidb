@@ -36,43 +36,54 @@ namespace apidb
 {
 	namespace internal
 	{
-		class RowsShowTables;
+		class Table;
+		class Tables;
 		
-		class Table
+		struct Symbol 
 		{
-		public:
-            struct Symbol 
-            {
-				enum KeyType
-				{
-					PRIMARY,
-					UNIQUE,
-					NOTKEY
-				};
+			enum KeyType
+			{
+				PRIMARY,
+				UNIQUE,
+				NOKEY
+			};
 				
-                std::string sqlType;
-                std::string name;
-                std::string get;
-                bool required; 
-                KeyType keyType;
-                const Table* classReferenced;
-                const Table* classParent;
-                std::string c_type;
-                std::string cpp_type;
-                std::string java_type; 
-                bool forInsert;               
-            };
-		public:
-			std::string name;
-            std::list<Symbol*> attributes;
-            Symbol* key;
-			bool basicSymbols(toolkit::clientdb::Connector& connect);
-            bool fillKeyType(toolkit::clientdb::Connector& connect,const RowsShowTables& tables); 
+			//in input lenguaje
+            std::string inType;
+            //in input lenguaje
+            std::string name;                
+            //in out lenguaje
+            std::string get;
+			bool required; 
+            KeyType keyType;
+            const Table* classReferenced;
+            const Table* classParent;
+            std::string outType; 
+            bool forInsert;               
 		};
 		
-		class RowsShowTables: public std::list<Table*>
+		/**
+		 * Simbolos por alcance(tabla en SQL) 
+		 **/
+		class Table : public std::list<Symbol*>
 		{
-		public:		
+		public:
+			std::string name;
+            //std::list<Symbol*> attributes;
+            Symbol* key;
+            
+            ~Table();
+			bool basicSymbols(toolkit::clientdb::Connector& connect);
+            bool fillKeyType(toolkit::clientdb::Connector& connect,const Tables& tables); 
+		};
+		
+		/**
+		 * Conjunto de tablas
+		 * */
+		class Tables: public std::list<Table*>
+		{
+		public:	
+			~Tables();	
             const Table* search(const std::string&)const;           
 			bool listing(toolkit::clientdb::Connector& connect);
 		};
@@ -121,7 +132,7 @@ namespace apidb
 		
 		const std::string& getNameProject();
 		void setPramsProject(const std::string& name,const std::string& directory);
-		const internal::RowsShowTables* getListTable() const;
+		const internal::Tables* getListTable() const;
         
         Driver();
 
@@ -144,7 +155,7 @@ namespace apidb
 		
 		std::string oneLine;//to get the retur from parser
     protected:
-		internal::RowsShowTables* rows;
+		internal::Tables* rows;
 	private:
 		void parse_helper( std::istream &stream );
 		apidb::Parser  *parser  = nullptr;

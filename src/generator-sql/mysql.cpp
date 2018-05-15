@@ -25,7 +25,7 @@
 
 namespace apidb
 {
-	bool internal::Table::fillKeyType(toolkit::clientdb::Connector& connect,const internal::RowsShowTables& tables)
+	bool internal::Table::fillKeyType(toolkit::clientdb::Connector& connect,const internal::Tables& tables)
 	{
 		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME FROM information_schema.TABLE_CONSTRAINTS i  LEFT JOIN information_schema.KEY_COLUMN_USAGE k ON i.CONSTRAINT_NAME = k.CONSTRAINT_NAME WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =";
 		fks += "'" ;
@@ -41,7 +41,7 @@ namespace apidb
 			MYSQL_ROW row;
 			while((row = mysql_fetch_row(result)))
 			{
-				for(Symbol* attribute: attributes) 
+				for(Symbol* attribute: *this) 
 				{
 					if(attribute->name.compare(row[0]) == 0)
 					{
@@ -73,8 +73,8 @@ namespace apidb
 				Symbol* attrribute = new Symbol();
 				attrribute->classParent = this;
 				attrribute->name = row[0];
-				attrribute->get = row[0];attrribute->get += "()";
-				attrribute->sqlType = row[1];
+				attrribute->get = "get";attrribute->get += row[0];attrribute->get += "()";
+				attrribute->inType = row[1];
 				std::string requiered = row[2];
 				if(requiered.compare("NO") == 0)
 				{
@@ -89,18 +89,22 @@ namespace apidb
 				key = NULL;
 				if((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))
 				{
-					attrribute->keyType = internal::Table::Symbol::KeyType::PRIMARY;
+					attrribute->keyType = internal::Symbol::KeyType::PRIMARY;
 					key = attrribute;
 				}
 				else if(((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") != 0)))//unique constraing with key primary
 				{
-					attrribute->keyType = internal::Table::Symbol::KeyType::UNIQUE;
+					attrribute->keyType = internal::Symbol::KeyType::UNIQUE;
 					if(key == NULL) key = attrribute;
 				}
 				else if(keyType.compare("UNI") == 0)
 				{
-					attrribute->keyType = internal::Table::Symbol::KeyType::UNIQUE;
+					attrribute->keyType = internal::Symbol::KeyType::UNIQUE;
 					if(key == NULL) key = attrribute;
+				}
+				else
+				{
+					attrribute->keyType = internal::Symbol::KeyType::NOKEY;
 				}
 				
 				if((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))
@@ -115,7 +119,7 @@ namespace apidb
 					}
 				}				
 				
-				attributes.push_back(attrribute);
+				push_back(attrribute);
 			}
 			mysql_free_result(result);
 			return true;			
@@ -128,7 +132,7 @@ namespace apidb
     }
     
     
-	bool internal::RowsShowTables::listing(toolkit::clientdb::Connector& connect)
+	bool internal::Tables::listing(toolkit::clientdb::Connector& connect)
 	{
 		if(connect.query("SHOW TABLES")) 
 		{

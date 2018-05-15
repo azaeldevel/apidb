@@ -28,7 +28,7 @@ int main()
 	apidb::CG driver("nmp","test",mysqlConnector);
 	if(driver.analyze())
 	{
-		if(driver.getListTable()->size() == 0)
+		/*if(driver.getListTable()->size() == 0)
 		{            
 			//std::cout<< "no hay elemtos" <<std::endl;
 		}
@@ -38,7 +38,7 @@ int main()
             for (apidb::internal::Table* n : *(driver.getListTable())) 
             {
                 //std::cout<<"" << n->name <<std::endl;
-                for(apidb::internal::Table::Symbol* m : n->attributes)
+                for(apidb::internal::Symbol* m : n->attributes)
                 {
                     //std::cout<<"  " << m->name<<std::endl;
                 }
@@ -50,12 +50,12 @@ int main()
             for (apidb::internal::Table* n : *(driver.getListTable())) 
             {
                 //std::cout<<" "<< n->name <<std::endl;
-                for(apidb::internal::Table::Symbol* m : n->attributes)
+                for(apidb::internal::Symbol* m : n->attributes)
                 {
                     //std::cout<<"  "<< m->name<<std::endl;
                 }
             }
-		}	
+		}*/	
 			
 		if(!driver.generate()) return -1;
 	}

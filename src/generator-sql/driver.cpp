@@ -7,7 +7,23 @@
 
 namespace apidb
 {		
-	const internal::Table* internal::RowsShowTables::search(const std::string& tableName)const
+	internal::Table::~Table()
+	{
+		for (apidb::internal::Symbol* symbol : *this)
+		{
+			//delete symbol;
+		}	
+		clear();
+	}
+	internal::Tables::~Tables()
+	{
+		for (apidb::internal::Table* table : *this)
+		{
+			//delete table;
+		}
+		clear();
+	}
+	const internal::Table* internal::Tables::search(const std::string& tableName)const
 	{
 		std::list<internal::Table*>::const_iterator first = this->begin();
 		std::list<internal::Table*>::const_iterator last = this->end();
@@ -137,10 +153,15 @@ namespace apidb
 	}
 	Driver::~Driver()
 	{
-	   delete(scanner);
-	   scanner = nullptr;
-	   delete(parser);
-	   parser = nullptr;	   
+		delete(scanner);
+		scanner = nullptr;
+		delete(parser);
+		parser = nullptr;
+		if(outputLenguaje == OutputLenguajes::CPP)
+		{
+		   //delete &writeResults[0];
+		   //delete &writeResults[1];
+		}	   
 	}
 
 	void Driver::parse( const char * const filename )
