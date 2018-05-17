@@ -96,6 +96,11 @@ namespace apidb
 		};
 	}
 	
+	class Analizer
+	{
+	public:
+		virtual bool analyze(internal::Tables*) = 0;
+	};
 	
 	class Generator
 	{
@@ -139,7 +144,7 @@ namespace apidb
 		
 		const std::string& getNameProject();
 		void setPramsProject(const std::string& name,const std::string& directory);
-		const internal::Tables* getListTable() const;
+		const internal::Tables& getListTable() const;
         
         Driver();
 
@@ -162,7 +167,7 @@ namespace apidb
 		
 		std::string oneLine;//to get the retur from parser
     protected:
-		internal::Tables* rows;
+		internal::Tables symbolsTables;
 	private:
 		void parse_helper( std::istream &stream );
 		apidb::Parser  *parser  = nullptr;

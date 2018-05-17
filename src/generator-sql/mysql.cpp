@@ -45,12 +45,8 @@ namespace apidb
 				{
 					if(attribute->name.compare(row[0]) == 0)
 					{
-						const internal::Table* table = tables.search(row[1]);
-						if(table != NULL)
-						{
-							attribute->classReferenced = table;
-						}						
-					}			
+						attribute->classReferenced = tables.search(row[1]);//returna null o un puntero valido.				
+					}
 				}
 			}			
 			mysql_free_result(result);

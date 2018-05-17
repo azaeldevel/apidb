@@ -7,6 +7,11 @@
 
 namespace apidb
 {		
+	const internal::Tables& Driver::getListTable() const
+	{
+		return symbolsTables;
+	}
+	
 	int internal::Symbol::getID()const
 	{
 		return id;
@@ -38,16 +43,14 @@ namespace apidb
 	}
 	const internal::Table* internal::Tables::search(const std::string& tableName)const
 	{
-		std::list<internal::Table*>::const_iterator first = this->begin();
+		std::list<internal::Table*>::const_iterator actual = this->begin();
 		std::list<internal::Table*>::const_iterator last = this->end();
 		
-		while (first != last) 
+		while (actual != last) 
 		{
-			if ((*first)->name.compare(tableName) == 0) break;
-			++first;
+			if ((*actual)->name.compare(tableName) == 0) return (const internal::Table*)(*actual);
+			++actual;
 		}
-		
-		if(first != last) return (const Table*)(*first);
 		return NULL;
 	}
 	std::ostream& Driver::getErrorMessage()

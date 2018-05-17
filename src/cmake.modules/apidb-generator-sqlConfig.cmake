@@ -6,6 +6,7 @@ ENDIF (APIBD_GENERATORSQL_INCLUDE_DIR)
 
 FIND_PATH(APIBD_GENERATORSQL_INCLUDE_DIR driver.hpp
   ${PROJECT_SOURCE_DIR}/generator-sql
+  ${PROJECT_SOURCE_DIR}/generator-sql/build
   $ENV{HOME}/root/include/toolkit
   /usr/local/include/toolkit
   /usr/include/toolkit
@@ -14,7 +15,7 @@ FIND_PATH(APIBD_GENERATORSQL_INCLUDE_DIR driver.hpp
 SET(APIBD_GENERATORSQL_NAMES apidb-generator-sql)
 FIND_LIBRARY(APIBD_GENERATORSQL_LIBRARY
   NAMES ${APIBD_GENERATORSQL_NAMES}
-  PATHS ${PROJECT_SOURCE_DIR}/generator-sql ${PROJECT_SOURCE_DIR}/generator-sql $ENV{HOME}/root/usr/lib /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu
+  PATHS ${PROJECT_SOURCE_DIR}/generator-sql ${PROJECT_SOURCE_DIR}/generator-sql/build $ENV{HOME}/root/usr/lib /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu
   PATH_SUFFIXES generator-sql
 )
 
