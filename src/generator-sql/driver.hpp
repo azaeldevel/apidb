@@ -62,7 +62,7 @@ namespace apidb
             const Table* classReferenced;
             const Table* classParent;
             std::string outType; 
-            bool forInsert; 
+            //bool forInsert; 
             
             Symbol();
             int getID()const;

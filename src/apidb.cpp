@@ -136,20 +136,19 @@ namespace apidb
 				{
 					if((*i)->classReferenced == NULL)//si es foreing key
 					{
-						ofile <<"\t\tsqlString = sqlString + \"'\" + std::to_string(" << (*i)->name<<") + \"'\";"<< std::endl;						
+						ofile << "\t\tsqlString = sqlString + \"'\" + std::to_string(" << (*i)->name << ") + \"'\";"<< std::endl;						
 					}
 					else
 					{
-						ofile <<"\t\tsqlString = sqlString + \"'\" + " << (*i)->name <<".toStringKey() + \"'\";"<< std::endl;
-					}						
+						ofile << "\t\tsqlString = sqlString + \"'\" + " << (*i)->name << ".toStringKey() + \"'\";"<< std::endl;
+					}
 				}
 				else
 				{
-					ofile << "\t\tsqlString = sqlString + \"'\" + " << (*i)->name <<" + \"'\";"<< std::endl;
+					ofile << "\t\tsqlString = sqlString + \"'\" + " << (*i)->name << " + \"'\";" << std::endl;
 				}
 			}
 		}
-        ofile << "\t\t"<<std::endl;
         ofile << "\t}"<<std::endl;
 		
     }

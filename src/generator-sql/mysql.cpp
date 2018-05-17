@@ -64,6 +64,7 @@ namespace apidb
 			//std::cout<<str<<std::endl;
 			MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());
 			MYSQL_ROW row;
+			bool setkey = false;
 			while((row = mysql_fetch_row(result)))
 			{
 				Symbol* attrribute = new Symbol();
@@ -81,39 +82,37 @@ namespace apidb
 					attrribute->required = false;
 				}
 				std::string keyType = row[3];
-				std::string extra = row[5];
-				if(attrribute->required && (keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))
+				std::string extra = row[5];				
+				if(keyType.size() == 0)//si esta vacio el campo no es key
+				{
+					attrribute->keyType = internal::Symbol::KeyType::NOKEY;
+					if(!setkey)	key = NULL;
+				}
+				else if(attrribute->required && (keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))//primary key
 				{
 					attrribute->keyType = internal::Symbol::KeyType::PRIMARY;
 					key = attrribute;
+					setkey = true;
 				}
-				else if(attrribute->required && ((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") != 0)))//unique constraing with key primary
+				else if(attrribute->required && (keyType.compare("PRI") == 0))//unique constraing
 				{
 					attrribute->keyType = internal::Symbol::KeyType::UNIQUE;
 					key = attrribute;
+					setkey = true;
 				}
-				else if(attrribute->required && (keyType.compare("UNI") == 0))
+				else if(attrribute->required && (keyType.compare("UNI") == 0))//unique constraing
 				{
 					attrribute->keyType = internal::Symbol::KeyType::UNIQUE;
 					key = attrribute;
+					setkey = true;
 				}
 				else
 				{
 					attrribute->keyType = internal::Symbol::KeyType::NOKEY;
-					key = NULL;
+					if(!setkey)	key = NULL;
 				}
 				
-				if((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))
-				{
-					attrribute->forInsert = false;
-				}
-				else
-				{
-					if(attrribute->required)
-					{
-						attrribute->forInsert = true;
-					}
-				}				
+							
 				
 				push_back(attrribute);
 				if(attrribute->required)
