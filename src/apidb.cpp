@@ -27,12 +27,7 @@ namespace apidb
 {
 	
     void CPPGenerator::createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
-    {
-		std::string attrib = "";
-		std::string values = "";
-		std::string id = "";
-		std::string insertMethode = "";
-		
+    {		
         for(const internal::Symbol* attr : table)
         {
 			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
@@ -77,98 +72,86 @@ namespace apidb
 			else
 			{
 				driver.message("OutputLenguaje is unknow.");
-			}  
-			
-			//buscando el campo llave
-			/*if(attr->keyType == internal::Symbol::KeyType::PRIMARY)
+			}  						
+        }
+        
+		// creando insert
+        ofile << "\t"<< "bool ";
+        ofile <<table.name<< "::insert(";
+        for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
+        {
+			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
 			{
-				id = attr->name;
-			}*/
-			
-			//parametros para insert metodo		
-			/*if(attr->forInsert)            
-			{
-				if(!insertMethode.empty())//si hay texto en la variable
+				if(i != table.required.begin())
 				{
-					attrib += ",";
-					values += " std::string(\",\") + ";
-					insertMethode += ",";//entonmces agregar coma, ya que se va a gregar otro parametro
+					ofile << ","; //se agrega la coma si hay un segundo parametro
 				}
-				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
+				
+				//
+				if(((*i)->outType.compare("char") == 0) | ((*i)->outType.compare("short") == 0) | ((*i)->outType.compare("int") == 0) | ((*i)->outType.compare("long") == 0) | ((*i)->outType.compare("float") == 0) | ((*i)->outType.compare("double") == 0))
 				{
-					if(attr->classReferenced == NULL)
+					if((*i)->classReferenced == NULL)//si es foreing key
 					{
-						attrib += attr->name;
-						
-						values += attr->name;
-						if(attr->classParent->key->name.compare(attr->name) == 0)
-						{
-							values += ".";
-							values += attr->classParent->key->get;
-						}
-						
-						insertMethode += attr->outType;						
+						ofile << (*i)->outType << " ";						
 					}
 					else
 					{
-						attrib += attr->name;
-						
-						values += attr->name;
-						
-						insertMethode += "const ";
-						insertMethode += attr->classReferenced->name;
-						insertMethode += "& ";
-						insertMethode += attr->name;
+						ofile << "const " << (*i)->classReferenced->name << "& ";
 					}
 				}
 				else
 				{
-					attrib += attr->name;
-					
-					values += attr->name;
-					
-					insertMethode += "const ";
-					insertMethode += attr->outType; 
-					insertMethode += "& ";
-					insertMethode += attr->name;
+					ofile << "const " << (*i)->outType <<"& ";
 				}
-			}   */
-        }
-        //como no se encontro llave primaria se aceptara un campo con restrccion de unicidad.
-        /*for(internal::Symbol* attr : *table)
+				ofile << (*i)->name;
+			}
+		}
+        ofile << ")"<<std::endl;
+        ofile << "\t{"<<std::endl;
+        ofile << "\t\t"<<"std::string sqlString = \"\";"<<std::endl;
+        ofile << "\t\t"<<"sqlString = sqlString + \"INSERT INTO\" + TABLE_NAME; "<<std::endl;
+        ofile << "\t\t"<<"sqlString = sqlString + \"(\";"<<std::endl;
+        for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
-			if(id.empty())
+			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
 			{
-				if(attr->keyType == internal::Symbol::KeyType::UNIQUE)
+				if(i != table.required.begin())
 				{
-					id = attr->name;
-					break; 
+					ofile << ","; //se agrega la coma si hay un segundo parametro
+				}				
+				ofile <<"\t\tsqlString = sqlString + \"" << (*i)->name <<"\";"<< std::endl;
+			}
+		}
+		ofile << "\t\tsqlString = sqlString + \") VALUES(\";"<<std::endl;
+        for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
+        {
+			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
+			{
+				if(i != table.required.begin())
+				{
+					ofile << ","; //se agrega la coma si hay un segundo parametro
+				}				
+				//ofile <<"\t\tsqlString = sqlString + \"" << (*i)->name;
+				if(((*i)->outType.compare("short") == 0) | ((*i)->outType.compare("int") == 0) | ((*i)->outType.compare("long") == 0) | ((*i)->outType.compare("float") == 0) | ((*i)->outType.compare("double") == 0))
+				{
+					if((*i)->classReferenced == NULL)//si es foreing key
+					{
+						ofile <<"\t\tsqlString = sqlString + \"'\" + std::to_string(" << (*i)->name<<") + \"'\";"<< std::endl;						
+					}
+					else
+					{
+						ofile <<"\t\tsqlString = sqlString + \"'\" + " << (*i)->name <<".toStringKey() + \"'\";"<< std::endl;
+					}						
+				}
+				else
+				{
+					ofile << "\t\tsqlString = sqlString + \"'\" + " << (*i)->name <<" + \"'\";"<< std::endl;
 				}
 			}
-		}*/
+		}
+        ofile << "\t\t"<<std::endl;
+        ofile << "\t}"<<std::endl;
 		
-		//cuerpo de la funcion insert
-        /*ofile << "bool " << table->name << "::insert(" << insertMethode <<")"<<std::endl;
-        ofile << "{"<<std::endl;
-        ofile << "std::string str = \"\";"<<std::endl;
-        ofile << "str += \"INSERT INTO \";"<<std::endl;
-        ofile << "str += TABLE_NAME;"<<std::endl;
-        ofile << "str += \"(\""<<";"<<std::endl;
-        ofile << "str += \""<< attrib<<"\";"<<std::endl;
-        ofile << "str += \") VALUES(\";"<<std::endl;
-        ofile << "str += \""<< values <<"\";"<<std::endl;
-        //ofile << "str +=\")\""<<";"<<std::endl;
-        if(table->key != NULL)
-        {			
-			ofile << "this->" <<table->key->name << " = new " << "table->key->classParent->name" << "(";
-			ofile << "connector.insert(str));"<< std::endl;
-			ofile << "return (" << table->key->name << "->get" <<"> 0);"<<std::endl;	
-		}
-		else
-		{
-			ofile << "return connector.query(str);"<< std::endl;
-		}
-        ofile << "}"<<std::endl;*/
     }
     
     void CPPGenerator::createSpaceCPP(apidb::Driver& driver,std::ofstream& file)
@@ -218,37 +201,45 @@ namespace apidb
 			else
 			{
 				driver.message("OutputLenguaje is unknow.");
-			}
+			}			
 			
-			//parametros para insert metodo
-			/*if(attr->forInsert)            
+        }  
+        
+        //si la table tiene key
+        if(table.key != NULL) ofile << "\t\tstd::string toStringKey()const;" <<std::endl;
+        
+        // creando insert
+        ofile << "\t\t"<< "bool ";
+        ofile << "insert(";
+        for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
+        {
+			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
 			{
-				if(!insertMethode.empty())//si hay texto en la variable
+				if(i != table.required.begin())
 				{
-					insertMethode += ",";//entonmces agregar coma, ya que se va a gregar otro parametro
+					ofile << ","; //se agrega la coma si hay un segundo parametro
 				}
-				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
+				
+				//
+				if(((*i)->outType.compare("char") == 0) | ((*i)->outType.compare("short") == 0) | ((*i)->outType.compare("int") == 0) | ((*i)->outType.compare("long") == 0) | ((*i)->outType.compare("float") == 0) | ((*i)->outType.compare("double") == 0))
 				{
-					if(attr->classReferenced == NULL)
+					if((*i)->classReferenced == NULL)//si es foreing key
 					{
-						insertMethode += attr->outType;						
+						ofile << (*i)->outType << " ";						
 					}
 					else
 					{
-						insertMethode +=  "const ";
-						insertMethode +=  attr->classReferenced->name;
-						insertMethode +=  "& ";
+						ofile << "const " << (*i)->classReferenced->name << "& ";
 					}
 				}
 				else
 				{
-					insertMethode += "const ";
-					insertMethode += attr->outType; 
-					insertMethode += "& ";
+					ofile << "const " << (*i)->outType <<"& ";
 				}
-			}*/
-        }   
-        //ofile <<"\t\t"<< "bool " << "insert(" << insertMethode <<");"<<std::endl;
+				ofile << (*i)->name;
+			}
+		}
+        ofile << ");"<<std::endl;
     }
     void CPPGenerator::createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
     {

@@ -72,35 +72,35 @@ namespace apidb
 				attrribute->get = "get";attrribute->get += row[0];attrribute->get += "()";
 				attrribute->inType = row[1];
 				std::string requiered = row[2];
-				if(requiered.compare("NO") == 0)
+				if(requiered.compare("NO") == 0)//NULL permited in DB?
 				{
 					attrribute->required = true;
 				}
-				else if(requiered.compare("YES") == 0)
+				else if(requiered.compare("YES") == 0)//NULL permited in DB?
 				{
 					attrribute->required = false;
 				}
 				std::string keyType = row[3];
 				std::string extra = row[5];
-				key = NULL;
-				if((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))
+				if(attrribute->required && (keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))
 				{
 					attrribute->keyType = internal::Symbol::KeyType::PRIMARY;
 					key = attrribute;
 				}
-				else if(((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") != 0)))//unique constraing with key primary
+				else if(attrribute->required && ((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") != 0)))//unique constraing with key primary
 				{
 					attrribute->keyType = internal::Symbol::KeyType::UNIQUE;
-					if(key == NULL) key = attrribute;
+					key = attrribute;
 				}
-				else if(keyType.compare("UNI") == 0)
+				else if(attrribute->required && (keyType.compare("UNI") == 0))
 				{
 					attrribute->keyType = internal::Symbol::KeyType::UNIQUE;
-					if(key == NULL) key = attrribute;
+					key = attrribute;
 				}
 				else
 				{
 					attrribute->keyType = internal::Symbol::KeyType::NOKEY;
+					key = NULL;
 				}
 				
 				if((keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))
@@ -116,6 +116,10 @@ namespace apidb
 				}				
 				
 				push_back(attrribute);
+				if(attrribute->required)
+				{
+					required.push_back(attrribute);//si attrribute->required tambie se agrega a un lista especial
+				}
 			}
 			mysql_free_result(result);
 			return true;			

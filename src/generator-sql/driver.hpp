@@ -77,8 +77,8 @@ namespace apidb
 		struct Table : public std::list<Symbol*>
 		{
 			std::string name;
-            //std::list<Symbol*> attributes;
             Symbol* key;
+            std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista
             
             ~Table();
 			bool basicSymbols(toolkit::clientdb::Connector& connect);
