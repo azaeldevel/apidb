@@ -177,6 +177,48 @@ namespace apidb
 		}
         ofile << "\t}"<<std::endl;
 		
+		        
+		//constructor que toma key como parametro
+        if(table.key != NULL)//tiene key
+        {
+			if(table.key->outType.compare("int") == 0)
+			{
+				ofile << "\t" <<table.name << "::" << table.name;
+				if(table.key->classReferenced == NULL)
+				{
+					ofile << "(int id);"<<std::endl;
+				}
+				else
+				{
+					ofile << "(const " << table.key->classReferenced->name << "& obj)"<<std::endl;
+				}
+			}
+			else
+			{
+				throw BuildException("EL tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema");
+			}
+		}
+		else
+		{
+			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
+		}
+		ofile << "\t{" <<std::endl;
+		if(table.key->outType.compare("int") == 0)
+		{			
+			if(table.key->classReferenced == NULL)
+			{
+					ofile << "\t\tthis->" << table.key->name<< "=id" <<std::endl;
+			}
+			else
+			{
+					ofile << "\t\tthis->" << table.key->name<< " = new " << table.key->classParent->name << "(obj." << table.key->name << ");"<<std::endl;
+			}
+		}
+		else
+		{
+				throw BuildException("EL tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema");
+		}
+		ofile << "\t}" <<std::endl;
     }
     
     void CPPGenerator::createSpaceCPP(apidb::Driver& driver,std::ofstream& file)
@@ -266,7 +308,7 @@ namespace apidb
 		}
         ofile << ");"<<std::endl;
         
-        
+        //constructor que toma key como parametro
         if(table.key != NULL)//tiene key
         {
 			if(table.key->outType.compare("int") == 0)
@@ -380,6 +422,7 @@ namespace apidb
 			
 		//inlcudes in source file
         driver.getSourceOutput()<< "#include \"" <<driver.getHeaderName() <<"\""<<std::endl<<std::endl; 
+		driver.getHeaderOutput()<< "#include <clientdb.hpp>"<<std::endl;
 			
 		//writing code
 		if(!driver.getNameProject().empty())
