@@ -171,9 +171,9 @@ namespace apidb
 			}
 			else //no tiene key
 			{
-				//la tabla no tiene llave primaria.
+				throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
 			}
-			ofile <<std::endl;
+			ofile << std::endl;
 		}
         ofile << "\t}"<<std::endl;
 		
@@ -265,7 +265,33 @@ namespace apidb
 			}
 		}
         ofile << ");"<<std::endl;
+        
+        
+        if(table.key != NULL)//tiene key
+        {
+			if(table.key->outType.compare("int") == 0)
+			{
+				ofile << "\t\t" <<table.name;
+				if(table.key->classReferenced == NULL)
+				{
+					ofile << "(int id);"<<std::endl;
+				}
+				else
+				{
+					ofile << "(const " << table.key->classReferenced->name<< "& obj);"<<std::endl;
+				}
+			}
+			else
+			{
+				throw BuildException("EL tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema");
+			}
+		}
+		else
+		{
+			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
+		}       
     }
+    
     void CPPGenerator::createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
     {
         for(internal::Symbol* attr : table)

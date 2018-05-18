@@ -32,7 +32,7 @@ namespace apidb
 {
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
-		
+	
 	class CPPGenerator: public Generator
 	{
     public:
