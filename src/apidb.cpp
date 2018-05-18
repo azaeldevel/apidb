@@ -77,12 +77,12 @@ namespace apidb
         
 		// creando insert
         ofile << "\t"<< "bool ";
-        ofile <<table.name<< "::insert(";
+        ofile <<table.name<< "::insert(Connector& connector";
         for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
 			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
 			{
-				if(i != table.required.begin())
+				if(i != table.required.end())
 				{
 					ofile << ","; //se agrega la coma si hay un segundo parametro
 				}
@@ -148,6 +148,32 @@ namespace apidb
 					ofile << "\t\tsqlString = sqlString + \"'\" + " << (*i)->name << " + \"'\";" << std::endl;
 				}
 			}
+			
+			//asegurar que tiene key
+			if(table.key != NULL)
+			{
+				ofile << "\t\t"  << (*i)->name;
+				if((table.key->outType.compare("int") == 0))
+				{
+					if(table.key->classReferenced == NULL)//si es foreing key
+					{
+						ofile << " = connector.insert(tsqlString);";						
+					}
+					else
+					{
+						ofile << " = new " << table.key->classReferenced->name << "(connector.insert(tsqlString));";
+					}
+				}
+				else
+				{
+					ofile << " = " << table.key->classReferenced->name << " connector.insert(tsqlString);";
+				}
+			}
+			else //no tiene key
+			{
+				//la tabla no tiene llave primaria.
+			}
+			ofile <<std::endl;
 		}
         ofile << "\t}"<<std::endl;
 		
@@ -209,12 +235,12 @@ namespace apidb
         
         // creando insert
         ofile << "\t\t"<< "bool ";
-        ofile << "insert(";
+        ofile << "insert(Connector& connector";
         for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
 			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
 			{
-				if(i != table.required.begin())
+				if(i != table.required.end())
 				{
 					ofile << ","; //se agrega la coma si hay un segundo parametro
 				}
