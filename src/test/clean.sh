@@ -1,6 +1,6 @@
 
 rm -r CMakeFiles
 rm CMakeCache.txt
-rm testing
+rm developing
 rm cmake_install.cmake
 rm Makefile

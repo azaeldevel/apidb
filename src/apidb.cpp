@@ -158,17 +158,23 @@ namespace apidb
 			{
 				if(table.key->classReferenced == NULL)//si es foreing key
 				{
-					ofile << " = connector.insert(sqlString);"<< std::endl;						
+					ofile << " = connector.insert(sqlString);"<< std::endl;		
+					ofile << "\t\tif(" << table.key->name << " > 0) return true;"<< std::endl;
+					ofile << "\t\telse return false;"<< std::endl;				
 				}
 				else
 				{
 					ofile << " = new " << table.key->classReferenced->name << "((int)connector.insert(sqlString));"<< std::endl;
+					ofile << "\t\tif(" << table.key->name << " != NULL) return true;"<< std::endl;
+					ofile << "\t\telse return false;"<< std::endl;
 				}
 			}
 			else
 			{
-				ofile << " = " << table.key->classReferenced->name << " connector.insert(sqlString);"<< std::endl;
-			}
+				ofile << " = " << table.key->classReferenced->name << "(connector.insert(sqlString));"<< std::endl;
+				ofile << "\t\tif(" << table.key->name << " != NULL) return true;"<< std::endl;
+				ofile << "\t\telse return false;"<< std::endl;
+			}			
 		}
 		else //no tiene key
 		{
