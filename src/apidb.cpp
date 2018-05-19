@@ -25,135 +25,43 @@
 namespace apidb
 {
 	
-	void CPPGenerator::writeCopyContructorH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPPGenerator::writeInsertH(const apidb::internal::Table& table,std::ofstream& ofile)
 	{
-		//constructor de copias 
-		ofile << "\t\t" <<table.name<<"(const " << table.name <<"&);"<<std::endl;
-	}
-	void CPPGenerator::writeCopyContructorCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
-	{
-		//constructor de copias 
-		ofile << "\t" << table.name << "::" << table.name <<"(const " << table.name <<"& obj)"<<std::endl;
-		ofile << "\t{"<<std::endl;
-		for(const internal::Symbol* attr : table)
-		{
-			ofile << "\t\tthis->"<< attr->name << " = obj." << attr->name<<";"<<std::endl;
-		}
-		ofile << "\t}"<<std::endl;
+		// creando insert
+        ofile << "\t\t"<< "bool ";
+        ofile << "insert(toolkit::clientdb::Connector& connector";
+        for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
+        {
+			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
+			{
+				if(i != table.required.end())
+				{
+					ofile << ","; //se agrega la coma si hay un segundo parametro
+				}
 				
-	}
-	void CPPGenerator::writeKeyValueH(apidb::Driver& driver,const apidb::internal::Table& table ,std::ofstream& ofile)
-	{
-        //si la table tiene key
-        if(table.key != NULL) 
-        {
-			ofile << "\t\tstd::string toStringKey()const;" <<std::endl;			
-		}
-	}
-	void CPPGenerator::writeKeyValueCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
-	{
-        //si la table tiene key
-        if(table.key != NULL)
-        {
-			ofile << "\tstd::string " <<table.name << "::toStringKey()const" <<std::endl;	
-			ofile << "\t{" << std::endl;
-			if((table.key->outType.compare("int") == 0))
-			{
-				if(table.key->classReferenced == NULL)//si es foreing key
+				//
+				if(((*i)->outType.compare("char") == 0) | ((*i)->outType.compare("short") == 0) | ((*i)->outType.compare("int") == 0) | ((*i)->outType.compare("long") == 0) | ((*i)->outType.compare("float") == 0) | ((*i)->outType.compare("double") == 0))
 				{
-					ofile <<"\t\treturn std::to_string(" << table.key->name;
-					internal::Symbol* actual = table.key;
-					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL))
+					if((*i)->classReferenced == NULL)//si es foreing key
 					{
-						ofile << "->" << actual->get;
-						actual = actual->classReferenced->key;
-					}
-					ofile <<");"<<std::endl;						
-				}
-				else
-				{
-					ofile <<"\t\treturn std::to_string(" << table.key->name;
-					internal::Symbol* actual = table.key;
-					do
-					{
-						ofile << "->" << actual->classReferenced->key->get;
-						actual = actual->classReferenced->key;						
-					}
-					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));
-					ofile <<");"<<std::endl;
-				}
-			}
-			else if((table.key->outType.compare("std::string") == 0))
-			{
-				ofile <<"\t\treturn " << table.key->name << ";" <<std::endl;
-			}
-			else
-			{
-				ofile <<"\t\treturn std::to_string(" << table.key->name <<");"<<std::endl;
-			}
-			ofile << "\t}" << std::endl;
-		}
-	}
-        
-	void CPPGenerator::writeDefaultContructorH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
-	{
-		ofile <<"\t\t"<<table.name<<"();"<<std::endl;
-	}
-	void CPPGenerator::writeDefaultContructorCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
-    {
-		ofile <<"\t"<<table.name<< "::" <<table.name<<"()"<<std::endl;
-		ofile <<"\t{"<<std::endl;
-		ofile <<"\t}"<<std::endl;
-	}
-    void CPPGenerator::createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
-    {		
-        for(const internal::Symbol* attr : table)
-        {
-			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
-			{
-				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
-				{
-					if(attr->classReferenced == NULL)//si es foreing key
-					{
-						ofile <<"\t"<< attr->outType << " ";						
+						ofile << (*i)->outType << " ";						
 					}
 					else
 					{
-						ofile <<"\t"<< "const " << attr->classReferenced->name << "& ";
+						ofile << "const " << (*i)->classReferenced->name << "& ";
 					}
 				}
 				else
 				{
-					ofile <<"\t" << "const " << attr->outType <<"& ";
-				}				
-				ofile << table.name <<"::get" << attr->name << "()const"<< std::endl;
-				ofile << "\t{"<<std::endl;
-				
-				
-				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
-				{
-					if(attr->classReferenced == NULL)//si es foreing key
-					{
-						ofile <<"\t\treturn "<< attr->name<<";"<< std::endl;						
-					}
-					else
-					{
-						ofile <<"\t\treturn *"<< attr->name<<";"<< std::endl;
-					}						
+					ofile << "const " << (*i)->outType <<"& ";
 				}
-				else
-				{
-					ofile <<"\t\treturn " << attr->name <<";"<< std::endl;
-				}
-								
-				ofile << "\t}"<<std::endl;
+				ofile << (*i)->name;
 			}
-			else
-			{
-				driver.message("OutputLenguaje is unknow.");
-			}  						
-        }
-        
+		}
+        ofile << ");"<<std::endl;
+	}
+	void CPPGenerator::writeInsertCPP(const apidb::internal::Table& table,std::ofstream& ofile)	
+	{	
 		// Methodo insert
         ofile << "\t"<< "bool ";
         ofile <<table.name<< "::insert(toolkit::clientdb::Connector& connector";
@@ -188,7 +96,7 @@ namespace apidb
         ofile << ")"<<std::endl;
         ofile << "\t{"<<std::endl;
         ofile << "\t\t"<<"std::string sqlString = \"\";"<<std::endl;
-        ofile << "\t\t"<<"sqlString = sqlString + \"INSERT INTO\" + TABLE_NAME; "<<std::endl;
+        ofile << "\t\t"<<"sqlString = sqlString + \"INSERT INTO \" + TABLE_NAME; "<<std::endl;
         ofile << "\t\t"<<"sqlString = sqlString + \"(\";"<<std::endl;
         for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
@@ -260,8 +168,37 @@ namespace apidb
 			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
 		}
         ofile << "\t}"<<std::endl;
-		
-		        
+	}
+        
+	void CPPGenerator::writeKeyContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
+	{
+        //constructor que toma key como parametro
+        if(table.key != NULL)//tiene key
+        {
+			if(table.key->outType.compare("int") == 0)
+			{
+				ofile << "\t\t" <<table.name;
+				if(table.key->classReferenced == NULL)
+				{
+					ofile << "(int id);"<<std::endl;
+				}
+				else
+				{
+					ofile << "(const " << table.key->classReferenced->name<< "& obj);"<<std::endl;
+				}
+			}
+			else
+			{
+				throw BuildException("EL tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema");
+			}
+		}
+		else
+		{
+			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
+		} 
+	}
+	void CPPGenerator::writeKeyContructorCPP(const apidb::internal::Table& table ,std::ofstream& ofile)
+	{
 		//constructor que toma key como parametro
         if(table.key != NULL)//tiene key
         {
@@ -303,11 +240,144 @@ namespace apidb
 				throw BuildException("EL tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema");
 		}
 		ofile << "\t}" <<std::endl;
+	}
+        
+	void CPPGenerator::writeCopyContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
+	{
+		//constructor de copias 
+		ofile << "\t\t" <<table.name<<"(const " << table.name <<"&);"<<std::endl;
+	}
+	void CPPGenerator::writeCopyContructorCPP(const apidb::internal::Table& table,std::ofstream& ofile)
+	{
+		//constructor de copias 
+		ofile << "\t" << table.name << "::" << table.name <<"(const " << table.name <<"& obj)"<<std::endl;
+		ofile << "\t{"<<std::endl;
+		for(const internal::Symbol* attr : table)
+		{
+			ofile << "\t\tthis->"<< attr->name << " = obj." << attr->name<<";"<<std::endl;
+		}
+		ofile << "\t}"<<std::endl;
+				
+	}
+	void CPPGenerator::writeKeyValueH(const apidb::internal::Table& table ,std::ofstream& ofile)
+	{
+        //si la table tiene key
+        if(table.key != NULL) 
+        {
+			ofile << "\t\tstd::string toStringKey()const;" <<std::endl;			
+		}
+	}
+	void CPPGenerator::writeKeyValueCPP(const apidb::internal::Table& table,std::ofstream& ofile)
+	{
+        //si la table tiene key
+        if(table.key != NULL)
+        {
+			ofile << "\tstd::string " <<table.name << "::toStringKey()const" <<std::endl;	
+			ofile << "\t{" << std::endl;
+			if((table.key->outType.compare("int") == 0))
+			{
+				if(table.key->classReferenced == NULL)//si es foreing key
+				{
+					ofile <<"\t\treturn std::to_string(" << table.key->name;
+					internal::Symbol* actual = table.key;
+					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL))
+					{
+						ofile << "->" << actual->get;
+						actual = actual->classReferenced->key;
+					}
+					ofile <<");"<<std::endl;						
+				}
+				else
+				{
+					ofile <<"\t\treturn std::to_string(" << table.key->name;
+					internal::Symbol* actual = table.key;
+					do
+					{
+						ofile << "->" << actual->classReferenced->key->get;
+						actual = actual->classReferenced->key;						
+					}
+					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));
+					ofile <<");"<<std::endl;
+				}
+			}
+			else if((table.key->outType.compare("std::string") == 0))
+			{
+				ofile <<"\t\treturn " << table.key->name << ";" <<std::endl;
+			}
+			else
+			{
+				ofile <<"\t\treturn std::to_string(" << table.key->name <<");"<<std::endl;
+			}
+			ofile << "\t}" << std::endl;
+		}
+	}
+        
+	void CPPGenerator::writeDefaultContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
+	{
+		ofile <<"\t\t"<<table.name<<"();"<<std::endl;
+	}
+	void CPPGenerator::writeDefaultContructorCPP(const apidb::internal::Table& table,std::ofstream& ofile)
+    {
+		ofile <<"\t"<<table.name<< "::" <<table.name<<"()"<<std::endl;
+		ofile <<"\t{"<<std::endl;
+		ofile <<"\t}"<<std::endl;
+	}
+    void CPPGenerator::createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+    {		
+        for(const internal::Symbol* attr : table)
+        {
+			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
+			{
+				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
+				{
+					if(attr->classReferenced == NULL)//si es foreing key
+					{
+						ofile <<"\t"<< attr->outType << " ";						
+					}
+					else
+					{
+						ofile <<"\t"<< "const " << attr->classReferenced->name << "& ";
+					}
+				}
+				else
+				{
+					ofile <<"\t" << "const " << attr->outType <<"& ";
+				}				
+				ofile << table.name <<"::get" << attr->name << "()const"<< std::endl;
+				ofile << "\t{"<<std::endl;
+				
+				
+				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
+				{
+					if(attr->classReferenced == NULL)//si es foreing key
+					{
+						ofile <<"\t\treturn "<< attr->name<<";"<< std::endl;						
+					}
+					else
+					{
+						ofile <<"\t\treturn *"<< attr->name<<";"<< std::endl;
+					}						
+				}
+				else
+				{
+					ofile <<"\t\treturn " << attr->name <<";"<< std::endl;
+				}
+								
+				ofile << "\t}"<<std::endl;
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+			}  						
+        }
+        	        
 		
-		writeCopyContructorCPP(driver,table,ofile);
-		writeDefaultContructorCPP(driver,table,ofile);
+		writeKeyContructorCPP(table,ofile);
+		writeCopyContructorCPP(table,ofile);
+		writeDefaultContructorCPP(table,ofile);
 			
-		writeKeyValueCPP(driver,table,ofile);
+		writeInsertCPP(table,ofile);		
+		writeKeyValueCPP(table,ofile);
 		ofile << std::endl; 
     }
     
@@ -363,68 +433,14 @@ namespace apidb
         }  
         
         
-        // creando insert
-        ofile << "\t\t"<< "bool ";
-        ofile << "insert(toolkit::clientdb::Connector& connector";
-        for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
-        {
-			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
-			{
-				if(i != table.required.end())
-				{
-					ofile << ","; //se agrega la coma si hay un segundo parametro
-				}
-				
-				//
-				if(((*i)->outType.compare("char") == 0) | ((*i)->outType.compare("short") == 0) | ((*i)->outType.compare("int") == 0) | ((*i)->outType.compare("long") == 0) | ((*i)->outType.compare("float") == 0) | ((*i)->outType.compare("double") == 0))
-				{
-					if((*i)->classReferenced == NULL)//si es foreing key
-					{
-						ofile << (*i)->outType << " ";						
-					}
-					else
-					{
-						ofile << "const " << (*i)->classReferenced->name << "& ";
-					}
-				}
-				else
-				{
-					ofile << "const " << (*i)->outType <<"& ";
-				}
-				ofile << (*i)->name;
-			}
-		}
-        ofile << ");"<<std::endl;
         
-        //constructor que toma key como parametro
-        if(table.key != NULL)//tiene key
-        {
-			if(table.key->outType.compare("int") == 0)
-			{
-				ofile << "\t\t" <<table.name;
-				if(table.key->classReferenced == NULL)
-				{
-					ofile << "(int id);"<<std::endl;
-				}
-				else
-				{
-					ofile << "(const " << table.key->classReferenced->name<< "& obj);"<<std::endl;
-				}
-			}
-			else
-			{
-				throw BuildException("EL tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema");
-			}
-		}
-		else
-		{
-			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
-		}   
-		
-		writeCopyContructorH(driver,table,ofile);
-		writeDefaultContructorH(driver,table,ofile);
-		ofile << std::endl; 		
-		writeKeyValueH(driver,table,ofile);
+          
+		writeKeyContructorH(table,ofile);		
+		writeCopyContructorH(table,ofile);
+		writeDefaultContructorH(table,ofile);
+		ofile << std::endl; 	
+		writeInsertH(table,ofile);	
+		writeKeyValueH(table,ofile);
 		ofile << std::endl; 		
 		  
     }

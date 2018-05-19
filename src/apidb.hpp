@@ -50,12 +50,16 @@ namespace apidb
         void createClassAttributesCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
         void createClassPublicCPP(std::ofstream&);
         void createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
-        void writeDefaultContructorH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
-        void writeDefaultContructorCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
-        void writeKeyValueH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
-        void writeKeyValueCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
-        void writeCopyContructorH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
-        void writeCopyContructorCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void writeDefaultContructorH(const apidb::internal::Table&,std::ofstream&);
+        void writeDefaultContructorCPP(const apidb::internal::Table&,std::ofstream&);
+        void writeKeyValueH(const apidb::internal::Table&,std::ofstream&);
+        void writeKeyValueCPP(const apidb::internal::Table&,std::ofstream&);
+        void writeCopyContructorH(const apidb::internal::Table&,std::ofstream&);
+        void writeCopyContructorCPP(const apidb::internal::Table&,std::ofstream&);
+        void writeKeyContructorH(const apidb::internal::Table&,std::ofstream&);
+        void writeKeyContructorCPP(const apidb::internal::Table&,std::ofstream&);
+        void writeInsertH(const apidb::internal::Table&,std::ofstream&);
+        void writeInsertCPP(const apidb::internal::Table&,std::ofstream&);
 	};	
     
 	class CG: public apidb::Driver
