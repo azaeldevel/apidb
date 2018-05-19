@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     nmp::Persons* person1 = new nmp::Persons();
     std::string n1 = "n1-";
     n1 += std::to_string(random);
-    if(person1->insert(connector,n1))
+    if(person1->insert(connector))
     {
 		std::cout << "Inserted "<< n1 << std::endl;
 	}
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 		std::cerr << "Commit fail"<< std::endl;
 	}
 	
-    nmp::Persons* person2 = new nmp::Persons();
+    /*nmp::Persons* person2 = new nmp::Persons();
     if(person2->selectRandom(connector))
     {
 		std::cout << "Select Random "<< person2->toString() << std::endl;
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 	else
 	{
 		std::cerr << "Fail Slected random "<< n1 << std::endl;
-	}    
+	}*/    
 	
 	std::string db = ((toolkit::clientdb::DatconectionMySQL&)(connector.getDatconection())).getDatabase();
 	std::cout<<db<<std::endl;

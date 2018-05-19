@@ -26,6 +26,16 @@
 namespace apidb
 {
 	
+	void CPPGenerator::writeDefaultContructorH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+	{
+		ofile <<"\t\t"<<table.name<<"();"<<std::endl;
+	}
+	void CPPGenerator::writeDefaultContructorC(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+    {
+		ofile <<"\t"<<table.name<< "::" <<table.name<<"()"<<std::endl;
+		ofile <<"\t{"<<std::endl;
+		ofile <<"\t}"<<std::endl;
+	}
     void CPPGenerator::createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
     {		
         for(const internal::Symbol* attr : table)
@@ -153,26 +163,26 @@ namespace apidb
 		//asegurar que tiene key
 		if(table.key != NULL)
 		{
-			ofile << "\t\t"  << table.key->name;
+			ofile << "\t\tthis->"  << table.key->name;
 			if((table.key->outType.compare("int") == 0))
 			{
 				if(table.key->classReferenced == NULL)//si es foreing key
 				{
 					ofile << " = connector.insert(sqlString);"<< std::endl;		
-					ofile << "\t\tif(" << table.key->name << " > 0) return true;"<< std::endl;
+					ofile << "\t\tif(this->" << table.key->name << " > 0) return true;"<< std::endl;
 					ofile << "\t\telse return false;"<< std::endl;				
 				}
 				else
 				{
 					ofile << " = new " << table.key->classReferenced->name << "((int)connector.insert(sqlString));"<< std::endl;
-					ofile << "\t\tif(" << table.key->name << " != NULL) return true;"<< std::endl;
+					ofile << "\t\tif(this->" << table.key->name << " != NULL) return true;"<< std::endl;
 					ofile << "\t\telse return false;"<< std::endl;
 				}
 			}
 			else
 			{
 				ofile << " = " << table.key->classReferenced->name << "(connector.insert(sqlString));"<< std::endl;
-				ofile << "\t\tif(" << table.key->name << " != NULL) return true;"<< std::endl;
+				ofile << "\t\tif(this->" << table.key->name << " != NULL) return true;"<< std::endl;
 				ofile << "\t\telse return false;"<< std::endl;
 			}			
 		}
@@ -216,7 +226,7 @@ namespace apidb
 			}
 			else
 			{
-					ofile << "\t\tthis->" << table.key->name<< " = new " << table.key->classParent->name << "(obj);"<<std::endl;
+					ofile << "\t\tthis->" << table.key->name<< " = new " << table.key->classReferenced->name << "(obj);"<<std::endl;
 			}
 		}
 		else
@@ -234,6 +244,8 @@ namespace apidb
 			ofile << "\t\tthis->"<< attr->name << " = obj." << attr->name<<";"<<std::endl;
 		}
 		ofile << "\t}"<<std::endl;
+		
+		writeDefaultContructorC(driver,table,ofile);
 		
     }
     
@@ -417,6 +429,7 @@ namespace apidb
         file << "\t\tstatic const std::string TABLE_NAME;" <<std::endl;
         createClassAttributesH(driver,cl,file);
         createClassPublicH(file);
+        writeDefaultContructorH(driver,cl,file);
         createClassMethodesH(driver,cl,file);
         file <<"\t};"<<std::endl;
     }
