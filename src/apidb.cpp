@@ -1,4 +1,3 @@
-
 /**
  * 
  *  This file is part of apidb.
@@ -26,11 +25,81 @@
 namespace apidb
 {
 	
+	void CPPGenerator::writeCopyContructorH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+	{
+		//constructor de copias 
+		ofile << "\t\t" <<table.name<<"(const " << table.name <<"&);"<<std::endl;
+	}
+	void CPPGenerator::writeCopyContructorCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+	{
+		//constructor de copias 
+		ofile << "\t" << table.name << "::" << table.name <<"(const " << table.name <<"& obj)"<<std::endl;
+		ofile << "\t{"<<std::endl;
+		for(const internal::Symbol* attr : table)
+		{
+			ofile << "\t\tthis->"<< attr->name << " = obj." << attr->name<<";"<<std::endl;
+		}
+		ofile << "\t}"<<std::endl;
+				
+	}
+	void CPPGenerator::writeKeyValueH(apidb::Driver& driver,const apidb::internal::Table& table ,std::ofstream& ofile)
+	{
+        //si la table tiene key
+        if(table.key != NULL) 
+        {
+			ofile << "\t\tstd::string toStringKey()const;" <<std::endl;			
+		}
+	}
+	void CPPGenerator::writeKeyValueCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+	{
+        //si la table tiene key
+        if(table.key != NULL)
+        {
+			ofile << "\tstd::string " <<table.name << "::toStringKey()const" <<std::endl;	
+			ofile << "\t{" << std::endl;
+			if((table.key->outType.compare("int") == 0))
+			{
+				if(table.key->classReferenced == NULL)//si es foreing key
+				{
+					ofile <<"\t\treturn std::to_string(" << table.key->name;
+					internal::Symbol* actual = table.key;
+					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL))
+					{
+						ofile << "->" << actual->get;
+						actual = actual->classReferenced->key;
+					}
+					ofile <<");"<<std::endl;						
+				}
+				else
+				{
+					ofile <<"\t\treturn std::to_string(" << table.key->name;
+					internal::Symbol* actual = table.key;
+					do
+					{
+						ofile << "->" << actual->classReferenced->key->get;
+						actual = actual->classReferenced->key;						
+					}
+					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));
+					ofile <<");"<<std::endl;
+				}
+			}
+			else if((table.key->outType.compare("std::string") == 0))
+			{
+				ofile <<"\t\treturn " << table.key->name << ";" <<std::endl;
+			}
+			else
+			{
+				ofile <<"\t\treturn std::to_string(" << table.key->name <<");"<<std::endl;
+			}
+			ofile << "\t}" << std::endl;
+		}
+	}
+        
 	void CPPGenerator::writeDefaultContructorH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
 	{
 		ofile <<"\t\t"<<table.name<<"();"<<std::endl;
 	}
-	void CPPGenerator::writeDefaultContructorC(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPPGenerator::writeDefaultContructorCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
     {
 		ofile <<"\t"<<table.name<< "::" <<table.name<<"()"<<std::endl;
 		ofile <<"\t{"<<std::endl;
@@ -235,18 +304,11 @@ namespace apidb
 		}
 		ofile << "\t}" <<std::endl;
 		
-		
-		//constructor de copias 
-		ofile << "\t" << table.name << "::" << table.name <<"(const " << table.name <<"& obj)"<<std::endl;
-		ofile << "\t{"<<std::endl;
-		for(const internal::Symbol* attr : table)
-		{
-			ofile << "\t\tthis->"<< attr->name << " = obj." << attr->name<<";"<<std::endl;
-		}
-		ofile << "\t}"<<std::endl;
-		
-		writeDefaultContructorC(driver,table,ofile);
-		
+		writeCopyContructorCPP(driver,table,ofile);
+		writeDefaultContructorCPP(driver,table,ofile);
+			
+		writeKeyValueCPP(driver,table,ofile);
+		ofile << std::endl; 
     }
     
     void CPPGenerator::createSpaceCPP(apidb::Driver& driver,std::ofstream& file)
@@ -300,8 +362,6 @@ namespace apidb
 			
         }  
         
-        //si la table tiene key
-        if(table.key != NULL) ofile << "\t\tstd::string toStringKey()const;" <<std::endl;
         
         // creando insert
         ofile << "\t\t"<< "bool ";
@@ -361,12 +421,12 @@ namespace apidb
 			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
 		}   
 		
-		
-		//constructor de copias 
-		ofile << "\t\t" <<table.name<<"(const " << table.name <<"&);";
-		
+		writeCopyContructorH(driver,table,ofile);
+		writeDefaultContructorH(driver,table,ofile);
+		ofile << std::endl; 		
+		writeKeyValueH(driver,table,ofile);
+		ofile << std::endl; 		
 		  
-		ofile << std::endl; 
     }
     
     void CPPGenerator::createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
@@ -429,7 +489,6 @@ namespace apidb
         file << "\t\tstatic const std::string TABLE_NAME;" <<std::endl;
         createClassAttributesH(driver,cl,file);
         createClassPublicH(file);
-        writeDefaultContructorH(driver,cl,file);
         createClassMethodesH(driver,cl,file);
         file <<"\t};"<<std::endl;
     }

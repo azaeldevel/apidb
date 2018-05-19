@@ -51,7 +51,11 @@ namespace apidb
         void createClassPublicCPP(std::ofstream&);
         void createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
         void writeDefaultContructorH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
-        void writeDefaultContructorC(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void writeDefaultContructorCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void writeKeyValueH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void writeKeyValueCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void writeCopyContructorH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void writeCopyContructorCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
 	};	
     
 	class CG: public apidb::Driver
