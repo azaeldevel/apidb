@@ -75,9 +75,9 @@ namespace apidb
 			}  						
         }
         
-		// creando insert
+		// Methodo insert
         ofile << "\t"<< "bool ";
-        ofile <<table.name<< "::insert(Connector& connector";
+        ofile <<table.name<< "::insert(toolkit::clientdb::Connector& connector";
         for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
 			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
@@ -147,33 +147,32 @@ namespace apidb
 				{
 					ofile << "\t\tsqlString = sqlString + \"'\" + " << (*i)->name << " + \"'\";" << std::endl;
 				}
-			}
-			
-			//asegurar que tiene key
-			if(table.key != NULL)
+			}			
+		}
+		ofile << "\t\tsqlString = sqlString + \")\";"<< std::endl;
+		//asegurar que tiene key
+		if(table.key != NULL)
+		{
+			ofile << "\t\t"  << table.key->name;
+			if((table.key->outType.compare("int") == 0))
 			{
-				ofile << "\t\t"  << (*i)->name;
-				if((table.key->outType.compare("int") == 0))
+				if(table.key->classReferenced == NULL)//si es foreing key
 				{
-					if(table.key->classReferenced == NULL)//si es foreing key
-					{
-						ofile << " = connector.insert(tsqlString);";						
-					}
-					else
-					{
-						ofile << " = new " << table.key->classReferenced->name << "(connector.insert(tsqlString));";
-					}
+					ofile << " = connector.insert(sqlString);"<< std::endl;						
 				}
 				else
 				{
-					ofile << " = " << table.key->classReferenced->name << " connector.insert(tsqlString);";
+					ofile << " = new " << table.key->classReferenced->name << "((int)connector.insert(sqlString));"<< std::endl;
 				}
 			}
-			else //no tiene key
+			else
 			{
-				throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
+				ofile << " = " << table.key->classReferenced->name << " connector.insert(sqlString);"<< std::endl;
 			}
-			ofile << std::endl;
+		}
+		else //no tiene key
+		{
+			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
 		}
         ofile << "\t}"<<std::endl;
 		
@@ -186,7 +185,7 @@ namespace apidb
 				ofile << "\t" <<table.name << "::" << table.name;
 				if(table.key->classReferenced == NULL)
 				{
-					ofile << "(int id);"<<std::endl;
+					ofile << "(int id)"<<std::endl;
 				}
 				else
 				{
@@ -204,14 +203,14 @@ namespace apidb
 		}
 		ofile << "\t{" <<std::endl;
 		if(table.key->outType.compare("int") == 0)
-		{			
+		{
 			if(table.key->classReferenced == NULL)
 			{
-					ofile << "\t\tthis->" << table.key->name<< "=id" <<std::endl;
+					ofile << "\t\tthis->" << table.key->name << "=id;" <<std::endl;
 			}
 			else
 			{
-					ofile << "\t\tthis->" << table.key->name<< " = new " << table.key->classParent->name << "(obj." << table.key->name << ");"<<std::endl;
+					ofile << "\t\tthis->" << table.key->name<< " = new " << table.key->classParent->name << "(obj);"<<std::endl;
 			}
 		}
 		else
@@ -219,6 +218,17 @@ namespace apidb
 				throw BuildException("EL tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema");
 		}
 		ofile << "\t}" <<std::endl;
+		
+		
+		//constructor de copias 
+		ofile << "\t" << table.name << "::" << table.name <<"(const " << table.name <<"& obj)"<<std::endl;
+		ofile << "\t{"<<std::endl;
+		for(const internal::Symbol* attr : table)
+		{
+			ofile << "\t\tthis->"<< attr->name << " = obj." << attr->name<<";"<<std::endl;
+		}
+		ofile << "\t}"<<std::endl;
+		
     }
     
     void CPPGenerator::createSpaceCPP(apidb::Driver& driver,std::ofstream& file)
@@ -277,7 +287,7 @@ namespace apidb
         
         // creando insert
         ofile << "\t\t"<< "bool ";
-        ofile << "insert(Connector& connector";
+        ofile << "insert(toolkit::clientdb::Connector& connector";
         for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
 			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
@@ -331,7 +341,14 @@ namespace apidb
 		else
 		{
 			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
-		}       
+		}   
+		
+		
+		//constructor de copias 
+		ofile << "\t\t" <<table.name<<"(const " << table.name <<"&);";
+		
+		  
+		ofile << std::endl; 
     }
     
     void CPPGenerator::createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
