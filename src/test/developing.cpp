@@ -41,6 +41,14 @@ int main(int argc, char **argv)
 	else
 	{
 		std::cerr << "Fail "<< n1 << std::endl;
+	}	
+    if(person1->updaten1(connector,n1))
+    {
+		std::cout << "Ipdate sussces "<< n1 << std::endl;
+	}
+	else
+	{
+		std::cerr << "Update Fail "<< n1 << std::endl;
 	}
     
     if(connector.commit())

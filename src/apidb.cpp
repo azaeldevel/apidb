@@ -269,7 +269,6 @@ namespace apidb
 	}
 	void CPPGenerator::writeKeyValueCPP(const apidb::internal::Table& table,std::ofstream& ofile)
 	{
-        //si la table tiene key
         if(table.key != NULL)
         {
 			ofile << "\tstd::string " <<table.name << "::toStringKey()const" <<std::endl;	
@@ -279,12 +278,6 @@ namespace apidb
 				if(table.key->classReferenced == NULL)//si es foreing key
 				{
 					ofile <<"\t\treturn std::to_string(" << table.key->name;
-					internal::Symbol* actual = table.key;
-					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL))
-					{
-						ofile << "->" << actual->get;
-						actual = actual->classReferenced->key;
-					}
 					ofile <<");"<<std::endl;						
 				}
 				else
@@ -326,51 +319,126 @@ namespace apidb
     {		
         for(const internal::Symbol* attr : table)
         {
-			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
+			//gets
+			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 			{
-				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
+				if(attr->classReferenced == NULL)//si es foreing key
 				{
-					if(attr->classReferenced == NULL)//si es foreing key
-					{
-						ofile <<"\t"<< attr->outType << " ";						
-					}
-					else
-					{
-						ofile <<"\t"<< "const " << attr->classReferenced->name << "& ";
-					}
+					ofile <<"\t"<< attr->outType << " ";						
 				}
 				else
 				{
-					ofile <<"\t" << "const " << attr->outType <<"& ";
-				}				
-				ofile << table.name <<"::get" << attr->name << "()const"<< std::endl;
-				ofile << "\t{"<<std::endl;
-				
-				
-				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
-				{
-					if(attr->classReferenced == NULL)//si es foreing key
-					{
-						ofile <<"\t\treturn "<< attr->name<<";"<< std::endl;						
-					}
-					else
-					{
-						ofile <<"\t\treturn *"<< attr->name<<";"<< std::endl;
-					}						
+					ofile <<"\t"<< "const " << attr->classReferenced->name << "& ";
 				}
-				else
-				{
-					ofile <<"\t\treturn " << attr->name <<";"<< std::endl;
-				}
-								
-				ofile << "\t}"<<std::endl;
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-			}  						
+				ofile <<"\t" << "const " << attr->outType <<"& ";
+			}				
+			ofile << table.name <<"::get" << attr->name << "()const"<< std::endl;
+			ofile << "\t{"<<std::endl;	
+			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
+			{
+				if(attr->classReferenced == NULL)//si es foreing key
+				{
+					ofile <<"\t\treturn "<< attr->name<<";"<< std::endl;						
+				}
+				else
+				{
+					ofile <<"\t\treturn *"<< attr->name <<";"<< std::endl;
+				}						
+			}
+			else
+			{
+				ofile <<"\t\treturn " << attr->name <<";"<< std::endl;
+			}								
+			ofile << "\t}"<<std::endl;
+			
+			if(attr->keyType == internal::Symbol::KeyType::PRIMARY)
+			{
+				continue;
+			}
+			//updates
+			ofile << "\tbool " << table.name <<"::update" << attr->name << "(toolkit::clientdb::Connector& connector,";
+			if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
+			{
+				if(attr->classReferenced == NULL)//si es foreing key
+				{
+					ofile << attr->outType << " " << attr->name;						
+				}
+				else
+				{
+					ofile <<"const "<< attr->classReferenced->name <<"& " << attr->name;
+				}						
+			}
+			else
+			{
+				ofile << attr->outType << " " << attr->name;
+			}
+			ofile <<")"<< std::endl;
+			ofile << "\t{"<<std::endl;
+			ofile <<"\t\tstd::string sqlString = \"\";"<<std::endl;
+			ofile <<"\t\tsqlString = \"UPDATE \" + TABLE_NAME;"<<std::endl;
+			ofile <<"\t\tsqlString = sqlString + \" SET " << attr->name << " = \" + " ;
+			if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
+			{
+				if(attr->classReferenced == NULL)//si es foreing key
+				{
+					ofile << "\"'\" + std::to_string(" << attr->name <<") + \"'\";";						
+				}
+				else
+				{
+					ofile << "\"'\" + std::to_string(" << table.key->name;					
+					/*internal::Symbol* actual = table.key;
+					do
+					{
+						ofile << "->" << actual->classReferenced->key->get;
+						actual = actual->classReferenced->key;						
+					}
+					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));		*/			
+					ofile <<") + \"'\";"<<std::endl;						
+				}
+			}
+			else if((attr->outType.compare("std::string") == 0))
+			{
+				ofile << " \"'\" + std::to_string(" << attr->name <<") + \"'\";";
+			}
+			else
+			{
+				ofile <<" std::to_string(" << attr->name <<");";	
+			}
+			ofile <<"\t\tsqlString = sqlString + \" WHERE \";"<<std::endl;
+			if(table.key != NULL)//key rectriction
+			{
+				ofile << " + " << table.key->name << " = ";
+				if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
+				{
+					if(attr->classReferenced == NULL)//si es foreing key
+					{
+						ofile <<"\t\t + std::to_string(" << attr->name <<");";						
+					}
+					else
+					{
+						ofile <<"\t\t + std::to_string(" << table.key->name;
+						/*internal::Symbol* actual = table.key;
+						do
+						{
+							ofile << "->" << actual->classReferenced->key->get;
+							actual = actual->classReferenced->key;						
+						}
+						while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));*/
+						ofile <<");"<<std::endl;						
+					}					
+				}
+				else
+				{
+					ofile <<"\t\t + std::to_string(" << attr->name <<");";	
+				}
+			}
+			
+			ofile <<"\t\treturn connector.query(sqlString);"<<std::endl;
+			ofile << "\t}"<<std::endl;						
         }
-        	        
 		
 		writeKeyContructorCPP(table,ofile);
 		writeCopyContructorCPP(table,ofile);
@@ -404,32 +472,43 @@ namespace apidb
 		std::string insertMethode = "";
         for(internal::Symbol* attr : table)
         {
-			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
+			//get
+			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 			{
-				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
+				if(attr->classReferenced == NULL)//si es foreing key
 				{
-					if(attr->classReferenced == NULL)//si es foreing key
-					{
-						ofile <<"\t\t"<< attr->outType << " ";						
-					}
-					else
-					{
-						ofile <<"\t\t"<< "const " << attr->classReferenced->name << "& ";
-					}
+					ofile <<"\t\t"<< attr->outType << " ";						
 				}
 				else
 				{
-					ofile <<"\t\t" << "const " << attr->outType <<"& ";
+					ofile <<"\t\t"<< "const " << attr->classReferenced->name << "& ";
 				}
-				
-				ofile << "get" << attr->name << "() const;";
-				ofile << std::endl;
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-			}			
+				ofile <<"\t\t" << "const " << attr->outType <<"& ";
+			}				
+			ofile << "get" << attr->name << "() const;"<< std::endl;
 			
+			//update
+			ofile << "\t\tbool " << "update" << attr->name << "(toolkit::clientdb::Connector& connector,";
+			if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
+			{
+				if(attr->classReferenced == NULL)//si es foreing key
+				{
+					ofile << attr->outType << " " << attr->name;						
+				}
+				else
+				{
+					ofile <<"const "<< attr->classReferenced->name <<"& ";
+				}						
+			}
+			else
+			{
+				ofile << attr->outType << " " << attr->name;
+			}
+			ofile << ")"<< std::endl;
+					
         }  
         
         
