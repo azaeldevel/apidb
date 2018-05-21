@@ -354,10 +354,11 @@ namespace apidb
 			}								
 			ofile << "\t}"<<std::endl;
 			
-			if(attr->keyType == internal::Symbol::KeyType::PRIMARY)
+			
+			if(attr->keyType == internal::Symbol::KeyType::PRIMARY || attr->keyType == internal::Symbol::KeyType::FOREIGN_UNIQUE)
 			{
 				continue;
-			}
+			}			
 			//updates
 			ofile << "\tbool " << table.name <<"::update" << attr->name << "(toolkit::clientdb::Connector& connector,";
 			if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
@@ -388,52 +389,48 @@ namespace apidb
 				}
 				else
 				{
-					ofile << "\"'\" + std::to_string(" << table.key->name;					
-					/*internal::Symbol* actual = table.key;
+					ofile << "\"'\" + std::to_string(" << attr->name ;	
+					const internal::Symbol* actual = attr;
 					do
 					{
-						ofile << "->" << actual->classReferenced->key->get;
+						ofile << "." << actual->classReferenced->key->get;
 						actual = actual->classReferenced->key;						
 					}
-					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));		*/			
+					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));				
 					ofile <<") + \"'\";"<<std::endl;						
 				}
 			}
 			else if((attr->outType.compare("std::string") == 0))
 			{
-				ofile << " \"'\" + std::to_string(" << attr->name <<") + \"'\";";
+				ofile << " \"'\" + " << attr->name <<" + \"'\";"<<std::endl;	
 			}
 			else
 			{
-				ofile <<" std::to_string(" << attr->name <<");";	
+				ofile <<" + std::to_string(" << attr->name <<");"<<std::endl;		
 			}
-			ofile <<"\t\tsqlString = sqlString + \" WHERE \";"<<std::endl;
-			if(table.key != NULL)//key rectriction
+			ofile <<"\t\tsqlString = sqlString + \" WHERE " << table.key->name << "  = \" ";			
+			if((table.key->outType.compare("int") == 0) | (table.key->outType.compare("long") == 0))
 			{
-				ofile << " + " << table.key->name << " = ";
-				if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
+				if(table.key->classReferenced == NULL)//si es foreing key
 				{
-					if(attr->classReferenced == NULL)//si es foreing key
-					{
-						ofile <<"\t\t + std::to_string(" << attr->name <<");";						
-					}
-					else
-					{
-						ofile <<"\t\t + std::to_string(" << table.key->name;
-						/*internal::Symbol* actual = table.key;
-						do
-						{
-							ofile << "->" << actual->classReferenced->key->get;
-							actual = actual->classReferenced->key;						
-						}
-						while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));*/
-						ofile <<");"<<std::endl;						
-					}					
+					ofile << " + std::to_string(" << table.key->get <<");"<<std::endl; ;	
 				}
 				else
 				{
-					ofile <<"\t\t + std::to_string(" << attr->name <<");";	
+					ofile << " + std::to_string(" << table.key->name ;	
+					const internal::Symbol* actual = table.key;
+					do
+					{
+						ofile << "->" << actual->classReferenced->key->get;
+						actual = actual->classReferenced->key;						
+					}
+					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));				
+					ofile <<");"<<std::endl;		
 				}
+			}
+			else
+			{
+				
 			}
 			
 			ofile <<"\t\treturn connector.query(sqlString);"<<std::endl;
@@ -490,6 +487,11 @@ namespace apidb
 			}				
 			ofile << "get" << attr->name << "() const;"<< std::endl;
 			
+			
+			if(attr->keyType == internal::Symbol::KeyType::PRIMARY)
+			{
+				continue;
+			}			
 			//update
 			ofile << "\t\tbool " << "update" << attr->name << "(toolkit::clientdb::Connector& connector,";
 			if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
@@ -507,8 +509,7 @@ namespace apidb
 			{
 				ofile << attr->outType << " " << attr->name;
 			}
-			ofile << ")"<< std::endl;
-					
+			ofile << ");"<< std::endl;					
         }  
         
         

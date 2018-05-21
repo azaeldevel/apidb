@@ -44,8 +44,12 @@ namespace apidb
 				for(Symbol* attribute: *this) 
 				{
 					if(attribute->name.compare(row[0]) == 0)
-					{
-						attribute->classReferenced = tables.search(row[1]);//returna null o un puntero valido.				
+					{						
+						attribute->classReferenced = tables.search(row[1]);//returna null o un puntero valido.		
+						if(attribute->keyType == internal::Symbol::KeyType::UNIQUE && attribute->classReferenced != NULL)		
+						{
+							attribute->keyType = internal::Symbol::KeyType::FOREIGN_UNIQUE;//usada como llave
+						}
 					}
 				}
 			}			
@@ -96,7 +100,7 @@ namespace apidb
 				}
 				else if(attrribute->required && (keyType.compare("PRI") == 0))//unique constraing
 				{
-					attrribute->keyType = internal::Symbol::KeyType::UNIQUE;
+					attrribute->keyType = internal::Symbol::KeyType::PRIMARY;
 					key = attrribute;
 					setkey = true;
 				}

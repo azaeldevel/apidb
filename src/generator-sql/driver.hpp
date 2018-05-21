@@ -62,6 +62,7 @@ namespace apidb
 			{
 				PRIMARY,
 				UNIQUE,
+				FOREIGN_UNIQUE,
 				NOKEY
 			};
 					
