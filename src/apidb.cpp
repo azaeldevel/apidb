@@ -424,7 +424,7 @@ namespace apidb
 						ofile << "->" << actual->classReferenced->key->get;
 						actual = actual->classReferenced->key;						
 					}
-					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));				
+					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));	
 					ofile <<");"<<std::endl;		
 				}
 			}

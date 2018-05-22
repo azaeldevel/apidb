@@ -44,13 +44,23 @@ int main(int argc, char **argv)
 	}	
     if(person1->updaten1(connector,n1))
     {
-		std::cout << "Ipdate sussces "<< n1 << std::endl;
+		std::cout << "Update sussces "<< n1 << std::endl;
 	}
 	else
 	{
 		std::cerr << "Update Fail "<< n1 << std::endl;
 	}
-    
+	std::string am = "am-";
+	am += std::to_string(random);
+    if(person1->updateam(connector,am))
+    {
+		std::cout << "Update sussces "<< am << std::endl;
+	}
+	else
+	{
+		std::cerr << "Update Fail "<< am << std::endl;
+	}
+	
     if(connector.commit())
     {
 		std::cout << "Commit done " << std::endl;

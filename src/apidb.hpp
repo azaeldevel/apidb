@@ -26,7 +26,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "generator-sql/driver.hpp"
+#include "driver.hpp"
 
 namespace apidb
 {
