@@ -655,6 +655,7 @@ namespace apidb
 		getOutputMessage() << "Analisis de codigo..." << std::endl;
 		getOutputMessage() << "\tLenguaje de entrada: " << getInputLenguajeString() << std::endl;
 		//rows = new apidb::internal::Tables();
+		
 		if(symbolsTables.listing(*connector)) //reading tables
         {
             for(internal::Table* table: symbolsTables) //reading attrubtes by table

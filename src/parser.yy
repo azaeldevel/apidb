@@ -3,14 +3,14 @@
 %debug 
 %defines 
 %define api.namespace {apidb}
-%define parser_class_name {Parser}
+%define parser_class_name {MySQLParser}
 
 %code requires
 {
 	namespace apidb 
 	{
       class Driver;
-      class Scanner;
+      class MySQLScanner;
 	}
 
 // The following definitions is missing when %locations isn't used
@@ -24,7 +24,7 @@
 
 }
 
-%parse-param { Scanner  &scanner  }
+%parse-param { MySQLScanner  &scanner  }
 %parse-param { Driver  &driver  }
 
 %code{
@@ -171,7 +171,7 @@ declare_end : END | NEWLINE;
 
 
 void 
-apidb::Parser::error( const location_type &l, const std::string &err_message )
+apidb::MySQLParser::error( const location_type &l, const std::string &err_message )
 {
 	driver.oneLine =  "";
 	std::cerr << "Error: " << err_message << " at " << l << "\n";

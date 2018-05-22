@@ -27,7 +27,7 @@ BISON_TARGET(parser parser.yy ${PROJECT_SOURCE_DIR}/parser.tab.cc)
 FLEX_TARGET(lexer lexer.l ${PROJECT_SOURCE_DIR}/lexer.yy.cc)
 ADD_FLEX_BISON_DEPENDENCY(lexer parser)
 
-SET(SOURCES_BUILDING apidb.cpp apidb-mysql.cpp driver.cpp mysql.cpp ${FLEX_lexer_OUTPUTS} ${BISON_parser_OUTPUTS})
+SET(SOURCES_BUILDING scanner.cpp apidb.cpp apidb-mysql.cpp driver.cpp ${FLEX_lexer_OUTPUTS} ${BISON_parser_OUTPUTS})
 
 ADD_EXECUTABLE(generator generator.cpp ${SOURCES_BUILDING})
 TARGET_LINK_LIBRARIES(generator ${TOOLKIT_COMMON_LIBRARY} ${TOOLKIT_CLIENTDB_LIBRARY} ${MYSQL_LIBRARY})

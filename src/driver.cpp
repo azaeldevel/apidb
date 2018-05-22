@@ -221,7 +221,7 @@ namespace apidb
 	   delete(scanner);
 	   try
 	   {
-		  scanner = new apidb::Scanner( &stream );
+		  scanner = new apidb::MySQLScanner( &stream );
 	   }
 	   catch( std::bad_alloc &ba )
 	   {
@@ -232,7 +232,7 @@ namespace apidb
 	   delete(parser); 
 	   try
 	   {
-		  parser = new apidb::Parser(*scanner,*this);
+		  parser = new apidb::MySQLParser(*scanner,*this);
 	   }
 	   catch( std::bad_alloc &ba )
 	   {

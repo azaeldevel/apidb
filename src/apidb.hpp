@@ -33,6 +33,11 @@ namespace apidb
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
 	
+	class MySQLAnalyzer: public Analizer
+	{
+	
+	};
+	
 	class CPPGenerator: public Generator
 	{
     public:

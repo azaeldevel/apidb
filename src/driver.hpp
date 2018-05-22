@@ -185,8 +185,8 @@ namespace apidb
 		internal::Tables symbolsTables;
 	private:
 		void parse_helper( std::istream &stream );
-		apidb::Parser  *parser  = nullptr;
-		apidb::Scanner *scanner = nullptr;
+		apidb::MySQLParser  *parser  = nullptr;
+		apidb::MySQLScanner *scanner = nullptr;
 		//flags
 		//std::string outputLenguaje;
 		//std::string inputLenguaje;
