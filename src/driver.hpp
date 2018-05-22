@@ -27,9 +27,10 @@
 #include <list>
 #include <iostream>
 
-
 #include "scanner.hpp"
 #include "parser.tab.hh"
+#include "analyzer.hpp"
+#include "generator.hpp"
 
 
 namespace apidb
@@ -111,44 +112,18 @@ namespace apidb
 		};
 	}
 	
-	class Analizer
-	{
-	public:
-		virtual bool analyze(internal::Tables*) = 0;
-	};
 	
-	class Generator
-	{
-	public:
-		virtual bool generate(apidb::Driver& driver) = 0;
-	};
        
 	class Driver
 	{
-	public:
-		enum InputLenguajes
-		{
-			MySQL_Server,
-			MySQL_Script,
-			PostgresSQL
-		};
-		enum OutputLenguajes
-		{
-			C,
-			CPP,
-			Java,
-			CSHARP,
-			Perl,
-			Python
-		};
 	public:
 		virtual bool generate();
 		virtual bool analyze();
 				
 		std::string getOutputLenguajeString()const;		
 		std::string getInputLenguajeString()const;
-		OutputLenguajes getOutputLenguaje()const;		
-		InputLenguajes getInputLenguaje()const;
+		Generator::OutputLenguajes getOutputLenguaje()const;		
+		Analyzer::InputLenguajes getInputLenguaje()const;
 		
 		std::ostream& getOutputMessage();
 		std::ostream& getErrorMessage();
@@ -162,8 +137,8 @@ namespace apidb
 		const internal::Tables& getListTable() const;
         
         Driver();
-        Driver(InputLenguajes, OutputLenguajes);
-
+        Driver(Analyzer::InputLenguajes, Generator::OutputLenguajes);
+		//Driver(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje);
         virtual ~Driver();
         std::string parse(const std::string& line);
 	   /** 
@@ -188,11 +163,12 @@ namespace apidb
 		void parse_helper( std::istream &stream );
 		apidb::MySQLParser  *parser  = nullptr;
 		apidb::MySQLScanner *scanner = nullptr;
+		toolkit::clientdb::Connector* connector;
 		//flags
 		//std::string outputLenguaje;
 		//std::string inputLenguaje;
-		InputLenguajes inputLenguaje;
-		OutputLenguajes outputLenguaje;
+		Analyzer::InputLenguajes inputLenguaje;
+		Generator::OutputLenguajes outputLenguaje;
 		std::ostream* outputMessages;//out stream
 		std::ostream* errorMessages;//out stream
 		std::ofstream* writeResults;//erreglo de writeoutput files

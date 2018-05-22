@@ -23,40 +23,11 @@
 #include <list>
 
 int main()
-{	
+{
 	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","root","k3yL0c41");  
-	apidb::CG driver("nmp","test",mysqlConnector,apidb::Driver::InputLenguajes::MySQL_Server,apidb::Driver::OutputLenguajes::CPP);
+	apidb::CG driver("nmp","test",mysqlConnector,apidb::Analyzer::InputLenguajes::MySQL_Server,apidb::Generator::OutputLenguajes::CPP);
 	if(driver.analyze())
 	{
-		/*if(driver.getListTable()->size() == 0)
-		{            
-			//std::cout<< "no hay elemtos" <<std::endl;
-		}
-		else if(driver.getListTable()->size() == 1)
-		{
-			//std::cout<< "\nHay " <<driver.getListTable()->size() <<" elemento."<<std::endl;
-            for (apidb::internal::Table* n : *(driver.getListTable())) 
-            {
-                //std::cout<<"" << n->name <<std::endl;
-                for(apidb::internal::Symbol* m : n->attributes)
-                {
-                    //std::cout<<"  " << m->name<<std::endl;
-                }
-            }
-		}	
-		else if(driver.getListTable()->size() > 1)
-		{
-			//std::cout<< "\nHay " <<driver.getListTable()->size() <<" elementos"<<std::endl;
-            for (apidb::internal::Table* n : *(driver.getListTable())) 
-            {
-                //std::cout<<" "<< n->name <<std::endl;
-                for(apidb::internal::Symbol* m : n->attributes)
-                {
-                    //std::cout<<"  "<< m->name<<std::endl;
-                }
-            }
-		}*/	
-			
 		if(!driver.generate()) return -1;
 	}
 	else

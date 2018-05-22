@@ -7,7 +7,7 @@
 
 namespace apidb
 {	
-	Driver::Driver(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
+	Driver::Driver(Analyzer::InputLenguajes inputLenguaje, Generator::OutputLenguajes outputLenguaje)
 	{
 		this->inputLenguaje = inputLenguaje;
 		this->outputLenguaje = outputLenguaje;
@@ -81,7 +81,7 @@ namespace apidb
 	{
 		switch(getOutputLenguaje())
 		{
-			case OutputLenguajes::CPP:
+			case Generator::OutputLenguajes::CPP:
 				return "C++";
 			default:
 				return "Unknow";
@@ -91,7 +91,7 @@ namespace apidb
 	{
 		switch(getInputLenguaje())
 		{
-			case InputLenguajes::MySQL_Server:
+			case Analyzer::InputLenguajes::MySQL_Server:
 				return "Servidor MySQL";
 			default:
 				return "Unknow";
@@ -106,17 +106,17 @@ namespace apidb
 	{
 		return false;
 	}
-	Driver::InputLenguajes Driver::getInputLenguaje()const
+	Analyzer::InputLenguajes Driver::getInputLenguaje()const
 	{
 		return inputLenguaje;
 	}
-	Driver::OutputLenguajes Driver::getOutputLenguaje()const
+	Generator::OutputLenguajes Driver::getOutputLenguaje()const
 	{
 		return outputLenguaje;
 	}
 	const std::string& Driver::getHeaderName() const
 	{
-		if(outputLenguaje == OutputLenguajes::CPP)
+		if(outputLenguaje == Generator::OutputLenguajes::CPP)
 		{
 			return projectH;
 		}
@@ -141,7 +141,7 @@ namespace apidb
 	{
 		nameProject = name;
 		directoryProject = directory;
-		if(outputLenguaje == OutputLenguajes::CPP)
+		if(outputLenguaje == Generator::OutputLenguajes::CPP)
 		{//se requiere un archivo para las cabezaras y otro para el codigo
 		   writeResults = new std::ofstream[2];
 		   if((directory.empty()) | (directory.compare(".") == 0)) 
@@ -166,13 +166,41 @@ namespace apidb
 	}
 	bool Driver::analyze()
 	{
-		return false;
+		getOutputMessage() << "Analisis de codigo..." << std::endl;
+		getOutputMessage() << "\tLenguaje de entrada: " << getInputLenguajeString() << std::endl;
+		//rows = new apidb::internal::Tables();
+		
+		if(symbolsTables.listing(*connector)) //reading tables
+        {
+            for(internal::Table* table: symbolsTables) //reading attrubtes by table
+            {
+				getOutputMessage() << "\tCreating simbols for " << table->name  << "." << std::endl;
+                if(!table->basicSymbols(*connector))
+                {
+					//std::cerr<<"Faill on basicSymbols"<<std::endl;
+					return false;
+				}
+				if(!table->fillKeyType(*connector,symbolsTables))
+                {
+					//std::cerr<<"Faill on fillKeyType"<<std::endl;
+					return false;
+				}
+				
+				//parsing imput types
+				for(internal::Symbol* attribute: *table)
+				{
+					attribute->outType = parse(attribute->inType);
+				}
+            }            
+        }  
+        		        
+		return true;
 	}
 	Driver::Driver()
 	{
 	   //deafults
-	   outputLenguaje = OutputLenguajes::CPP;
-	   inputLenguaje = InputLenguajes::MySQL_Server;
+	   outputLenguaje = Generator::OutputLenguajes::CPP;
+	   inputLenguaje = Analyzer::InputLenguajes::MySQL_Server;
 	   outputMessages = &std::cout;	  
 	   errorMessages = &std::cerr; 
 	}
@@ -192,7 +220,7 @@ namespace apidb
 		scanner = nullptr;
 		delete(parser);
 		parser = nullptr;
-		if(outputLenguaje == OutputLenguajes::CPP)
+		if(outputLenguaje == Generator::OutputLenguajes::CPP)
 		{
 		   //delete &writeResults[0];
 		   //delete &writeResults[1];

@@ -20,7 +20,6 @@
 #ifndef APIDB_HPP
 #define APIDB_HPP
 
-#include <clientdb.hpp>
 #include <list>
 #include <vector>
 #include <iostream>
@@ -33,10 +32,6 @@ namespace apidb
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
 	
-	class MySQLAnalyzer: public Analizer
-	{
-	
-	};
 	
 	class CPPGenerator: public Generator
 	{
@@ -67,12 +62,13 @@ namespace apidb
         void writeInsertCPP(const apidb::internal::Table&,std::ofstream&);
 	};	
     
+    
 	class CG: public apidb::Driver
 	{
 	public:
 		virtual bool analyze();
 		virtual bool generate();
-		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje);
+		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,Analyzer::InputLenguajes inputLenguaje, Generator::OutputLenguajes outputLenguaje);
 	private:
 		toolkit::clientdb::Connector* connector;
 	};

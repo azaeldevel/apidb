@@ -529,7 +529,7 @@ namespace apidb
     {
         for(internal::Symbol* attr : table)
         {
-			if(driver.getOutputLenguaje() == Driver::OutputLenguajes::CPP)
+			if(driver.getOutputLenguaje() == Generator::OutputLenguajes::CPP)
 			{
 				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 				{
@@ -683,7 +683,7 @@ namespace apidb
 		return true;
 	}
 		
-	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje):Driver(inputLenguaje,outputLenguaje)
+	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,Analyzer::InputLenguajes inputLenguaje, Generator::OutputLenguajes outputLenguaje):Driver(inputLenguaje,outputLenguaje)
 	{		
 		connector = new toolkit::clientdb::Connector();
 		try
