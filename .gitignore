@@ -17,3 +17,17 @@
 /src/test/nmp.hpp
 /src/CMakeFiles/*
 /src/generator-sql/cmake_install.cmake
+/src/generator
+/src/lexer.yy.cc
+/src/libapidb.a
+/src/location.hh
+/src/parser.tab.hh
+/src/parser.tab.cc
+/src/position.hh
+/src/stack.hh
+/src/test/CMakeCache.txt
+/src/test/Makefile
+/src/test/cmake_install.cmake
+/src/test/developing
+/src/test/test0.pl
+/src/test/CMakeFiles/*
