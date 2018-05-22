@@ -7,6 +7,13 @@
 
 namespace apidb
 {	
+	Driver::Driver(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
+	{
+		this->inputLenguaje = inputLenguaje;
+		this->outputLenguaje = outputLenguaje;
+		outputMessages = &std::cout;	  
+		errorMessages = &std::cerr; 
+	}
 	BuildException::~BuildException() throw()
 	{
 		

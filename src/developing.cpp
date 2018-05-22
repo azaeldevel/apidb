@@ -25,7 +25,7 @@
 int main()
 {	
 	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","root","k3yL0c41");  
-	apidb::CG driver("nmp","test",mysqlConnector);
+	apidb::CG driver("nmp","test",mysqlConnector,apidb::Driver::InputLenguajes::MySQL_Server,apidb::Driver::OutputLenguajes::CPP);
 	if(driver.analyze())
 	{
 		/*if(driver.getListTable()->size() == 0)

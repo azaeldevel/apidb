@@ -683,7 +683,7 @@ namespace apidb
 		return true;
 	}
 		
-	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection)
+	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje):Driver(inputLenguaje,outputLenguaje)
 	{		
 		connector = new toolkit::clientdb::Connector();
 		try

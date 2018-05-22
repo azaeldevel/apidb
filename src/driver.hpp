@@ -162,6 +162,7 @@ namespace apidb
 		const internal::Tables& getListTable() const;
         
         Driver();
+        Driver(InputLenguajes, OutputLenguajes);
 
         virtual ~Driver();
         std::string parse(const std::string& line);

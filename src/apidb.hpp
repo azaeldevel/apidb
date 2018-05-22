@@ -72,7 +72,7 @@ namespace apidb
 	public:
 		virtual bool analyze();
 		virtual bool generate();
-		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection);
+		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje);
 	private:
 		toolkit::clientdb::Connector* connector;
 	};
