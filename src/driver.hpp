@@ -111,13 +111,12 @@ namespace apidb
 			bool listing(toolkit::clientdb::Connector& connect);
 		};
 	}
-	
-	
+		
        
 	class Driver
 	{
 	public:
-		virtual bool generate();
+		virtual bool generate(Generator&);
 		virtual bool analyze();
 				
 		std::string getOutputLenguajeString()const;		
@@ -137,11 +136,14 @@ namespace apidb
 		const internal::Tables& getListTable() const;
         
         Driver();
-        Driver(Analyzer::InputLenguajes, Generator::OutputLenguajes);
-		//Driver(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje);
+        Driver(Analyzer::InputLenguajes, Generator::OutputLenguajes);		
         virtual ~Driver();
-        std::string parse(const std::string& line);
-	   /** 
+        
+        /**
+         * Parse desde una std::string
+         **/
+		std::string parse(const std::string& line);
+		/** 
 		* parse - parse from a file
 		* @param filename - valid string with input file
 		*/
@@ -152,23 +154,18 @@ namespace apidb
 		*/
 		void parse( std::istream &iss );
 		
-		void message(const std::string&);
-		
+		void message(const std::string&);		
 		std::ostream& print(std::ostream &stream);
 		
-		std::string oneLine;//to get the retur from parser
+		//Don't use, is temporal: usada por parse para retorna sui resultado
+		std::string oneLine;
     protected:
 		internal::Tables symbolsTables;
 	private:
 		void parse_helper( std::istream &stream );
-		apidb::parser::MySQL  *parser  = nullptr;
-		apidb::scanner::MySQL *scanner = nullptr;
+		apidb::mysql::Parser  *parser  = nullptr;
+		apidb::mysql::Scanner *scanner = nullptr;
 		toolkit::clientdb::Connector* connector;
-		//flags
-		//std::string outputLenguaje;
-		//std::string inputLenguaje;
-		Analyzer::InputLenguajes inputLenguaje;
-		Generator::OutputLenguajes outputLenguaje;
 		std::ostream* outputMessages;//out stream
 		std::ostream* errorMessages;//out stream
 		std::ofstream* writeResults;//erreglo de writeoutput files
@@ -176,7 +173,9 @@ namespace apidb
 		std::string projectH;
 		std::string projectCPP;
 		std::string directoryProject;
-	   
+		//flags
+		Analyzer::InputLenguajes inputLenguaje;
+		Generator::OutputLenguajes outputLenguaje;   
 	};
 
 }

@@ -2,17 +2,17 @@
 %require  "3.0"
 %debug 
 %defines 
-%define api.namespace {apidb::parser}
-%define parser_class_name {MySQL}
+%define api.namespace {apidb::mysql}
+%define parser_class_name {Parser}
 
 %code requires
 {
 	namespace apidb 
 	{
       class Driver;
-      namespace scanner
+      namespace mysql
       {
-		class MySQL;
+			class Scanner;
       }
 	}
 
@@ -27,7 +27,7 @@
 
 }
 
-%parse-param { scanner::MySQL  &scanner  }
+%parse-param { mysql::Scanner  &scanner  }
 %parse-param { Driver  &driver  }
 
 %code{
@@ -174,7 +174,7 @@ declare_end : END | NEWLINE;
 
 
 void 
-apidb::parser::MySQL::error( const location_type &l, const std::string &err_message )
+apidb::mysql::Parser::error( const location_type &l, const std::string &err_message )
 {
 	driver.oneLine =  "";
 	std::cerr << "Error: " << err_message << " at " << l << "\n";

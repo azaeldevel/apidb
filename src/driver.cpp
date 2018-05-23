@@ -102,9 +102,9 @@ namespace apidb
 	{
 		return *outputMessages;
 	}
-	bool Driver::generate()
+	bool Driver::generate(Generator& generator)
 	{
-		return false;
+		return generator.generate(*this);
 	}
 	Analyzer::InputLenguajes Driver::getInputLenguaje()const
 	{
@@ -255,7 +255,7 @@ namespace apidb
 	   delete(scanner);
 	   try
 	   {
-		  scanner = new apidb::scanner::MySQL( &stream );
+		  scanner = new apidb::mysql::Scanner( &stream );
 	   }
 	   catch( std::bad_alloc &ba )
 	   {
@@ -266,7 +266,7 @@ namespace apidb
 	   delete(parser); 
 	   try
 	   {
-		  parser = new apidb::parser::MySQL(*scanner,*this);
+		  parser = new apidb::mysql::Parser(*scanner,*this);
 	   }
 	   catch( std::bad_alloc &ba )
 	   {

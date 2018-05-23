@@ -62,7 +62,9 @@ namespace apidb
         void writeInsertCPP(const apidb::internal::Table&,std::ofstream&);
 	};	
     
-    
+    /**
+     * Clientes Generato
+     **/
 	class CG: public apidb::Driver
 	{
 	public:

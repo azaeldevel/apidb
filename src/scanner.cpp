@@ -2,13 +2,13 @@
 
 namespace apidb
 {
-	namespace scanner
+	namespace mysql
 	{
-		MySQL::MySQL(std::istream *in) : yyFlexLexer(in)
+		Scanner::Scanner(std::istream *in) : yyFlexLexer(in)
 		{
 		   
 		}
-		MySQL::~MySQL() 
+		Scanner::~Scanner() 
 		{
 		   
 		}

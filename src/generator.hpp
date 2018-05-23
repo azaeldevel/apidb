@@ -12,5 +12,7 @@ namespace apidb
 			Perl,
 			Python
 		};
+		
+		virtual bool generate(apidb::Driver& driver) = 0;
 	};
 }
