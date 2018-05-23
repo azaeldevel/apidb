@@ -10,25 +10,28 @@
 
 namespace apidb
 {
-	class MySQLScanner : public yyFlexLexer
+	namespace scanner
 	{
-	public:
-	   
-	   MySQLScanner(std::istream *in);
-	   virtual ~MySQLScanner();
+		class MySQL : public yyFlexLexer
+		{
+		public:
+		   
+		   MySQL(std::istream *in);
+		   virtual ~MySQL();
 
-	   //get rid of override virtual function warning
-	   using FlexLexer::yylex;
+		   //get rid of override virtual function warning
+		   using FlexLexer::yylex;
 
-	   virtual int yylex( apidb::MySQLParser::semantic_type * const lval, apidb::MySQLParser::location_type *location);
-	   // YY_DECL defined in mc_lexer.l
-	   // Method body created by flex in mc_lexer.yy.cc
+		   virtual int yylex( apidb::parser::MySQL::semantic_type * const lval, apidb::parser::MySQL::location_type *location);
+		   // YY_DECL defined in mc_lexer.l
+		   // Method body created by flex in mc_lexer.yy.cc
 
 
-	private:
-	   /* yyval ptr */
-	   apidb::MySQLParser::semantic_type *yylval = nullptr;
-	};
+		private:
+		   /* yyval ptr */
+		   apidb::parser::MySQL::semantic_type *yylval = nullptr;
+		};
+	}
 
 } /* end namespace MC */
 

@@ -5,10 +5,10 @@
 /* Implementation of yyFlexScanner */ 
 #include "scanner.hpp"
 #undef  YY_DECL
-#define YY_DECL int apidb::MySQLScanner::yylex( apidb::MySQLParser::semantic_type * const lval, apidb::MySQLParser::location_type *loc )
+#define YY_DECL int apidb::scanner::MySQL::yylex(apidb::parser::MySQL::semantic_type * const lval, apidb::parser::MySQL::location_type *loc )
 
 /* typedef to make the returns for the tokens shorter */
-using token = apidb::MySQLParser::token;
+using token = apidb::parser::MySQL::token;
 
 /* define yyterminate as this instead of NULL */
 #define yyterminate() return( token::END )
@@ -23,7 +23,7 @@ using token = apidb::MySQLParser::token;
 
 %option debug
 %option nodefault
-%option yyclass="apidb::MySQLScanner"
+%option yyclass="apidb::scanner::MySQL"
 %option noyywrap
 %option c++
 

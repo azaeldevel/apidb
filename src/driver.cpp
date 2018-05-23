@@ -48,7 +48,7 @@ namespace apidb
 	{
 		for (apidb::internal::Symbol* symbol : *this)
 		{
-			//delete symbol;
+			delete symbol;
 		}	
 		clear();
 	}
@@ -56,7 +56,7 @@ namespace apidb
 	{
 		for (apidb::internal::Table* table : *this)
 		{
-			//delete table;
+			delete table;
 		}
 		clear();
 	}
@@ -222,8 +222,7 @@ namespace apidb
 		parser = nullptr;
 		if(outputLenguaje == Generator::OutputLenguajes::CPP)
 		{
-		   //delete &writeResults[0];
-		   //delete &writeResults[1];
+		   delete[] writeResults;
 		}	   
 	}
 
@@ -256,7 +255,7 @@ namespace apidb
 	   delete(scanner);
 	   try
 	   {
-		  scanner = new apidb::MySQLScanner( &stream );
+		  scanner = new apidb::scanner::MySQL( &stream );
 	   }
 	   catch( std::bad_alloc &ba )
 	   {
@@ -267,7 +266,7 @@ namespace apidb
 	   delete(parser); 
 	   try
 	   {
-		  parser = new apidb::MySQLParser(*scanner,*this);
+		  parser = new apidb::parser::MySQL(*scanner,*this);
 	   }
 	   catch( std::bad_alloc &ba )
 	   {
