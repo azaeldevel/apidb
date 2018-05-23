@@ -13,6 +13,6 @@ namespace apidb
 			Python
 		};
 		
-		virtual bool generate(apidb::Driver& driver) = 0;
+		virtual bool generate(apidb::mysql::Driver& driver) = 0;
 	};
 }

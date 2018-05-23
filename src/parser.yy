@@ -9,11 +9,11 @@
 {
 	namespace apidb 
 	{
-      class Driver;
-      namespace mysql
-      {
+		namespace mysql
+		{
+			class Driver;
 			class Scanner;
-      }
+		}
 	}
 
 // The following definitions is missing when %locations isn't used
@@ -28,7 +28,7 @@
 }
 
 %parse-param { mysql::Scanner  &scanner  }
-%parse-param { Driver  &driver  }
+%parse-param { mysql::Driver  &driver  }
 
 %code{
    #include <iostream>

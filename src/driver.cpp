@@ -7,13 +7,6 @@
 
 namespace apidb
 {	
-	Driver::Driver(Analyzer::InputLenguajes inputLenguaje, Generator::OutputLenguajes outputLenguaje)
-	{
-		this->inputLenguaje = inputLenguaje;
-		this->outputLenguaje = outputLenguaje;
-		outputMessages = &std::cout;	  
-		errorMessages = &std::cerr; 
-	}
 	BuildException::~BuildException() throw()
 	{
 		
@@ -25,10 +18,6 @@ namespace apidb
     BuildException::BuildException(const std::string &description) throw()
     {
 		this->description = description;
-	}
-	const internal::Tables& Driver::getListTable() const
-	{
-		return symbolsTables;
 	}
 	
 	int internal::Symbol::getID()const
@@ -71,6 +60,20 @@ namespace apidb
 			++actual;
 		}
 		return NULL;
+	}
+
+namespace mysql
+{
+	const internal::Tables& Driver::getListTable() const
+	{
+		return symbolsTables;
+	}
+	Driver::Driver(Analyzer::InputLenguajes inputLenguaje, Generator::OutputLenguajes outputLenguaje)
+	{
+		this->inputLenguaje = inputLenguaje;
+		this->outputLenguaje = outputLenguaje;
+		outputMessages = &std::cout;	  
+		errorMessages = &std::cerr; 
 	}
 	std::ostream& Driver::getErrorMessage()
 	{
@@ -255,7 +258,7 @@ namespace apidb
 	   delete(scanner);
 	   try
 	   {
-		  scanner = new apidb::mysql::Scanner( &stream );
+		  scanner = new Scanner( &stream );
 	   }
 	   catch( std::bad_alloc &ba )
 	   {
@@ -266,7 +269,7 @@ namespace apidb
 	   delete(parser); 
 	   try
 	   {
-		  parser = new apidb::mysql::Parser(*scanner,*this);
+		  parser = new Parser(*scanner,*this);
 	   }
 	   catch( std::bad_alloc &ba )
 	   {
@@ -286,4 +289,5 @@ namespace apidb
 	{
 	   return(stream);
 	}
+}
 }

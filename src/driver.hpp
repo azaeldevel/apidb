@@ -112,7 +112,8 @@ namespace apidb
 		};
 	}
 		
-       
+namespace mysql
+{
 	class Driver
 	{
 	public:
@@ -163,8 +164,8 @@ namespace apidb
 		internal::Tables symbolsTables;
 	private:
 		void parse_helper( std::istream &stream );
-		apidb::mysql::Parser  *parser  = nullptr;
-		apidb::mysql::Scanner *scanner = nullptr;
+		Parser  *parser  = nullptr;
+		Scanner *scanner = nullptr;
 		toolkit::clientdb::Connector* connector;
 		std::ostream* outputMessages;//out stream
 		std::ostream* errorMessages;//out stream
@@ -177,6 +178,6 @@ namespace apidb
 		Analyzer::InputLenguajes inputLenguaje;
 		Generator::OutputLenguajes outputLenguaje;   
 	};
-
+}
 }
 #endif /* END __MCDRIVER_HPP__ */

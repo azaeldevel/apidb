@@ -315,7 +315,7 @@ namespace apidb
 		ofile <<"\t{"<<std::endl;
 		ofile <<"\t}"<<std::endl;
 	}
-    void CPPGenerator::createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPPGenerator::createClassMethodesCPP(apidb::mysql::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
     {		
         for(const internal::Symbol* attr : table)
         {
@@ -446,7 +446,7 @@ namespace apidb
 		ofile << std::endl; 
     }
     
-    void CPPGenerator::createSpaceCPP(apidb::Driver& driver,std::ofstream& file)
+    void CPPGenerator::createSpaceCPP(apidb::mysql::Driver& driver,std::ofstream& file)
     {
         file <<"namespace "<<driver.getNameProject()<<std::endl;
         file <<"{"<<std::endl;
@@ -457,14 +457,14 @@ namespace apidb
         }
         file <<"}"<<std::endl;
     }
-	void CPPGenerator::createClassCPP(apidb::Driver& driver,const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
+	void CPPGenerator::createClassCPP(apidb::mysql::Driver& driver,const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  nameClass << "\";" << std::endl;
         createClassMethodesCPP(driver,cl,file);        
         file<< std::endl<< std::endl;
     }
     
-    void CPPGenerator::createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPPGenerator::createClassMethodesH(apidb::mysql::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
     {
 		std::string insertMethode = "";
         for(internal::Symbol* attr : table)
@@ -525,7 +525,7 @@ namespace apidb
 		  
     }
     
-    void CPPGenerator::createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPPGenerator::createClassAttributesH(apidb::mysql::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
     {
         for(internal::Symbol* attr : table)
         {
@@ -553,7 +553,7 @@ namespace apidb
 			}             
         }        
     }
-    void CPPGenerator::createSpaceH(apidb::Driver& driver,std::ofstream& file)
+    void CPPGenerator::createSpaceH(apidb::mysql::Driver& driver,std::ofstream& file)
     {
         file <<"namespace "<<driver.getNameProject()<<std::endl;
         file <<"{"<<std::endl;
@@ -577,7 +577,7 @@ namespace apidb
     {
         file << "\tprivate:" <<std::endl;
     }
-    void CPPGenerator::createClassH(apidb::Driver& driver,const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
+    void CPPGenerator::createClassH(apidb::mysql::Driver& driver,const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
         file <<"\tclass "<<nameClass<<std::endl;
         file <<"\t{"<<std::endl;
@@ -589,7 +589,7 @@ namespace apidb
         file <<"\t};"<<std::endl;
     }
     
-    bool CPPGenerator::generate(apidb::Driver& driver)
+    bool CPPGenerator::generate(apidb::mysql::Driver& driver)
     {		
 		driver.getOutputMessage() << "Generando codigo... " << std::endl;
 		driver.getOutputMessage() << "\tLenguaje resultado: " << driver.getOutputLenguajeString() << std::endl;

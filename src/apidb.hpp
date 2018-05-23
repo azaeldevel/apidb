@@ -36,20 +36,20 @@ namespace apidb
 	class CPPGenerator: public Generator
 	{
     public:
-		virtual bool generate(apidb::Driver& driver);
+		virtual bool generate(apidb::mysql::Driver& driver);
     private:
-        void createSpaceH(apidb::Driver& driver,std::ofstream& file);
-        void createClassH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&,const std::string&);
+        void createSpaceH(apidb::mysql::Driver& driver,std::ofstream& file);
+        void createClassH(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&,const std::string&);
         void createClassPrivateH(std::ofstream&);
-        void createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void createClassAttributesH(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&);
         void createClassPublicH(std::ofstream&);
-        void createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
-        void createSpaceCPP(apidb::Driver& driver,std::ofstream& file);
-        void createClassCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&,const std::string&);
+        void createClassMethodesH(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void createSpaceCPP(apidb::mysql::Driver& driver,std::ofstream& file);
+        void createClassCPP(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&,const std::string&);
         void createClassPrivateCPP(std::ofstream&);
-        void createClassAttributesCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void createClassAttributesCPP(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&);
         void createClassPublicCPP(std::ofstream&);
-        void createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void createClassMethodesCPP(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&);
         void writeDefaultContructorH(const apidb::internal::Table&,std::ofstream&);
         void writeDefaultContructorCPP(const apidb::internal::Table&,std::ofstream&);
         void writeKeyValueH(const apidb::internal::Table&,std::ofstream&);
@@ -65,7 +65,7 @@ namespace apidb
     /**
      * Clientes Generato
      **/
-	class CG: public apidb::Driver
+	class CG: public apidb::mysql::Driver
 	{
 	public:
 		virtual bool analyze();
