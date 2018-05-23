@@ -30,9 +30,7 @@ namespace apidb
 		id = counter;
 	}
 	
-	int internal::Symbol::counter = 0;
-	
-	
+	int internal::Symbol::counter = 0;	
 	internal::Table::~Table()
 	{
 		for (apidb::internal::Symbol* symbol : *this)
@@ -62,131 +60,98 @@ namespace apidb
 		return NULL;
 	}
 	
-	const internal::Tables& Driver::getListTable() const
+	
+	
+	const internal::Tables& Analyzer::getListTable() const
 	{
 		return symbolsTables;
 	}
-	
-	std::string Driver::getOutputLenguajeString()const
+	std::string Analyzer::getOutputLenguajeString()const
 	{
 		switch(getOutputLenguaje())
 		{
-			case Generator::OutputLenguajes::CPP:
+			case OutputLenguajes::CPP:
 				return "C++";
 			default:
 				return "Unknow";
 		}
-	}	
-	std::string Driver::getInputLenguajeString()const
+	}
+	std::string Analyzer::getInputLenguajeString()const
 	{
 		switch(getInputLenguaje())
 		{
-			case Analyzer::InputLenguajes::MySQL_Server:
+			case InputLenguajes::MySQL_Server:
 				return "Servidor MySQL";
 			default:
 				return "Unknow";
 		}
 	}
-	const std::string& Driver::getNameProject()
+	const std::string& Analyzer::getNameProject()
 	{
 		return nameProject;
 	}
-	void Driver::setPramsProject(const std::string& name,const std::string& directory)
+	void Analyzer::setPramsProject(const std::string& name,const std::string& directory)
 	{
 		nameProject = name;
 		directoryProject = directory;
 	}
-	const std::string& Driver::getDirectoryProject()
+	const std::string& Analyzer::getDirectoryProject()
 	{
 		return directoryProject;
 	}
-	Analyzer::InputLenguajes Driver::getInputLenguaje()const
+	InputLenguajes Analyzer::getInputLenguaje()const
 	{
 		return inputLenguaje;
 	}
-	Generator::OutputLenguajes Driver::getOutputLenguaje()const
+	OutputLenguajes Analyzer::getOutputLenguaje()const
 	{
 		return outputLenguaje;
 	}
 	
+	
+	
 namespace mysql
 {
-	bool Driver::listing(toolkit::clientdb::Connector& connect)
+	bool Analyzer::listing(toolkit::clientdb::Connector& connect)
 	{
 		return symbolsTables.listing(connect);
 	}
-	Driver::Driver(Analyzer::InputLenguajes inputLenguaje, Generator::OutputLenguajes outputLenguaje)
+	Analyzer::Analyzer(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
 	{
 		this->inputLenguaje = inputLenguaje;
 		this->outputLenguaje = outputLenguaje;
 		outputMessages = &std::cout;	  
 		errorMessages = &std::cerr; 
 	}
-	std::ostream& Driver::getErrorMessage()
+	std::ostream& Analyzer::getErrorMessage()
 	{
 		return *errorMessages;
 	}
 
 		
-	std::ostream& Driver::getOutputMessage()
+	std::ostream& Analyzer::getOutputMessage()
 	{
 		return *outputMessages;
 	}
-	bool Driver::generate(Generator& generator)
-	{
-		return generator.generate(*this);
-	}
-	/*bool Driver::analyze()
-	{
-		getOutputMessage() << "Analisis de codigo..." << std::endl;
-		getOutputMessage() << "\tLenguaje de entrada: " << getInputLenguajeString() << std::endl;
-		//rows = new apidb::internal::Tables();
-		
-		if(symbolsTables.listing(*connector)) //reading tables
-        {
-            for(internal::Table* table: symbolsTables) //reading attrubtes by table
-            {
-				getOutputMessage() << "\tCreating simbols for " << table->name  << "." << std::endl;
-                if(!table->basicSymbols(*connector))
-                {
-					//std::cerr<<"Faill on basicSymbols"<<std::endl;
-					return false;
-				}
-				if(!table->fillKeyType(*connector,symbolsTables))
-                {
-					//std::cerr<<"Faill on fillKeyType"<<std::endl;
-					return false;
-				}
-				
-				//parsing imput types
-				for(internal::Symbol* attribute: *table)
-				{
-					attribute->outType = parse(attribute->inType);
-				}
-            }            
-        }  
-        		        
-		return true;
-	}*/
-	Driver::Driver()
+	Analyzer::Analyzer()
 	{
 	   //deafults
-	   outputLenguaje = Generator::OutputLenguajes::CPP;
-	   inputLenguaje = Analyzer::InputLenguajes::MySQL_Server;
+	   outputLenguaje = OutputLenguajes::CPP;
+	   inputLenguaje = InputLenguajes::MySQL_Server;
 	   outputMessages = &std::cout;	  
 	   errorMessages = &std::cerr; 
 	}
-	void Driver::message(const std::string& msg)
+	void Analyzer::message(const std::string& msg)
 	{
 		(*outputMessages)<<msg<<std::endl;
 	}
-	std::string Driver::parse(const std::string& line)
+	std::string Analyzer::parse(const std::string& line)
 	{
 		std::istringstream text(line);
 		parse(text);
 		return oneLine;
 	}
-	Driver::~Driver()
+	Analyzer::~Analyzer()
 	{
 		delete(scanner);
 		scanner = nullptr;
@@ -194,7 +159,7 @@ namespace mysql
 		parser = nullptr;	   
 	}
 
-	void Driver::parse( const char * const filename )
+	void Analyzer::parse( const char * const filename )
 	{
 	   assert( filename != nullptr );
 	   std::ifstream in_file( filename );
@@ -206,7 +171,7 @@ namespace mysql
 	   return;
 	}
 	
-	void Driver::parse( std::istream &stream )
+	void Analyzer::parse( std::istream &stream )
 	{
 	   if( ! stream.good()  && stream.eof() )
 	   {
@@ -218,7 +183,7 @@ namespace mysql
 	}
 
 
-	void Driver::parse_helper( std::istream &stream )
+	void Analyzer::parse_helper( std::istream &stream )
 	{
 	   delete(scanner);
 	   try
@@ -250,7 +215,7 @@ namespace mysql
 	}
 
 
-	std::ostream& Driver::print( std::ostream &stream )
+	std::ostream& Analyzer::print( std::ostream &stream )
 	{
 	   return(stream);
 	}

@@ -29,12 +29,27 @@
 
 #include "scanner.hpp"
 #include "parser.tab.hh"
-#include "analyzer.hpp"
-#include "generator.hpp"
 
 
 namespace apidb
-{
+{	
+	enum InputLenguajes
+	{
+		MySQL_Server,
+		MySQL_Script,
+		PostgresSQL
+	};
+		
+	enum OutputLenguajes
+	{
+		C,
+		CPP,
+		Java,
+		CSHARP,
+		Perl,
+		Python
+	};
+	
 	class BuildException : public std::exception
     {
     public:
@@ -112,11 +127,9 @@ namespace apidb
 		};
 	}
 	
-	class Driver
+	class Analyzer
 	{
 	public:
-		virtual bool generate(Generator&) = 0;
-		//virtual bool analyze() = 0;
 		virtual std::ostream& getOutputMessage() = 0;
 		virtual std::ostream& getErrorMessage() = 0;
 		virtual std::string parse(const std::string& line) = 0;
@@ -130,8 +143,8 @@ namespace apidb
 		const std::string& getDirectoryProject();
 		void setPramsProject(const std::string& name,const std::string& directory);
 		
-		Generator::OutputLenguajes getOutputLenguaje() const;		
-		Analyzer::InputLenguajes getInputLenguaje() const;
+		OutputLenguajes getOutputLenguaje() const;		
+		InputLenguajes getInputLenguaje() const;
 		
     protected:
 		internal::Tables symbolsTables;		
@@ -141,26 +154,24 @@ namespace apidb
 		std::string nameProject;
 		std::string directoryProject;
 		//flags
-		Analyzer::InputLenguajes inputLenguaje;
-		Generator::OutputLenguajes outputLenguaje;
+		InputLenguajes inputLenguaje;
+		OutputLenguajes outputLenguaje;
 	};
 
 		
 namespace mysql
 {
-	class Driver : public apidb::Driver
+	class Analyzer : public apidb::Analyzer
 	{
 	public:
 		bool listing(toolkit::clientdb::Connector& connect);
-		virtual bool generate(Generator&);
-		//virtual bool analyze();
 		
 		virtual std::ostream& getOutputMessage();
 		virtual std::ostream& getErrorMessage();
 		
-        Driver();
-        Driver(Analyzer::InputLenguajes, Generator::OutputLenguajes);		
-        virtual ~Driver();
+        Analyzer();
+        Analyzer(InputLenguajes, OutputLenguajes);		
+        virtual ~Analyzer();
         
         /**
          * Parse desde una std::string

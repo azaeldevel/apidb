@@ -41,7 +41,7 @@ namespace apidb
 		return writeResults[0];
 	}
 	
-	CPPGenerator::CPPGenerator(apidb::Driver& d):driver(&d)
+	CPPGenerator::CPPGenerator(apidb::Analyzer& d):driver(&d)
 	{
 		writeResults = new std::ofstream[2];
 		if((d.getDirectoryProject().empty()) | (d.getDirectoryProject().compare(".") == 0)) 
@@ -349,7 +349,7 @@ namespace apidb
 		ofile <<"\t{"<<std::endl;
 		ofile <<"\t}"<<std::endl;
 	}
-    void CPPGenerator::createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPPGenerator::createClassMethodesCPP(apidb::Analyzer& driver,const apidb::internal::Table& table,std::ofstream& ofile)
     {		
         for(const internal::Symbol* attr : table)
         {
@@ -480,7 +480,7 @@ namespace apidb
 		ofile << std::endl; 
     }
     
-    void CPPGenerator::createSpaceCPP(apidb::Driver& driver,std::ofstream& file)
+    void CPPGenerator::createSpaceCPP(apidb::Analyzer& driver,std::ofstream& file)
     {
         file <<"namespace "<<driver.getNameProject()<<std::endl;
         file <<"{"<<std::endl;
@@ -491,14 +491,14 @@ namespace apidb
         }
         file <<"}"<<std::endl;
     }
-	void CPPGenerator::createClassCPP(apidb::Driver& driver,const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
+	void CPPGenerator::createClassCPP(apidb::Analyzer& driver,const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  nameClass << "\";" << std::endl;
         createClassMethodesCPP(driver,cl,file);        
         file<< std::endl<< std::endl;
     }
     
-    void CPPGenerator::createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPPGenerator::createClassMethodesH(apidb::Analyzer& driver,const apidb::internal::Table& table,std::ofstream& ofile)
     {
 		std::string insertMethode = "";
         for(internal::Symbol* attr : table)
@@ -559,11 +559,11 @@ namespace apidb
 		  
     }
     
-    void CPPGenerator::createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPPGenerator::createClassAttributesH(apidb::Analyzer& driver,const apidb::internal::Table& table,std::ofstream& ofile)
     {
         for(internal::Symbol* attr : table)
         {
-			if(driver.getOutputLenguaje() == Generator::OutputLenguajes::CPP)
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
 			{
 				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 				{
@@ -587,7 +587,7 @@ namespace apidb
 			}             
         }        
     }
-    void CPPGenerator::createSpaceH(apidb::Driver& driver,std::ofstream& file)
+    void CPPGenerator::createSpaceH(apidb::Analyzer& driver,std::ofstream& file)
     {
         file <<"namespace "<<driver.getNameProject()<<std::endl;
         file <<"{"<<std::endl;
@@ -611,7 +611,7 @@ namespace apidb
     {
         file << "\tprivate:" <<std::endl;
     }
-    void CPPGenerator::createClassH(apidb::Driver& driver,const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
+    void CPPGenerator::createClassH(apidb::Analyzer& driver,const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
         file <<"\tclass "<<nameClass<<std::endl;
         file <<"\t{"<<std::endl;
@@ -623,17 +623,17 @@ namespace apidb
         file <<"\t};"<<std::endl;
     }
     
-    bool CPPGenerator::generate(apidb::Driver& driver)
+    bool CPPGenerator::generate()
     {		
-		driver.getOutputMessage() << "Generando codigo... " << std::endl;
-		driver.getOutputMessage() << "\tLenguaje resultado: " << driver.getOutputLenguajeString() << std::endl;
+		driver->getOutputMessage() << "Generando codigo... " << std::endl;
+		driver->getOutputMessage() << "\tLenguaje resultado: " << driver->getOutputLenguajeString() << std::endl;
 		//includes in header file
         std::string headers = "";
         bool stringFlag = false;
-        const apidb::internal::Tables& tables = driver.getListTable();
+        const apidb::internal::Tables& tables = driver->getListTable();
 		for(internal::Table* table: tables)
 		{
-			driver.getOutputMessage() << "\tCoding " << table->name << "." << std::endl;
+			driver->getOutputMessage() << "\tCoding " << table->name << "." << std::endl;
 			for(internal::Symbol* attr : *table)
 			{
 				if(attr->outType.compare("std::string")==0 && stringFlag == false)
@@ -650,17 +650,17 @@ namespace apidb
 		getHeaderOutput()<< "#include <clientdb.hpp>"<<std::endl;
 			
 		//writing code
-		if(!driver.getNameProject().empty())
+		if(!driver->getNameProject().empty())
 		{			
-			createSpaceH(driver,getHeaderOutput());    
-			createSpaceCPP(driver,getSourceOutput()); 
+			createSpaceH(*driver,getHeaderOutput());    
+			createSpaceCPP(*driver,getSourceOutput()); 
 		}   
 		else
 		{
 			for (apidb::internal::Table* table : tables) 
 			{
-				createClassH(driver,*table,getHeaderOutput(),table->name);  
-				createClassCPP(driver,*table,getSourceOutput(),table->name);      
+				createClassH(*driver,*table,getHeaderOutput(),table->name);  
+				createClassCPP(*driver,*table,getSourceOutput(),table->name);      
 			}
 		}            
         return true;    
@@ -680,7 +680,7 @@ namespace apidb
 	bool CG::generate()
 	{
 		apidb::CPPGenerator cpp(*driver);
-		cpp.generate(*driver);
+		cpp.generate();
 		return false;
 	}
 	
@@ -689,10 +689,10 @@ namespace apidb
 		driver->getOutputMessage() << "Analisis de codigo..." << std::endl;
 		driver->getOutputMessage() << "\tLenguaje de entrada: " << driver->getInputLenguajeString() << std::endl;
 		
-		apidb::mysql::Driver* driver = NULL;
-		if(this->driver->getInputLenguaje() == apidb::Analyzer::InputLenguajes::MySQL_Server)
+		apidb::mysql::Analyzer* driver = NULL;
+		if(this->driver->getInputLenguaje() == apidb::InputLenguajes::MySQL_Server)
 		{
-			driver = (apidb::mysql::Driver*)(this->driver);
+			driver = (apidb::mysql::Analyzer*)(this->driver);
 		}
 		else
 		{
@@ -713,21 +713,20 @@ namespace apidb
 					//std::cerr<<"Faill on fillKeyType"<<std::endl;
 					return false;
 				}
-				
 				//parsing imput types
 				for(internal::Symbol* attribute: *table)
 				{
 					attribute->outType = driver->parse(attribute->inType);
 				}
-            }            
-        }        		        
+            }
+        }    
 		return true;
 	}
 		
-	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,Analyzer::InputLenguajes inputLenguaje, Generator::OutputLenguajes outputLenguaje)
+	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
 	{		
 		connector = new toolkit::clientdb::Connector();
-		driver = new mysql::Driver(inputLenguaje,outputLenguaje);		
+		driver = new mysql::Analyzer(inputLenguaje,outputLenguaje);		
 		try
 		{
 			bool flag = connector->connect(datconection);
@@ -739,7 +738,6 @@ namespace apidb
 		catch(toolkit::clientdb::SQLException ex)
 		{
 			driver->getErrorMessage() <<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
-		}
-		
+		}		
 	}
 } 
