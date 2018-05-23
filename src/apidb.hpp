@@ -36,20 +36,26 @@ namespace apidb
 	class CPPGenerator: public Generator
 	{
     public:
-		virtual bool generate(apidb::mysql::Driver& driver);
+		virtual bool generate(apidb::Driver&);
+		CPPGenerator(apidb::Driver&);
+		const std::string& getHeaderName() const;
+		std::ofstream& getSourceOutput();
+		std::ofstream& getHeaderOutput();
+		~CPPGenerator();
+		
     private:
-        void createSpaceH(apidb::mysql::Driver& driver,std::ofstream& file);
-        void createClassH(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&,const std::string&);
+        void createSpaceH(apidb::Driver& driver,std::ofstream& file);
+        void createClassH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&,const std::string&);
         void createClassPrivateH(std::ofstream&);
-        void createClassAttributesH(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void createClassAttributesH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
         void createClassPublicH(std::ofstream&);
-        void createClassMethodesH(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&);
-        void createSpaceCPP(apidb::mysql::Driver& driver,std::ofstream& file);
-        void createClassCPP(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&,const std::string&);
+        void createClassMethodesH(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void createSpaceCPP(apidb::Driver& driver,std::ofstream& file);
+        void createClassCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&,const std::string&);
         void createClassPrivateCPP(std::ofstream&);
-        void createClassAttributesCPP(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void createClassAttributesCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
         void createClassPublicCPP(std::ofstream&);
-        void createClassMethodesCPP(apidb::mysql::Driver& driver,const apidb::internal::Table&,std::ofstream&);
+        void createClassMethodesCPP(apidb::Driver& driver,const apidb::internal::Table&,std::ofstream&);
         void writeDefaultContructorH(const apidb::internal::Table&,std::ofstream&);
         void writeDefaultContructorCPP(const apidb::internal::Table&,std::ofstream&);
         void writeKeyValueH(const apidb::internal::Table&,std::ofstream&);
@@ -60,12 +66,17 @@ namespace apidb
         void writeKeyContructorCPP(const apidb::internal::Table&,std::ofstream&);
         void writeInsertH(const apidb::internal::Table&,std::ofstream&);
         void writeInsertCPP(const apidb::internal::Table&,std::ofstream&);
+        
+        apidb::Driver* driver;
+		std::ofstream* writeResults;//erreglo de writeoutput files
+		std::string projectH;
+		std::string projectCPP;
 	};	
     
     /**
      * Clientes Generato
      **/
-	class CG: public apidb::mysql::Driver
+	class CG
 	{
 	public:
 		virtual bool analyze();
@@ -73,6 +84,7 @@ namespace apidb
 		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,Analyzer::InputLenguajes inputLenguaje, Generator::OutputLenguajes outputLenguaje);
 	private:
 		toolkit::clientdb::Connector* connector;
+		apidb::Driver* driver;
 	};
 }
 

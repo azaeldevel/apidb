@@ -111,31 +111,53 @@ namespace apidb
 			bool listing(toolkit::clientdb::Connector& connect);
 		};
 	}
-		
-namespace mysql
-{
+	
 	class Driver
 	{
 	public:
-		virtual bool generate(Generator&);
-		virtual bool analyze();
-				
+		virtual bool generate(Generator&) = 0;
+		//virtual bool analyze() = 0;
+		virtual std::ostream& getOutputMessage() = 0;
+		virtual std::ostream& getErrorMessage() = 0;
+		virtual std::string parse(const std::string& line) = 0;
+		
+		const internal::Tables& getListTable() const;
+		
 		std::string getOutputLenguajeString()const;		
 		std::string getInputLenguajeString()const;
-		Generator::OutputLenguajes getOutputLenguaje()const;		
-		Analyzer::InputLenguajes getInputLenguaje()const;
-		
-		std::ostream& getOutputMessage();
-		std::ostream& getErrorMessage();
-				
-		const std::string& getHeaderName() const;
-		std::ofstream& getSourceOutput();
-		std::ofstream& getHeaderOutput();
 		
 		const std::string& getNameProject();
+		const std::string& getDirectoryProject();
 		void setPramsProject(const std::string& name,const std::string& directory);
-		const internal::Tables& getListTable() const;
-        
+		
+		Generator::OutputLenguajes getOutputLenguaje() const;		
+		Analyzer::InputLenguajes getInputLenguaje() const;
+		
+    protected:
+		internal::Tables symbolsTables;		
+		toolkit::clientdb::Connector* connector;
+		std::ostream* outputMessages;//out stream
+		std::ostream* errorMessages;//out stream
+		std::string nameProject;
+		std::string directoryProject;
+		//flags
+		Analyzer::InputLenguajes inputLenguaje;
+		Generator::OutputLenguajes outputLenguaje;
+	};
+
+		
+namespace mysql
+{
+	class Driver : public apidb::Driver
+	{
+	public:
+		bool listing(toolkit::clientdb::Connector& connect);
+		virtual bool generate(Generator&);
+		//virtual bool analyze();
+		
+		virtual std::ostream& getOutputMessage();
+		virtual std::ostream& getErrorMessage();
+		
         Driver();
         Driver(Analyzer::InputLenguajes, Generator::OutputLenguajes);		
         virtual ~Driver();
@@ -143,7 +165,7 @@ namespace mysql
         /**
          * Parse desde una std::string
          **/
-		std::string parse(const std::string& line);
+		virtual std::string parse(const std::string& line);
 		/** 
 		* parse - parse from a file
 		* @param filename - valid string with input file
@@ -160,23 +182,10 @@ namespace mysql
 		
 		//Don't use, is temporal: usada por parse para retorna sui resultado
 		std::string oneLine;
-    protected:
-		internal::Tables symbolsTables;
 	private:
 		void parse_helper( std::istream &stream );
 		Parser  *parser  = nullptr;
-		Scanner *scanner = nullptr;
-		toolkit::clientdb::Connector* connector;
-		std::ostream* outputMessages;//out stream
-		std::ostream* errorMessages;//out stream
-		std::ofstream* writeResults;//erreglo de writeoutput files
-		std::string nameProject;
-		std::string projectH;
-		std::string projectCPP;
-		std::string directoryProject;
-		//flags
-		Analyzer::InputLenguajes inputLenguaje;
-		Generator::OutputLenguajes outputLenguaje;   
+		Scanner *scanner = nullptr;   
 	};
 }
 }

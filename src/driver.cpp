@@ -9,7 +9,7 @@ namespace apidb
 {	
 	BuildException::~BuildException() throw()
 	{
-		
+		;
 	}
 	const char* BuildException::what() const throw()
 	{
@@ -61,23 +61,10 @@ namespace apidb
 		}
 		return NULL;
 	}
-
-namespace mysql
-{
+	
 	const internal::Tables& Driver::getListTable() const
 	{
 		return symbolsTables;
-	}
-	Driver::Driver(Analyzer::InputLenguajes inputLenguaje, Generator::OutputLenguajes outputLenguaje)
-	{
-		this->inputLenguaje = inputLenguaje;
-		this->outputLenguaje = outputLenguaje;
-		outputMessages = &std::cout;	  
-		errorMessages = &std::cerr; 
-	}
-	std::ostream& Driver::getErrorMessage()
-	{
-		return *errorMessages;
 	}
 	
 	std::string Driver::getOutputLenguajeString()const
@@ -100,14 +87,18 @@ namespace mysql
 				return "Unknow";
 		}
 	}
-		
-	std::ostream& Driver::getOutputMessage()
+	const std::string& Driver::getNameProject()
 	{
-		return *outputMessages;
+		return nameProject;
 	}
-	bool Driver::generate(Generator& generator)
+	void Driver::setPramsProject(const std::string& name,const std::string& directory)
 	{
-		return generator.generate(*this);
+		nameProject = name;
+		directoryProject = directory;
+	}
+	const std::string& Driver::getDirectoryProject()
+	{
+		return directoryProject;
 	}
 	Analyzer::InputLenguajes Driver::getInputLenguaje()const
 	{
@@ -117,57 +108,35 @@ namespace mysql
 	{
 		return outputLenguaje;
 	}
-	const std::string& Driver::getHeaderName() const
+	
+namespace mysql
+{
+	bool Driver::listing(toolkit::clientdb::Connector& connect)
 	{
-		if(outputLenguaje == Generator::OutputLenguajes::CPP)
-		{
-			return projectH;
-		}
-		else
-		{
-			throw std::invalid_argument("OutputLenguaje is unknow.");
-		}
+		return symbolsTables.listing(connect);
 	}
-	std::ofstream& Driver::getSourceOutput()
+	Driver::Driver(Analyzer::InputLenguajes inputLenguaje, Generator::OutputLenguajes outputLenguaje)
 	{
-		return writeResults[1];
+		this->inputLenguaje = inputLenguaje;
+		this->outputLenguaje = outputLenguaje;
+		outputMessages = &std::cout;	  
+		errorMessages = &std::cerr; 
 	}
-	std::ofstream& Driver::getHeaderOutput()
+	std::ostream& Driver::getErrorMessage()
 	{
-		return writeResults[0];
+		return *errorMessages;
 	}
-	const std::string& Driver::getNameProject()
+
+		
+	std::ostream& Driver::getOutputMessage()
 	{
-		return nameProject;
+		return *outputMessages;
 	}
-	void Driver::setPramsProject(const std::string& name,const std::string& directory)
+	bool Driver::generate(Generator& generator)
 	{
-		nameProject = name;
-		directoryProject = directory;
-		if(outputLenguaje == Generator::OutputLenguajes::CPP)
-		{//se requiere un archivo para las cabezaras y otro para el codigo
-		   writeResults = new std::ofstream[2];
-		   if((directory.empty()) | (directory.compare(".") == 0)) 
-		   {
-			   projectH = nameProject + ".hpp";
-			   writeResults[0].open(projectH);
-			   projectCPP = nameProject + ".cpp";
-			   writeResults[1].open(projectCPP);
-		   }
-		   else
-		   {
-			   projectH = nameProject + ".hpp";
-			   projectCPP = nameProject + ".cpp";
-			   writeResults[0].open(directoryProject + "/" + projectH);
-			   writeResults[1].open(directoryProject + "/" + projectCPP);
-		   }
-		}
-		else
-		{
-			message("OutputLenguaje is unknow.");
-		}
+		return generator.generate(*this);
 	}
-	bool Driver::analyze()
+	/*bool Driver::analyze()
 	{
 		getOutputMessage() << "Analisis de codigo..." << std::endl;
 		getOutputMessage() << "\tLenguaje de entrada: " << getInputLenguajeString() << std::endl;
@@ -198,7 +167,7 @@ namespace mysql
         }  
         		        
 		return true;
-	}
+	}*/
 	Driver::Driver()
 	{
 	   //deafults
@@ -222,11 +191,7 @@ namespace mysql
 		delete(scanner);
 		scanner = nullptr;
 		delete(parser);
-		parser = nullptr;
-		if(outputLenguaje == Generator::OutputLenguajes::CPP)
-		{
-		   delete[] writeResults;
-		}	   
+		parser = nullptr;	   
 	}
 
 	void Driver::parse( const char * const filename )
