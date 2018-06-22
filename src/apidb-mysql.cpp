@@ -26,7 +26,7 @@
 
 namespace apidb
 {
-	bool internal::Table::fillKeyType(toolkit::clientdb::Connector& connect,const internal::Tables& tables)
+	bool internal::Table::fillKeyType(toolkit::clientdb::Connector& connect,internal::Tables& tables)
 	{
 		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME FROM information_schema.TABLE_CONSTRAINTS i  LEFT JOIN information_schema.KEY_COLUMN_USAGE k ON i.CONSTRAINT_NAME = k.CONSTRAINT_NAME WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =";
 		fks += "'" ;
@@ -49,6 +49,7 @@ namespace apidb
 						attribute->classReferenced = tables.search(row[1]);//returna null o un puntero valido.		
 						if(attribute->keyType == internal::Symbol::KeyType::UNIQUE && attribute->classReferenced != NULL)		
 						{
+							attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
 							attribute->keyType = internal::Symbol::KeyType::FOREIGN_UNIQUE;//usada como llave
 						}
 					}

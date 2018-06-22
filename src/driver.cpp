@@ -11,7 +11,20 @@ namespace apidb
 	{
 		int Symbol::counter = 0;	
 		
+		void Tables::sortByReferences()
+		{
+			
+		}
 		
+		short Table::getCountRefereces()const 
+		{
+			return countRef;
+		}
+		
+		Table::Table()
+		{
+			countRef = 0;
+		}
 		
 		Table::~Table()
 		{
@@ -29,14 +42,14 @@ namespace apidb
 			}
 			clear();
 		}
-		const Table* Tables::search(const std::string& tableName)const
+		Table* Tables::search(const std::string& tableName)
 		{
-			std::list<Table*>::const_iterator actual = this->begin();
-			std::list<Table*>::const_iterator last = this->end();
+			std::list<Table*>::iterator actual = begin();
+			std::list<Table*>::iterator last = end();
 			
 			while (actual != last) 
 			{
-				if ((*actual)->name.compare(tableName) == 0) return (const internal::Table*)(*actual);
+				if ((*actual)->name.compare(tableName) == 0) return (internal::Table*)(*actual);
 				++actual;
 			}
 			return NULL;
@@ -66,7 +79,7 @@ namespace apidb
 		id = counter;
 	}
 	
-	const internal::Tables& Analyzer::getListTable() const
+	internal::Tables& Analyzer::getListTable() 
 	{
 		return symbolsTables;
 	}

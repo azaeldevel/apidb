@@ -90,8 +90,8 @@ namespace apidb
             std::string get;
 			bool required;
             KeyType keyType;
-            const Table* classReferenced;
-            const Table* classParent;
+            Table* classReferenced;
+            Table* classParent;
             std::string outType; 
             //bool forInsert; 
             
@@ -109,13 +109,16 @@ namespace apidb
 		{
 			std::string name;
             Symbol* key;
-            std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista
-            short countRefereced;
+            std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
             
-            
+            Table();
             ~Table();
 			bool basicSymbols(toolkit::clientdb::Connector& connect);
-            bool fillKeyType(toolkit::clientdb::Connector& connect,const Tables& tables); 
+            bool fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables);
+            short getCountRefereces()const; 
+            
+		private:
+			short countRef;
 		};
 		
 		/**
@@ -124,8 +127,9 @@ namespace apidb
 		struct Tables: public std::list<Table*>
 		{
 			~Tables();	
-            const Table* search(const std::string&)const;           
+            Table* search(const std::string&);           
 			bool listing(toolkit::clientdb::Connector& connect);
+			void sortByReferences();
 		};
 	}
 	
@@ -136,7 +140,7 @@ namespace apidb
 		virtual std::ostream& getErrorMessage() = 0;
 		virtual std::string parse(const std::string& line) = 0;
 		
-		const internal::Tables& getListTable() const;
+		internal::Tables& getListTable();
 		
 		std::string getOutputLenguajeString()const;		
 		std::string getInputLenguajeString()const;
