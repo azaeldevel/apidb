@@ -11,7 +11,7 @@
 	{
 		namespace mysql
 		{
-			class Driver;
+			class Analyzer;
 			class Scanner;
 		}
 	}
@@ -28,153 +28,424 @@
 }
 
 %parse-param { mysql::Scanner  &scanner  }
-%parse-param { mysql::Driver  &driver  }
+%parse-param { mysql::Analyzer  &driver  }
 
-%code{
-   #include <iostream>
-   #include <cstdlib>
-   #include <fstream>
-   
-   /* include for all driver functions */
-   #include "driver.hpp"
-
-#undef yylex
-#define yylex scanner.yylex
+%code
+{
+	#include <iostream>
+	#include <cstdlib>
+	#include <fstream>
+	
+	/* include for all driver functions */
+	#include "driver.hpp"
+	
+	#undef yylex
+	#define yylex scanner.yylex
 }
 
 %define api.value.type variant
 %define parse.assert
 
-%token			TINYINT
-%token			SMALLINT
-%token			MEDIUMINT
-%token			INT
-%token			INTEGER
-%token			BIGINT
-%token			BIT
-%token			DECIMAL
-%token			NUMERIC
-%token			REAL
-%token			FLOAT
-%token			DOUBLE
-%token			DATE
-%token			DATETIME
-%token			TIMESTAMP
-%token			TIME
-%token			YEAR
-%token			CHAR
-%token			VARCHAR
-%token			BINARY
-%token			VARBINARY
-%token			BLOB
-%token			TEXT
-%token			ENUM
-%token			SET
+%token TINYINT
+%token SMALLINT
+%token MEDIUMINT
+%token INT
+%token INTEGER
+%token BIGINT
+%token REAL
+%token DOUBLE
+%token FLOAT
+%token DECIMAL
+%token DATE
+%token TIME
+%token TIMESTAMP
+%token DATETIME
+%token YEAR
+%token CHAR
+%token VARCHAR
+%token BINARY
+%token VARBINARY
+%token TINYBLOB
+%token BLOB
+%token MEDIUMBLOB
+%token LONGBLOB
+%token TINYTEXT
+%token TEXT
+%token MEDIUMTEXT
+%token LONGTEXT
+%token ENUM
+%token SET
+%token COLLATE
+%token BIT
+%token STRING
+%token INTNUM
+%token UNSIGNED
+%token ZEROFILL
 
-
-%token			COMA
-%token			PARENTHESIS_OPEN
-%token			PARENTHESIS_CLOSE
-%token			SPACE
+%token 		PARENTHESIS_OPEN
+%token 		PARENTHESIS_CLOSE
+%token 		COMA
+%token 		SIMPLE_COMMILLA
+%token 		SPACE
 %token               END    0     "end of file"
 %token               NEWLINE
 %token               UNKNOW
-%token			NUMBER
 
+%start data_type
 %locations
 
 %%
 
-declare_type :
-	integerDeclareVariable declare_end		{
-												if((driver.getOutputLenguaje() == Generator::OutputLenguajes::CPP) | (driver.getOutputLenguaje() == Generator::OutputLenguajes::C))
-												{
-													driver.oneLine = "int";
-												}
-												else
-												{
-													driver.message("OutputLenguaje is unknow.");
-													driver.oneLine =  "";
-												}
-											}
-	|
-	stringDeclareVarible declare_end 		{
-												if(driver.getOutputLenguaje() == Generator::OutputLenguajes::CPP)
-												{
-													driver.oneLine = "std::string";
-												}
-												else if(driver.getOutputLenguaje() == Generator::OutputLenguajes::C)
-												{
-													driver.oneLine ="const char*";
-												}
-												else
-												{
-													driver.message("OutputLenguaje is unknow.");
-													driver.oneLine = "";
-												}
-											}
-	|
-	integerTypes declare_end    		{
-											if((driver.getOutputLenguaje() == Generator::OutputLenguajes::CPP) | (driver.getOutputLenguaje() == Generator::OutputLenguajes::C))
-											{
-												driver.oneLine = "int";
-											}
-											else
-											{
-												driver.message("OutputLenguaje is unknow.");
-												driver.oneLine =  "";
-											}
-										}
-	|
-	realDeclareLow declare_end	    		{
-												if((driver.getOutputLenguaje() == Generator::OutputLenguajes::CPP) | (driver.getOutputLenguaje() == Generator::OutputLenguajes::C))
-												{
-													driver.oneLine = "float";
-												}
-												else
-												{
-													driver.message("OutputLenguaje is unknow.");
-													driver.oneLine =  "";
-												}
-											}
-	|
-	realDeclareHigh declare_end			    {
-												if((driver.getOutputLenguaje() == Generator::OutputLenguajes::CPP) | (driver.getOutputLenguaje() == Generator::OutputLenguajes::C))
-												{
-													driver.oneLine = "duble";
-												}
-												else
-												{
-													driver.message("OutputLenguaje is unknow.");
-													driver.oneLine =  "";
-												}
-											}						
-	;
+data_type: BIT opt_length end
+	| TINYINT opt_length opt_uz end
+		{
+			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			{
+				driver.oneLine = "short";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine =  "";
+			}
+		}
+	| SMALLINT opt_length opt_uz end
+		{
+			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			{
+				driver.oneLine = "unsigned char";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine =  "";
+			}
+		}
+	| MEDIUMINT opt_length opt_uz end
+		{
+			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			{
+				driver.oneLine = "int";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine =  "";
+			}
+		}
+	| INT opt_length opt_uz end
+		{
+			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			{
+				driver.oneLine = "int";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine =  "";
+			}
+		}
+	| INTEGER opt_length opt_uz end
+		{
+			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			{
+				driver.oneLine = "int";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine =  "";
+			}
+		}
+	| BIGINT opt_length opt_uz end
+		{
+			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			{
+				driver.oneLine = "int";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine =  "";
+			}
+		}
+	| REAL opt_length opt_uz end
+	| DOUBLE opt_length opt_uz end
+		{
+			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			{
+				driver.oneLine = "double";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine =  "";
+			}
+		}
+	| FLOAT opt_length opt_uz end
+		{
+			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			{
+				driver.oneLine = "float";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine =  "";
+			}
+		}
+	| DECIMAL opt_length opt_uz end
+		{
+			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			{
+				driver.oneLine = "double";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine =  "";
+			}
+		}
+	| DATE end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| TIME end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| TIMESTAMP end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| DATETIME end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| YEAR end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| CHAR opt_length opt_csc end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| VARCHAR opt_length opt_csc end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| BINARY opt_length end
+	| VARBINARY PARENTHESIS_OPEN INTNUM PARENTHESIS_CLOSE end
+	| TINYBLOB end
+	| BLOB end
+	| MEDIUMBLOB end
+	| LONGBLOB end
+	| TINYTEXT opt_binary opt_csc end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| TEXT opt_binary opt_csc end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| MEDIUMTEXT opt_binary opt_csc end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| LONGTEXT opt_binary opt_csc end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| ENUM PARENTHESIS_OPEN enum_list PARENTHESIS_CLOSE opt_csc end	
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
+	| SET PARENTHESIS_OPEN enum_list PARENTHESIS_CLOSE opt_csc end
+		{
+			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			{
+				driver.oneLine = "std::string";
+			}
+			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			{
+				driver.oneLine ="const char*";
+			}
+			else
+			{
+				driver.message("OutputLenguaje is unknow.");
+				driver.oneLine = "";
+			}
+		}
 
-stringDeclareVarible: stringVariableTypes PARENTHESIS_OPEN NUMBER PARENTHESIS_CLOSE;
-
-integerDeclareVariable: integerTypes PARENTHESIS_OPEN NUMBER PARENTHESIS_CLOSE;
-
-stringVariableTypes : VARCHAR | CHAR | TEXT;
-
-integerTypes : INT | INTEGER;
-
-realDeclareLow : realDeclareTypesLow PARENTHESIS_OPEN NUMBER COMA NUMBER PARENTHESIS_CLOSE;
-
-realDeclareHigh : realDeclareTypesHigh PARENTHESIS_OPEN NUMBER COMA NUMBER PARENTHESIS_CLOSE;
-
-realDeclareTypesLow : NUMERIC | FLOAT;
-
-realDeclareTypesHigh : DECIMAL | REAL | DOUBLE;
-
-declare_end : END | NEWLINE;
+enum_list: STRING
+	| enum_list COMA STRING
+	
+opt_binary: /* empty */
+	| BINARY
+	
+opt_length: /* empty */
+	| PARENTHESIS_OPEN INTNUM PARENTHESIS_CLOSE
+	| PARENTHESIS_OPEN INTNUM COMA INTNUM PARENTHESIS_CLOSE
+	
+opt_uz: /* empty */
+	| opt_uz SPACE UNSIGNED
+	| opt_uz SPACE ZEROFILL
+	
+opt_csc: /* empty */
+	| opt_csc CHAR SET STRING
+	| opt_csc COLLATE STRING
+end : NEWLINE|END|';'
 
 
 %%
 
 
 void 
-apidb::mysql::Parser::error( const location_type &l, const std::string &err_message )
+apidb::mysql::Parser::error(const location_type &l, const std::string &err_message)
 {
 	driver.oneLine =  "";
 	std::cerr << "Error: " << err_message << " at " << l << "\n";

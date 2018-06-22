@@ -17,7 +17,7 @@
  * 
  * */
 
-#include "apidb.hpp" 
+#include "apidb.hpp"
 
 #include <iostream>
 #include <list>
@@ -34,7 +34,6 @@ int main()
     {
         std::cerr<<"Not parsin phase"<<std::endl;
         return -1;
-    }   
-	
+    }	
 	return 0;	
 }

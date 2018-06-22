@@ -199,7 +199,7 @@ namespace apidb
 		}
 		else //no tiene key
 		{
-			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
+			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase in writeInsertCPP");
 		}
         ofile << "\t}"<<std::endl;
 	}
@@ -221,15 +221,22 @@ namespace apidb
 					ofile << "(const " << table.key->classReferenced->name<< "& obj);"<<std::endl;
 				}
 			}
+			else if(table.key->outType.compare("std::string") == 0)
+			{
+				ofile << "\t\t" <<table.name;
+				ofile << "(std::string id);"<<std::endl;
+			}
 			else
 			{
-				throw BuildException("EL tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema");
+				throw BuildException("EL tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema'" + table.key->outType + "'");
 			}
 		}
 		else
 		{
-			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
-		} 
+			std::string msg = "La tabla no tiene llave que es necesaria para el constructor de la clase in writeKeyContructorH ";
+			msg = msg + table.name;
+			throw BuildException(msg);
+		}
 	}
 	void CPPGenerator::writeKeyContructorCPP(const apidb::internal::Table& table ,std::ofstream& ofile)
 	{
@@ -248,6 +255,10 @@ namespace apidb
 					ofile << "(const " << table.key->classReferenced->name << "& obj)"<<std::endl;
 				}
 			}
+			else if(table.key->outType.compare("std::string") == 0)
+			{
+				ofile << "(std::string id)"<<std::endl;
+			}
 			else
 			{
 				throw BuildException("EL tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema");
@@ -255,7 +266,7 @@ namespace apidb
 		}
 		else
 		{
-			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase");
+			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase in writeKeyContructorCPP" );
 		}
 		ofile << "\t{" <<std::endl;
 		if(table.key->outType.compare("int") == 0)
@@ -545,9 +556,7 @@ namespace apidb
 			}
 			ofile << ");"<< std::endl;					
         }  
-        
-        
-        
+                 
           
 		writeKeyContructorH(table,ofile);		
 		writeCopyContructorH(table,ofile);
@@ -563,21 +572,25 @@ namespace apidb
     {
         for(internal::Symbol* attr : table)
         {
+			//ofile <<"["<<attr->outType<<"]"<<std::endl;
 			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
 			{
 				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 				{
 					if(attr->classReferenced == NULL)//si es foreing key
 					{
+						//ofile <<"[1]"<<std::endl;
 						ofile <<"\t\t"<< attr->outType << " "<< attr->name<<";"<< std::endl;						
 					}
 					else
 					{
+						//ofile <<"[2]"<<std::endl;
 						ofile <<"\t\t"<< attr->classReferenced->name << "* "<< attr->name<<";"<< std::endl;
-					}						
+					}
 				}
 				else
 				{
+					//ofile <<"[3]"<<std::endl;
 					ofile <<"\t\t" << attr->outType <<" "<< attr->name <<";"<< std::endl;
 				}
 			}
@@ -591,14 +604,17 @@ namespace apidb
     {
         file <<"namespace "<<driver.getNameProject()<<std::endl;
         file <<"{"<<std::endl;
+        //file <<"Listing tables" << std::endl;
         const internal::Tables& tables = driver.getListTable();
         for (const apidb::internal::Table* table : tables) 
         {
+			//file <<"Backward Table " << table->name << std::endl;
 			file <<"\tclass " <<table->name << ";"<<std::endl;
 		}
 		file<<std::endl;
         for (const apidb::internal::Table* table : tables) 
         {
+			//file <<"Declare Table " << table->name << std::endl;
             createClassH(driver,*table,file,table->name);       
         }
         file <<"}"<<std::endl;
@@ -613,12 +629,17 @@ namespace apidb
     }
     void CPPGenerator::createClassH(apidb::Analyzer& driver,const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
-        file <<"\tclass "<<nameClass<<std::endl;
+		//file <<"keyword"<<std::endl;
+		driver.getOutputMessage() <<"\tHeading class " << cl.name<<std::endl;
+        file <<"\tclass "<<nameClass<<std::endl;        
         file <<"\t{"<<std::endl;
+        //file <<"private"<<std::endl;
         createClassPrivateH(file);
         file << "\t\tstatic const std::string TABLE_NAME;" <<std::endl;
+        //file <<"atributes"<<std::endl;
         createClassAttributesH(driver,cl,file);
         createClassPublicH(file);
+        //file <<"methodes"<<std::endl;
         createClassMethodesH(driver,cl,file);
         file <<"\t};"<<std::endl;
     }
@@ -633,14 +654,13 @@ namespace apidb
         const apidb::internal::Tables& tables = driver->getListTable();
 		for(internal::Table* table: tables)
 		{
-			driver->getOutputMessage() << "\tCoding " << table->name << "." << std::endl;
 			for(internal::Symbol* attr : *table)
 			{
 				if(attr->outType.compare("std::string")==0 && stringFlag == false)
 				{
 					getHeaderOutput()<< "#include <string>" <<std::endl;
 					stringFlag = true;
-				}					
+				}
 			}
 		}
 			
@@ -652,7 +672,7 @@ namespace apidb
 		//writing code
 		if(!driver->getNameProject().empty())
 		{			
-			createSpaceH(*driver,getHeaderOutput());    
+			createSpaceH(*driver,getHeaderOutput());  
 			createSpaceCPP(*driver,getSourceOutput()); 
 		}   
 		else
@@ -660,7 +680,7 @@ namespace apidb
 			for (apidb::internal::Table* table : tables) 
 			{
 				createClassH(*driver,*table,getHeaderOutput(),table->name);  
-				createClassCPP(*driver,*table,getSourceOutput(),table->name);      
+				createClassCPP(*driver,*table,getSourceOutput(),table->name);     
 			}
 		}            
         return true;    
@@ -702,23 +722,26 @@ namespace apidb
         {
             for(internal::Table* table: driver->getListTable()) //reading attrubtes by table
             {
-				driver->getOutputMessage() << "\tCreating simbols for " << table->name  << "." << std::endl;
+				driver->getOutputMessage() << "\tCreating basic simbols for " << table->name  << "." << std::endl;
+                //simbolos basicos 
                 if(!table->basicSymbols(*connector))
                 {
 					//std::cerr<<"Faill on basicSymbols"<<std::endl;
 					return false;
-				}
+				}				
+				//foreign key's
 				if(!table->fillKeyType(*connector,driver->getListTable()))
                 {
 					//std::cerr<<"Faill on fillKeyType"<<std::endl;
 					return false;
-				}
-				//parsing imput types
+				}//parsing imput types
+				
 				for(internal::Symbol* attribute: *table)
 				{
+					//std::cout<<attribute->inType<<std::endl;
 					attribute->outType = driver->parse(attribute->inType);
-				}
-            }
+				}				
+			}				
         }    
 		return true;
 	}

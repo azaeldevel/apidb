@@ -5,3 +5,5 @@ rm cmake_install.cmake
 rm Makefile
 rm *.cc
 rm *.hh
+rm libapidb.a
+rm generator

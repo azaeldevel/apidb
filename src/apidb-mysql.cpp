@@ -119,7 +119,7 @@ namespace apidb
 				
 							
 				
-				push_back(attrribute);
+				push_back(attrribute);//se agrega el atributo a la lista
 				if(attrribute->required)
 				{
 					required.push_back(attrribute);//si attrribute->required tambie se agrega a un lista especial
@@ -138,7 +138,17 @@ namespace apidb
     
 	bool internal::Tables::listing(toolkit::clientdb::Connector& connect)
 	{
-		if(connect.query("SHOW TABLES")) 
+		std::string db;
+		switch(connect.getDatconection().getServerType())
+		{
+			case toolkit::clientdb::Datconection::ServerType::MySQL:
+				db = ((toolkit::clientdb::DatconectionMySQL&)(connect.getDatconection())).getDatabase();
+				break;
+			default:
+			return false;
+		}
+		//std::cout<< "db:" << db <<std::endl;
+		if(connect.query("SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '"  + db + "' and TABLE_TYPE = 'BASE TABLE'")) 
 		{
 			MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());
 			MYSQL_ROW row;

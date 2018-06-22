@@ -7,6 +7,42 @@
 
 namespace apidb
 {	
+	namespace internal
+	{
+		int Symbol::counter = 0;	
+		
+		
+		
+		Table::~Table()
+		{
+			for (Symbol* symbol : *this)
+			{
+				delete symbol;
+			}	
+			clear();
+		}
+		Tables::~Tables()
+		{
+			for (Table* table : *this)
+			{
+				delete table;
+			}
+			clear();
+		}
+		const Table* Tables::search(const std::string& tableName)const
+		{
+			std::list<Table*>::const_iterator actual = this->begin();
+			std::list<Table*>::const_iterator last = this->end();
+			
+			while (actual != last) 
+			{
+				if ((*actual)->name.compare(tableName) == 0) return (const internal::Table*)(*actual);
+				++actual;
+			}
+			return NULL;
+		}		
+	}
+
 	BuildException::~BuildException() throw()
 	{
 		;
@@ -30,42 +66,12 @@ namespace apidb
 		id = counter;
 	}
 	
-	int internal::Symbol::counter = 0;	
-	internal::Table::~Table()
-	{
-		for (apidb::internal::Symbol* symbol : *this)
-		{
-			delete symbol;
-		}	
-		clear();
-	}
-	internal::Tables::~Tables()
-	{
-		for (apidb::internal::Table* table : *this)
-		{
-			delete table;
-		}
-		clear();
-	}
-	const internal::Table* internal::Tables::search(const std::string& tableName)const
-	{
-		std::list<internal::Table*>::const_iterator actual = this->begin();
-		std::list<internal::Table*>::const_iterator last = this->end();
-		
-		while (actual != last) 
-		{
-			if ((*actual)->name.compare(tableName) == 0) return (const internal::Table*)(*actual);
-			++actual;
-		}
-		return NULL;
-	}
-	
-	
-	
 	const internal::Tables& Analyzer::getListTable() const
 	{
 		return symbolsTables;
 	}
+	
+	
 	std::string Analyzer::getOutputLenguajeString()const
 	{
 		switch(getOutputLenguaje())

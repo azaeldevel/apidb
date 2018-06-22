@@ -110,6 +110,8 @@ namespace apidb
 			std::string name;
             Symbol* key;
             std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista
+            short countRefereced;
+            
             
             ~Table();
 			bool basicSymbols(toolkit::clientdb::Connector& connect);
@@ -181,12 +183,12 @@ namespace mysql
 		* parse - parse from a file
 		* @param filename - valid string with input file
 		*/
-		void parse( const char * const filename );
+		void parse(const char * const filename);
 		/** 
 		* parse - parse from a c++ input stream
 		* @param is - std::istream&, valid input stream
 		*/
-		void parse( std::istream &iss );
+		void parse(std::istream &iss);
 		
 		void message(const std::string&);		
 		std::ostream& print(std::ostream &stream);
@@ -194,7 +196,7 @@ namespace mysql
 		//Don't use, is temporal: usada por parse para retorna sui resultado
 		std::string oneLine;
 	private:
-		void parse_helper( std::istream &stream );
+		void parse_helper(std::istream &stream);
 		Parser  *parser  = nullptr;
 		Scanner *scanner = nullptr;   
 	};
