@@ -26,11 +26,7 @@ int main()
 {
 	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","root","k3yL0c41");  
 	apidb::CG driver("nmp","test",mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP);
-	if(driver.analyze())
-	{
-		if(!driver.generate()) return -1;
-	}
-	else
+	if(!driver.driving())
     {
         std::cerr<<"Not parsin phase"<<std::endl;
         return -1;

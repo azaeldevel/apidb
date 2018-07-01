@@ -25,11 +25,27 @@
 namespace apidb
 {
 		
-	bool CG::generate()
+	bool CG::driving()
 	{
-		apidb::CPPGenerator cpp(*analyzer);
-		cpp.generate();
+		if(analyze())
+		{
+			if(generate()) return true;
+		}
+		
 		return false;
+	}
+	
+	bool CG::generate()
+	{		
+		if(this->analyzer->getOutputLenguaje() == apidb::OutputLenguajes::CPP)
+		{
+			apidb::CPPGenerator cpp(*analyzer);
+			return cpp.generate();
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	bool CG::analyze()
@@ -70,7 +86,8 @@ namespace apidb
 					attribute->outType = analyzer->parse(attribute->inType);
 				}				
 			}				
-        }    
+        }  
+          
 		return true;
 	}
 		
