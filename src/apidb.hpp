@@ -25,55 +25,18 @@
 #include <iostream>
 #include <fstream>
 
-#include "driver.hpp"
+#include "analyzer.hpp"
+#include "generator.hpp"
+
 
 namespace apidb
 {
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
-		
-	class CPPGenerator
-	{
-    public:
-		virtual bool generate();
-		CPPGenerator(apidb::Analyzer&);
-		const std::string& getHeaderName() const;
-		std::ofstream& getSourceOutput();
-		std::ofstream& getHeaderOutput();
-		~CPPGenerator();
-		
-    private:
-        void createSpaceH(apidb::Analyzer& driver,std::ofstream& file);
-        void createClassH(apidb::Analyzer& driver,const apidb::internal::Table&,std::ofstream&,const std::string&);
-        void createClassPrivateH(std::ofstream&);
-        void createClassAttributesH(apidb::Analyzer& driver,const apidb::internal::Table&,std::ofstream&);
-        void createClassPublicH(std::ofstream&);
-        void createClassMethodesH(apidb::Analyzer& driver,const apidb::internal::Table&,std::ofstream&);
-        void createSpaceCPP(apidb::Analyzer& driver,std::ofstream& file);
-        void createClassCPP(apidb::Analyzer& driver,const apidb::internal::Table&,std::ofstream&,const std::string&);
-        void createClassPrivateCPP(std::ofstream&);
-        void createClassAttributesCPP(apidb::Analyzer& driver,const apidb::internal::Table&,std::ofstream&);
-        void createClassPublicCPP(std::ofstream&);
-        void createClassMethodesCPP(apidb::Analyzer& driver,const apidb::internal::Table&,std::ofstream&);
-        void writeDefaultContructorH(const apidb::internal::Table&,std::ofstream&);
-        void writeDefaultContructorCPP(const apidb::internal::Table&,std::ofstream&);
-        void writeKeyValueH(const apidb::internal::Table&,std::ofstream&);
-        void writeKeyValueCPP(const apidb::internal::Table&,std::ofstream&);
-        void writeCopyContructorH(const apidb::internal::Table&,std::ofstream&);
-        void writeCopyContructorCPP(const apidb::internal::Table&,std::ofstream&);
-        void writeKeyContructorH(const apidb::internal::Table&,std::ofstream&);
-        void writeKeyContructorCPP(const apidb::internal::Table&,std::ofstream&);
-        void writeInsertH(const apidb::internal::Table&,std::ofstream&);
-        void writeInsertCPP(const apidb::internal::Table&,std::ofstream&);
-        
-        apidb::Analyzer* driver;
-		std::ofstream* writeResults;//erreglo de writeoutput files
-		std::string projectH;
-		std::string projectCPP;
-	};	
+	
     
     /**
-     * Clientes Generato
+     * 
      **/
 	class CG
 	{
@@ -83,7 +46,7 @@ namespace apidb
 		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje,OutputLenguajes outputLenguaje);
 	private:
 		toolkit::clientdb::Connector* connector;
-		apidb::Analyzer* driver;
+		apidb::Analyzer* analyzer;
 	};
 }
 
