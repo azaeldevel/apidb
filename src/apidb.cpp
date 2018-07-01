@@ -24,7 +24,12 @@
 
 namespace apidb
 {
-		
+	
+	OutputLenguajes CG::getOutputLenguaje() const
+	{
+		return generator->getOutputLenguaje();
+	}
+	
 	bool CG::driving()
 	{
 		if(analyze())
@@ -37,9 +42,10 @@ namespace apidb
 	
 	bool CG::generate()
 	{		
-		if(this->analyzer->getOutputLenguaje() == apidb::OutputLenguajes::CPP)
+		if(outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
 			apidb::CPPGenerator cpp(*analyzer);
+			generator = &cpp;
 			return cpp.generate();
 		}
 		else
@@ -62,6 +68,9 @@ namespace apidb
 		{
 			return false;
 		}
+		
+		analyzer->setPramsLenguajes(inputLenguaje,outputLenguaje);
+		
 		if(analyzer->listing(*connector)) //reading tables
         {
             for(internal::Table* table: analyzer->getListTable()) //reading attrubtes by table
@@ -93,6 +102,8 @@ namespace apidb
 		
 	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
 	{		
+		this->inputLenguaje = inputLenguaje;
+		this->outputLenguaje = outputLenguaje;
 		connector = new toolkit::clientdb::Connector();
 		analyzer = new mysql::Analyzer(inputLenguaje,outputLenguaje);		
 		try

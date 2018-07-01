@@ -10,6 +10,20 @@
 namespace apidb
 {
 
+	std::string Generator::getOutputLenguajeString()const
+	{
+		switch(getOutputLenguaje())
+		{
+			case OutputLenguajes::CPP:
+				return "C++";
+			default:
+				return "Unknow";
+		}
+	}
+	OutputLenguajes Generator::getOutputLenguaje()const
+	{
+		return outputLenguaje;
+	}
 	CPPGenerator::~CPPGenerator()
 	{
 		delete[] writeResults;
@@ -29,6 +43,7 @@ namespace apidb
 	
 	CPPGenerator::CPPGenerator(apidb::Analyzer& d):analyzer(&d)
 	{
+		outputLenguaje = d.getOutputLenguaje();
 		writeResults = new std::ofstream[2];
 		if((d.getDirectoryProject().empty()) | (d.getDirectoryProject().compare(".") == 0)) 
 		{
@@ -559,7 +574,7 @@ namespace apidb
         for(internal::Symbol* attr : table)
         {
 			//ofile <<"["<<attr->outType<<"]"<<std::endl;
-			if(analyzer->getOutputLenguaje() == OutputLenguajes::CPP)
+			if(outputLenguaje == OutputLenguajes::CPP)
 			{
 				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 				{
@@ -633,7 +648,7 @@ namespace apidb
     bool CPPGenerator::generate()
     {		
 		analyzer->getOutputMessage() << "Generando codigo... " << std::endl;
-		analyzer->getOutputMessage() << "\tLenguaje resultado: " << analyzer->getOutputLenguajeString() << std::endl;
+		analyzer->getOutputMessage() << "\tLenguaje resultado: " << getOutputLenguajeString() << std::endl;
 		//includes in header file
         std::string headers = "";
         bool stringFlag = false;

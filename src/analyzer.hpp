@@ -39,7 +39,7 @@ namespace apidb
 		MySQL_Script,
 		PostgresSQL
 	};
-		
+	
 	enum OutputLenguajes
 	{
 		C,
@@ -49,6 +49,7 @@ namespace apidb
 		Perl,
 		Python
 	};
+		
 	
 	class BuildException : public std::exception
     {
@@ -147,16 +148,16 @@ namespace apidb
 		virtual std::string parse(const std::string& line) = 0;
 		
 		internal::Tables& getListTable();
-		
-		std::string getOutputLenguajeString()const;		
+			
 		std::string getInputLenguajeString()const;
 		
 		const std::string& getNameProject();
 		const std::string& getDirectoryProject();
 		void setPramsProject(const std::string& name,const std::string& directory);
-		
-		OutputLenguajes getOutputLenguaje() const;		
+		void setPramsLenguajes(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje);
+				
 		InputLenguajes getInputLenguaje() const;
+		OutputLenguajes getOutputLenguaje() const;
 		
     protected:
 		internal::Tables symbolsTables;		

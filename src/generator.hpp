@@ -1,6 +1,20 @@
 namespace apidb
 {
-	class CPPGenerator
+	
+	
+	class Generator
+	{
+	public:
+		virtual bool generate() = 0;
+		OutputLenguajes getOutputLenguaje() const;
+		std::string getOutputLenguajeString()const;	
+		
+	protected:		
+		OutputLenguajes outputLenguaje;
+	};
+	
+	
+	class CPPGenerator : public Generator
 	{
     public:
 		virtual bool generate();

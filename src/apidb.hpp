@@ -41,6 +41,7 @@ namespace apidb
 	class CG
 	{
 	public:
+		OutputLenguajes getOutputLenguaje() const;
 		virtual bool analyze();
 		virtual bool generate();
 		bool driving();
@@ -48,6 +49,9 @@ namespace apidb
 	private:
 		toolkit::clientdb::Connector* connector;
 		apidb::Analyzer* analyzer;
+		apidb::Generator* generator;
+		InputLenguajes inputLenguaje;
+		OutputLenguajes outputLenguaje;
 	};
 }
 
