@@ -26,32 +26,7 @@ namespace apidb
 			}			
 			return m;
 		}
-		
-		bool Table::operator<(const Table& t)
-		{
-			return countRef < t.countRef;
-		}
-		
-		bool Table::operator>(const Table& t)
-		{
-			return countRef > t.countRef;
-		}
-		
-		void Tables::sortByReferences()
-		{
-			std::list<Table*>::iterator actual = begin();
-			std::list<Table*>::iterator last = end();
-			
-			for(short count = max(); count > 0 && last != actual ; count--)
-			{
-				if(count == (*actual)->getCountRefereces())
-				{
-					//splice(end(),(*actual));
-					++actual;
-				}				
-			}
-		}
-		
+				
 		short Table::getCountRefereces()const 
 		{
 			return countRef;
@@ -114,6 +89,10 @@ namespace apidb
 	{
 		counter++;
 		id = counter;
+		classReferenced = NULL;
+		classParent = NULL;
+		keyType = NOKEY;
+		id = 0;
 	}
 	
 	

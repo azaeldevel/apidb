@@ -44,10 +44,10 @@ namespace apidb
 	{
 		C,
 		CPP,
-		Java,
+		JAVA,
 		CSHARP,
-		Perl,
-		Python
+		PERL,
+		PYTHON
 	};
 		
 	
@@ -117,8 +117,6 @@ namespace apidb
 			bool basicSymbols(toolkit::clientdb::Connector& connect);
             bool fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables);
             short getCountRefereces()const; 
-            bool operator<(const Table& t);
-            bool operator>(const Table& t);
             
 		private:
 			short countRef;
@@ -133,7 +131,6 @@ namespace apidb
 			~Tables();	
             Table* search(const std::string&);           
 			bool listing(toolkit::clientdb::Connector& connect);
-			void sortByReferences();
 			
 		private:			
 			short max();
@@ -171,7 +168,7 @@ namespace apidb
 		OutputLenguajes outputLenguaje;
 	};
 
-		
+
 namespace mysql
 {
 	class Analyzer : public apidb::Analyzer
