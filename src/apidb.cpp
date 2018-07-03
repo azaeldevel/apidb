@@ -41,12 +41,20 @@ namespace apidb
 	}
 	
 	bool CG::generate()
-	{		
+	{
 		if(outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
-			apidb::CPPGenerator cpp(*analyzer);
+			bool flagCPP,flagCMAKE;
+			
+			apidb::generators::CPP cpp(*analyzer);
 			generator = &cpp;
-			return cpp.generate();
+			flagCPP = cpp.generate();
+			
+			apidb::generators::CMake cmake(*analyzer);			
+			flagCMAKE = cmake.generate();
+			
+			analyzer->getOutputMessage() <<"Completado."<<std::endl;
+			return (flagCPP && flagCMAKE);
 		}
 		else
 		{
@@ -101,7 +109,7 @@ namespace apidb
 	}
 		
 	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
-	{		
+	{
 		this->inputLenguaje = inputLenguaje;
 		this->outputLenguaje = outputLenguaje;
 		connector = new toolkit::clientdb::Connector();

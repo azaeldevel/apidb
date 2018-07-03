@@ -9,39 +9,133 @@
 
 namespace apidb
 {
+namespace generators
+{
+	CMake::CMake(apidb::Analyzer& d):analyzer(&d)
+	{
+		outputLenguaje = apidb::OutputLenguajes::CMAKE;
+		
+	}
+	
+	CMake::~CMake()
+	{
+		
+	}
+	
+	bool CMake::generate()
+	{
+		std::string namefile = "CMakeLists.txt";
+		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		{
+			cmakelists.open(namefile);
+		}
+		else
+		{
+			cmakelists.open(analyzer->getDirectoryProject() + "/" + namefile);
+		}
+		
+		
+		Options options;
+		options.cmake_minimun_requiered.set(3,0);
+		options.project.name = "nmp";
+		options.project.lenguague = apidb::CPP;
+		options.project.version.set(0,1,0,toolkit::Version::alpha);
+		
+		
+		analyzer->getOutputMessage() << "Generando archivos de gentor de projecto... " << std::endl;
+		analyzer->getOutputMessage() << "\tTipo de Gestor: " << getOutputLenguajeString() << std::endl;
+		
+		cmakelists<<"CMAKE_MINIMUM_REQUIRED(VERSION ";
+		cmakelists<<options.cmake_minimun_requiered.getMajor();
+		cmakelists<<".";
+		cmakelists<<options.cmake_minimun_requiered.getMinor();
+		cmakelists<<")"<<std::endl;
+		
+		cmakelists<<"PROJECT(";
+		cmakelists<<options.project.name;
+		cmakelists<<" VERSION ";
+		cmakelists<<options.project.version.getMajor();
+		cmakelists<<".";
+		cmakelists<<options.project.version.getMinor();
+		cmakelists<<".";
+		cmakelists<<options.project.version.getPatch();
+		cmakelists<<".";
+		cmakelists<<"0 ";
+		if(analyzer->getOutputLenguaje() == apidb::OutputLenguajes::CPP)
+		{
+			cmakelists<<" LANGUAGES CXX)"<<std::endl;
+		}
+		else
+		{
+			throw BuildException("El lenguje de salida es desconocido para el gentor de projecto.");
+		}
+		
+		cmakelists<<"SET(CMAKE_CXX_STANDARD 14)"<<std::endl;
+		cmakelists<<"SET(CMAKE_CXX_STANDARD_REQUIRED ON)"<<std::endl;
+		cmakelists<<"SET(CMAKE_CXX_EXTENSIONS OFF)"<<std::endl;
+		cmakelists<<"SET(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -g -Wall\")"<<std::endl;
+		cmakelists<<std::endl;
+		cmakelists<<"SET(apidb_VERSION_STAGE \"alpha\")"<<std::endl;
+		cmakelists<<"CONFIGURE_FILE(\"${PROJECT_SOURCE_DIR}/config.h.in\" \"${PROJECT_SOURCE_DIR}/config.h\")"<<std::endl;
+		cmakelists<<std::endl;
+		cmakelists<<"FIND_PACKAGE(MySQL REQUIRED PATHS ${PROJECT_SOURCE_DIR}/../../cmake/Modules/)"<<std::endl;
+		cmakelists<<"IF(MySQL_FOUND)"<<std::endl;
+			cmakelists<<"INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"ENDIF()"<<std::endl;
+		cmakelists<<"FIND_PACKAGE(toolkit-common REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
+		cmakelists<<"IF(TOOLKIT_COMMON_FOUND)"<<std::endl;
+			cmakelists<<"INCLUDE_DIRECTORIES(${TOOLKIT_COMMON_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"ENDIF()"<<std::endl;
+		cmakelists<<"FIND_PACKAGE(toolkit-clientdb REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
+		cmakelists<<"IF(TOOLKIT_CLIENTDB_FOUND)"<<std::endl;
+			cmakelists<<"INCLUDE_DIRECTORIES(${TOOLKIT_CLIENTDB_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"ENDIF()"<<std::endl;
+		cmakelists<<std::endl;
+		cmakelists<<"ADD_EXECUTABLE(developing nmp.cpp developing.cpp)"<<std::endl;
+		cmakelists<<"TARGET_LINK_LIBRARIES(developing ${TOOLKIT_CLIENTDB_LIBRARY} ${TOOLKIT_COMMON_LIBRARY} ${MYSQL_LIBRARY})"<<std::endl;
+
+		
+		analyzer->getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
+		return true;
+	}
 
 	std::string Generator::getOutputLenguajeString()const
 	{
-		switch(getOutputLenguaje())
+		switch(outputLenguaje)
 		{
+			case OutputLenguajes::CMAKE:		
+				return "CMake";
 			case OutputLenguajes::CPP:
 				return "C++";
 			default:
 				return "Unknow";
 		}
 	}
+		
 	OutputLenguajes Generator::getOutputLenguaje()const
 	{
 		return outputLenguaje;
 	}
-	CPPGenerator::~CPPGenerator()
+	
+	
+	CPP::~CPP()
 	{
 		delete[] writeResults;
 	}
-	const std::string& CPPGenerator::getHeaderName() const
+	const std::string& CPP::getHeaderName() const
 	{
 		return projectH;
 	}
-	std::ofstream& CPPGenerator::getSourceOutput()
+	std::ofstream& CPP::getSourceOutput()
 	{
 		return writeResults[1];
 	}
-	std::ofstream& CPPGenerator::getHeaderOutput()
+	std::ofstream& CPP::getHeaderOutput()
 	{
 		return writeResults[0];
 	}
 	
-	CPPGenerator::CPPGenerator(apidb::Analyzer& d):analyzer(&d)
+	CPP::CPP(apidb::Analyzer& d):analyzer(&d)
 	{
 		outputLenguaje = d.getOutputLenguaje();
 		writeResults = new std::ofstream[2];
@@ -60,7 +154,7 @@ namespace apidb
 			writeResults[1].open(d.getDirectoryProject() + "/" + projectCPP);
 		}
 	}
-	void CPPGenerator::writeInsertH(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeInsertH(const apidb::internal::Table& table,std::ofstream& ofile)
 	{
 		// creando insert
         ofile << "\t\t"<< "bool ";
@@ -95,7 +189,7 @@ namespace apidb
 		}
         ofile << ");"<<std::endl;
 	}
-	void CPPGenerator::writeInsertCPP(const apidb::internal::Table& table,std::ofstream& ofile)	
+	void CPP::writeInsertCPP(const apidb::internal::Table& table,std::ofstream& ofile)	
 	{	
 		// Methodo insert
         ofile << "\t"<< "bool ";
@@ -205,7 +299,7 @@ namespace apidb
         ofile << "\t}"<<std::endl;
 	}
         
-	void CPPGenerator::writeKeyContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeKeyContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
 	{
         //constructor que toma key como parametro
         if(table.key != NULL)//tiene key
@@ -239,7 +333,7 @@ namespace apidb
 			throw BuildException(msg);
 		}
 	}
-	void CPPGenerator::writeKeyContructorCPP(const apidb::internal::Table& table ,std::ofstream& ofile)
+	void CPP::writeKeyContructorCPP(const apidb::internal::Table& table ,std::ofstream& ofile)
 	{
 		//constructor que toma key como parametro
         if(table.key != NULL)//tiene key
@@ -288,12 +382,12 @@ namespace apidb
 		ofile << "\t}" <<std::endl;
 	}
         
-	void CPPGenerator::writeCopyContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeCopyContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
 	{
 		//constructor de copias 
 		ofile << "\t\t" <<table.name<<"(const " << table.name <<"&);"<<std::endl;
 	}
-	void CPPGenerator::writeCopyContructorCPP(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeCopyContructorCPP(const apidb::internal::Table& table,std::ofstream& ofile)
 	{
 		//constructor de copias 
 		ofile << "\t" << table.name << "::" << table.name <<"(const " << table.name <<"& obj)"<<std::endl;
@@ -305,7 +399,7 @@ namespace apidb
 		ofile << "\t}"<<std::endl;
 				
 	}
-	void CPPGenerator::writeKeyValueH(const apidb::internal::Table& table ,std::ofstream& ofile)
+	void CPP::writeKeyValueH(const apidb::internal::Table& table ,std::ofstream& ofile)
 	{
         //si la table tiene key
         if(table.key != NULL) 
@@ -313,7 +407,7 @@ namespace apidb
 			ofile << "\t\tstd::string toStringKey()const;" <<std::endl;			
 		}
 	}
-	void CPPGenerator::writeKeyValueCPP(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeKeyValueCPP(const apidb::internal::Table& table,std::ofstream& ofile)
 	{
         if(table.key != NULL)
         {
@@ -351,17 +445,17 @@ namespace apidb
 		}
 	}
         
-	void CPPGenerator::writeDefaultContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeDefaultContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
 	{
 		ofile <<"\t\t"<<table.name<<"();"<<std::endl;
 	}
-	void CPPGenerator::writeDefaultContructorCPP(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeDefaultContructorCPP(const apidb::internal::Table& table,std::ofstream& ofile)
     {
 		ofile <<"\t"<<table.name<< "::" <<table.name<<"()"<<std::endl;
 		ofile <<"\t{"<<std::endl;
 		ofile <<"\t}"<<std::endl;
 	}
-    void CPPGenerator::createClassMethodesCPP(const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPP::createClassMethodesCPP(const apidb::internal::Table& table,std::ofstream& ofile)
     {		
         for(const internal::Symbol* attr : table)
         {
@@ -492,7 +586,7 @@ namespace apidb
 		ofile << std::endl; 
     }
     
-    void CPPGenerator::createSpaceCPP(std::ofstream& file)
+    void CPP::createSpaceCPP(std::ofstream& file)
     {
         file <<"namespace "<<analyzer->getNameProject()<<std::endl;
         file <<"{"<<std::endl;
@@ -503,14 +597,14 @@ namespace apidb
         }
         file <<"}"<<std::endl;
     }
-	void CPPGenerator::createClassCPP(const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
+	void CPP::createClassCPP(const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  nameClass << "\";" << std::endl;
         createClassMethodesCPP(cl,file);        
         file<< std::endl<< std::endl;
     }
     
-    void CPPGenerator::createClassMethodesH(const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPP::createClassMethodesH(const apidb::internal::Table& table,std::ofstream& ofile)
     {
 		std::string insertMethode = "";
         for(internal::Symbol* attr : table)
@@ -569,7 +663,7 @@ namespace apidb
 		  
     }
     
-    void CPPGenerator::createClassAttributesH(const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPP::createClassAttributesH(const apidb::internal::Table& table,std::ofstream& ofile)
     {
         for(internal::Symbol* attr : table)
         {
@@ -601,7 +695,7 @@ namespace apidb
 			}             
         }        
     }
-    void CPPGenerator::createSpaceH(std::ofstream& file)
+    void CPP::createSpaceH(std::ofstream& file)
     {
         file <<"namespace "<<analyzer->getNameProject()<<std::endl;
         file <<"{"<<std::endl;
@@ -620,15 +714,15 @@ namespace apidb
         }
         file <<"}"<<std::endl;
     }
-    void CPPGenerator::createClassPublicH(std::ofstream& file)
+    void CPP::createClassPublicH(std::ofstream& file)
     {
         file << "\tpublic:" <<std::endl;
     }
-    void CPPGenerator::createClassPrivateH(std::ofstream& file)
+    void CPP::createClassPrivateH(std::ofstream& file)
     {
         file << "\tprivate:" <<std::endl;
     }
-    void CPPGenerator::createClassH(const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
+    void CPP::createClassH(const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
 		//file <<"keyword"<<std::endl;
 		analyzer->getOutputMessage() <<"\tHeading class " << cl.name<<std::endl;
@@ -645,9 +739,9 @@ namespace apidb
         file <<"\t};"<<std::endl;
     }
     
-    bool CPPGenerator::generate()
+    bool CPP::generate()
     {		
-		analyzer->getOutputMessage() << "Generando codigo... " << std::endl;
+		analyzer->getOutputMessage() << "Generando archivos de codigo fuente... " << std::endl;
 		analyzer->getOutputMessage() << "\tLenguaje resultado: " << getOutputLenguajeString() << std::endl;
 		//includes in header file
         std::string headers = "";
@@ -689,5 +783,5 @@ namespace apidb
     
 
 	
-	
+}
 }

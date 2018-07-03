@@ -6,4 +6,4 @@ rm Makefile
 rm *.cc
 rm *.hh
 rm libapidb.a
-rm test
+rm Test

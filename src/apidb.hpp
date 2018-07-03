@@ -49,7 +49,7 @@ namespace apidb
 	private:
 		toolkit::clientdb::Connector* connector;
 		apidb::Analyzer* analyzer;
-		apidb::Generator* generator;
+		apidb::generators::Generator* generator;
 		InputLenguajes inputLenguaje;
 		OutputLenguajes outputLenguaje;
 	};

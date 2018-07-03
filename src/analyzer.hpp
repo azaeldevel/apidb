@@ -47,7 +47,8 @@ namespace apidb
 		JAVA,
 		CSHARP,
 		PERL,
-		PYTHON
+		PYTHON,
+		CMAKE		
 	};
 		
 	

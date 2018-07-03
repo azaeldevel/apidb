@@ -114,7 +114,7 @@ namespace apidb
 		
 	std::string Analyzer::getInputLenguajeString() const
 	{
-		switch(getInputLenguaje())
+		switch(inputLenguaje)
 		{
 			case InputLenguajes::MySQL_Server:
 				return "Servidor MySQL";
