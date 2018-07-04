@@ -76,6 +76,8 @@ namespace apidb
 		private:
 			apidb::Analyzer* analyzer;
 			std::ofstream cmakelists;
+			std::ofstream toolkitcommonconifg;
+			std::ofstream toolkitclientdbConfig;
 		};
 	
 	}

@@ -42,6 +42,7 @@ namespace generators
 		options.project.version.set(0,1,0,toolkit::Version::alpha);
 		
 		
+		//CMakeLists.txt
 		analyzer->getOutputMessage() << "Generando archivos de gentor de projecto... " << std::endl;
 		analyzer->getOutputMessage() << "\tTipo de Gestor: " << getOutputLenguajeString() << std::endl;
 		
@@ -93,7 +94,135 @@ namespace generators
 		cmakelists<<std::endl;
 		cmakelists<<"ADD_EXECUTABLE(developing nmp.cpp developing.cpp)"<<std::endl;
 		cmakelists<<"TARGET_LINK_LIBRARIES(developing ${TOOLKIT_CLIENTDB_LIBRARY} ${TOOLKIT_COMMON_LIBRARY} ${MYSQL_LIBRARY})"<<std::endl;
+		cmakelists.close();
 
+		
+		//cmake.modules
+		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		{
+			std::ifstream ifile("cmake.modules");
+			if (!ifile) 
+			{
+				system("mkdir cmake.modules");
+			}
+		}
+		else
+		{
+			std::string direct = analyzer->getDirectoryProject() + "/cmake.modules";
+			std::ifstream ifile(direct);
+			if (!ifile) 
+			{
+				std::string cmd = "mkdir ";
+				cmd = cmd + direct;
+				system(cmd.c_str());
+			}			
+		}
+	
+		namefile = "toolkit-commonConfig.cmake";
+		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		{
+			toolkitcommonconifg.open(namefile);
+		}
+		else
+		{
+			toolkitcommonconifg.open(analyzer->getDirectoryProject() + "/cmake.modules/" + namefile);
+		}
+		
+		toolkitcommonconifg<<"IF (TOOLKIT_COMMON_INCLUDE_DIR)"<<std::endl;
+		  toolkitcommonconifg<<"SET(TOOLKIT_COMMON_FIND_QUIETLY TRUE)"<<std::endl;
+		toolkitcommonconifg<<"ENDIF (TOOLKIT_COMMON_INCLUDE_DIR)"<<std::endl;
+
+		toolkitcommonconifg<<"FIND_PATH(TOOLKIT_COMMON_INCLUDE_DIR toolkit.hpp"<<std::endl;
+		  toolkitcommonconifg<<"${PROJECT_SOURCE_DIR}/../../../toolkit/common/src"<<std::endl;
+		  toolkitcommonconifg<<"$ENV{HOME}/root/include/toolkit"<<std::endl;
+		  toolkitcommonconifg<<"/usr/local/include/toolkit"<<std::endl;
+		  toolkitcommonconifg<<"/usr/include/toolkit"<<std::endl;
+		toolkitcommonconifg<<")"<<std::endl;
+
+		toolkitcommonconifg<<"SET(TOOLKIT_COMMON_NAMES toolkit-common)"<<std::endl;
+		toolkitcommonconifg<<"FIND_LIBRARY(TOOLKIT_COMMON_LIBRARY"<<std::endl;
+		  toolkitcommonconifg<<"NAMES ${TOOLKIT_COMMON_NAMES}"<<std::endl;
+		  toolkitcommonconifg<<"PATHS ${PROJECT_SOURCE_DIR}/../../../toolkit/common/src ${PROJECT_SOURCE_DIR}/../../common/src $ENV{HOME}/root/usr/lib /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu"<<std::endl;
+		  toolkitcommonconifg<<"PATH_SUFFIXES toolkit-common"<<std::endl;
+		toolkitcommonconifg<<")"<<std::endl;
+
+		toolkitcommonconifg<<"IF (TOOLKIT_COMMON_INCLUDE_DIR AND TOOLKIT_COMMON_LIBRARY)"<<std::endl;
+		  toolkitcommonconifg<<"SET(TOOLKIT_COMMON_FOUND TRUE)"<<std::endl;
+		  toolkitcommonconifg<<"SET( TOOLKIT_COMMON_LIBRARIES ${TOOLKIT_COMMON_LIBRARY} )"<<std::endl;
+		toolkitcommonconifg<<"ELSE (TOOLKIT_COMMON_INCLUDE_DIR AND TOOLKIT_COMMON_LIBRARY)"<<std::endl;
+		  toolkitcommonconifg<<"SET(TOOLKIT_COMMON_FOUND FALSE)"<<std::endl;
+		  toolkitcommonconifg<<"SET( TOOLKIT_COMMON_LIBRARIES )"<<std::endl;
+		toolkitcommonconifg<<"ENDIF (TOOLKIT_COMMON_INCLUDE_DIR AND TOOLKIT_COMMON_LIBRARY)"<<std::endl;
+
+		toolkitcommonconifg<<"IF (TOOLKIT_COMMON_FOUND)"<<std::endl;
+		  toolkitcommonconifg<<"IF (NOT TOOLKIT_COMMON_FIND_QUIETLY)"<<std::endl;
+			toolkitcommonconifg<<"MESSAGE(STATUS \"Found toolkit-common: ${TOOLKIT_COMMON_LIBRARY}\")"<<std::endl;
+		  toolkitcommonconifg<<"ENDIF (NOT TOOLKIT_COMMON_FIND_QUIETLY)"<<std::endl;
+		toolkitcommonconifg<<"ELSE (TOOLKIT_COMMON_FOUND)"<<std::endl;
+		  toolkitcommonconifg<<"IF (TOOLKIT_COMMON_FIND_REQUIRED)"<<std::endl;
+			toolkitcommonconifg<<"MESSAGE(STATUS \"Looked for toolkit-common libraries named ${TOOLKIT_COMMON_NAMES}.\")"<<std::endl;
+			toolkitcommonconifg<<"MESSAGE(FATAL_ERROR \"Could NOT find toolkit-common library\")"<<std::endl;
+		  toolkitcommonconifg<<"ENDIF (TOOLKIT_COMMON_FIND_REQUIRED)"<<std::endl;
+		toolkitcommonconifg<<"ENDIF (TOOLKIT_COMMON_FOUND)"<<std::endl;
+
+		toolkitcommonconifg<<"MARK_AS_ADVANCED("<<std::endl;
+		  toolkitcommonconifg<<"TOOLKIT_COMMON_LIBRARY"<<std::endl;
+		  toolkitcommonconifg<<"TOOLKIT_COMMON_INCLUDE_DIR"<<std::endl;
+		  toolkitcommonconifg<<")"<<std::endl;
+		toolkitcommonconifg.close();
+		
+		namefile = "toolkit-clientdbConfig.cmake";
+		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		{
+			toolkitclientdbConfig.open(namefile);
+		}
+		else
+		{
+			toolkitclientdbConfig.open(analyzer->getDirectoryProject() + "/cmake.modules/" + namefile);
+		}		
+		
+		toolkitclientdbConfig<<"IF (TOOLKIT_CLIENTDB_INCLUDE_DIR)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_FIND_QUIETLY TRUE)"<<std::endl;
+		toolkitclientdbConfig<<"ENDIF (TOOLKIT_CLIENTDB_INCLUDE_DIR)"<<std::endl;
+
+		toolkitclientdbConfig<<"FIND_PATH(TOOLKIT_CLIENTDB_INCLUDE_DIR clientdb.hpp"<<std::endl;
+		  toolkitclientdbConfig<<"${PROJECT_SOURCE_DIR}/../../../toolkit/clientdb/src"<<std::endl;
+		  toolkitclientdbConfig<<"$ENV{HOME}/root/include/toolkit"<<std::endl;
+		  toolkitclientdbConfig<<"/usr/local/include/toolkit"<<std::endl;
+		  toolkitclientdbConfig<<"/usr/include/toolkit"<<std::endl;
+		toolkitclientdbConfig<<")"<<std::endl;
+
+		toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_NAMES toolkit-clientdb)"<<std::endl;
+		toolkitclientdbConfig<<"FIND_LIBRARY(TOOLKIT_CLIENTDB_LIBRARY"<<std::endl;
+		  toolkitclientdbConfig<<"NAMES ${TOOLKIT_CLIENTDB_NAMES}"<<std::endl;
+		  toolkitclientdbConfig<<"PATHS ${PROJECT_SOURCE_DIR}/../../../toolkit/clientdb/src ${PROJECT_SOURCE_DIR}/../../toolkit/clientdb/src $ENV{HOME}/root/usr/lib /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu"<<std::endl;
+		  toolkitclientdbConfig<<"PATH_SUFFIXES toolkit-clientdb"<<std::endl;
+		toolkitclientdbConfig<<")"<<std::endl;
+
+		toolkitclientdbConfig<<"IF (TOOLKIT_CLIENTDB_INCLUDE_DIR AND TOOLKIT_CLIENTDB_LIBRARY)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_FOUND TRUE)"<<std::endl;
+		  toolkitclientdbConfig<<"SET( TOOLKIT_CLIENTDB_LIBRARIES ${TOOLKIT_CLIENTDB_LIBRARY} )"<<std::endl;
+		toolkitclientdbConfig<<"ELSE (TOOLKIT_CLIENTDB_INCLUDE_DIR AND TOOLKIT_CLIENTDB_LIBRARY)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_FOUND FALSE)"<<std::endl;
+		  toolkitclientdbConfig<<"SET( TOOLKIT_CLIENTDB_LIBRARIES )"<<std::endl;
+		toolkitclientdbConfig<<"ENDIF (TOOLKIT_CLIENTDB_INCLUDE_DIR AND TOOLKIT_CLIENTDB_LIBRARY)"<<std::endl;
+
+		toolkitclientdbConfig<<"IF (TOOLKIT_CLIENTDB_FOUND)"<<std::endl;
+		  toolkitclientdbConfig<<"IF (NOT TOOLKIT_CLIENTDB_FIND_QUIETLY)"<<std::endl;
+			toolkitclientdbConfig<<"MESSAGE(STATUS \"Found toolkit-cliendb: ${TOOLKIT_CLIENTDB_LIBRARY}\")"<<std::endl;
+		  toolkitclientdbConfig<<"ENDIF (NOT TOOLKIT_CLIENTDB_FIND_QUIETLY)"<<std::endl;
+		toolkitclientdbConfig<<"ELSE (TOOLKIT_CLIENTDB_FOUND)"<<std::endl;
+		  toolkitclientdbConfig<<"IF (TOOLKIT_CLIENTDB_FIND_REQUIRED)"<<std::endl;
+			toolkitclientdbConfig<<"MESSAGE(STATUS \"Looked for toolkit-client libraries named ${TOOLKIT_CLIENTDB_NAMES}.\")"<<std::endl;
+			toolkitclientdbConfig<<"MESSAGE(FATAL_ERROR \"Could NOT find toolkit-client library\")"<<std::endl;
+		  toolkitclientdbConfig<<"ENDIF (TOOLKIT_CLIENTDB_FIND_REQUIRED)"<<std::endl;
+		toolkitclientdbConfig<<"ENDIF (TOOLKIT_CLIENTDB_FOUND)"<<std::endl;
+
+		toolkitclientdbConfig<<"MARK_AS_ADVANCED("<<std::endl;
+		  toolkitclientdbConfig<<"TOOLKIT_CLIENTDB_LIBRARY"<<std::endl;
+		  toolkitclientdbConfig<<"TOOLKIT_CLIENTDB_INCLUDE_DIR"<<std::endl;
+		  toolkitclientdbConfig<<")"<<std::endl;
+		toolkitclientdbConfig.close();
 		
 		analyzer->getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
 		return true;
