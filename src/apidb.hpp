@@ -51,7 +51,7 @@ namespace apidb
 		apidb::Analyzer* analyzer;
 		apidb::generators::Generator* generator;
 		InputLenguajes inputLenguaje;
-		OutputLenguajes outputLenguaje;
+		OutputLenguajes outputLenguaje;		
 	};
 }
 

@@ -5,6 +5,7 @@ namespace apidb
 		class Generator
 		{
 		public:
+			
 			virtual bool generate() = 0;
 			OutputLenguajes getOutputLenguaje() const;
 			std::string getOutputLenguajeString()const;	
@@ -65,6 +66,7 @@ namespace apidb
 					std::string name;
 					toolkit::Version version;
 					OutputLenguajes lenguague;
+					std::string directory;
 				};
 				Project project;
 			};
@@ -78,6 +80,9 @@ namespace apidb
 			std::ofstream cmakelists;
 			std::ofstream toolkitcommonconifg;
 			std::ofstream toolkitclientdbConfig;
+			std::ofstream config;
+			std::ofstream developing;
+			Options options;
 		};
 	
 	}

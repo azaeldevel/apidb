@@ -26,6 +26,16 @@
 
 int main()
 {
+	std::cout<<"Nombre de projecto:";
+	std::string name;
+	std::cin>>name;
+	
+	
+	std::cout<<"Directorio de projecto:";
+	std::string dir;
+	std::cin>>dir;
+	
+	
 	std::cout<<"Servidor de Base de Datos:";
 	std::string db;
 	std::cin>>db;
@@ -74,7 +84,15 @@ int main()
 	}
 	else
 	{
-		std::cout<<"\tFallo conexion a servidor completada."<<std::endl;
+		std::cout<<"\tFallo conexion a servidor."<<std::endl;
 	}
+	
+	apidb::CG driver(name,dir,mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP);
+	if(!driver.driving())
+    {
+        std::cerr<<"Fail parsin phase"<<std::endl;
+        return -1;
+    }
+    
 	return 0;	
 }

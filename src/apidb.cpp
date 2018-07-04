@@ -41,7 +41,23 @@ namespace apidb
 	}
 	
 	bool CG::generate()
-	{
+	{				
+		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		{
+			
+		}
+		else
+		{
+			std::string direct = analyzer->getDirectoryProject();
+			std::ifstream ifile(direct);
+			if (!ifile) 
+			{
+				std::string cmd = "mkdir ";
+				cmd = cmd + direct;
+				system(cmd.c_str());
+			}			
+		}
+		
 		if(outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
 			bool flagCPP,flagCMAKE;
@@ -53,8 +69,16 @@ namespace apidb
 			apidb::generators::CMake cmake(*analyzer);			
 			flagCMAKE = cmake.generate();
 			
-			analyzer->getOutputMessage() <<"Completado."<<std::endl;
-			return (flagCPP && flagCMAKE);
+			if(flagCPP && flagCMAKE)
+			{
+				analyzer->getOutputMessage() <<"Completado."<<std::endl;
+				return true;				
+			}
+			else
+			{
+				analyzer->getOutputMessage() <<"Fail."<<std::endl;
+				return false;
+			}
 		}
 		else
 		{
@@ -109,22 +133,29 @@ namespace apidb
 	}
 		
 	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
-	{
+	{		
 		this->inputLenguaje = inputLenguaje;
 		this->outputLenguaje = outputLenguaje;
-		connector = new toolkit::clientdb::Connector();
-		analyzer = new mysql::Analyzer(inputLenguaje,outputLenguaje);		
-		try
+		if(this->inputLenguaje == apidb::InputLenguajes::MySQL_Server)
 		{
-			bool flag = connector->connect(datconection);
-			if(flag)
+			connector = new toolkit::clientdb::Connector();
+			analyzer = new mysql::Analyzer(inputLenguaje,outputLenguaje);		
+			try
 			{
-				analyzer->setPramsProject(name,directory);				
+				bool flag = connector->connect(datconection);
+				if(flag)
+				{
+					analyzer->setPramsProject(name,directory);				
+				}
+			}
+			catch(toolkit::clientdb::SQLException ex)
+			{
+				analyzer->getErrorMessage() <<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
 			}
 		}
-		catch(toolkit::clientdb::SQLException ex)
+		else
 		{
-			analyzer->getErrorMessage() <<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
-		}		
+			analyzer->getErrorMessage() <<"Lenguaje de entrada desconocido."<<std::endl;
+		}	
 	}
 } 

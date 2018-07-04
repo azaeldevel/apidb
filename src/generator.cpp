@@ -15,6 +15,11 @@ namespace generators
 	{
 		outputLenguaje = apidb::OutputLenguajes::CMAKE;
 		
+		options.cmake_minimun_requiered.set(3,0);
+		options.project.name = analyzer->getNameProject();
+		options.project.directory = analyzer->getDirectoryProject();
+		options.project.lenguague = outputLenguaje;
+		options.project.version.set(0,1,0,toolkit::Version::alpha);		
 	}
 	
 	CMake::~CMake()
@@ -35,11 +40,6 @@ namespace generators
 		}
 		
 		
-		Options options;
-		options.cmake_minimun_requiered.set(3,0);
-		options.project.name = "nmp";
-		options.project.lenguague = apidb::CPP;
-		options.project.version.set(0,1,0,toolkit::Version::alpha);
 		
 		
 		//CMakeLists.txt
@@ -92,10 +92,10 @@ namespace generators
 			cmakelists<<"INCLUDE_DIRECTORIES(${TOOLKIT_CLIENTDB_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
 		cmakelists<<std::endl;
-		cmakelists<<"ADD_EXECUTABLE(developing nmp.cpp developing.cpp)"<<std::endl;
+		cmakelists<<"ADD_EXECUTABLE(developing "<< options.project.name <<".cpp developing.cpp)"<<std::endl;
 		cmakelists<<"TARGET_LINK_LIBRARIES(developing ${TOOLKIT_CLIENTDB_LIBRARY} ${TOOLKIT_COMMON_LIBRARY} ${MYSQL_LIBRARY})"<<std::endl;
 		cmakelists.close();
-
+		analyzer->getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
 		
 		//cmake.modules
 		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
@@ -224,7 +224,45 @@ namespace generators
 		  toolkitclientdbConfig<<")"<<std::endl;
 		toolkitclientdbConfig.close();
 		
-		analyzer->getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
+		namefile = "config.h.in";
+		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		{
+			config.open(namefile);
+		}
+		else
+		{
+			config.open(analyzer->getDirectoryProject() + "/" + namefile);
+		}
+		config<<"#define VERSION_MAJOR @apidb_VERSION_MAJOR@"<<std::endl;
+		config<<"#define VERSION_MINOR @apidb_VERSION_MINOR@"<<std::endl;
+		config<<"#define VERSION_PATCH @apidb_VERSION_PATCH@"<<std::endl;
+		config<<"#define VERSION_STAGE toolkit::Version::Stage::@apidb_VERSION_STAGE@"<<std::endl;
+		config<<"#define PAKAGENAME \"@PROJECT_NAME@\""<<std::endl;
+		config.close();		
+		analyzer->getOutputMessage()<<"\tArchivo de configuración de projecto: " << namefile <<std::endl;
+		
+		
+		namefile = "developing.cpp";
+		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		{
+			developing.open(namefile);
+		}
+		else
+		{
+			developing.open(analyzer->getDirectoryProject() + "/" + namefile);
+		}
+		
+		developing<<"#include \""<<options.project.name<<".hpp\""<<std::endl;
+		developing<<std::endl;
+		developing<<"#include <iostream>"<<std::endl;
+		developing<<"#include <list>"<<std::endl;
+		developing<<std::endl;
+		developing<<"int main()"<<std::endl;
+		developing<<"{"<<std::endl;
+			developing<<"return 0;"<<std::endl;
+		developing<<"}"<<std::endl;
+		
+		analyzer->getOutputMessage()<<"\tArchivo de develping phase: " << namefile <<std::endl;
 		return true;
 	}
 
