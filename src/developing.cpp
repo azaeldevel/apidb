@@ -15,6 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
+ *  author: Azael Reyes
  * */
 
 #include "apidb.hpp"
@@ -28,7 +29,7 @@ int main()
 	apidb::CG driver("nmp","test",mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP);
 	if(!driver.driving())
     {
-        std::cerr<<"Not parsin phase"<<std::endl;
+        std::cerr<<"Fail parsin phase"<<std::endl;
         return -1;
     }	
 	return 0;	
