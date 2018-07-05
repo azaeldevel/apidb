@@ -9,16 +9,16 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 744.09448819 1052.3622047"
+   width="74mm"
+   height="105mm"
+   viewBox="0 0 262.20473 372.04724"
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
    sodipodi:docname="logo.svg"
-   inkscape:export-filename="/home/areyes/softdev/apidb/src/logo.svg.png"
-   inkscape:export-xdpi="20"
-   inkscape:export-ydpi="20">
+   inkscape:export-filename="/home/areyes/softdev/apidb/src/logo.png"
+   inkscape:export-xdpi="13.697823"
+   inkscape:export-ydpi="13.697823">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -29,8 +29,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="0.71978763"
-     inkscape:cy="647.03747"
+     inkscape:cx="-127.98604"
+     inkscape:cy="404.60086"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -38,7 +38,8 @@
      inkscape:window-height="1026"
      inkscape:window-x="0"
      inkscape:window-y="24"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     units="mm" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -54,23 +55,25 @@
   <g
      inkscape:label="Capa 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(0,-680.31496)">
     <g
-       id="g8133">
+       id="g8133"
+       transform="translate(-122.22846,511.13718)">
       <rect
          y="306.72253"
          x="150.36563"
          height="93.228241"
          width="157.87799"
          id="rect3336"
-         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.82035518;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:10.10000038;stroke-dasharray:none" />
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.82035518;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.10000038;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          y="289.43079"
          x="150.32771"
          height="17.501993"
          width="52.85733"
          id="rect3338"
-         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.67972112;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:10.10000038;stroke-dasharray:none" />
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.67972112;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.10000038;stroke-dasharray:none;stroke-opacity:1" />
       <flowRoot
          transform="translate(14.705017,0)"
          style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -87,13 +90,13 @@
          inkscape:connector-curvature="0"
          id="path7292"
          d="m 308.10223,348.28077 24.23225,1.02037"
-         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:3.59131455;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:10.10000038;stroke-dasharray:none" />
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:3.59131455;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.10000038;stroke-dasharray:none;stroke-opacity:1" />
       <circle
          r="12.775464"
          cy="347.78082"
          cx="345.02802"
          id="path7294"
-         style="fill:none;stroke:#000000;stroke-width:2.80873203;stroke-opacity:1;stroke-miterlimit:10.10000038;stroke-dasharray:none" />
+         style="fill:none;stroke:#000000;stroke-width:2.80873203;stroke-miterlimit:10.10000038;stroke-dasharray:none;stroke-opacity:1" />
     </g>
   </g>
 </svg>
