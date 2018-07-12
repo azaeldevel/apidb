@@ -36,7 +36,7 @@ int main()
 	std::cin>>dir;
 	
 	
-	std::cout<<"Servidor de Base de Datos:";
+	std::cout<<"<tipo de servidor de DB:";
 	std::string db;
 	std::cin>>db;
 	std::regex dbOption("[M|m][Y|y][S|s][Q|q][L|l]");
@@ -46,7 +46,7 @@ int main()
 	}
 	
 	
-	std::cout<<"Nombre de servidor:";
+	std::cout<<"Host:";
 	std::string server;
 	std::cin>>server;
 	std::regex serverOption("[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}");
@@ -93,6 +93,8 @@ int main()
         std::cerr<<"Fail parsin phase"<<std::endl;
         return -1;
     }
+    
+
     
 	return 0;	
 }

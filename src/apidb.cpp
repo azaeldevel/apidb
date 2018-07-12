@@ -21,11 +21,67 @@
 #include "apidb.hpp"
 #include "toolkit.hpp"
 
-#include <iostream>
+
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
+
 
 namespace apidb
 {
-	
+	bool CG::saveConfig(const std::string &docname)
+	{
+		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
+		xmlNodePtr root_node = xmlNewNode(NULL, (const xmlChar *)"project");
+		xmlDocSetRootElement(doc, root_node);
+		
+		xmlNewChild(root_node, NULL, (const xmlChar *)"name", (const xmlChar *)name.c_str());
+		xmlNewChild(root_node, NULL, (const xmlChar *)"directory", (const xmlChar *)directory.c_str());
+				
+		if(xmlSaveFormatFileEnc(docname.c_str(), doc, "UTF-8", 1) == -1) return false;		
+		return true;
+	}
+
+	bool CG::loadConfig(const std::string &docname)
+	{
+		xmlDocPtr doc;
+		xmlNodePtr cur;
+
+		doc = xmlParseFile(docname.c_str());
+		
+		if (doc == NULL ) {
+			fprintf(stderr,"Document not parsed successfully. \n");
+			xmlFreeDoc(doc);
+			return false;
+		}
+		
+		cur = xmlDocGetRootElement(doc);
+		
+		if (cur == NULL) {
+			fprintf(stderr,"empty document\n");
+			xmlFreeDoc(doc);
+			return false;
+		}
+		
+		if (xmlStrcmp(cur->name, (const xmlChar *) "generation")) {
+			fprintf(stderr,"document of the wrong type, root node != generation");
+			xmlFreeDoc(doc);
+			return false;
+		}
+		
+		cur = cur->xmlChildrenNode;
+		if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
+		{
+				
+		}			 
+		cur = cur->next;
+		
+		xmlFreeDoc(doc);
+		
+		
+		
+		return true;		
+	}
+
 	OutputLenguajes CG::getOutputLenguaje() const
 	{
 		return generator->getOutputLenguaje();
@@ -146,7 +202,10 @@ namespace apidb
 				bool flag = connector->connect(datconection);
 				if(flag)
 				{
-					analyzer->setPramsProject(name,directory);				
+					analyzer->setPramsProject(name,directory);
+					this->name = name;
+					this->directory = directory;								
+					this->version.set(0,1,0,toolkit::Version::Stage::alpha);
 				}
 			}
 			catch(toolkit::clientdb::SQLException ex)

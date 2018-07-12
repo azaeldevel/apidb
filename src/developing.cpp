@@ -23,6 +23,7 @@
 #include <iostream>
 #include <list>
 
+
 int main()
 {
 	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","root","k3yL0c41");  
@@ -31,6 +32,14 @@ int main()
     {
         std::cerr<<"Fail parsin phase"<<std::endl;
         return -1;
-    }	
+    }
+    
+    if(!driver.saveConfig("test/nmp.apidb"))
+    {
+        std::cerr<<"Fail creation prject."<<std::endl;
+        return -1;		
+	}
+    
+    	
 	return 0;	
 }

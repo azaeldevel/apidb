@@ -25,10 +25,14 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <set>
+#include <string>
 
 #include "analyzer.hpp"
 #include "generator.hpp"
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace apidb
 {
@@ -47,12 +51,19 @@ namespace apidb
 		virtual bool generate();
 		bool driving();
 		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje,OutputLenguajes outputLenguaje);
+		bool loadConfig(const std::string &filename);
+		bool saveConfig(const std::string &filename);
 	private:
 		toolkit::clientdb::Connector* connector;
 		apidb::Analyzer* analyzer;
 		apidb::generators::Generator* generator;
 		InputLenguajes inputLenguaje;
-		OutputLenguajes outputLenguaje;		
+		OutputLenguajes outputLenguaje;	
+		
+		std::string name;
+		std::string directory;
+		toolkit::Version version;
+		toolkit::clientdb::Datconection* datconection;
 	};
 }
 
