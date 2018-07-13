@@ -73,7 +73,6 @@ int main()
 	std::cin >>  dbPW;
 	
 	
-	
 	toolkit::clientdb::DatconectionMySQL mysqlConnector(server,puerto,dbName,dbUser,dbPW); 
 	toolkit::clientdb::Connector connector;    
     bool flagServer = connector.connect(mysqlConnector);
@@ -87,13 +86,41 @@ int main()
 		std::cout<<"\tFallo conexion a servidor."<<std::endl;
 	}
 	
-	apidb::CG driver(name,dir,mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP);
+	toolkit::Version version;
+	version.set(0,1,0,toolkit::Version::Stage::alpha);
+	apidb::CG driver(name,dir,mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP,version);
 	if(!driver.driving())
     {
         std::cerr<<"Fail parsin phase"<<std::endl;
         return -1;
     }
     
+labelConfig:
+	std::cout<< "Archivo de configuracion:";
+	std::string config;
+	std::cin >> config;
+	if(config.compare("N") == 0 | config.compare("n") == 0)
+	{
+		;
+	}
+	else if(config.compare("S") == 0 | config.compare("s") == 0)
+	{
+		std::cout<< "\tIndique directorio.";
+		goto labelConfig;
+	}
+	else if(config.compare(".") == 0 | config.empty())
+	{
+		std::string fn = name;
+		fn = fn + ".apidb";
+		driver.saveConfig(fn);
+		std::cout<<"\tArchivo de configuracion:"<<fn<<std::endl;
+	}
+	else
+	{
+		std::string fn = name + ".apidb";
+		driver.saveConfig(fn);
+		std::cout<<"\tArchivo de configuracion:"<<fn<<std::endl;		
+	}
 
     
 	return 0;	

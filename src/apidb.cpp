@@ -20,7 +20,7 @@
 
 #include "apidb.hpp"
 #include "toolkit.hpp"
-
+#include <exception>
 
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
@@ -37,46 +37,33 @@ namespace apidb
 		xmlNewChild(root_node, NULL, (const xmlChar *)"name", (const xmlChar *)name.c_str());
 		xmlNewChild(root_node, NULL, (const xmlChar *)"directory", (const xmlChar *)directory.c_str());
 				
-		if(xmlSaveFormatFileEnc(docname.c_str(), doc, "UTF-8", 1) == -1) return false;		
+		xmlNodePtr version_node = xmlNewChild(root_node, NULL, (const xmlChar *)"version", NULL);
+		xmlNewChild(version_node, NULL, (const xmlChar *)"major", (const xmlChar *)std::to_string(version.getMajor()).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(version.getMinor()).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(version.getPatch()).c_str());
+		//xmlNewChild(version_node, NULL, (const xmlChar *)"stage", (const xmlChar *)version.stage );
+		
+		xmlNodePtr db_node = xmlNewChild(root_node, NULL, (const xmlChar *)"db", NULL);
+		if(this->inputLenguaje == apidb::InputLenguajes::MySQL_Server)
+		{
+			toolkit::clientdb::DatconectionMySQL* dat = (toolkit::clientdb::DatconectionMySQL*)datconection;
+			xmlNewChild(db_node, NULL, (const xmlChar *)"host", (const xmlChar *)dat->getHost().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"puerto", (const xmlChar *)std::to_string(dat->getPort()).c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"db", (const xmlChar *)dat->getDatabase().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"user", (const xmlChar *)dat->getUsuario().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)dat->getPassword().c_str());
+		}
+		
+				
+		int ret = xmlSaveFormatFileEnc(docname.c_str(), doc, "UTF-8", 1);	
+		xmlFreeDoc(doc);
+		xmlCleanupParser();
+		if( ret == -1) return false;	
 		return true;
 	}
 
 	bool CG::loadConfig(const std::string &docname)
 	{
-		xmlDocPtr doc;
-		xmlNodePtr cur;
-
-		doc = xmlParseFile(docname.c_str());
-		
-		if (doc == NULL ) {
-			fprintf(stderr,"Document not parsed successfully. \n");
-			xmlFreeDoc(doc);
-			return false;
-		}
-		
-		cur = xmlDocGetRootElement(doc);
-		
-		if (cur == NULL) {
-			fprintf(stderr,"empty document\n");
-			xmlFreeDoc(doc);
-			return false;
-		}
-		
-		if (xmlStrcmp(cur->name, (const xmlChar *) "generation")) {
-			fprintf(stderr,"document of the wrong type, root node != generation");
-			xmlFreeDoc(doc);
-			return false;
-		}
-		
-		cur = cur->xmlChildrenNode;
-		if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-		{
-				
-		}			 
-		cur = cur->next;
-		
-		xmlFreeDoc(doc);
-		
 		
 		
 		return true;		
@@ -189,12 +176,13 @@ namespace apidb
 		return true;
 	}
 		
-	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
+	CG::CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje,toolkit::Version version)
 	{		
 		this->inputLenguaje = inputLenguaje;
 		this->outputLenguaje = outputLenguaje;
 		if(this->inputLenguaje == apidb::InputLenguajes::MySQL_Server)
 		{
+			this->datconection = new toolkit::clientdb::DatconectionMySQL((toolkit::clientdb::DatconectionMySQL&)datconection);
 			connector = new toolkit::clientdb::Connector();
 			analyzer = new mysql::Analyzer(inputLenguaje,outputLenguaje);		
 			try
@@ -204,8 +192,8 @@ namespace apidb
 				{
 					analyzer->setPramsProject(name,directory);
 					this->name = name;
-					this->directory = directory;								
-					this->version.set(0,1,0,toolkit::Version::Stage::alpha);
+					this->directory = directory;
+					this->version = version;
 				}
 			}
 			catch(toolkit::clientdb::SQLException ex)

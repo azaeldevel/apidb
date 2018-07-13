@@ -38,8 +38,7 @@ namespace apidb
 {
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
-	
-    
+	    
     /**
      * 
      **/
@@ -50,7 +49,7 @@ namespace apidb
 		virtual bool analyze();
 		virtual bool generate();
 		bool driving();
-		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje,OutputLenguajes outputLenguaje);
+		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje,OutputLenguajes outputLenguaje,toolkit::Version version);
 		bool loadConfig(const std::string &filename);
 		bool saveConfig(const std::string &filename);
 	private:

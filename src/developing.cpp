@@ -26,15 +26,17 @@
 
 int main()
 {
-	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","root","k3yL0c41");  
-	apidb::CG driver("nmp","test",mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP);
+	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","root","k3yL0c41"); 
+	toolkit::Version version;
+	version.set(0,1,0,toolkit::Version::Stage::alpha); 
+	apidb::CG driver("nmp","test",mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP,version);
 	if(!driver.driving())
     {
         std::cerr<<"Fail parsin phase"<<std::endl;
         return -1;
     }
     
-    if(!driver.saveConfig("test/nmp.apidb"))
+    if(!driver.saveConfig("nmp.apidb"))
     {
         std::cerr<<"Fail creation prject."<<std::endl;
         return -1;		
