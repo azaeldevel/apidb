@@ -26,7 +26,7 @@
 
 int main()
 {
-	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","root",""); 
+	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","develop","123456"); 
 	toolkit::Version version;
 	version.set(0,1,0,toolkit::Version::Stage::alpha); 
 	apidb::CG driver("nmp","test",mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP,version);
