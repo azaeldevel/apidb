@@ -1,0 +1,12 @@
+* Requisitos
+
+  - GCC >= 7.1
+  - CMake >= 3.0
+  - Bison
+  - Flex
+  - MySQL C API
+  - Toolkit		https://github.com/azaelrmartz/toolkit.git
+  - LibXml2
+  - LibXML++
+  - Boost
+
