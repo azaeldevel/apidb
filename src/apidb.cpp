@@ -21,13 +21,20 @@
 #include "apidb.hpp"
 #include "toolkit.hpp"
 #include <exception>
-
+#include <string.h>
+#include <stdio.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
 
 namespace apidb
 {
+	CG::CG()
+	{
+		datconection = NULL;
+		connector = NULL;
+	}
+	
 	bool CG::saveConfig(const std::string &docname)
 	{
 		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
@@ -62,10 +69,189 @@ namespace apidb
 		return true;
 	}
 
+
+	/**
+	* processNode:
+	* @reader: the xmlReader
+	*
+	* Dump information about the current node
+	*/
+	void CG::processNode(xmlTextReaderPtr reader) 
+	{
+		const xmlChar *name, *value;
+
+		name = xmlTextReaderConstName(reader);
+		if (name == NULL)
+		name = BAD_CAST "--";
+		value = xmlTextReaderConstValue(reader);
+		//printf("%d %d %s %d %d", xmlTextReaderDepth(reader),xmlTextReaderNodeType(reader), name, xmlTextReaderIsEmptyElement(reader),xmlTextReaderHasValue(reader));
+		//printf("%d %s ", xmlTextReaderDepth(reader),name);
+		//if (value == NULL)
+		//{
+			//printf("\n");
+		//}
+		//else 
+		{
+			
+			if (xmlStrlen(value) > 40)
+			{
+				//printf(" %.40s...\n", value);
+			}
+			else
+			{
+				//printf(" %s\n", value);
+				if(strcmp((const char*)name,"project") == 0)
+				{
+					stackXML.push_front((const char*)name);
+				}
+				else if(value != NULL && strcmp((const char*)name,"name") == 0)
+				{
+					this->name = (const char*)value;
+				}
+				else if(value != NULL && strcmp((const char*)name,"directory") == 0)
+				{
+					this->directory = (const char*)value;
+				}
+				else if(strcmp((const char*)name,"InputLenguajes") == 0)
+				{
+					this->directory = (const char*)value;
+					if(strcmp((const char*)name,"MySQL"))
+					{
+						this->inputLenguaje = apidb::InputLenguajes::MySQL_Server;
+					}
+				}
+				else if(strcmp((const char*)name,"OutputLenguajes") == 0)
+				{
+					this->directory = (const char*)value;
+					if(strcmp((const char*)name,"C++"))
+					{
+						this->outputLenguaje = apidb::OutputLenguajes::CPP;
+					}
+				}
+				else if(strcmp((const char*)name,"version") == 0)
+				{
+					;
+				}
+				else if(strcmp((const char*)name,"major") == 0)
+				{
+					this->version.major = atoi((const char*)value);
+				}
+				else if(strcmp((const char*)name,"minor") == 0)
+				{
+					this->version.minor = atoi((const char*)value);
+				}
+				else if(strcmp((const char*)name,"patch") == 0)
+				{
+					this->version.patch = atoi((const char*)value);
+				}
+				else if(strcmp((const char*)name,"patch") == 0)
+				{
+					this->version.patch = atoi((const char*)value);
+				}
+				else if(strcmp((const char*)name,"ConectorDB") == 0)
+				{
+					datconection = new toolkit::clientdb::DatconectionMySQL();
+				}
+				else if(strcmp((const char*)name,"host") == 0)
+				{
+					((toolkit::clientdb::DatconectionMySQL*)datconection)->host = (const char*)value;
+				}
+				else if(strcmp((const char*)name,"port") == 0)
+				{
+					((toolkit::clientdb::DatconectionMySQL*)datconection)->port = atoi((const char*)value);
+				}
+				else if(strcmp((const char*)name,"nameDB") == 0)
+				{
+					((toolkit::clientdb::DatconectionMySQL*)datconection)->database = (const char*)value;
+				}
+				else if(strcmp((const char*)name,"user") == 0)
+				{
+					((toolkit::clientdb::DatconectionMySQL*)datconection)->usuario = (const char*)value;
+				}
+				else if(strcmp((const char*)name,"password") == 0)
+				{
+					((toolkit::clientdb::DatconectionMySQL*)datconection)->password = (const char*)value;
+				}
+			}
+				
+		}
+		
+		
+		return;
+	}
+
+	/**
+	 * streamFile:
+	 * @filename: the file name to parse
+	 *
+	 * Parse, validate and print information about an XML file.
+	 */
+	void CG::streamFile(const char *filename) 
+	{
+		xmlTextReaderPtr reader;
+		int ret;
+
+		reader = xmlReaderForFile(filename, NULL,0);
+		if (reader != NULL) 
+		{
+			ret = xmlTextReaderRead(reader);
+			while (ret == 1) 
+			{
+				processNode(reader);
+				ret = xmlTextReaderRead(reader);
+			}
+			xmlFreeTextReader(reader);
+			if (ret != 0) 
+			{
+				fprintf(stderr, "%s : failed to parse\n", filename);
+			}
+		} 
+		else 
+		{
+			fprintf(stderr, "Unable to open %s\n", filename);
+		}
+	}
+
 	bool CG::loadConfig(const std::string &docname)
 	{
-		
-		
+		/*
+		 * this initialize the library and check potential ABI mismatches
+		 * between the version it was compiled for and the actual shared
+		 * library used.
+		 */
+		streamFile(docname.c_str());
+
+		/*
+		 * Cleanup function for the XML library.
+		 */
+		xmlCleanupParser();
+		/*
+		 * this is to debug memory for regression tests
+		 */
+		xmlMemoryDump();
+        
+		connector = new toolkit::clientdb::Connector();
+		analyzer = new mysql::Analyzer(inputLenguaje,outputLenguaje);
+		std::cout<<"Analizador creado."<<std::endl;		
+		try
+		{
+			std::cout<<"Conectando a BD."<<std::endl;
+			if(datconection == NULL) std::cerr<<"datconection is NULL"<<std::endl;
+			bool flag = connector->connect(*datconection);
+			if(flag)
+			{
+				analyzer->setPramsProject(name,directory);
+			}
+			else
+			{
+				std::cerr<<"Falló la conexion la BD."<<std::endl;
+			}
+		}
+		catch(toolkit::clientdb::SQLException ex)
+		{
+			analyzer->getErrorMessage() <<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
+		}
+    
 		return true;		
 	}
 

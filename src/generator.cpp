@@ -58,10 +58,7 @@ namespace generators
 		{
 			cmakelists.open(analyzer->getDirectoryProject() + "/" + namefile);
 		}
-		
-		
-		
-		
+			
 		//CMakeLists.txt
 		analyzer->getOutputMessage() << "Generando archivos de gentor de projecto... " << std::endl;
 		analyzer->getOutputMessage() << "\tTipo de Gestor: " << getOutputLenguajeString() << std::endl;
@@ -259,7 +256,7 @@ namespace generators
 		config<<"#define VERSION_STAGE toolkit::Version::Stage::@apidb_VERSION_STAGE@"<<std::endl;
 		config<<"#define PAKAGENAME \"@PROJECT_NAME@\""<<std::endl;
 		config.close();		
-		analyzer->getOutputMessage()<<"\tArchivo de configuración de projecto: " << namefile <<std::endl;
+		//analyzer->getOutputMessage()<<"\tArchivo de configuración de projecto: " << namefile <<std::endl;
 		
 		
 		namefile = "developing.cpp";
@@ -280,9 +277,9 @@ namespace generators
 		developing<<"int main()"<<std::endl;
 		developing<<"{"<<std::endl;
 			developing<<"return 0;"<<std::endl;
-		developing<<"}"<<std::endl;
+		developing<<"}"<<std::endl;		
+		//analyzer->getOutputMessage()<<"\tArchivo de develping phase: " << namefile <<std::endl;
 		
-		analyzer->getOutputMessage()<<"\tArchivo de develping phase: " << namefile <<std::endl;
 		return true;
 	}
 
@@ -787,8 +784,8 @@ namespace generators
 	void CPP::createClassCPP(const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  nameClass << "\";" << std::endl;
-        createClassMethodesCPP(cl,file);        
-        file<< std::endl<< std::endl;
+		createClassMethodesCPP(cl,file);        
+		file<< std::endl<< std::endl;
     }
     
     void CPP::createClassMethodesH(const apidb::internal::Table& table,std::ofstream& ofile)

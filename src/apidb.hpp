@@ -31,17 +31,25 @@
 #include "analyzer.hpp"
 #include "generator.hpp"
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
+#include <libxml/xmlreader.h>
+
 
 namespace apidb
 {
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
-	    
-    /**
-     * 
-     **/
+	
+	class Configuration
+	{
+	public:
+		std::string nameProject;
+		std::string directory;
+		toolkit::Version version;
+		toolkit::clientdb::Datconection* datconection;	
+	};
+	/**
+	* 
+	**/
 	class CG
 	{
 	public:
@@ -50,6 +58,7 @@ namespace apidb
 		virtual bool generate();
 		bool driving();
 		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje,OutputLenguajes outputLenguaje,toolkit::Version version);
+		CG();
 		bool loadConfig(const std::string &filename);
 		bool saveConfig(const std::string &filename);
 	private:
@@ -63,6 +72,9 @@ namespace apidb
 		std::string directory;
 		toolkit::Version version;
 		toolkit::clientdb::Datconection* datconection;
+		std::list<std::string> stackXML;
+		void processNode(xmlTextReaderPtr reader);
+		void streamFile(const char *filename);
 	};
 }
 

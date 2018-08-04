@@ -23,20 +23,57 @@
 #include <iostream>
 #include <list>
 #include <regex>
+#include <string>
+#include <cstdlib>
 
-int main()
+int main(int argc, char *argv[])
 {
 	std::cout<<"Nombre de projecto:";
 	std::string name;
 	std::cin>>name;
-	
-	
+		
 	std::cout<<"Directorio de projecto:";
 	std::string dir;
 	std::cin>>dir;
 	
 	
-	std::cout<<"<tipo de servidor de DB:";
+	//verificar si exist un projecto en el directorio.
+	std::string strProject;	
+	if(dir.compare(".") == 0 | dir.empty())
+	{
+		strProject = name + ".apidb";
+	}
+	else
+	{
+		strProject = dir + "/" + name + ".apidb";
+	}
+	std::ifstream fin(strProject);
+	if(fin) 
+	{
+		std::cout<<"Cargando '" << strProject << "' ..." <<std::endl;
+		apidb::CG driver;
+		if(!driver.loadConfig(strProject))
+		{
+			std::cerr<<"Fallo la configuracion."<<std::endl;
+			return EXIT_FAILURE;
+		}
+		else
+		{
+			std::cout<<"'"<<strProject<<"' cargado.";
+		}
+		
+		
+		
+		if(!driver.driving())
+		{
+			std::cerr<<"Fail parsin phase"<<std::endl;
+			return EXIT_FAILURE;
+		}
+		
+		return EXIT_SUCCESS;
+	}
+	
+	std::cout<<"Tipo de Servidor de DB:";
 	std::string db;
 	std::cin>>db;
 	std::regex dbOption("[M|m][Y|y][S|s][Q|q][L|l]");
@@ -46,7 +83,7 @@ int main()
 	}
 	
 	
-	std::cout<<"Host:";
+	std::cout<<"Servidor:";
 	std::string server;
 	std::cin>>server;
 	std::regex serverOption("[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}");
@@ -88,11 +125,12 @@ int main()
 	
 	toolkit::Version version;
 	version.set(0,1,0,toolkit::Version::Stage::alpha);
+	
 	apidb::CG driver(name,dir,mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP,version);
 	if(!driver.driving())
     {
         std::cerr<<"Fail parsin phase"<<std::endl;
-        return -1;
+        return EXIT_FAILURE;
     }
     
 labelConfig:
@@ -105,7 +143,7 @@ labelConfig:
 	}
 	else if(config.compare("S") == 0 | config.compare("s") == 0)
 	{
-		std::cout<< "\tIndique directorio.";
+		std::cout<< "\tIndique el directorio.";
 		goto labelConfig;
 	}
 	else if(config.compare(".") == 0 | config.empty())
@@ -117,11 +155,10 @@ labelConfig:
 	}
 	else
 	{
-		std::string fn = name + ".apidb";
+		std::string fn = dir + "/" + name + ".apidb";
 		driver.saveConfig(fn);
 		std::cout<<"\tArchivo de configuracion:"<<fn<<std::endl;		
 	}
-
     
-	return 0;	
+	return EXIT_SUCCESS;	
 }

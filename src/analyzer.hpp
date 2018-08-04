@@ -54,18 +54,15 @@ namespace apidb
 		
 	
 	class BuildException : public std::exception
-    {
-    public:
-        //exception () throw();
-        //exception (const exception&) throw();
-        //exception& operator= (const exception&) throw();
-        virtual ~BuildException() throw();
-        virtual const char* what() const throw();
-        BuildException(const std::string &description) throw();
+	{
+	public:
+		virtual ~BuildException() throw();
+		virtual const char* what() const throw();
+		BuildException(const std::string &description) throw();
         //Exception()throw();
 	private:
-        std::string description;
-    };
+		std::string description;
+	};
     
 	namespace internal
 	{
