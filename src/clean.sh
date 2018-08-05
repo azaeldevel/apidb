@@ -7,3 +7,5 @@ rm *.cc
 rm *.hh
 rm libapidb.a
 rm Test
+rm config.h
+rm apidbgen

@@ -26,43 +26,22 @@
 
 int main()
 {
-
-	std::string name = "business1";		
-	std::string dir = "../business1";
-	std::string strProject;	
-	if(dir.compare(".") == 0 | dir.empty())
-	{
-		strProject = name + ".apidb";
-	}
-	else
-	{
-		strProject = dir + "/" + name + ".apidb";
-	}
-	std::ifstream fin(strProject);
-	if(fin) 
-	{
-		std::cout<<"Cargando '" << strProject << "' ..." <<std::endl;
-		apidb::CG driver;
-		if(!driver.loadConfig(strProject))
-		{
-			std::cerr<<"Fallo la configuracion."<<std::endl;
-			return EXIT_FAILURE;
-		}
-		else
-		{
-			std::cout<<"'"<<strProject<<"' cargado.";
-		}		
-		
-		
-		if(!driver.driving())
-		{
-			std::cerr<<"Fail parsin phase"<<std::endl;
-			return EXIT_FAILURE;
-		}
-		
-		return EXIT_SUCCESS;
-	}
-	   
-	
-	return 0;	
+	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","root","k3yL0c41"); 
+	toolkit::Version version;
+	version.set(0,1,0,toolkit::Version::Stage::alpha); 
+	apidb::Driver driver("nmp","test",mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP,version);
+	if(!driver.driving())
+    {
+        std::cerr<<"Fail parsin phase"<<std::endl;
+        return -1;
+    }
+    
+    /*if(!driver.saveConfig("nmp.apidb"))
+    {
+        std::cerr<<"Fail creation prject."<<std::endl;
+        return -1;		
+	}*/
+    
+    	
+	return EXIT_SUCCESS;	
 }

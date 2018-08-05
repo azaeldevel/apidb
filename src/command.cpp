@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 	if(fin) 
 	{
 		std::cout<<"Cargando '" << strProject << "' ..." <<std::endl;
-		apidb::CG driver;
+		apidb::Driver driver;
 		if(!driver.loadConfig(strProject))
 		{
 			std::cerr<<"Fallo la configuracion."<<std::endl;
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
 	toolkit::Version version;
 	version.set(0,1,0,toolkit::Version::Stage::alpha);
 	
-	apidb::CG driver(name,dir,mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP,version);
+	apidb::Driver driver(name,dir,mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP,version);
 	if(!driver.driving())
     {
         std::cerr<<"Fail parsin phase"<<std::endl;

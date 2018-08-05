@@ -21,61 +21,12 @@
 #ifndef APIDB_HPP
 #define APIDB_HPP
 
-#include <list>
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <set>
-#include <string>
-
-#include "analyzer.hpp"
-#include "generator.hpp"
-
-#include <libxml/xmlreader.h>
-
+#include "driver.hpp"
 
 namespace apidb
 {
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
-	
-	class Configuration
-	{
-	public:
-		std::string nameProject;
-		std::string directory;
-		toolkit::Version version;
-		toolkit::clientdb::Datconection* datconection;	
-	};
-	/**
-	* 
-	**/
-	class CG
-	{
-	public:
-		OutputLenguajes getOutputLenguaje() const;
-		virtual bool analyze();
-		virtual bool generate();
-		bool driving();
-		CG(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje,OutputLenguajes outputLenguaje,toolkit::Version version);
-		CG();
-		bool loadConfig(const std::string &filename);
-		bool saveConfig(const std::string &filename);
-	private:
-		toolkit::clientdb::Connector* connector;
-		apidb::Analyzer* analyzer;
-		apidb::generators::Generator* generator;
-		InputLenguajes inputLenguaje;
-		OutputLenguajes outputLenguaje;	
-		
-		std::string name;
-		std::string directory;
-		toolkit::Version version;
-		toolkit::clientdb::Datconection* datconection;
-		std::list<std::string> stackXML;
-		void processNode(xmlTextReaderPtr reader);
-		void streamFile(const char *filename);
-	};
 }
 
 #endif
