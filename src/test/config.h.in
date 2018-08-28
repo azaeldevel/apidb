@@ -1,5 +1,0 @@
-#define VERSION_MAJOR @apidb_VERSION_MAJOR@
-#define VERSION_MINOR @apidb_VERSION_MINOR@
-#define VERSION_PATCH @apidb_VERSION_PATCH@
-#define VERSION_STAGE toolkit::Version::Stage::@apidb_VERSION_STAGE@
-#define PAKAGENAME "@PROJECT_NAME@"

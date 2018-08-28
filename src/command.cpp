@@ -51,23 +51,17 @@ int main(int argc, char *argv[])
 	if(fin) 
 	{
 		std::cout<<"Cargando '" << strProject << "' ..." <<std::endl;
-		apidb::Driver driver;
-		/*if(!driver.loadConfig(strProject))
+		apidb::ConfigureProject config(strProject);
+        apidb::Driver driver(config);
+		if(!driver.driving())
 		{
 			std::cerr<<"Fallo la configuracion."<<std::endl;
 			return EXIT_FAILURE;
 		}
 		else
 		{
-			std::cout<<"'"<<strProject<<"' cargado.";
-		}*/
-            
-		if(!driver.driving())
-		{
-			std::cerr<<"Fail parsin phase"<<std::endl;
-			return EXIT_FAILURE;
+			std::cout<<"'"<<strProject<<"' cargado."<<std::endl;
 		}
-		
 		return EXIT_SUCCESS;
 	}
 	
@@ -123,38 +117,31 @@ int main(int argc, char *argv[])
 	
 	toolkit::Version version;
 	version.set(0,1,0,toolkit::Version::Stage::alpha);
-	
-	apidb::Driver driver(name,dir,mysqlConnector,apidb::InputLenguajes::MySQL_Server,apidb::OutputLenguajes::CPP,version);
+	apidb::ConfigureProject config;
+    config.name = name;
+    config.directory = dir;
+    config.conectordb = mysqlConnector;
+    config.version = version;
+    config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
+    config.outputLenguaje = apidb::OutputLenguajes::CPP;
+	apidb::Driver driver(config);
 	if(!driver.driving())
     {
-        std::cerr<<"Fail parsin phase"<<std::endl;
-        return EXIT_FAILURE;
-    }
+        std::cerr<<mysqlConnector.toString()<<" - is bat "<<std::endl;
+        return -1;
+    }  
     
-labelConfig:
 	std::cout<< "Archivo de configuracion:";
-	std::string config;
-	std::cin >> config;
-	if(config.compare("N") == 0 | config.compare("n") == 0)
+	std::string configCh;
+	std::cin >> configCh;
+	if(configCh.compare("N") == 0 | configCh.compare("n") == 0)
 	{
 		;
 	}
-	else if(config.compare("S") == 0 | config.compare("s") == 0)
+	else if(configCh.compare("S") == 0 | configCh.compare("s") == 0)
 	{
-		std::cout<< "\tIndique el directorio.";
-		goto labelConfig;
-	}
-	else if(config.compare(".") == 0 | config.empty())
-	{
-		std::string fn = name;
-		fn = fn + ".apidb";
-		//driver.saveConfig();
-		std::cout<<"\tArchivo de configuracion:"<<fn<<std::endl;
-	}
-	else
-	{
-		std::string fn = dir + "/" + name + ".apidb";
-		//driver.saveConfig();
+		std::string fn = dir + "/apidb";
+		config.saveConfig();
 		std::cout<<"\tArchivo de configuracion:"<<fn<<std::endl;		
 	}
     
