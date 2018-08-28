@@ -19,9 +19,16 @@
  * */
 
 #include "driver.hpp"
-
+#include "config.h"
 
 namespace apidb
 {
-
+    const char* getPakageName()
+    {
+        return PAKAGENAME;
+    }
+	toolkit::Version getPakageVersion()
+	{
+		return toolkit::Version(VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,VERSION_STAGE);		
+	}
 } 

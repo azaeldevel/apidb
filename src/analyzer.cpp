@@ -7,65 +7,7 @@
 
 namespace apidb
 {	
-	namespace internal
-	{
-		int Symbol::counter = 0;	
-		
-		short Tables::max()
-		{
-			std::list<Table*>::iterator actual = begin();
-			std::list<Table*>::iterator last = end();
-			short m = 0;
-			
-			while (actual != last) 
-			{
-				if(((*actual)->getCountRefereces()) > m)
-				{
-					m = (*actual)->getCountRefereces();
-				}				
-			}			
-			return m;
-		}
-				
-		short Table::getCountRefereces()const 
-		{
-			return countRef;
-		}
-		
-		Table::Table()
-		{
-			countRef = 0;
-		}
-		
-		Table::~Table()
-		{
-			for (Symbol* symbol : *this)
-			{
-				delete symbol;
-			}	
-			clear();
-		}
-		Tables::~Tables()
-		{
-			for (Table* table : *this)
-			{
-				delete table;
-			}
-			clear();
-		}
-		Table* Tables::search(const std::string& tableName)
-		{
-			std::list<Table*>::iterator actual = begin();
-			std::list<Table*>::iterator last = end();
-			
-			while (actual != last) 
-			{
-				if ((*actual)->name.compare(tableName) == 0) return (internal::Table*)(*actual);
-				++actual;
-			}
-			return NULL;
-		}		
-	}
+	
 	
 
 	BuildException::~BuildException() throw()
@@ -81,19 +23,7 @@ namespace apidb
 		this->description = description;
 	}
 	
-	int internal::Symbol::getID()const
-	{
-		return id;
-	}
-	internal::Symbol::Symbol()
-	{
-		counter++;
-		id = counter;
-		classReferenced = NULL;
-		classParent = NULL;
-		keyType = NOKEY;
-		id = 0;
-	}
+
 	
 	
 	void Analyzer::setPramsLenguajes(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
@@ -107,7 +37,7 @@ namespace apidb
 		return outputLenguaje;
 	}
 	
-	internal::Tables& Analyzer::getListTable() 
+	symbols::Tables& Analyzer::getListTable() 
 	{
 		return symbolsTables;
 	}

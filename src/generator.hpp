@@ -17,7 +17,12 @@
  * 
  *  author: Azael Reyes
  * */
- 
+#ifndef APIDB_GENERATOR_HPP
+#define APIDB_GENERATOR_HPP
+
+#include <fstream>
+
+
  namespace apidb
 {
 	namespace generators
@@ -46,27 +51,27 @@
 			
 		private:
 			void createSpaceH(std::ofstream& file);
-			void createClassH(const apidb::internal::Table&,std::ofstream&,const std::string&);
+			void createClassH(const apidb::symbols::Table&,std::ofstream&,const std::string&);
 			void createClassPrivateH(std::ofstream&);
-			void createClassAttributesH(const apidb::internal::Table&,std::ofstream&);
+			void createClassAttributesH(const apidb::symbols::Table&,std::ofstream&);
 			void createClassPublicH(std::ofstream&);
-			void createClassMethodesH(const apidb::internal::Table&,std::ofstream&);
+			void createClassMethodesH(const apidb::symbols::Table&,std::ofstream&);
 			void createSpaceCPP(std::ofstream& file);
-			void createClassCPP(const apidb::internal::Table&,std::ofstream&,const std::string&);
+			void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&);
 			void createClassPrivateCPP(std::ofstream&);
-			void createClassAttributesCPP(const apidb::internal::Table&,std::ofstream&);
+			void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);
 			void createClassPublicCPP(std::ofstream&);
-			void createClassMethodesCPP(const apidb::internal::Table&,std::ofstream&);
-			void writeDefaultContructorH(const apidb::internal::Table&,std::ofstream&);
-			void writeDefaultContructorCPP(const apidb::internal::Table&,std::ofstream&);
-			void writeKeyValueH(const apidb::internal::Table&,std::ofstream&);
-			void writeKeyValueCPP(const apidb::internal::Table&,std::ofstream&);
-			void writeCopyContructorH(const apidb::internal::Table&,std::ofstream&);
-			void writeCopyContructorCPP(const apidb::internal::Table&,std::ofstream&);
-			void writeKeyContructorH(const apidb::internal::Table&,std::ofstream&);
-			void writeKeyContructorCPP(const apidb::internal::Table&,std::ofstream&);
-			void writeInsertH(const apidb::internal::Table&,std::ofstream&);
-			void writeInsertCPP(const apidb::internal::Table&,std::ofstream&);
+			void createClassMethodesCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeDefaultContructorH(const apidb::symbols::Table&,std::ofstream&);
+			void writeDefaultContructorCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeKeyValueH(const apidb::symbols::Table&,std::ofstream&);
+			void writeKeyValueCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeCopyContructorH(const apidb::symbols::Table&,std::ofstream&);
+			void writeCopyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeKeyContructorH(const apidb::symbols::Table&,std::ofstream&);
+			void writeKeyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeInsertH(const apidb::symbols::Table&,std::ofstream&);
+			void writeInsertCPP(const apidb::symbols::Table&,std::ofstream&);
 			
 			apidb::Analyzer* analyzer;
 			std::ofstream* writeResults;//erreglo de writeoutput files
@@ -108,3 +113,4 @@
 	}
 		
 }
+#endif

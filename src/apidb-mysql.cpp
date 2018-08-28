@@ -26,7 +26,7 @@
 
 namespace apidb
 {
-	bool internal::Table::fillKeyType(toolkit::clientdb::Connector& connect,internal::Tables& tables)
+	bool symbols::Table::fillKeyType(toolkit::clientdb::Connector& connect,symbols::Tables& tables)
 	{
 		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME FROM information_schema.TABLE_CONSTRAINTS i  LEFT JOIN information_schema.KEY_COLUMN_USAGE k ON i.CONSTRAINT_NAME = k.CONSTRAINT_NAME WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =";
 		fks += "'" ;
@@ -47,10 +47,10 @@ namespace apidb
 					if(attribute->name.compare(row[0]) == 0)
 					{						
 						attribute->classReferenced = tables.search(row[1]);//returna null o un puntero valido.		
-						if(attribute->keyType == internal::Symbol::KeyType::UNIQUE && attribute->classReferenced != NULL)		
+						if(attribute->keyType == symbols::Symbol::KeyType::UNIQUE && attribute->classReferenced != NULL)		
 						{
 							attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
-							attribute->keyType = internal::Symbol::KeyType::FOREIGN_UNIQUE;//usada como llave
+							attribute->keyType = symbols::Symbol::KeyType::FOREIGN_UNIQUE;//usada como llave
 						}
 					}
 				}
@@ -61,7 +61,7 @@ namespace apidb
 		return true;
 	}
 	
-    bool internal::Table::basicSymbols(toolkit::clientdb::Connector& connect)
+    bool symbols::Table::basicSymbols(toolkit::clientdb::Connector& connect)
     {
 		std::string str = "DESCRIBE ";
 		str += name;
@@ -91,30 +91,30 @@ namespace apidb
 				std::string extra = row[5];				
 				if(keyType.size() == 0)//si esta vacio el campo no es key
 				{
-					attrribute->keyType = internal::Symbol::KeyType::NOKEY;
+					attrribute->keyType = symbols::Symbol::KeyType::NOKEY;
 					if(!setkey)	key = NULL;
 				}
 				else if(attrribute->required && (keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))//primary key
 				{
-					attrribute->keyType = internal::Symbol::KeyType::PRIMARY;
+					attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
 					key = attrribute;
 					setkey = true;
 				}
 				else if(attrribute->required && (keyType.compare("PRI") == 0))//unique constraing
 				{
-					attrribute->keyType = internal::Symbol::KeyType::PRIMARY;
+					attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
 					key = attrribute;
 					setkey = true;
 				}
 				else if(attrribute->required && (keyType.compare("UNI") == 0))//unique constraing
 				{
-					attrribute->keyType = internal::Symbol::KeyType::UNIQUE;
+					attrribute->keyType = symbols::Symbol::KeyType::UNIQUE;
 					key = attrribute;
 					setkey = true;
 				}
 				else
 				{
-					attrribute->keyType = internal::Symbol::KeyType::NOKEY;
+					attrribute->keyType = symbols::Symbol::KeyType::NOKEY;
 					if(!setkey)	key = NULL;
 				}
 				
@@ -137,7 +137,7 @@ namespace apidb
     }
     
     
-	bool internal::Tables::listing(toolkit::clientdb::Connector& connect)
+	bool symbols::Tables::listing(toolkit::clientdb::Connector& connect)
 	{
 		std::string db;
 		switch(connect.getDatconection().getServerType())

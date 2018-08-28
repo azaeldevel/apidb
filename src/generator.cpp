@@ -338,14 +338,14 @@ namespace generators
 			writeResults[1].open(d.getDirectoryProject() + "/" + projectCPP);
 		}
 	}
-	void CPP::writeInsertH(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeInsertH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		// creando insert
         ofile << "\t\t"<< "bool ";
         ofile << "insert(toolkit::clientdb::Connector& connector";
-        for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
+        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
-			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
+			if((*i)->keyType != symbols::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
 			{
 				if(i != table.required.end())
 				{
@@ -373,14 +373,14 @@ namespace generators
 		}
         ofile << ");"<<std::endl;
 	}
-	void CPP::writeInsertCPP(const apidb::internal::Table& table,std::ofstream& ofile)	
+	void CPP::writeInsertCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{	
 		// Methodo insert
         ofile << "\t"<< "bool ";
         ofile <<table.name<< "::insert(toolkit::clientdb::Connector& connector";
-        for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
+        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
-			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
+			if((*i)->keyType != symbols::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
 			{
 				if(i != table.required.end())
 				{
@@ -411,9 +411,9 @@ namespace generators
         ofile << "\t\t"<<"std::string sqlString = \"\";"<<std::endl;
         ofile << "\t\t"<<"sqlString = sqlString + \"INSERT INTO \" + TABLE_NAME; "<<std::endl;
         ofile << "\t\t"<<"sqlString = sqlString + \"(\";"<<std::endl;
-        for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
+        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
-			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
+			if((*i)->keyType != symbols::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
 			{
 				if(i != table.required.begin())
 				{
@@ -423,9 +423,9 @@ namespace generators
 			}
 		}
 		ofile << "\t\tsqlString = sqlString + \") VALUES(\";"<<std::endl;
-        for(std::list<internal::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
+        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
-			if((*i)->keyType != internal::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
+			if((*i)->keyType != symbols::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
 			{
 				if(i != table.required.begin())
 				{
@@ -483,7 +483,7 @@ namespace generators
         ofile << "\t}"<<std::endl;
 	}
         
-	void CPP::writeKeyContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeKeyContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
         //constructor que toma key como parametro
         if(table.key != NULL)//tiene key
@@ -517,7 +517,7 @@ namespace generators
 			throw BuildException(msg);
 		}
 	}
-	void CPP::writeKeyContructorCPP(const apidb::internal::Table& table ,std::ofstream& ofile)
+	void CPP::writeKeyContructorCPP(const apidb::symbols::Table& table ,std::ofstream& ofile)
 	{
 		//constructor que toma key como parametro
         if(table.key != NULL)//tiene key
@@ -566,24 +566,24 @@ namespace generators
 		ofile << "\t}" <<std::endl;
 	}
         
-	void CPP::writeCopyContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeCopyContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		//constructor de copias 
 		ofile << "\t\t" <<table.name<<"(const " << table.name <<"&);"<<std::endl;
 	}
-	void CPP::writeCopyContructorCPP(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeCopyContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		//constructor de copias 
 		ofile << "\t" << table.name << "::" << table.name <<"(const " << table.name <<"& obj)"<<std::endl;
 		ofile << "\t{"<<std::endl;
-		for(const internal::Symbol* attr : table)
+		for(const symbols::Symbol* attr : table)
 		{
 			ofile << "\t\tthis->"<< attr->name << " = obj." << attr->name<<";"<<std::endl;
 		}
 		ofile << "\t}"<<std::endl;
 				
 	}
-	void CPP::writeKeyValueH(const apidb::internal::Table& table ,std::ofstream& ofile)
+	void CPP::writeKeyValueH(const apidb::symbols::Table& table ,std::ofstream& ofile)
 	{
         //si la table tiene key
         if(table.key != NULL) 
@@ -591,7 +591,7 @@ namespace generators
 			ofile << "\t\tstd::string toStringKey()const;" <<std::endl;			
 		}
 	}
-	void CPP::writeKeyValueCPP(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeKeyValueCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
         if(table.key != NULL)
         {
@@ -607,7 +607,7 @@ namespace generators
 				else
 				{
 					ofile <<"\t\treturn std::to_string(" << table.key->name;
-					internal::Symbol* actual = table.key;
+					symbols::Symbol* actual = table.key;
 					do
 					{
 						ofile << "->" << actual->classReferenced->key->get;
@@ -629,19 +629,19 @@ namespace generators
 		}
 	}
         
-	void CPP::writeDefaultContructorH(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeDefaultContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		ofile <<"\t\t"<<table.name<<"();"<<std::endl;
 	}
-	void CPP::writeDefaultContructorCPP(const apidb::internal::Table& table,std::ofstream& ofile)
+	void CPP::writeDefaultContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
 		ofile <<"\t"<<table.name<< "::" <<table.name<<"()"<<std::endl;
 		ofile <<"\t{"<<std::endl;
 		ofile <<"\t}"<<std::endl;
 	}
-    void CPP::createClassMethodesCPP(const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
     {		
-        for(const internal::Symbol* attr : table)
+        for(const symbols::Symbol* attr : table)
         {
 			//gets
 			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
@@ -679,7 +679,7 @@ namespace generators
 			ofile << "\t}"<<std::endl;
 			
 			
-			if(attr->keyType == internal::Symbol::KeyType::PRIMARY || attr->keyType == internal::Symbol::KeyType::FOREIGN_UNIQUE)
+			if(attr->keyType == symbols::Symbol::KeyType::PRIMARY || attr->keyType == symbols::Symbol::KeyType::FOREIGN_UNIQUE)
 			{
 				continue;
 			}			
@@ -714,7 +714,7 @@ namespace generators
 				else
 				{
 					ofile << "\"'\" + std::to_string(" << attr->name ;	
-					const internal::Symbol* actual = attr;
+					const symbols::Symbol* actual = attr;
 					do
 					{
 						ofile << "." << actual->classReferenced->key->get;
@@ -742,7 +742,7 @@ namespace generators
 				else
 				{
 					ofile << " + std::to_string(" << table.key->name ;	
-					const internal::Symbol* actual = table.key;
+					const symbols::Symbol* actual = table.key;
 					do
 					{
 						ofile << "->" << actual->classReferenced->key->get;
@@ -774,24 +774,24 @@ namespace generators
     {
         file <<"namespace "<<analyzer->getNameProject()<<std::endl;
         file <<"{"<<std::endl;
-        const internal::Tables& tables = analyzer->getListTable();
-        for (apidb::internal::Table* table : tables) 
+        const symbols::Tables& tables = analyzer->getListTable();
+        for (apidb::symbols::Table* table : tables) 
         {
             createClassCPP(*table,file,table->name);       
         }
         file <<"}"<<std::endl;
     }
-	void CPP::createClassCPP(const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
+	void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  nameClass << "\";" << std::endl;
 		createClassMethodesCPP(cl,file);        
 		file<< std::endl<< std::endl;
     }
     
-    void CPP::createClassMethodesH(const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPP::createClassMethodesH(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
 		std::string insertMethode = "";
-        for(internal::Symbol* attr : table)
+        for(symbols::Symbol* attr : table)
         {
 			//get
 			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
@@ -812,7 +812,7 @@ namespace generators
 			ofile << "get" << attr->name << "() const;"<< std::endl;
 			
 			
-			if(attr->keyType == internal::Symbol::KeyType::PRIMARY)
+			if(attr->keyType == symbols::Symbol::KeyType::PRIMARY)
 			{
 				continue;
 			}			
@@ -847,9 +847,9 @@ namespace generators
 		  
     }
     
-    void CPP::createClassAttributesH(const apidb::internal::Table& table,std::ofstream& ofile)
+    void CPP::createClassAttributesH(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
-        for(internal::Symbol* attr : table)
+        for(symbols::Symbol* attr : table)
         {
 			//ofile <<"["<<attr->outType<<"]"<<std::endl;
 			if(outputLenguaje == OutputLenguajes::CPP)
@@ -884,14 +884,14 @@ namespace generators
         file <<"namespace "<<analyzer->getNameProject()<<std::endl;
         file <<"{"<<std::endl;
         //file <<"Listing tables" << std::endl;
-        const internal::Tables& tables = analyzer->getListTable();
-        for (const apidb::internal::Table* table : tables) 
+        const symbols::Tables& tables = analyzer->getListTable();
+        for (const apidb::symbols::Table* table : tables) 
         {
 			//file <<"Backward Table " << table->name << std::endl;
 			file <<"\tclass " <<table->name << ";"<<std::endl;
 		}
 		file<<std::endl;
-        for (const apidb::internal::Table* table : tables) 
+        for (const apidb::symbols::Table* table : tables) 
         {
 			//file <<"Declare Table " << table->name << std::endl;
             createClassH(*table,file,table->name);       
@@ -906,7 +906,7 @@ namespace generators
     {
         file << "\tprivate:" <<std::endl;
     }
-    void CPP::createClassH(const apidb::internal::Table& cl,std::ofstream& file,const std::string& nameClass)
+    void CPP::createClassH(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
 		//file <<"keyword"<<std::endl;
 		analyzer->getOutputMessage() <<"\tHeading class " << cl.name<<std::endl;
@@ -930,10 +930,10 @@ namespace generators
 		//includes in header file
         std::string headers = "";
         bool stringFlag = false;
-        const apidb::internal::Tables& tables = analyzer->getListTable();
-		for(internal::Table* table: tables)
+        const apidb::symbols::Tables& tables = analyzer->getListTable();
+		for(symbols::Table* table: tables)
 		{
-			for(internal::Symbol* attr : *table)
+			for(symbols::Symbol* attr : *table)
 			{
 				if(attr->outType.compare("std::string")==0 && stringFlag == false)
 				{
@@ -956,7 +956,7 @@ namespace generators
 		}   
 		else
 		{
-			for (apidb::internal::Table* table : tables) 
+			for (apidb::symbols::Table* table : tables) 
 			{
 				createClassH(*table,getHeaderOutput(),table->name);  
 				createClassCPP(*table,getSourceOutput(),table->name);     

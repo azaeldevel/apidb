@@ -21,43 +21,12 @@
 #ifndef APIDB_DRIVER_HPP
 #define APIDB_DRIVER_HPP
 
-#include <list>
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <set>
-#include <string>
-
 #include "analyzer.hpp"
 #include "generator.hpp"
-
-#include <libxml/xmlreader.h>
-
 
 namespace apidb
 {
 	
-    class ConfigureProject
-    {
-    private:
-        bool processNode(xmlTextReaderPtr);
-        bool getProjectNodes(xmlTextReaderPtr);
-        
-    public:    
-        std::string name; 
-        std::string directory;
-        toolkit::Version version;
-        toolkit::clientdb::DatconectionMySQL conectordb;
-		InputLenguajes inputLenguaje;
-		OutputLenguajes outputLenguaje;	
-        ConfigureProject(std::string filename);
-        ConfigureProject();
-        const std::string& getName()const;
-        const std::string& getDirectory()const;
-        const toolkit::Version& getVersion()const;
-        const toolkit::clientdb::DatconectionMySQL& getConector()const;
-        bool saveConfig();
-    };
 	
 	
 	class Driver
