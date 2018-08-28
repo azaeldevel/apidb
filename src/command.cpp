@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 	std::string name;
 	std::cin>>name;
 		
-	std::cout<<"Directorio de projecto:";
+	std::cout<<"Directorio de proyecto:";
 	std::string dir;
 	std::cin>>dir;
 	
@@ -41,18 +41,18 @@ int main(int argc, char *argv[])
 	std::string strProject;	
 	if(dir.compare(".") == 0 | dir.empty())
 	{
-		strProject = name + ".apidb";
+		strProject = "apidb";
 	}
 	else
 	{
-		strProject = dir + "/" + name + ".apidb";
+		strProject = dir + "/" +"apidb";
 	}
 	std::ifstream fin(strProject);
 	if(fin) 
 	{
 		std::cout<<"Cargando '" << strProject << "' ..." <<std::endl;
 		apidb::Driver driver;
-		if(!driver.loadConfig(strProject))
+		/*if(!driver.loadConfig(strProject))
 		{
 			std::cerr<<"Fallo la configuracion."<<std::endl;
 			return EXIT_FAILURE;
@@ -60,10 +60,8 @@ int main(int argc, char *argv[])
 		else
 		{
 			std::cout<<"'"<<strProject<<"' cargado.";
-		}
-		
-		
-		
+		}*/
+            
 		if(!driver.driving())
 		{
 			std::cerr<<"Fail parsin phase"<<std::endl;
@@ -150,13 +148,13 @@ labelConfig:
 	{
 		std::string fn = name;
 		fn = fn + ".apidb";
-		driver.saveConfig(fn);
+		//driver.saveConfig();
 		std::cout<<"\tArchivo de configuracion:"<<fn<<std::endl;
 	}
 	else
 	{
 		std::string fn = dir + "/" + name + ".apidb";
-		driver.saveConfig(fn);
+		//driver.saveConfig();
 		std::cout<<"\tArchivo de configuracion:"<<fn<<std::endl;		
 	}
     

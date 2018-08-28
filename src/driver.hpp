@@ -37,14 +37,27 @@
 namespace apidb
 {
 	
-	class Configuration
-	{
-	public:
-		std::string nameProject;
-		std::string directory;
-		toolkit::Version version;
-		toolkit::clientdb::Datconection* datconection;	
-	};
+    class ConfigureProject
+    {
+    private:
+        bool processNode(xmlTextReaderPtr);
+        bool getProjectNodes(xmlTextReaderPtr);
+        
+    public:    
+        std::string name; 
+        std::string directory;
+        toolkit::Version version;
+        toolkit::clientdb::DatconectionMySQL conectordb;
+		InputLenguajes inputLenguaje;
+		OutputLenguajes outputLenguaje;	
+        ConfigureProject(std::string filename);
+        ConfigureProject();
+        const std::string& getName()const;
+        const std::string& getDirectory()const;
+        const toolkit::Version& getVersion()const;
+        const toolkit::clientdb::DatconectionMySQL& getConector()const;
+        bool saveConfig();
+    };
 	
 	
 	class Driver
@@ -56,8 +69,8 @@ namespace apidb
 		bool driving();
 		Driver(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje,OutputLenguajes outputLenguaje,toolkit::Version version);
 		Driver();
-		bool loadConfig(const std::string &filename);//fixme: hay que determinar como leeer correctamente el archivo de configuracion.
-		bool saveConfig(const std::string &filename);
+        Driver(const ConfigureProject);
+
 		
 	private:
 		toolkit::clientdb::Connector* connector;
@@ -71,8 +84,6 @@ namespace apidb
 		toolkit::Version version;
 		toolkit::clientdb::Datconection* datconection;
 		std::list<std::string> stackXML;
-		void processNode(xmlTextReaderPtr reader);
-		void streamFile(const char *filename);
 	};
 }
 

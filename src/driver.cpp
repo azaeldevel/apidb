@@ -29,13 +29,289 @@
 
 namespace apidb
 {
+    Driver::Driver(const ConfigureProject config)
+	{		
+		this->inputLenguaje = config.inputLenguaje;
+		this->outputLenguaje = config.outputLenguaje;
+		if(this->inputLenguaje == apidb::InputLenguajes::MySQL_Server)
+		{
+			this->datconection = new toolkit::clientdb::DatconectionMySQL(config.conectordb);
+			connector = new toolkit::clientdb::Connector();
+			analyzer = new mysql::Analyzer(inputLenguaje,outputLenguaje);		
+			try
+			{
+				bool flag = connector->connect(config.conectordb);
+				if(flag)
+				{
+					analyzer->setPramsProject(config.name,config.directory);
+					this->name = config.name;
+					this->directory = config.directory;
+					this->version = config.version;
+				}
+			}
+			catch(toolkit::clientdb::SQLException ex)
+			{
+				analyzer->getErrorMessage() <<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
+			}
+		}
+		else
+		{
+			analyzer->getErrorMessage() <<"Lenguaje de entrada desconocido."<<std::endl;
+		}	
+	}
+	
+    const toolkit::clientdb::DatconectionMySQL& ConfigureProject::getConector() const
+    {
+        return conectordb;    
+    }
+    const toolkit::Version& ConfigureProject::getVersion()const
+    {
+        return version;
+    }
+    const std::string& ConfigureProject::getName()const
+    {
+        return name;
+        
+    }
+    const std::string& ConfigureProject::getDirectory()const
+    {
+        return directory;    
+    }
+        
+    bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
+    {
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        const xmlChar *name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"#text") == 0)
+        {
+            //std::cout<<"Find text."<<std::endl;   
+            this->name = (const char*)xmlTextReaderConstValue(reader);
+        }
+            
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);  
+        if(strcmp((const char*)name,"#text") == 0)
+        {
+            this->directory = (const char*)xmlTextReaderConstValue(reader);
+        }
+        
+        
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"major") == 0)
+        {
+            xmlTextReaderRead(reader);
+        }
+        else
+        {
+            return true;
+        }
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"#text") == 0)
+        {  
+            this->version.major = atoi((const char*)xmlTextReaderConstValue(reader));
+        }
+        
+
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);    
+        if(strcmp((const char*)name,"minor") == 0)
+        {
+            xmlTextReaderRead(reader);
+        }
+        else
+        {
+            return true;
+        }  
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"#text") == 0)
+        {
+            this->version.minor = atoi((const char*)xmlTextReaderConstValue(reader));
+        }
+        
+
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"patch") == 0)
+        {
+            xmlTextReaderRead(reader);
+        }
+        else
+        {
+            return true;
+        }
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"#text") == 0)
+        {
+            this->version.patch = atoi((const char*)xmlTextReaderConstValue(reader));
+        }
+        
+        this->version.stage = toolkit::Version::Stage::alpha;
+        
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"host") == 0)
+        {
+            xmlTextReaderRead(reader);
+        }
+        else
+        {
+            return true;
+        }
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"#text") == 0)
+        {
+            this->conectordb.host = (const char*)xmlTextReaderConstValue(reader);
+        }
+        
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"puerto") == 0)
+        {
+            xmlTextReaderRead(reader);
+        }
+        else
+        {
+            return true;
+        }
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"#text") == 0)
+        {
+            this->conectordb.port = atoi((const char*)xmlTextReaderConstValue(reader));
+        }
+        
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"nameDB") == 0)
+        {
+            xmlTextReaderRead(reader);
+        }
+        else
+        {
+            return true;
+        }
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"#text") == 0)
+        {
+            this->conectordb.database = (const char*)xmlTextReaderConstValue(reader);
+        }
+        
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"user") == 0)
+        {
+            xmlTextReaderRead(reader);
+        }
+        else
+        {
+            return true;
+        }
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"#text") == 0)
+        {
+            this->conectordb.usuario = (const char*)xmlTextReaderConstValue(reader);
+        }
+        
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"pw") == 0)
+        {
+            xmlTextReaderRead(reader);
+        }
+        else
+        {
+            return true;
+        }
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"#text") == 0)
+        {
+            this->conectordb.password = (const char*)xmlTextReaderConstValue(reader);
+        }
+        return true;
+    }
+
+
+    bool ConfigureProject::processNode(xmlTextReaderPtr reader) 
+    {
+        const xmlChar *name = xmlTextReaderConstName(reader);
+
+        if( xmlTextReaderNodeType(reader) == 1) //es d apertura?
+        {
+            if(strcmp((const char*)name,"project") == 0)
+            {
+                //std::cout<<(const char*)name<<std::endl;
+                getProjectNodes(reader);
+            }
+        }
+        else if( xmlTextReaderNodeType(reader) == 15) //es d cerradura?
+        {
+            //stack.pop_front();
+        }
+        
+        return true;
+    }
+
+    ConfigureProject::ConfigureProject()
+    {
+        ;
+    }
+    
+    ConfigureProject::ConfigureProject(std::string filename)
+    {    
+        xmlTextReaderPtr reader;
+        int ret;
+        inputLenguaje = apidb::InputLenguajes::MySQL_Server;
+        outputLenguaje = apidb::OutputLenguajes::CPP;	
+        reader = xmlReaderForFile(filename.c_str(), NULL, 0);
+        if (reader != NULL) 
+        {
+            ret = xmlTextReaderRead(reader);               
+            if (!processNode(reader)) 
+            {
+                fprintf(stderr, "%s : failed to parse\n", filename.c_str());
+            }
+            xmlFreeTextReader(reader);
+        }
+        else 
+        {
+            fprintf(stderr, "Unable to open %s\n", filename.c_str());
+        }
+    }
+
 	Driver::Driver()
 	{
 		datconection = NULL;
 		connector = NULL;
 	}
 	
-	bool Driver::saveConfig(const std::string &docname)
+	bool ConfigureProject::saveConfig()
 	{
 		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
 		xmlNodePtr root_node = xmlNewNode(NULL, (const xmlChar *)"project");
@@ -51,18 +327,39 @@ namespace apidb
 		//xmlNewChild(version_node, NULL, (const xmlChar *)"stage", (const xmlChar *)version.stage );
 		
 		xmlNodePtr db_node = xmlNewChild(root_node, NULL, (const xmlChar *)"ConectorDB", NULL);
-		if(this->inputLenguaje == apidb::InputLenguajes::MySQL_Server)
+		if(inputLenguaje == apidb::InputLenguajes::MySQL_Server)
 		{
-			toolkit::clientdb::DatconectionMySQL* dat = (toolkit::clientdb::DatconectionMySQL*)datconection;
-			xmlNewChild(db_node, NULL, (const xmlChar *)"host", (const xmlChar *)dat->getHost().c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"puerto", (const xmlChar *)std::to_string(dat->getPort()).c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"nameDB", (const xmlChar *)dat->getDatabase().c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"user", (const xmlChar *)dat->getUsuario().c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)dat->getPassword().c_str());
+			//toolkit::clientdb::DatconectionMySQL* dat = (toolkit::clientdb::DatconectionMySQL*)connector;
+			xmlNewChild(db_node, NULL, (const xmlChar *)"host", (const xmlChar *)conectordb.getHost().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"puerto", (const xmlChar *)std::to_string(conectordb.getPort()).c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"nameDB", (const xmlChar *)conectordb.getDatabase().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"user", (const xmlChar *)conectordb.getUsuario().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb.getPassword().c_str());
 		}
+		else
+        {
+            return false;
+        }
 		
-				
-		int ret = xmlSaveFormatFileEnc(docname.c_str(), doc, "UTF-8", 1);	
+        std::string nmFile = "";
+		if((directory.empty()) || (directory.compare(".") == 0))
+		{
+			nmFile = "apidb";
+		}
+		else
+        {
+            std::ifstream ifile(directory);
+            if (ifile) 
+            {            
+                nmFile = directory + "/apidb";
+            }
+            else
+            {            
+                return false;
+            }
+        }
+        
+		int ret = xmlSaveFormatFileEnc(nmFile.c_str(), doc, "UTF-8", 1);	
 		xmlFreeDoc(doc);
 		xmlCleanupParser();
 		if( ret == -1) return false;	
@@ -70,195 +367,9 @@ namespace apidb
 	}
 
 
-	/**
-	* processNode:
-	* @reader: the xmlReader
-	*
-	* Dump information about the current node
-	*/
-	void Driver::processNode(xmlTextReaderPtr reader) 
-	{
-		const xmlChar *name, *value;
 
-		name = xmlTextReaderConstName(reader);
-		if (name == NULL)
-		name = BAD_CAST "--";
-		value = xmlTextReaderConstValue(reader);
-		//printf("%d %d %s %d %d", xmlTextReaderDepth(reader),xmlTextReaderNodeType(reader), name, xmlTextReaderIsEmptyElement(reader),xmlTextReaderHasValue(reader));
-		//printf("%d %s ", xmlTextReaderDepth(reader),name);
-		//if (value == NULL)
-		//{
-			//printf("\n");
-		//}
-		//else 
-		{
-			
-			if (xmlStrlen(value) > 40)
-			{
-				//printf(" %.40s...\n", value);
-			}
-			else
-			{
-				//printf(" %s\n", value);
-				if(strcmp((const char*)name,"project") == 0)
-				{
-					stackXML.push_front((const char*)name);
-				}
-				else if(value != NULL && strcmp((const char*)name,"name") == 0)
-				{
-					this->name = (const char*)value;
-				}
-				else if(value != NULL && strcmp((const char*)name,"directory") == 0)
-				{
-					this->directory = (const char*)value;
-				}
-				else if(strcmp((const char*)name,"InputLenguajes") == 0)
-				{
-					this->directory = (const char*)value;
-					if(strcmp((const char*)name,"MySQL"))
-					{
-						this->inputLenguaje = apidb::InputLenguajes::MySQL_Server;
-					}
-				}
-				else if(strcmp((const char*)name,"OutputLenguajes") == 0)
-				{
-					this->directory = (const char*)value;
-					if(strcmp((const char*)name,"C++"))
-					{
-						this->outputLenguaje = apidb::OutputLenguajes::CPP;
-					}
-				}
-				else if(strcmp((const char*)name,"version") == 0)
-				{
-					;
-				}
-				else if(strcmp((const char*)name,"major") == 0)
-				{
-					this->version.major = atoi((const char*)value);
-				}
-				else if(strcmp((const char*)name,"minor") == 0)
-				{
-					this->version.minor = atoi((const char*)value);
-				}
-				else if(strcmp((const char*)name,"patch") == 0)
-				{
-					this->version.patch = atoi((const char*)value);
-				}
-				else if(strcmp((const char*)name,"patch") == 0)
-				{
-					this->version.patch = atoi((const char*)value);
-				}
-				else if(strcmp((const char*)name,"ConectorDB") == 0)
-				{
-                    this->datconection = NULL;
-				}
-				else if(strcmp((const char*)name,"host") == 0)
-				{
-					((toolkit::clientdb::DatconectionMySQL*)datconection)->host = (const char*)value;
-				}
-				else if(strcmp((const char*)name,"port") == 0)
-				{
-					((toolkit::clientdb::DatconectionMySQL*)datconection)->port = atoi((const char*)value);
-				}
-				else if(strcmp((const char*)name,"nameDB") == 0)
-				{
-					((toolkit::clientdb::DatconectionMySQL*)datconection)->database = (const char*)value;
-				}
-				else if(strcmp((const char*)name,"user") == 0)
-				{
-					((toolkit::clientdb::DatconectionMySQL*)datconection)->usuario = (const char*)value;
-				}
-				else if(strcmp((const char*)name,"password") == 0)
-				{
-					((toolkit::clientdb::DatconectionMySQL*)datconection)->password = (const char*)value;
-				}
-			}
-				
-		}
-		
-		
-		return;
-	}
-
-	/**
-	 * streamFile:
-	 * @filename: the file name to parse
-	 *
-	 * Parse, validate and print information about an XML file.
-	 */
-	void Driver::streamFile(const char *filename) 
-	{
-		xmlTextReaderPtr reader;
-		int ret;
-
-		reader = xmlReaderForFile(filename, NULL,0);
-		if (reader != NULL) 
-		{
-			ret = xmlTextReaderRead(reader);
-			while (ret == 1) 
-			{
-				processNode(reader);
-				ret = xmlTextReaderRead(reader);
-			}
-			xmlFreeTextReader(reader);
-			if (ret != 0) 
-			{
-				fprintf(stderr, "%s : failed to parse\n", filename);
-			}
-		} 
-		else 
-		{
-			fprintf(stderr, "Unable to open %s\n", filename);
-		}
-	}
-
-	bool Driver::loadConfig(const std::string &docname)
-	{
-		/*
-		 * this initialize the library and check potential ABI mismatches
-		 * between the version it was compiled for and the actual shared
-		 * library used.
-		 */
-		streamFile(docname.c_str());
-
-		/*
-		 * Cleanup function for the XML library.
-		 */
-		xmlCleanupParser();
-		/*
-		 * this is to debug memory for regression tests
-		 */
-		xmlMemoryDump();
-        
-		connector = new toolkit::clientdb::Connector();
-		analyzer = new mysql::Analyzer(inputLenguaje,outputLenguaje);
-		std::cout<<"Analizador creado."<<std::endl;		
-		try
-		{
-			std::cout<<"Conectando a BD."<<std::endl;
-            if(this->inputLenguaje == apidb::InputLenguajes::MySQL_Server)
-            {         
-                datconection = new toolkit::clientdb::DatconectionMySQL(((toolkit::clientdb::DatconectionMySQL*)datconection)->host,((toolkit::clientdb::DatconectionMySQL*)datconection)->port,((toolkit::clientdb::DatconectionMySQL*)datconection)->database,((toolkit::clientdb::DatconectionMySQL*)datconection)->usuario,((toolkit::clientdb::DatconectionMySQL*)datconection)->password);
-            }
-			//if(datconection == NULL) std::cerr<<"datconection is NULL"<<std::endl;
-			bool flag = connector->connect(*datconection);
-			if(flag)
-			{
-				analyzer->setPramsProject(name,directory);
-			}
-			else
-			{
-				std::cerr<<"Falló la conexion la BD."<<std::endl;
-			}
-		}
-		catch(toolkit::clientdb::SQLException ex)
-		{
-			analyzer->getErrorMessage() <<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
-		}
-    
-		return true;		
-	}
-
+	
+	
 	OutputLenguajes Driver::getOutputLenguaje() const
 	{
 		return generator->getOutputLenguaje();
