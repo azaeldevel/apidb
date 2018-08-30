@@ -114,6 +114,7 @@ namespace generators
 		cmakelists.close();
 		analyzer->getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
 		
+		//std::cout<<"Creating cmake.modules..."<<std::endl;
 		//cmake.modules
 		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
 		{
@@ -130,11 +131,13 @@ namespace generators
 			if (!ifile) 
 			{
 				std::string cmd = "mkdir ";
-				cmd = cmd + direct;
+				system((cmd + analyzer->getDirectoryProject()).c_str());
+				cmd = cmd + direct;				
 				system(cmd.c_str());
 			}			
 		}
 	
+		//std::cout<<"Creating toolkit-commonConfig.cmake..."<<std::endl;
 		namefile = "toolkit-commonConfig.cmake";
 		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
 		{
@@ -188,6 +191,7 @@ namespace generators
 		  toolkitcommonconifg<<")"<<std::endl;
 		toolkitcommonconifg.close();
 		
+		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
 		namefile = "toolkit-clientdbConfig.cmake";
 		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
 		{
@@ -241,6 +245,7 @@ namespace generators
 		  toolkitclientdbConfig<<")"<<std::endl;
 		toolkitclientdbConfig.close();
 		
+		//std::cout<<"Creating config.h.in..."<<std::endl;
 		namefile = "config.h.in";
 		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
 		{
@@ -258,7 +263,7 @@ namespace generators
 		config.close();		
 		//analyzer->getOutputMessage()<<"\tArchivo de configuración de projecto: " << namefile <<std::endl;
 		
-		
+		//std::cout<<"Creating developing.cpp..."<<std::endl;
 		namefile = "developing.cpp";
 		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
 		{
@@ -279,7 +284,7 @@ namespace generators
 			developing<<"return 0;"<<std::endl;
 		developing<<"}"<<std::endl;		
 		//analyzer->getOutputMessage()<<"\tArchivo de develping phase: " << namefile <<std::endl;
-		
+		//std::cout<<"return..."<<std::endl;
 		return true;
 	}
 

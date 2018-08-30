@@ -5,7 +5,7 @@ IF (TOOLKIT_CLIENTDB_INCLUDE_DIR)
 ENDIF (TOOLKIT_CLIENTDB_INCLUDE_DIR)
 
 FIND_PATH(TOOLKIT_CLIENTDB_INCLUDE_DIR clientdb.hpp
-  ${PROJECT_SOURCE_DIR}/../../toolkit/clientdb/src
+  /home/arm/development/toolkit/clientdb/src
   $ENV{HOME}/root/include/toolkit
   /usr/local/include/toolkit
   /usr/include/toolkit
@@ -14,7 +14,7 @@ FIND_PATH(TOOLKIT_CLIENTDB_INCLUDE_DIR clientdb.hpp
 SET(TOOLKIT_CLIENTDB_NAMES toolkit-clientdb)
 FIND_LIBRARY(TOOLKIT_CLIENTDB_LIBRARY
   NAMES ${TOOLKIT_CLIENTDB_NAMES}
-  PATHS ${PROJECT_SOURCE_DIR}/../../toolkit/clientdb/src ${PROJECT_SOURCE_DIR}/../../toolkit/clientdb/src $ENV{HOME}/root/usr/lib /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu
+  PATHS /home/arm/development/toolkit/clientdb/src $ENV{HOME}/root/usr/lib /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu
   PATH_SUFFIXES toolkit-clientdb
 )
 

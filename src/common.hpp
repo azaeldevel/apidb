@@ -108,9 +108,8 @@ namespace apidb
 			~Tables();	
             Table* search(const std::string&);           
 			bool listing(toolkit::clientdb::Connector& connect);
-			
-		private:			
-			short max();
+			short getMaxCountRef();
+            void reorder();
 		};
 	}
 	

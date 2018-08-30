@@ -162,16 +162,19 @@ namespace apidb
 		{
 			bool flagCPP,flagCMAKE;
 			
+			//std::cout<<"apidb::generators::CPP cpp(*analyzer);..."<<std::endl;
 			apidb::generators::CPP cpp(*analyzer);
 			generator = &cpp;
 			flagCPP = cpp.generate();
 			
+			//std::cout<<"apidb::generators::CMake cmake(*analyzer);..."<<std::endl;
 			apidb::generators::CMake cmake(*analyzer);			
 			flagCMAKE = cmake.generate();
 			
+			///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
 			if(flagCPP && flagCMAKE)
 			{
-				analyzer->getOutputMessage() <<"Completado."<<std::endl;
+				analyzer->getOutputMessage() <<"Completado."<<std::endl;				
 				return true;				
 			}
 			else
@@ -226,7 +229,8 @@ namespace apidb
 					//std::cout<<attribute->inType<<std::endl;
 					attribute->outType = analyzer->parse(attribute->inType);
 				}				
-			}				
+			}	
+			//analyzer->getListTable().reorder();
         }  
           
 		return true;
