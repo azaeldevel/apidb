@@ -1,12 +1,5 @@
- --- Generador de Linea de comando
-	Deve permitir generar un projecto completo y utiliable desde la linea de comandos, incluyendo actualizacion.
-
- --- Clase de Configuracion :  es necesario tener una clase que englobe los parametro para configurar el Driver
+ --- Soporte para llave compuesta 
  
- --- Refatory - pasar la clase CG al archivo de driver y renombrarla como Driver
- 
- --- Soprte para autotools
-
  --- Soporte para PHP
 
  --- Soprte para Java

@@ -286,11 +286,11 @@ namespace apidb
         void Tables::reorder()
 		{
 			short max = getMaxCountRef();
-			std::cout<< "Count in this: " << size() <<std::endl;
+			//std::cout<< "Count in this: " << size() <<std::endl;
 			std::list<Table*> tmp(*this);//copy all datas
 			clear();
-			std::cout<< "Count in this after: " << size() <<std::endl;
-			std::cout<< "Count in tmp: " << tmp.size() <<std::endl;
+			//std::cout<< "Count in this after: " << size() <<std::endl;
+			//std::cout<< "Count in tmp: " << tmp.size() <<std::endl;
 
 			std::list<Table*>::iterator actual;
 			std::list<Table*>::iterator tmpactual;
@@ -301,9 +301,9 @@ namespace apidb
 				tmpactual = tmp.begin();
 				last = tmp.end();
 				while (actual != last) 
-				{std::cout<< "while (actual != last) " <<std::endl;
+				{//std::cout<< "while (actual != last) " <<std::endl;
 					if(((*actual)->getCountRefereces()) == i)
-					{std::cout<< "if(((*actual)->getCountRefereces()) == i) " << size() <<std::endl;
+					{//std::cout<< "if(((*actual)->getCountRefereces()) == i) " << size() <<std::endl;
 						tmpactual++;
 						push_back(*actual);						
 						tmp.erase(actual);
@@ -311,7 +311,7 @@ namespace apidb
 					actual = tmpactual;
 				}
 			}
-			std::cout<< "Count in this: " << size() <<std::endl;
+			//std::cout<< "Count in this: " << size() <<std::endl;
 		}
 		
         int Symbol::getID()const
