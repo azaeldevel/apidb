@@ -26,7 +26,7 @@
 
 int main()
 {
-	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","root","k3yL0c41"); 
+	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","develop","123456"); 
 	toolkit::Version version;
 	version.set(0,1,0,toolkit::Version::Stage::alpha); 
 
@@ -51,9 +51,7 @@ int main()
         std::cerr<<"Fail creation prject."<<std::endl;
         return EXIT_FAILURE;		
 	}
-	
-	
-	
+		
 	apidb::ConfigureProject config2("nmp/apidb");
     config2.directory = "nmp2";
     apidb::Driver driver2(config2);

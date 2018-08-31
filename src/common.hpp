@@ -5,6 +5,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 #include <clientdb.hpp>
 #include <libxml/xmlreader.h>
 #include <iostream>
@@ -80,6 +81,18 @@ namespace apidb
 			int id;	
 		};
 		
+		struct Key : public std::vector<Symbol*>
+		{
+			/**
+			 * return true si los campos son iguales o es inico, falso en otro caso.
+			 * */
+			bool isHomogeneous();
+			
+			/**
+			 * 	para las llaves homegenesa retorna el valor de outType, si no lo son returna una cadaena vacia.
+			 * */
+			std::string getOutType();
+		};
 		/**
 		 * Simbolos por alcance(tabla en SQL) 
 		 **/

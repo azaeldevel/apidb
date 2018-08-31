@@ -223,10 +223,10 @@ namespace apidb
 					//std::cerr<<"Faill on fillKeyType"<<std::endl;
 					return false;
 				}//parsing imput types
-				
+				//std::cout<<"\t"<<table->name<<std::endl;
 				for(symbols::Symbol* attribute: *table)
 				{
-					//std::cout<<attribute->inType<<std::endl;
+					//std::cout<<"\t"<<attribute->inType<<std::endl;
 					attribute->outType = analyzer->parse(attribute->inType);
 				}				
 			}	

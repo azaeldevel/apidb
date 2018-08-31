@@ -88,34 +88,41 @@ namespace apidb
 					attrribute->required = false;
 				}
 				std::string keyType = row[3];
-				std::string extra = row[5];				
-				if(keyType.size() == 0)//si esta vacio el campo no es key
+				std::string extra = row[5];
+				if(keyType.size() == 0)//si esta vacio (row[3]) el campo no es key
 				{
 					attrribute->keyType = symbols::Symbol::KeyType::NOKEY;
-					if(!setkey)	key = NULL;
 				}
-				else if(attrribute->required && (keyType.compare("PRI") == 0) && (extra.compare("auto_increment") == 0))//primary key
+				else if(attrribute->required && keyType.compare("PRI") == 0 && extra.compare("auto_increment") == 0)//primary key
 				{
-					attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
+					if(key != NULL)
+					{
+						throw new BuildException("No hay soporto para llave compuesta.");
+					}
 					key = attrribute;
-					setkey = true;
+					attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
 				}
 				else if(attrribute->required && (keyType.compare("PRI") == 0))//unique constraing
 				{
+					/*if(key != NULL)
+					{
+						throw new BuildException("No hay soporto para llave compuesta.");
+					}*/
+					key = attrribute;
 					attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
-					key = attrribute;
-					setkey = true;
 				}
-				else if(attrribute->required && (keyType.compare("UNI") == 0))//unique constraing
+				/*else if(attrribute->required && (keyType.compare("UNI") == 0))//unique constraing
 				{
-					attrribute->keyType = symbols::Symbol::KeyType::UNIQUE;
+					if(key != NULL)
+					{
+						throw new BuildException("No hay soporto para llave compuesta.");
+					}
 					key = attrribute;
-					setkey = true;
-				}
+					attrribute->keyType = symbols::Symbol::KeyType::UNIQUE;
+				}*/
 				else
 				{
-					attrribute->keyType = symbols::Symbol::KeyType::NOKEY;
-					if(!setkey)	key = NULL;
+					attrribute->keyType = symbols::Symbol::KeyType::NOKEY;					
 				}
 				
 							

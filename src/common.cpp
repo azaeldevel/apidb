@@ -259,8 +259,32 @@ namespace apidb
     
     namespace symbols
 	{
+		std::string Key::getOutType()
+		{
+			if(isHomogeneous()) return (*begin())->outType;	
+			return "";
+		}
+		bool Key::isHomogeneous()
+		{
+			if(size() == 1) return true;
+			
+			std::vector<Symbol*>::iterator firts = begin();
+			std::vector<Symbol*>::iterator actual = begin();
+			std::vector<Symbol*>::iterator last  = end();		
+			
+			while (actual != last) 
+			{
+				if((*actual)->outType.compare((*firts)->outType) != 0)
+				{
+					return false;
+				}
+				actual++;
+			}
+			return true;
+		}
+		
         void Tables::reorder()
-		{			
+		{
 			short max = getMaxCountRef();
 			std::cout<< "Count in this: " << size() <<std::endl;
 			std::list<Table*> tmp(*this);//copy all datas
@@ -269,21 +293,22 @@ namespace apidb
 			std::cout<< "Count in tmp: " << tmp.size() <<std::endl;
 
 			std::list<Table*>::iterator actual;
+			std::list<Table*>::iterator tmpactual;
 			std::list<Table*>::iterator last;
 			for(short i = max; i >= 0; i--)
 			{
 				actual = tmp.begin();
-				//std::list<Table*>::iterator tmpactual = actual;
+				tmpactual = tmp.begin();
 				last = tmp.end();
 				while (actual != last) 
-				{
-					//if(((*actual)->getCountRefereces()) == i)
-					{
-						//tmpactual++;
-						//push_back(*actual);						
-						//tmp.erase(actual);
+				{std::cout<< "while (actual != last) " <<std::endl;
+					if(((*actual)->getCountRefereces()) == i)
+					{std::cout<< "if(((*actual)->getCountRefereces()) == i) " << size() <<std::endl;
+						tmpactual++;
+						push_back(*actual);						
+						tmp.erase(actual);
 					}
-					//actual = tmpactual;
+					actual = tmpactual;
 				}
 			}
 			std::cout<< "Count in this: " << size() <<std::endl;
@@ -331,6 +356,7 @@ namespace apidb
 		Table::Table()
 		{
 			countRef = 0;
+			key = NULL;
 		}
 		
 		Table::~Table()
