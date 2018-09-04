@@ -36,7 +36,7 @@ namespace generators
 		
 	}
 	
-	CMake::CMake(apidb::Analyzer& d,const ConfigureProject& config): analyzer(d), apidb::generators::Generator(config)
+	CMake::CMake(apidb::Analyzer& d,const ConfigureProject& config): analyzer(d),configureProject(config), apidb::generators::Generator(config)
 	{
 		options.cmake_minimun_requiered.set(3,0);
 		options.project.name = analyzer.getNameProject();
@@ -780,7 +780,15 @@ namespace generators
     
     void CPP::createSpaceCPP(std::ofstream& file)
     {
-        file <<"namespace "<<analyzer.getNameProject()<<std::endl;
+
+		if(configureProject.mvc == apidb::MVC::NO)
+		{
+			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+		}
+		else 
+		{
+			file <<"namespace "<< analyzer.getNameProject() << "::controller" <<std::endl;
+		}
         file <<"{"<<std::endl;
         const symbols::Tables& tables = analyzer.getListTable();
         for (apidb::symbols::Table* table : tables) 
@@ -889,7 +897,14 @@ namespace generators
     }
     void CPP::createSpaceH(std::ofstream& file)
     {
-        file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+		if(configureProject.mvc == apidb::MVC::NO)
+		{
+			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+		}
+		else 
+		{
+			file <<"namespace "<< analyzer.getNameProject() << "::controller" <<std::endl;
+		}
         file <<"{"<<std::endl;
         const symbols::Tables& tables = analyzer.getListTable();
         for (const apidb::symbols::Table* table : tables) 

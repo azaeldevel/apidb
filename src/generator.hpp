@@ -108,6 +108,7 @@
 			std::ofstream config;
 			std::ofstream developing;
 			Options options;
+			const ConfigureProject& configureProject;
 		};
 	
 	}

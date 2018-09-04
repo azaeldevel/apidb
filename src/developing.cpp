@@ -37,6 +37,7 @@ int main()
     config.version = version;
     config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
     config.outputLenguaje = apidb::OutputLenguajes::CPP;	
+	config.mvc = apidb::MVC::GTK3;
     apidb::Driver driver(config);	
 	if(!driver.driving())
 	{
