@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 	std::cout<<"Servidor:";
 	std::string server;
 	std::cin>>server;
-	std::regex serverOption("[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}");
+	std::regex serverOption("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}");
 	if(!regex_match(server,serverOption))
 	{
 		std::cout<<"\tServidor desconocido."<<std::endl;

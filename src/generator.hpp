@@ -73,7 +73,7 @@
 			void writeInsertH(const apidb::symbols::Table&,std::ofstream&);
 			void writeInsertCPP(const apidb::symbols::Table&,std::ofstream&);
 			
-			apidb::Analyzer* analyzer;
+			apidb::Analyzer& analyzer;
 			std::ofstream* writeResults;//erreglo de writeoutput files
 			std::string projectH;
 			std::string projectCPP;
@@ -101,7 +101,7 @@
 			CMake(apidb::Analyzer&,const ConfigureProject&);
 			
 		private:
-			apidb::Analyzer* analyzer;
+			apidb::Analyzer& analyzer;
 			std::ofstream cmakelists;
 			std::ofstream toolkitcommonconifg;
 			std::ofstream toolkitclientdbConfig;

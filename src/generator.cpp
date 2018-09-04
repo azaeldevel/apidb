@@ -36,11 +36,11 @@ namespace generators
 		
 	}
 	
-	CMake::CMake(apidb::Analyzer& d,const ConfigureProject& config): analyzer(&d), apidb::generators::Generator(config)
+	CMake::CMake(apidb::Analyzer& d,const ConfigureProject& config): analyzer(d), apidb::generators::Generator(config)
 	{
 		options.cmake_minimun_requiered.set(3,0);
-		options.project.name = analyzer->getNameProject();
-		options.project.directory = analyzer->getDirectoryProject();
+		options.project.name = analyzer.getNameProject();
+		options.project.directory = analyzer.getDirectoryProject();
 		options.project.lenguague = configureProject.outputLenguaje;
 		options.project.version.set(0,1,0,toolkit::Version::alpha);		
 	}
@@ -53,18 +53,18 @@ namespace generators
 	bool CMake::generate()
 	{
 		std::string namefile = "CMakeLists.txt";
-		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
 			cmakelists.open(namefile);
 		}
 		else
 		{
-			cmakelists.open(analyzer->getDirectoryProject() + "/" + namefile);
+			cmakelists.open(analyzer.getDirectoryProject() + "/" + namefile);
 		}
 			
 		//CMakeLists.txt
-		analyzer->getOutputMessage() << "Generando archivos de gestor de projecto... " << std::endl;
-		analyzer->getOutputMessage() << "\tTipo de Gestor: " << getOutputLenguajeString() << std::endl;
+		analyzer.getOutputMessage() << "Generando archivos de gestor de projecto... " << std::endl;
+		analyzer.getOutputMessage() << "\tTipo de Gestor: " << getOutputLenguajeString() << std::endl;
 		
 		cmakelists<<"CMAKE_MINIMUM_REQUIRED(VERSION ";
 		cmakelists<<options.cmake_minimun_requiered.getMajor();
@@ -82,7 +82,7 @@ namespace generators
 		cmakelists<<options.project.version.getPatch();
 		cmakelists<<".";
 		cmakelists<<"0 ";
-		if(analyzer->getOutputLenguaje() == apidb::OutputLenguajes::CPP)
+		if(analyzer.getOutputLenguaje() == apidb::OutputLenguajes::CPP)
 		{
 			cmakelists<<" LANGUAGES CXX)"<<std::endl;
 		}
@@ -115,11 +115,11 @@ namespace generators
 		cmakelists<<"ADD_EXECUTABLE(developing "<< options.project.name <<".cpp developing.cpp)"<<std::endl;
 		cmakelists<<"TARGET_LINK_LIBRARIES(developing ${TOOLKIT_CLIENTDB_LIBRARY} ${TOOLKIT_COMMON_LIBRARY} ${MYSQL_LIBRARY})"<<std::endl;
 		cmakelists.close();
-		analyzer->getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
+		analyzer.getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
 		
 		//std::cout<<"Creating cmake.modules..."<<std::endl;
 		//cmake.modules
-		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
 			std::ifstream ifile("cmake.modules");
 			if (!ifile) 
@@ -129,12 +129,12 @@ namespace generators
 		}
 		else
 		{
-			std::string direct = analyzer->getDirectoryProject() + "/cmake.modules";
+			std::string direct = analyzer.getDirectoryProject() + "/cmake.modules";
 			std::ifstream ifile(direct);
 			if (!ifile) 
 			{
 				std::string cmd = "mkdir -v ";
-				system((cmd + analyzer->getDirectoryProject()).c_str());
+				system((cmd + analyzer.getDirectoryProject()).c_str());
 				cmd = cmd + direct;				
 				system(cmd.c_str());
 			}			
@@ -142,13 +142,13 @@ namespace generators
 	
 		//std::cout<<"Creating toolkit-commonConfig.cmake..."<<std::endl;
 		namefile = "toolkit-commonConfig.cmake";
-		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
 			toolkitcommonconifg.open(namefile);
 		}
 		else
 		{
-			toolkitcommonconifg.open(analyzer->getDirectoryProject() + "/cmake.modules/" + namefile);
+			toolkitcommonconifg.open(analyzer.getDirectoryProject() + "/cmake.modules/" + namefile);
 		}
 		
 		toolkitcommonconifg<<"IF (TOOLKIT_COMMON_INCLUDE_DIR)"<<std::endl;
@@ -196,13 +196,13 @@ namespace generators
 		
 		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
 		namefile = "toolkit-clientdbConfig.cmake";
-		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
 			toolkitclientdbConfig.open(namefile);
 		}
 		else
 		{
-			toolkitclientdbConfig.open(analyzer->getDirectoryProject() + "/cmake.modules/" + namefile);
+			toolkitclientdbConfig.open(analyzer.getDirectoryProject() + "/cmake.modules/" + namefile);
 		}		
 		
 		toolkitclientdbConfig<<"IF (TOOLKIT_CLIENTDB_INCLUDE_DIR)"<<std::endl;
@@ -250,13 +250,13 @@ namespace generators
 		
 		//std::cout<<"Creating config.h.in..."<<std::endl;
 		namefile = "config.h.in";
-		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
 			config.open(namefile);
 		}
 		else
 		{
-			config.open(analyzer->getDirectoryProject() + "/" + namefile);
+			config.open(analyzer.getDirectoryProject() + "/" + namefile);
 		}
 		config<<"#define VERSION_MAJOR @apidb_VERSION_MAJOR@"<<std::endl;
 		config<<"#define VERSION_MINOR @apidb_VERSION_MINOR@"<<std::endl;
@@ -268,13 +268,13 @@ namespace generators
 		
 		//std::cout<<"Creating developing.cpp..."<<std::endl;
 		namefile = "developing.cpp";
-		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
 			developing.open(namefile);
 		}
 		else
 		{
-			developing.open(analyzer->getDirectoryProject() + "/" + namefile);
+			developing.open(analyzer.getDirectoryProject() + "/" + namefile);
 		}
 		
 		developing<<"#include \""<<options.project.name<<".hpp\""<<std::endl;
@@ -327,7 +327,7 @@ namespace generators
 		return writeResults[0];
 	}
 	
-	CPP::CPP(apidb::Analyzer& d,const ConfigureProject& config) : analyzer(&d), apidb::generators::Generator(config)
+	CPP::CPP(apidb::Analyzer& d,const ConfigureProject& config) : analyzer(d), apidb::generators::Generator(config)
 	{
 		//outputLenguaje = d.getOutputLenguaje();
 		writeResults = new std::ofstream[2];
@@ -780,9 +780,9 @@ namespace generators
     
     void CPP::createSpaceCPP(std::ofstream& file)
     {
-        file <<"namespace "<<analyzer->getNameProject()<<std::endl;
+        file <<"namespace "<<analyzer.getNameProject()<<std::endl;
         file <<"{"<<std::endl;
-        const symbols::Tables& tables = analyzer->getListTable();
+        const symbols::Tables& tables = analyzer.getListTable();
         for (apidb::symbols::Table* table : tables) 
         {
             createClassCPP(*table,file,table->name);       
@@ -883,15 +883,15 @@ namespace generators
 			}
 			else
 			{
-				analyzer->getErrorMessage()<<"OutputLenguaje is unknow.";
+				analyzer.getErrorMessage()<<"OutputLenguaje is unknow.";
 			}             
         }        
     }
     void CPP::createSpaceH(std::ofstream& file)
     {
-        file <<"namespace "<< analyzer->getNameProject() <<std::endl;
+        file <<"namespace "<< analyzer.getNameProject() <<std::endl;
         file <<"{"<<std::endl;
-        const symbols::Tables& tables = analyzer->getListTable();
+        const symbols::Tables& tables = analyzer.getListTable();
         for (const apidb::symbols::Table* table : tables) 
         {
 			if(table->getCountRefereces() > 0) file << "\tclass " << table->name << ";"<<std::endl;
@@ -915,7 +915,7 @@ namespace generators
     void CPP::createClassH(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
 		//file <<"keyword"<<std::endl;
-		analyzer->getOutputMessage() <<"\tHeading class " << cl.name<<std::endl;
+		analyzer.getOutputMessage() <<"\tHeading class " << cl.name<<std::endl;
         file <<"\tclass "<<nameClass<<std::endl;        
         file <<"\t{"<<std::endl;
         //file <<"private"<<std::endl;
@@ -931,12 +931,12 @@ namespace generators
     
     bool CPP::generate()
     {		
-		analyzer->getOutputMessage() << "Generando archivos de codigo fuente... " << std::endl;
-		analyzer->getOutputMessage() << "\tLenguaje resultado: " << getOutputLenguajeString() << std::endl;
+		analyzer.getOutputMessage() << "Generando archivos de codigo fuente... " << std::endl;
+		analyzer.getOutputMessage() << "\tLenguaje resultado: " << getOutputLenguajeString() << std::endl;
 		//includes in header file
         std::string headers = "";
         bool stringFlag = false;
-        const apidb::symbols::Tables& tables = analyzer->getListTable();
+        const apidb::symbols::Tables& tables = analyzer.getListTable();
 		for(symbols::Table* table: tables)
 		{
 			for(symbols::Symbol* attr : *table)
@@ -955,7 +955,7 @@ namespace generators
 		getHeaderOutput()<< "#include <clientdb.hpp>"<<std::endl<<std::endl;
 			
 		//writing code
-		if(!analyzer->getNameProject().empty())
+		if(!analyzer.getNameProject().empty())
 		{			
 			createSpaceH(getHeaderOutput());  
 			createSpaceCPP(getSourceOutput()); 
