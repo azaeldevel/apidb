@@ -44,7 +44,7 @@ int main()
         return EXIT_FAILURE;
 	}
 	
-	std::cout<<"----"<<std::endl;
+	//std::cout<<"----"<<std::endl;
 	
     if(!config.saveConfig())
     {

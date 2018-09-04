@@ -121,7 +121,7 @@ namespace generators
 			std::ifstream ifile("cmake.modules");
 			if (!ifile) 
 			{
-				system("mkdir cmake.modules");
+				system("mkdir -v cmake.modules");
 			}
 		}
 		else
@@ -130,7 +130,7 @@ namespace generators
 			std::ifstream ifile(direct);
 			if (!ifile) 
 			{
-				std::string cmd = "mkdir ";
+				std::string cmd = "mkdir -v ";
 				system((cmd + analyzer->getDirectoryProject()).c_str());
 				cmd = cmd + direct;				
 				system(cmd.c_str());

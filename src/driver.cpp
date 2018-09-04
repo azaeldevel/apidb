@@ -162,7 +162,7 @@ namespace apidb
 		{
 			bool flagCPP,flagCMAKE;
 			
-			std::cout<<"apidb::generators::CPP cpp(*analyzer);..."<<std::endl;
+			//std::cout<<"apidb::generators::CPP cpp(*analyzer);..."<<std::endl;
 			apidb::generators::CPP cpp(*analyzer);
 			generator = &cpp;
 			flagCPP = cpp.generate();
@@ -179,7 +179,7 @@ namespace apidb
 			}
 			else
 			{
-				analyzer->getOutputMessage() <<"Fail."<<std::endl;
+				analyzer->getOutputMessage() <<"Fallo."<<std::endl;
 				return false;
 			}
 		}
