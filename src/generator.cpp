@@ -780,22 +780,32 @@ namespace generators
     
     void CPP::createSpaceCPP(std::ofstream& file)
     {
-
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
 			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+			file <<"{"<<std::endl;
 		}
 		else 
 		{
-			file <<"namespace "<< analyzer.getNameProject() << "::controller" <<std::endl;
+			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+			file <<"{" <<std::endl;
+			file <<"namespace  controller" <<std::endl;
+			file <<"{" <<std::endl;
 		}
-        file <<"{"<<std::endl;
         const symbols::Tables& tables = analyzer.getListTable();
         for (apidb::symbols::Table* table : tables) 
         {
             createClassCPP(*table,file,table->name);       
         }
-        file <<"}"<<std::endl;
+		if(configureProject.mvc == apidb::MVC::NO)
+		{
+			file <<"}"<<std::endl;
+		}
+		else 
+		{
+			file <<"}" <<std::endl;
+			file <<"}" <<std::endl;
+		}
     }
 	void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
@@ -900,12 +910,15 @@ namespace generators
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
 			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+			file <<"{"<<std::endl;
 		}
 		else 
 		{
-			file <<"namespace "<< analyzer.getNameProject() << "::controller" <<std::endl;
+			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+			file <<"{" <<std::endl;
+			file <<"namespace  controller" <<std::endl;
+			file <<"{" <<std::endl;
 		}
-        file <<"{"<<std::endl;
         const symbols::Tables& tables = analyzer.getListTable();
         for (const apidb::symbols::Table* table : tables) 
         {
@@ -917,7 +930,16 @@ namespace generators
 			//file <<"Declare Table " << table->name << std::endl;
             createClassH(*table,file,table->name);       
         }
-        file <<"}"<<std::endl;
+
+		if(configureProject.mvc == apidb::MVC::NO)
+		{
+			file <<"}"<<std::endl;
+		}
+		else 
+		{
+			file <<"}" <<std::endl;
+			file <<"}" <<std::endl;
+		}
     }
     void CPP::createClassPublicH(std::ofstream& file)
     {
