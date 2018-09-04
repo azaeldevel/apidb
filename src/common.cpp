@@ -286,34 +286,36 @@ namespace apidb
         void Tables::reorder()
 		{
 			short max = getMaxCountRef();
-			//std::cout<< "Max number: " << max <<std::endl;
-			//std::cout<< "Size this: " << size() <<std::endl;
+			short i = max;
+			std::cout<< "Max number: " << max <<std::endl;
+			std::cout<< "Size this: " << size() <<std::endl;
 			std::list<Table*> tmp(*this);//copy all datas
-			//std::cout<< "Size tmp: " << tmp.size() <<std::endl;
+			std::cout<< "Size tmp: " << tmp.size() <<std::endl;
 			clear();
-			//std::cout<< "Size this: " << size() <<std::endl;
+			std::cout<< "Size this: " << size() <<std::endl;
 			std::list<Table*>::iterator actual;
 			std::list<Table*>::iterator tmpactual;
 			std::list<Table*>::iterator last;
-			for(short i = max; i > 0; i--)
+			for(short i = max; i > 0; i--) 
 			{
-				//std::cout<< "i-esimo number " << i <<std::endl;
+				std::cout<< "for(short i = max; i > 0; i++)" <<std::endl;			
 				actual = tmp.begin();
 				tmpactual = tmp.begin();
 				last = tmp.end();
-				while (actual != last) 
+				while(actual != last)
 				{
-					//std::cout<< "while (actual != last)" <<std::endl;
-					tmpactual++;
-					if(((*actual)->getCountRefereces()) == i)
+					if(((*actual)->getCountRefereces()) == i || ((*actual)->getCountRefereces()) == 0)
 					{
+						std::cout<< i << "-esimo number " <<std::endl;
 						push_back(*actual);						
 						tmp.erase(actual);
-					}
-					actual = tmpactual;
+					}	
+					actual = tmp.begin();
+					tmpactual = tmp.begin();
+					last = tmp.end();		
 				}
 			}
-			//std::cout<< "Count in this: " << size() <<std::endl;
+			std::cout<< "Count in this: " << size() <<std::endl;
 		}
 		
         int Symbol::getID()const
