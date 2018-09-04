@@ -124,7 +124,7 @@ namespace generators
 			std::ifstream ifile("cmake.modules");
 			if (!ifile) 
 			{
-				system("mkdir -v cmake.modules");
+				system("mkdir  cmake.modules");
 			}
 		}
 		else
@@ -133,7 +133,7 @@ namespace generators
 			std::ifstream ifile(direct);
 			if (!ifile) 
 			{
-				std::string cmd = "mkdir -v ";
+				std::string cmd = "mkdir  ";
 				system((cmd + analyzer.getDirectoryProject()).c_str());
 				cmd = cmd + direct;				
 				system(cmd.c_str());
@@ -905,6 +905,7 @@ namespace generators
 			}             
         }        
     }
+    
     void CPP::createSpaceH(std::ofstream& file)
     {
 		if(configureProject.mvc == apidb::MVC::NO)
@@ -941,10 +942,12 @@ namespace generators
 			file <<"}" <<std::endl;
 		}
     }
+    
     void CPP::createClassPublicH(std::ofstream& file)
     {
         file << "\tpublic:" <<std::endl;
     }
+    
     void CPP::createClassPrivateH(std::ofstream& file)
     {
         file << "\tprivate:" <<std::endl;

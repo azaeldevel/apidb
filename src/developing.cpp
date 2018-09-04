@@ -43,10 +43,7 @@ int main()
 	{
 		std::cerr<<mysqlConnector.toString()<<" - es incorrecta."<<std::endl;
         return EXIT_FAILURE;
-	}
-	
-	//std::cout<<"----"<<std::endl;
-	
+	}	
     if(!config.saveConfig())
     {
         std::cerr<<"Fail creation prject."<<std::endl;
