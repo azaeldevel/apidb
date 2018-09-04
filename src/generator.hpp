@@ -22,28 +22,28 @@
 
 #include <fstream>
 
-
  namespace apidb
 {
 	namespace generators
 	{
 		class Generator
 		{
-		public:
-			
+		public:			
 			virtual bool generate() = 0;
 			OutputLenguajes getOutputLenguaje() const;
 			std::string getOutputLenguajeString()const;	
+			Generator(const ConfigureProject& config);
 			
 		protected:		
-			OutputLenguajes outputLenguaje;//se 
+			//OutputLenguajes outputLenguaje;//se 
+			const ConfigureProject& configureProject;
 		};
 		
 		class CPP : public Generator
 		{
 		public:
 			virtual bool generate();
-			CPP(apidb::Analyzer&);
+			CPP(apidb::Analyzer&,const ConfigureProject&);
 			const std::string& getHeaderName() const;
 			std::ofstream& getSourceOutput();
 			std::ofstream& getHeaderOutput();
@@ -98,7 +98,7 @@
 			
 			virtual bool generate();
 			virtual ~CMake();
-			CMake(apidb::Analyzer&);
+			CMake(apidb::Analyzer&,const ConfigureProject&);
 			
 		private:
 			apidb::Analyzer* analyzer;

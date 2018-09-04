@@ -37,27 +37,29 @@ namespace apidb
 		virtual std::string parse(const std::string& line) = 0;
 		
 		symbols::Tables& getListTable();
-			
+		
 		std::string getInputLenguajeString()const;
 		
 		const std::string& getNameProject();
 		const std::string& getDirectoryProject();
-		void setPramsProject(const std::string& name,const std::string& directory);
-		void setPramsLenguajes(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje);
+		//void setPramsProject(const std::string& name,const std::string& directory);
+		//void setPramsLenguajes(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje);
 				
 		InputLenguajes getInputLenguaje() const;
 		OutputLenguajes getOutputLenguaje() const;
+		Analyzer(const ConfigureProject&);
 		
     protected:
 		symbols::Tables symbolsTables;		
 		toolkit::clientdb::Connector* connector;
 		std::ostream* outputMessages;//out stream
 		std::ostream* errorMessages;//out stream
-		std::string nameProject;
-		std::string directoryProject;
-		//flags
-		InputLenguajes inputLenguaje;
-		OutputLenguajes outputLenguaje;
+		
+		//std::string nameProject;
+		//std::string directoryProject;
+		//InputLenguajes inputLenguaje;
+		//OutputLenguajes outputLenguaje;
+		const ConfigureProject& configureProject;
 	};
 
 
@@ -71,8 +73,8 @@ namespace apidb
             virtual std::ostream& getOutputMessage();
             virtual std::ostream& getErrorMessage();
             
-            Analyzer();
-            Analyzer(InputLenguajes, OutputLenguajes);		
+            //Analyzer();
+            Analyzer(const ConfigureProject&);		
             virtual ~Analyzer();
             
             /**

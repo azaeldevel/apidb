@@ -29,24 +29,25 @@
 
 namespace apidb
 {
-    Driver::Driver(const ConfigureProject config)
+    Driver::Driver(const ConfigureProject& config) : configureProject(config)
 	{		
-		this->inputLenguaje = config.inputLenguaje;
-		this->outputLenguaje = config.outputLenguaje;
-		if(this->inputLenguaje == apidb::InputLenguajes::MySQL_Server)
+		//configureProject = &config;
+		//this->inputLenguaje = config.inputLenguaje;
+		//this->outputLenguaje = config.outputLenguaje;
+		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL_Server)
 		{
-			this->datconection = new toolkit::clientdb::DatconectionMySQL(config.conectordb);
+			//this->datconection = new toolkit::clientdb::DatconectionMySQL(config.conectordb);
 			connector = new toolkit::clientdb::Connector();
-			analyzer = new mysql::Analyzer(inputLenguaje,outputLenguaje);		
+			analyzer = new mysql::Analyzer(configureProject);		
 			try
 			{
 				bool flag = connector->connect(config.conectordb);
 				if(flag)
 				{
-					analyzer->setPramsProject(config.name,config.directory);
-					this->name = config.name;
-					this->directory = config.directory;
-					this->version = config.version;
+					//analyzer->setPramsProject(config.name,config.directory);
+					//this->name = config.name;
+					//this->directory = config.directory;
+					//this->version = config.version;
 				}
 			}
 			catch(toolkit::clientdb::SQLException ex)
@@ -60,67 +61,14 @@ namespace apidb
 		}	
 	}
 	
-	Driver::Driver()
+	/*Driver::Driver()
 	{
-		datconection = NULL;
-		connector = NULL;
-	}
+		//datconection = NULL;
+		//connector = NULL;
+		configureProject = NULL;
+	}*/
 	
-	bool ConfigureProject::saveConfig()
-	{
-		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
-		xmlNodePtr root_node = xmlNewNode(NULL, (const xmlChar *)"project");
-		xmlDocSetRootElement(doc, root_node);
-		
-		xmlNewChild(root_node, NULL, (const xmlChar *)"name", (const xmlChar *)name.c_str());
-		xmlNewChild(root_node, NULL, (const xmlChar *)"directory", (const xmlChar *)directory.c_str());
-				
-		xmlNodePtr version_node = xmlNewChild(root_node, NULL, (const xmlChar *)"version", NULL);
-		xmlNewChild(version_node, NULL, (const xmlChar *)"major", (const xmlChar *)std::to_string(version.getMajor()).c_str());
-		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(version.getMinor()).c_str());
-		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(version.getPatch()).c_str());
-		//xmlNewChild(version_node, NULL, (const xmlChar *)"stage", (const xmlChar *)version.stage );
-		
-		xmlNodePtr db_node = xmlNewChild(root_node, NULL, (const xmlChar *)"ConectorDB", NULL);
-		if(inputLenguaje == apidb::InputLenguajes::MySQL_Server)
-		{
-			//toolkit::clientdb::DatconectionMySQL* dat = (toolkit::clientdb::DatconectionMySQL*)connector;
-			xmlNewChild(db_node, NULL, (const xmlChar *)"host", (const xmlChar *)conectordb.getHost().c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"puerto", (const xmlChar *)std::to_string(conectordb.getPort()).c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"nameDB", (const xmlChar *)conectordb.getDatabase().c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"user", (const xmlChar *)conectordb.getUsuario().c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb.getPassword().c_str());
-		}
-		else
-        {
-            return false;
-        }
-		
-        std::string nmFile = "";
-		if((directory.empty()) || (directory.compare(".") == 0))
-		{
-			nmFile = "apidb";
-		}
-		else
-        {
-            std::ifstream ifile(directory);
-            if (ifile) 
-            {            
-                nmFile = directory + "/apidb";
-            }
-            else
-            {            
-                return false;
-            }
-        }
-        
-		int ret = xmlSaveFormatFileEnc(nmFile.c_str(), doc, "UTF-8", 1);	
-		xmlFreeDoc(doc);
-		xmlCleanupParser();
-		if( ret == -1) return false;	
-		return true;
-	}
-
+	
 
 
 	
@@ -158,17 +106,17 @@ namespace apidb
 			}			
 		}
 		
-		if(outputLenguaje == apidb::OutputLenguajes::CPP)
+		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
 			bool flagCPP,flagCMAKE;
 			
 			//std::cout<<"apidb::generators::CPP cpp(*analyzer);..."<<std::endl;
-			apidb::generators::CPP cpp(*analyzer);
+			apidb::generators::CPP cpp(*analyzer,configureProject);
 			generator = &cpp;
 			flagCPP = cpp.generate();
 			
 			//std::cout<<"apidb::generators::CMake cmake(*analyzer);..."<<std::endl;
-			apidb::generators::CMake cmake(*analyzer);			
+			apidb::generators::CMake cmake(*analyzer,configureProject);			
 			flagCMAKE = cmake.generate();
 			
 			///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
@@ -204,7 +152,7 @@ namespace apidb
 			return false;
 		}
 		
-		analyzer->setPramsLenguajes(inputLenguaje,outputLenguaje);
+		//analyzer->setPramsLenguajes(configureProject->inputLenguaje,configureProject->outputLenguaje);
 		
 		if(analyzer->listing(*connector)) //reading tables
         {
@@ -236,7 +184,7 @@ namespace apidb
 		return true;
 	}
 		
-	Driver::Driver(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje,toolkit::Version version)
+	/*Driver::Driver(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje,toolkit::Version version)
 	{		
 		this->inputLenguaje = inputLenguaje;
 		this->outputLenguaje = outputLenguaje;
@@ -265,6 +213,6 @@ namespace apidb
 		{
 			analyzer->getErrorMessage() <<"Lenguaje de entrada desconocido."<<std::endl;
 		}	
-	}
+	}*/
 } 
 

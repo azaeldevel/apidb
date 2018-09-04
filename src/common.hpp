@@ -16,19 +16,28 @@ namespace apidb
 	enum InputLenguajes
 	{
 		MySQL_Server,
-		MySQL_Script,
-		PostgresSQL
+		//MySQL_Script,
+		//PostgresSQL
 	};
 	
 	enum OutputLenguajes
 	{
 		C,
 		CPP,
-		JAVA,
-		CSHARP,
-		PERL,
-		PYTHON,
+		//JAVA,
+		//CSHARP,
+		//PERL,
+		//PYTHON,
 		CMAKE		
+	};
+	
+	enum MVC
+	{
+		NO,
+		//X,
+		GTK2,
+		GTK3
+		//WIN32
 	};
 		
 	class BuildException : public std::exception
@@ -140,14 +149,17 @@ namespace apidb
         toolkit::Version version;
         toolkit::clientdb::DatconectionMySQL conectordb;
 		InputLenguajes inputLenguaje;
-		OutputLenguajes outputLenguaje;	
+		OutputLenguajes outputLenguaje;
+		MVC mvc;
+		
         ConfigureProject(std::string filename);
         ConfigureProject();
+        bool saveConfig();
+		
         const std::string& getName()const;
         const std::string& getDirectory()const;
         const toolkit::Version& getVersion()const;
         const toolkit::clientdb::DatconectionMySQL& getConector()const;
-        bool saveConfig();
     };
 }
 

@@ -33,23 +33,24 @@ namespace apidb
 		virtual bool analyze();
 		virtual bool generate();
 		bool driving();
-		Driver(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje,OutputLenguajes outputLenguaje,toolkit::Version version);
-		Driver();
-        Driver(const ConfigureProject);
+		//Driver(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje,OutputLenguajes outputLenguaje,toolkit::Version version);
+		//Driver();
+        Driver(const ConfigureProject&);
 
 		
 	private:
 		toolkit::clientdb::Connector* connector;
 		apidb::Analyzer* analyzer;
 		apidb::generators::Generator* generator;
-		InputLenguajes inputLenguaje;
-		OutputLenguajes outputLenguaje;	
+		//InputLenguajes inputLenguaje;
+		//OutputLenguajes outputLenguaje;	
 		
-		std::string name;
-		std::string directory;
-		toolkit::Version version;
-		toolkit::clientdb::Datconection* datconection;
-		std::list<std::string> stackXML;
+		//std::string name;
+		//std::string directory;
+		//toolkit::Version version;
+		//toolkit::clientdb::Datconection* datconection;
+		//std::list<std::string> stackXML;
+		const ConfigureProject& configureProject;
 	};
 }
 

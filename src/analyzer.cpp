@@ -8,7 +8,10 @@
 namespace apidb
 {	
 	
-	
+	Analyzer::Analyzer(const ConfigureProject& config) : configureProject(config)
+	{
+		
+	}
 
 	BuildException::~BuildException() throw()
 	{
@@ -26,15 +29,15 @@ namespace apidb
 
 	
 	
-	void Analyzer::setPramsLenguajes(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
+	/*void Analyzer::setPramsLenguajes(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
 	{
-		this->inputLenguaje = inputLenguaje;
-		this->outputLenguaje = outputLenguaje;		
-	}
+		//this->inputLenguaje = inputLenguaje;
+		//this->outputLenguaje = outputLenguaje;		
+	}*/
 	
 	OutputLenguajes Analyzer::getOutputLenguaje() const
 	{
-		return outputLenguaje;
+		return configureProject.outputLenguaje;
 	}
 	
 	symbols::Tables& Analyzer::getListTable() 
@@ -44,7 +47,7 @@ namespace apidb
 		
 	std::string Analyzer::getInputLenguajeString() const
 	{
-		switch(inputLenguaje)
+		switch(configureProject.inputLenguaje)
 		{
 			case InputLenguajes::MySQL_Server:
 				return "Servidor MySQL";
@@ -55,23 +58,23 @@ namespace apidb
 	
 	const std::string& Analyzer::getNameProject()
 	{
-		return nameProject;
+		return configureProject.name;
 	}
 	
-	void Analyzer::setPramsProject(const std::string& name,const std::string& directory)
+	/*void Analyzer::setPramsProject(const std::string& name,const std::string& directory)
 	{
-		nameProject = name;
-		directoryProject = directory;
-	}
+		//nameProject = name;
+		//directoryProject = directory;
+	}*/
 	
 	const std::string& Analyzer::getDirectoryProject()
 	{
-		return directoryProject;
+		return configureProject.directory;
 	}
 	
 	InputLenguajes Analyzer::getInputLenguaje()const
 	{
-		return inputLenguaje;
+		return configureProject.inputLenguaje;
 	}
 	
 	
@@ -83,10 +86,10 @@ namespace mysql
 		return symbolsTables.listing(connect);
 	}
 	
-	Analyzer::Analyzer(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
+	Analyzer::Analyzer(const ConfigureProject& config) : apidb::Analyzer(config)
 	{
-		this->inputLenguaje = inputLenguaje;
-		this->outputLenguaje = outputLenguaje;
+		//this->inputLenguaje = inputLenguaje;
+		//this->outputLenguaje = outputLenguaje;
 		outputMessages = &std::cout;	  
 		errorMessages = &std::cerr; 
 	}
@@ -102,14 +105,15 @@ namespace mysql
 		return *outputMessages;
 	}
 	
-	Analyzer::Analyzer()
+	/*Analyzer::Analyzer()
 	{
 	   //deafults
 	   outputLenguaje = OutputLenguajes::CPP;
 	   inputLenguaje = InputLenguajes::MySQL_Server;
 	   outputMessages = &std::cout;	  
 	   errorMessages = &std::cerr; 
-	}
+	}*/
+	
 	void Analyzer::message(const std::string& msg)
 	{
 		(*outputMessages)<<msg<<std::endl;

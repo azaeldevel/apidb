@@ -12,6 +12,62 @@
 namespace apidb
 {
 
+	bool ConfigureProject::saveConfig()
+	{
+		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
+		xmlNodePtr root_node = xmlNewNode(NULL, (const xmlChar *)"project");
+		xmlDocSetRootElement(doc, root_node);
+		
+		xmlNewChild(root_node, NULL, (const xmlChar *)"name", (const xmlChar *)name.c_str());
+		xmlNewChild(root_node, NULL, (const xmlChar *)"directory", (const xmlChar *)directory.c_str());
+				
+		xmlNodePtr version_node = xmlNewChild(root_node, NULL, (const xmlChar *)"version", NULL);
+		xmlNewChild(version_node, NULL, (const xmlChar *)"major", (const xmlChar *)std::to_string(version.getMajor()).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(version.getMinor()).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(version.getPatch()).c_str());
+		//xmlNewChild(version_node, NULL, (const xmlChar *)"stage", (const xmlChar *)version.stage );
+		
+		xmlNodePtr db_node = xmlNewChild(root_node, NULL, (const xmlChar *)"ConectorDB", NULL);
+		if(inputLenguaje == apidb::InputLenguajes::MySQL_Server)
+		{
+			//toolkit::clientdb::DatconectionMySQL* dat = (toolkit::clientdb::DatconectionMySQL*)connector;
+			xmlNewChild(db_node, NULL, (const xmlChar *)"host", (const xmlChar *)conectordb.getHost().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"puerto", (const xmlChar *)std::to_string(conectordb.getPort()).c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"nameDB", (const xmlChar *)conectordb.getDatabase().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"user", (const xmlChar *)conectordb.getUsuario().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb.getPassword().c_str());
+		}
+		else
+        {
+            return false;
+        }
+		
+        std::string nmFile = "";
+		if((directory.empty()) || (directory.compare(".") == 0))
+		{
+			nmFile = "apidb";
+		}
+		else
+        {
+            std::ifstream ifile(directory);
+            if (ifile) 
+            {            
+                nmFile = directory + "/apidb";
+            }
+            else
+            {            
+                return false;
+            }
+        }
+        
+		int ret = xmlSaveFormatFileEnc(nmFile.c_str(), doc, "UTF-8", 1);	
+		xmlFreeDoc(doc);
+		xmlCleanupParser();
+		if( ret == -1) return false;	
+		return true;
+	}
+
+	
     const toolkit::clientdb::DatconectionMySQL& ConfigureProject::getConector() const
     {
         return conectordb;    

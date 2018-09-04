@@ -7,7 +7,7 @@
 
 int main(int argc, const char **argv)
 {
-	apidb::mysql::Analyzer driver;	
+	/*apidb::mysql::Analyzer driver;	
 	std::string str = "VARCHAR(25)";
 	std::cout<<driver.parse(str)<<std::endl;
 	str = "int(10)";
@@ -17,6 +17,6 @@ int main(int argc, const char **argv)
 	str = "INT(10)";
 	std::cout<<driver.parse(str)<<std::endl;
 	str = "varchar(25)";	
-	std::cout<<driver.parse(str)<<std::endl;
+	std::cout<<driver.parse(str)<<std::endl;*/
 	return(EXIT_SUCCESS);
 }

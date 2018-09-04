@@ -31,14 +31,17 @@ namespace apidb
 {
 namespace generators
 {
-	CMake::CMake(apidb::Analyzer& d):analyzer(&d)
+	Generator::Generator(const ConfigureProject& config) : configureProject(config)
 	{
-		outputLenguaje = apidb::OutputLenguajes::CMAKE;
 		
+	}
+	
+	CMake::CMake(apidb::Analyzer& d,const ConfigureProject& config): analyzer(&d), apidb::generators::Generator(config)
+	{
 		options.cmake_minimun_requiered.set(3,0);
 		options.project.name = analyzer->getNameProject();
 		options.project.directory = analyzer->getDirectoryProject();
-		options.project.lenguague = outputLenguaje;
+		options.project.lenguague = configureProject.outputLenguaje;
 		options.project.version.set(0,1,0,toolkit::Version::alpha);		
 	}
 	
@@ -60,7 +63,7 @@ namespace generators
 		}
 			
 		//CMakeLists.txt
-		analyzer->getOutputMessage() << "Generando archivos de gentor de projecto... " << std::endl;
+		analyzer->getOutputMessage() << "Generando archivos de gestor de projecto... " << std::endl;
 		analyzer->getOutputMessage() << "\tTipo de Gestor: " << getOutputLenguajeString() << std::endl;
 		
 		cmakelists<<"CMAKE_MINIMUM_REQUIRED(VERSION ";
@@ -281,7 +284,7 @@ namespace generators
 		developing<<std::endl;
 		developing<<"int main()"<<std::endl;
 		developing<<"{"<<std::endl;
-			developing<<"return 0;"<<std::endl;
+		developing<<"return 0;"<<std::endl;
 		developing<<"}"<<std::endl;		
 		//analyzer->getOutputMessage()<<"\tArchivo de develping phase: " << namefile <<std::endl;
 		//std::cout<<"return..."<<std::endl;
@@ -290,7 +293,7 @@ namespace generators
 
 	std::string Generator::getOutputLenguajeString()const
 	{
-		switch(outputLenguaje)
+		switch(configureProject.outputLenguaje)
 		{
 			case OutputLenguajes::CMAKE:		
 				return "CMake";
@@ -303,7 +306,7 @@ namespace generators
 		
 	OutputLenguajes Generator::getOutputLenguaje()const
 	{
-		return outputLenguaje;
+		return configureProject.outputLenguaje;
 	}
 	
 	
@@ -324,9 +327,9 @@ namespace generators
 		return writeResults[0];
 	}
 	
-	CPP::CPP(apidb::Analyzer& d):analyzer(&d)
+	CPP::CPP(apidb::Analyzer& d,const ConfigureProject& config) : analyzer(&d), apidb::generators::Generator(config)
 	{
-		outputLenguaje = d.getOutputLenguaje();
+		//outputLenguaje = d.getOutputLenguaje();
 		writeResults = new std::ofstream[2];
 		if((d.getDirectoryProject().empty()) | (d.getDirectoryProject().compare(".") == 0)) 
 		{
@@ -857,7 +860,7 @@ namespace generators
         for(symbols::Symbol* attr : table)
         {
 			//ofile <<"["<<attr->outType<<"]"<<std::endl;
-			if(outputLenguaje == OutputLenguajes::CPP)
+			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
 			{
 				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 				{
@@ -949,7 +952,7 @@ namespace generators
 			
 		//inlcudes in source file
         getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl; 
-		getHeaderOutput()<< "#include <clientdb.hpp>"<<std::endl;
+		getHeaderOutput()<< "#include <clientdb.hpp>"<<std::endl<<std::endl;
 			
 		//writing code
 		if(!analyzer->getNameProject().empty())
