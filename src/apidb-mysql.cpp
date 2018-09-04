@@ -26,7 +26,7 @@
 
 namespace apidb
 {
-	bool symbols::Table::fillKeyType(toolkit::clientdb::Connector& connect,symbols::Tables& tables)
+	bool symbols::Table::fillKeyType(toolkit::clientdb::Connector& connect, symbols::Tables& tables)
 	{
 		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME FROM information_schema.TABLE_CONSTRAINTS i  LEFT JOIN information_schema.KEY_COLUMN_USAGE k ON i.CONSTRAINT_NAME = k.CONSTRAINT_NAME WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =";
 		fks += "'" ;
@@ -45,19 +45,20 @@ namespace apidb
 				for(Symbol* attribute: *this) 
 				{
 					if(attribute->name.compare(row[0]) == 0)
-					{						
+					{
 						attribute->classReferenced = tables.search(row[1]);//returna null o un puntero valido.		
-						if(attribute->keyType == symbols::Symbol::KeyType::UNIQUE && attribute->classReferenced != NULL)		
+						if(attribute->classReferenced != NULL && attribute->keyType == symbols::Symbol::KeyType::UNIQUE)	
 						{
+							//std::cout<< "FOREIGN UNIQUE : " << attribute->classReferenced->name << "." << attribute->name <<std::endl;
 							attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
 							attribute->keyType = symbols::Symbol::KeyType::FOREIGN_UNIQUE;//usada como llave
 						}
 					}
 				}
-			}			
+			}
 			mysql_free_result(result);
 			return true;	
-		}		
+		}
 		return true;
 	}
 	
@@ -104,28 +105,22 @@ namespace apidb
 				}
 				else if(attrribute->required && (keyType.compare("PRI") == 0))//unique constraing
 				{
-					/*if(key != NULL)
-					{
-						throw new BuildException("No hay soporto para llave compuesta.");
-					}*/
-					key = attrribute;
-					attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
-				}
-				/*else if(attrribute->required && (keyType.compare("UNI") == 0))//unique constraing
-				{
 					if(key != NULL)
 					{
 						throw new BuildException("No hay soporto para llave compuesta.");
 					}
 					key = attrribute;
-					attrribute->keyType = symbols::Symbol::KeyType::UNIQUE;
-				}*/
+					attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
+				}
 				else
 				{
-					attrribute->keyType = symbols::Symbol::KeyType::NOKEY;					
+					attrribute->keyType = symbols::Symbol::KeyType::NOKEY;				
 				}
 				
-							
+				if(attrribute->required && keyType.compare("UNI") == 0)//unique constraing
+				{
+					attrribute->keyType = symbols::Symbol::KeyType::UNIQUE;
+				}
 				
 				push_back(attrribute);//se agrega el atributo a la lista
 				if(attrribute->required)

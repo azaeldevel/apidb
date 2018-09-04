@@ -26,9 +26,6 @@
 
 namespace apidb
 {
-	
-	
-	
 	class Driver
 	{
 	public:

@@ -60,6 +60,7 @@ namespace apidb
 				FOREIGN_UNIQUE,
 				NOKEY
 			};
+			
 					
 			//in input lenguaje
             std::string inType;

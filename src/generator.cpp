@@ -886,14 +886,12 @@ namespace generators
     }
     void CPP::createSpaceH(std::ofstream& file)
     {
-        file <<"namespace "<<analyzer->getNameProject()<<std::endl;
+        file <<"namespace "<< analyzer->getNameProject() <<std::endl;
         file <<"{"<<std::endl;
-        //file <<"Listing tables" << std::endl;
         const symbols::Tables& tables = analyzer->getListTable();
         for (const apidb::symbols::Table* table : tables) 
         {
-			//file <<"Backward Table " << table->name << std::endl;
-			file <<"\tclass " <<table->name << ";"<<std::endl;
+			if(table->getCountRefereces() > 0) file << "\tclass " << table->name << ";"<<std::endl;
 		}
 		file<<std::endl;
         for (const apidb::symbols::Table* table : tables) 
