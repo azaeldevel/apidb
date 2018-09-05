@@ -20,3 +20,4 @@ rm -r _CPack_Packages
 rm install_manifest.txt
 rm -r nmp
 rm -r nmp2
+rm apidb-*-Linux
