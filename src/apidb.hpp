@@ -27,6 +27,7 @@ namespace apidb
 {
 	toolkit::Version getPakageVersion();
 	const char* getPakageName();
+
 }
 
 #endif

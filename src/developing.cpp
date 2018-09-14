@@ -31,39 +31,40 @@ int main()
 	version.set(0,1,0,toolkit::Version::Stage::alpha); 
 
 	apidb::ConfigureProject config;
-    config.name = "nmp";
-    config.directory = "nmp";
-    config.conectordb = mysqlConnector;
-    config.version = version;
-    config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
-    config.outputLenguaje = apidb::OutputLenguajes::CPP;	
+    	config.name = "nmp";
+    	config.directory = "nmp";
+    	config.conectordb = mysqlConnector;
+    	config.version = version;
+    	config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
+    	config.outputLenguaje = apidb::OutputLenguajes::CPP;	
 	config.mvc = apidb::MVC::GTK3;
-    apidb::Driver driver(config);	
+    	apidb::Driver driver(config);	
 	if(!driver.driving())
 	{
 		std::cerr<<mysqlConnector.toString()<<" - es incorrecta."<<std::endl;
         return EXIT_FAILURE;
 	}	
-    if(!config.saveConfig())
-    {
-        std::cerr<<"Fail creation prject."<<std::endl;
-        return EXIT_FAILURE;		
+    	if(!config.saveConfig())
+    	{
+		std::cerr<<"Fail creation prject."<<std::endl;
+		return EXIT_FAILURE;		
 	}
-		
+	std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;
+	std::cout<<"Version previa: " << config.getVersion().toString()<<std::endl;
 	apidb::ConfigureProject config2("nmp/apidb");
-    config2.directory = "nmp2";
-    apidb::Driver driver2(config2);
-    if(!driver2.driving())
-    {
-        std::cerr<<config2.getConector().toString()<<" - is bat "<<std::endl;
-        return EXIT_FAILURE;
-    }
+    	config2.directory = "nmp2";
+    	apidb::Driver driver2(config2);
+    	if(!driver2.driving())
+    	{
+		std::cerr<<config2.getConector().toString()<<" - is bat "<<std::endl;		
+		return EXIT_FAILURE;
+    	}
 	if(!config2.saveConfig())
-    {
-        std::cerr<<"Fail creation prject."<<std::endl;
-        return EXIT_FAILURE;		
+    	{
+		std::cerr<<"Fail creation prject."<<std::endl;
+		return EXIT_FAILURE;		
 	}
-    
-    
+	std::cout<<"Configuracion posterior: " << config2.getConector().toString()<<std::endl;
+	std::cout<<"Version posterior: " << config2.getVersion().toString()<<std::endl;
 	return EXIT_SUCCESS;	
 }

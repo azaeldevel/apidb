@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	std::cin>>name;
 		
 	std::cout<<"Directorio de proyecto:";
-	std::string dir;
+	std::string dir,fulldir;
 	std::cin>>dir;
 	
 	
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	{
 		std::cout<<"Cargando '" << strProject << "' ..." <<std::endl;
 		apidb::ConfigureProject config(strProject);
-        apidb::Driver driver(config);
+        	apidb::Driver driver(config);
 		if(!driver.driving())
 		{
 			std::cerr<<"Fallo la configuracion."<<std::endl;

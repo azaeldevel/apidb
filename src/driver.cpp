@@ -21,6 +21,7 @@
 #include <exception>
 #include <string.h>
 #include <stdio.h>
+#include <exception>
 
 
 #include "apidb.hpp"
@@ -31,28 +32,26 @@ namespace apidb
 {
     Driver::Driver(const ConfigureProject& config) : configureProject(config)
 	{		
-		//configureProject = &config;
-		//this->inputLenguaje = config.inputLenguaje;
-		//this->outputLenguaje = config.outputLenguaje;
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL_Server)
 		{
-			//this->datconection = new toolkit::clientdb::DatconectionMySQL(config.conectordb);
 			connector = new toolkit::clientdb::Connector();
 			analyzer = new mysql::Analyzer(configureProject);		
 			try
 			{
 				bool flag = connector->connect(config.conectordb);
-				if(flag)
+				if(!flag)
 				{
-					//analyzer->setPramsProject(config.name,config.directory);
-					//this->name = config.name;
-					//this->directory = config.directory;
-					//this->version = config.version;
+					delete connector;
+					delete analyzer;
+					connector = NULL;
+					analyzer = NULL;
+					//throw toolkit::Exception(msg);
 				}
 			}
 			catch(toolkit::clientdb::SQLException ex)
 			{
-				analyzer->getErrorMessage() <<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
+				
+				analyzer->getErrorMessage() <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
 			}
 		}
 		else
@@ -61,15 +60,6 @@ namespace apidb
 		}	
 	}
 	
-	/*Driver::Driver()
-	{
-		//datconection = NULL;
-		//connector = NULL;
-		configureProject = NULL;
-	}*/
-	
-	
-
 
 	
 	
@@ -80,6 +70,8 @@ namespace apidb
 	
 	bool Driver::driving()
 	{
+		if(connector == NULL) return false;
+
 		if(analyze())
 		{
 			if(generate()) return true;

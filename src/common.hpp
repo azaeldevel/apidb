@@ -168,9 +168,9 @@ namespace apidb
         std::string directory;
         toolkit::Version version;
         toolkit::clientdb::DatconectionMySQL conectordb;
-		InputLenguajes inputLenguaje;
-		OutputLenguajes outputLenguaje;
-		MVC mvc;
+	InputLenguajes inputLenguaje;
+	OutputLenguajes outputLenguaje;
+	MVC mvc;
 		
         ConfigureProject(std::string filename);
         ConfigureProject();
