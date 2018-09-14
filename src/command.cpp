@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	std::cin>>name;
 		
 	std::cout<<"Directorio de proyecto:";
-	std::string dir,fulldir;
+	std::string dir;
 	std::cin>>dir;
 	
 	
