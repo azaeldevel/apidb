@@ -28,6 +28,20 @@
 
 int main(int argc, char *argv[])
 {
+	if(argc > 1)
+	{
+		if(strcmp(argv[0],"-v") || strcmp(argv[0],"--version"))
+		{
+			std::cout<<"Version: " << apidb::getPakageVersion().toString()<<std::endl;
+			return EXIT_SUCCESS;
+		}
+		else
+		{
+			std::cout<<"Opción desconocida "<<std::endl;
+			return EXIT_FAILURE;
+		}
+	}
+
 	std::cout<<"Nombre de projecto:";
 	std::string name;
 	std::cin>>name;
@@ -134,7 +148,8 @@ int main(int argc, char *argv[])
         return -1;
     }  
     
-	std::cout<< "Archivo de configuracion:";
+repeatconfigCh:
+	std::cout<< "Archivo de configuracion(s/n):";
 	std::string configCh;
 	std::cin >> configCh;
 	if(configCh.compare("N") == 0 | configCh.compare("n") == 0)
@@ -146,6 +161,14 @@ int main(int argc, char *argv[])
 		std::string fn = dir + "/apidb";
 		config.saveConfig();
 		std::cout<<"\tArchivo de configuracion:"<<fn<<std::endl;		
+	}
+	else if(configCh.compare("Q") == 0 | configCh.compare("q") == 0)
+	{
+		//solo continua con el programam para evitar el bucle		
+	}
+	else
+	{
+		std::cout<<"\tIndique S o N:"<<std::endl;
 	}
     
 	return EXIT_SUCCESS;	
