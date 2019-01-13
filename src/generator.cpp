@@ -118,6 +118,8 @@ namespace generators
 		cmakelists<<std::endl;
 		cmakelists<<"ADD_EXECUTABLE(developing "<< options.project.name <<".cpp developing.cpp)"<<std::endl;
 		cmakelists<<"TARGET_LINK_LIBRARIES(developing ${TOOLKIT_CLIENTDB_LIBRARY} ${TOOLKIT_COMMON_LIBRARY} ${MYSQL_LIBRARY})"<<std::endl;
+		cmakelists<<"ADD_LIBRARY("<< options.project.name <<" STATIC "<< options.project.name <<".cpp )"<<std::endl;
+		cmakelists<<"TARGET_LINK_LIBRARIES("<< options.project.name <<" ${MYSQL_LIBRARY} ${TOOLKIT_COMMON_LIBRARY}  ${TOOLKIT_CLIENDB_LIBRARY} )"<<std::endl;
 		cmakelists.close();
 		analyzer.getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
 		
@@ -783,7 +785,7 @@ namespace generators
 			ofile << "\t{"<<std::endl;
 			ofile <<"\t\tstd::string sqlString = \"\";"<<std::endl;
 			ofile <<"\t\tsqlString = \"UPDATE \" + TABLE_NAME;"<<std::endl;
-			ofile <<"\t\tsqlString = sqlString + \" SET " << attr->name << " = \" + " ;
+			ofile <<"\t\tsqlString = sqlString + \" SET " << attr->name << " = \" " ;
 			if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
 			{
 				if(attr->classReferenced == NULL)//si es foreing key

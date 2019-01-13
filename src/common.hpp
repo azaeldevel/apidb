@@ -92,21 +92,21 @@ namespace apidb
 			
 					
 			//in input lenguaje
-            std::string inType;
-            //in input lenguaje
-            std::string name;                
-            //in out lenguaje
-            std::string get;
+            		std::string inType;
+		    	//in input lenguaje
+		    	std::string name;                
+		    	//in out lenguaje
+		    	std::string get;
 			bool required;
-            KeyType keyType;
-            Table* classReferenced;
-            Table* classParent;
-            std::string outType; 
-            //bool forInsert; 
+		    	KeyType keyType;
+		    	Table* classReferenced;
+		    	Table* classParent;
+		    	std::string outType; 
+		    	//bool forInsert; 
             
-            Symbol();
-            int getID()const;
-		private:
+            		Symbol();
+            		int getID()const;
+			private:
 			static int counter;
 			int id;	
 		};
@@ -129,15 +129,15 @@ namespace apidb
 		struct Table : public std::list<Symbol*>
 		{
 			std::string name;
-            Symbol* key;
-            std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
+            		Symbol* key;
+            		std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
             
-            Table();
-            ~Table();
+            		Table();
+            		~Table();
 			bool basicSymbols(toolkit::clientdb::Connector& connect);
-            bool fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables);
-            short getCountRefereces()const; 
-            
+            		bool fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables);
+            		short getCountRefereces()const; 
+            		
 		private:
 			short countRef;
 		};
@@ -149,10 +149,14 @@ namespace apidb
 		{
 		public:
 			~Tables();	
-            Table* search(const std::string&);           
+            		Table* search(const std::string&); 
+			std::list<Table*>::iterator find(const std::string& tableName);       
 			bool listing(toolkit::clientdb::Connector& connect);
 			short getMaxCountRef();
-            void reorder();
+			int floatup();
+            		bool reorder();
+		private:
+			bool push(Table* tb,std::list<Table*>& in);
 		};
 	}
 	

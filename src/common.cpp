@@ -6,6 +6,7 @@
 #include <libxml/parser.h>
 #include <string.h>
 #include <stdio.h>
+#include <iostream>
 
 #include "common.hpp"
 
@@ -363,39 +364,58 @@ namespace apidb
 			}
 			return true;
 		}
-		
-        	void Tables::reorder()
+			
+		bool Tables::reorder()
 		{
-			short max = getMaxCountRef();
-			//std::cout<< "Max number: " << max <<std::endl;
-			//std::cout<< "Size this: " << size() <<std::endl;
-			std::list<Table*> tmp(*this);//copy all datas
-			//std::cout<< "Size tmp: " << tmp.size() <<std::endl;
-			clear();
-			//std::cout<< "Size this: " << size() <<std::endl;
-			std::list<Table*>::iterator actual;
-			std::list<Table*>::iterator tmpactual;
-			std::list<Table*>::iterator last;
-			for(short i = max; i > 0; i--) 
+			int flag = 0;
+			//do
+			//{
+				flag = floatup();
+			//}
+			//while(flag > 0);
+		}
+	
+        	int Tables::floatup()
+		{		
+			std::list<Table*>::iterator firtsTb = (--begin());
+			std::list<Table*>::iterator lastTb = (--end());
+			int countFloatup  = 0;
+			for (std::list<Table*>::iterator i = lastTb; firtsTb != i; --i) 
 			{
-				//std::cout<< "for(short i = max; i > 0; i++)" <<std::endl;			
-				actual = tmp.begin();
-				tmpactual = tmp.begin();
-				last = tmp.end();
-				while(actual != last)
+				//std::cout<<"Table : "<< (*i)->name << std::endl;
+				std::list<Symbol*>::iterator firtsFl = (--((*i)->begin()));
+				std::list<Symbol*>::iterator lastFl = (--((*i)->end()));
+				for (std::list<Symbol*>::iterator j = lastFl; firtsFl != j; --j)
 				{
-					if(((*actual)->getCountRefereces()) == i || ((*actual)->getCountRefereces()) == 0)
+					if((*j)->classReferenced != NULL)
 					{
-						//std::cout<< i << "-esimo number " <<std::endl;
-						push_back(*actual);						
-						tmp.erase(actual);
-					}	
-					actual = tmp.begin();
-					tmpactual = tmp.begin();
-					last = tmp.end();		
+						std::cout<<"Table : "<< (*i)->name << std::endl;
+						//std::cout<<"\tField : "<< (*j)->name << " --> " << (*i)->name << std::endl;
+						//verificar que la tabla '(*j)->classReferenced' este en una posicion mas superior a la tabla 'i'
+						auto finded = find((*j)->classReferenced->name);
+						if(std::distance(finded,i) < 0)
+						{
+							//std::cout<<"\t"<< (*j)->classReferenced->name << " Ya superior a " << (*i)->name << std::endl;
+						}
+						else
+						{							
+							auto newpos = finded;
+							if(newpos != begin() && newpos != end()) 
+							{
+								//std::cout<<"\tFlotando "<< (*finded)->name << " antes de " << (*i)->name << std::endl;
+								--newpos;
+								splice(newpos,*this,finded);
+								countFloatup++;
+							}
+						}
+					}
+					else
+					{
+						
+					}
 				}
 			}
-			//std::cout<< "Count in this: " << size() <<std::endl;
+			return countFloatup;
 		}
 		
         int Symbol::getID()const
@@ -472,6 +492,18 @@ namespace apidb
 				++actual;
 			}
 			return NULL;
+		}
+		std::list<Table*>::iterator Tables::find(const std::string& tableName)
+		{
+			std::list<Table*>::iterator actual = begin();
+			std::list<Table*>::iterator last = end();
+			
+			while (actual != last) 
+			{
+				if ((*actual)->name.compare(tableName) == 0) return actual;
+				++actual;
+			}
+			return last;
 		}		
 	}
 }

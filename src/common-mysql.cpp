@@ -46,11 +46,14 @@ namespace apidb
 				{
 					if(attribute->name.compare(row[0]) == 0)
 					{
-						attribute->classReferenced = tables.search(row[1]);//returna null o un puntero valido.		
+						attribute->classReferenced = tables.search(row[1]);//returna null o un puntero valido.
+						if(attribute->classReferenced != NULL)
+						{
+							attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
+						}		
 						if(attribute->classReferenced != NULL && attribute->keyType == symbols::Symbol::KeyType::UNIQUE)	
 						{
 							//std::cout<< "FOREIGN UNIQUE : " << attribute->classReferenced->name << "." << attribute->name <<std::endl;
-							attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
 							attribute->keyType = symbols::Symbol::KeyType::FOREIGN_UNIQUE;//usada como llave
 						}
 					}
