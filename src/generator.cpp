@@ -103,15 +103,15 @@ namespace generators
 		cmakelists<<"SET(apidb_VERSION_STAGE \"alpha\")"<<std::endl;
 		cmakelists<<"CONFIGURE_FILE(\"${PROJECT_SOURCE_DIR}/config.h.in\" \"${PROJECT_SOURCE_DIR}/config.h\")"<<std::endl;
 		cmakelists<<std::endl;
-		cmakelists<<"FIND_PACKAGE(MySQL REQUIRED PATHS ${PROJECT_SOURCE_DIR}/../../cmake/Modules/)"<<std::endl;
+		cmakelists<<"FIND_PACKAGE(MySQL REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
 		cmakelists<<"IF(MySQL_FOUND)"<<std::endl;
 			cmakelists<<"INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
-		cmakelists<<"FIND_PACKAGE(toolkit-common REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
+		cmakelists<<"FIND_PACKAGE(toolkit-common-c++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
 		cmakelists<<"IF(TOOLKIT_COMMON_FOUND)"<<std::endl;
 			cmakelists<<"INCLUDE_DIRECTORIES(${TOOLKIT_COMMON_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
-		cmakelists<<"FIND_PACKAGE(toolkit-clientdb REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
+		cmakelists<<"FIND_PACKAGE(toolkit-clientdb-c++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
 		cmakelists<<"IF(TOOLKIT_CLIENTDB_FOUND)"<<std::endl;
 			cmakelists<<"INCLUDE_DIRECTORIES(${TOOLKIT_CLIENTDB_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
@@ -145,7 +145,7 @@ namespace generators
 		}
 	
 		//std::cout<<"Creating toolkit-commonConfig.cmake..."<<std::endl;
-		namefile = "toolkit-commonConfig.cmake";
+		namefile = "toolkit-common-c++Config.cmake";
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
 			toolkitcommonconifg.open(namefile);
@@ -159,18 +159,16 @@ namespace generators
 		  toolkitcommonconifg<<"SET(TOOLKIT_COMMON_FIND_QUIETLY TRUE)"<<std::endl;
 		toolkitcommonconifg<<"ENDIF (TOOLKIT_COMMON_INCLUDE_DIR)"<<std::endl;
 
-		toolkitcommonconifg<<"FIND_PATH(TOOLKIT_COMMON_INCLUDE_DIR toolkit.hpp"<<std::endl;
-		  toolkitcommonconifg<<"${PROJECT_SOURCE_DIR}/../../../toolkit/common/src"<<std::endl;
-		  toolkitcommonconifg<<"$ENV{HOME}/root/include/toolkit"<<std::endl;
+		toolkitcommonconifg<<"FIND_PATH(TOOLKIT_COMMON_INCLUDE_DIR common.hpp"<<std::endl;
 		  toolkitcommonconifg<<"/usr/local/include/toolkit"<<std::endl;
 		  toolkitcommonconifg<<"/usr/include/toolkit"<<std::endl;
 		toolkitcommonconifg<<")"<<std::endl;
 
-		toolkitcommonconifg<<"SET(TOOLKIT_COMMON_NAMES toolkit-common)"<<std::endl;
+		toolkitcommonconifg<<"SET(TOOLKIT_COMMON_NAMES toolkit-common-c++)"<<std::endl;
 		toolkitcommonconifg<<"FIND_LIBRARY(TOOLKIT_COMMON_LIBRARY"<<std::endl;
 		  toolkitcommonconifg<<"NAMES ${TOOLKIT_COMMON_NAMES}"<<std::endl;
-		  toolkitcommonconifg<<"PATHS ${PROJECT_SOURCE_DIR}/../../../toolkit/common/src ${PROJECT_SOURCE_DIR}/../../common/src $ENV{HOME}/root/usr/lib /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu"<<std::endl;
-		  toolkitcommonconifg<<"PATH_SUFFIXES toolkit-common"<<std::endl;
+		  toolkitcommonconifg<<"PATHS /usr/lib/toolkit /usr/local/lib/toolkit /usr/lib/x86_64-linux-gnu/toolkit"<<std::endl;
+		  toolkitcommonconifg<<"PATH_SUFFIXES toolkit-common-c++"<<std::endl;
 		toolkitcommonconifg<<")"<<std::endl;
 
 		toolkitcommonconifg<<"IF (TOOLKIT_COMMON_INCLUDE_DIR AND TOOLKIT_COMMON_LIBRARY)"<<std::endl;
@@ -199,7 +197,7 @@ namespace generators
 		toolkitcommonconifg.close();
 		
 		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
-		namefile = "toolkit-clientdbConfig.cmake";
+		namefile = "toolkit-clientdb-c++Config.cmake";
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
 			toolkitclientdbConfig.open(namefile);
@@ -214,17 +212,15 @@ namespace generators
 		toolkitclientdbConfig<<"ENDIF (TOOLKIT_CLIENTDB_INCLUDE_DIR)"<<std::endl;
 
 		toolkitclientdbConfig<<"FIND_PATH(TOOLKIT_CLIENTDB_INCLUDE_DIR clientdb.hpp"<<std::endl;
-		  toolkitclientdbConfig<<"${PROJECT_SOURCE_DIR}/../../../toolkit/clientdb/src"<<std::endl;
-		  toolkitclientdbConfig<<"$ENV{HOME}/root/include/toolkit"<<std::endl;
 		  toolkitclientdbConfig<<"/usr/local/include/toolkit"<<std::endl;
 		  toolkitclientdbConfig<<"/usr/include/toolkit"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
-		toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_NAMES toolkit-clientdb)"<<std::endl;
+		toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_NAMES toolkit-clientdb-c++)"<<std::endl;
 		toolkitclientdbConfig<<"FIND_LIBRARY(TOOLKIT_CLIENTDB_LIBRARY"<<std::endl;
 		  toolkitclientdbConfig<<"NAMES ${TOOLKIT_CLIENTDB_NAMES}"<<std::endl;
-		  toolkitclientdbConfig<<"PATHS ${PROJECT_SOURCE_DIR}/../../../toolkit/clientdb/src ${PROJECT_SOURCE_DIR}/../../toolkit/clientdb/src $ENV{HOME}/root/usr/lib /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu"<<std::endl;
-		  toolkitclientdbConfig<<"PATH_SUFFIXES toolkit-clientdb"<<std::endl;
+		  toolkitclientdbConfig<<"PATHS /usr/lib/toolkit /usr/local/lib/toolkit /usr/lib/x86_64-linux-gnu/toolkit"<<std::endl;
+		  toolkitclientdbConfig<<"PATH_SUFFIXES toolkit-clientdb-c++"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
 		toolkitclientdbConfig<<"IF (TOOLKIT_CLIENTDB_INCLUDE_DIR AND TOOLKIT_CLIENTDB_LIBRARY)"<<std::endl;
@@ -252,6 +248,77 @@ namespace generators
 		  toolkitclientdbConfig<<")"<<std::endl;
 		toolkitclientdbConfig.close();
 		
+
+
+
+
+
+
+
+
+
+
+		//std::cout<<"Creating MySQLConfig.cmake..."<<std::endl;
+		namefile = "MySQLConfig.cmake";
+		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
+		{
+			toolkitcommonconifg.open(namefile);
+		}
+		else
+		{
+			toolkitcommonconifg.open(analyzer.getDirectoryProject() + "/cmake.modules/" + namefile);
+		}
+		
+		toolkitcommonconifg<<"IF (MYSQL_INCLUDE_DIR)"<<std::endl;
+		  toolkitcommonconifg<<"SET(MYSQL_FIND_QUIETLY TRUE)"<<std::endl;
+		toolkitcommonconifg<<"ENDIF (MYSQL_INCLUDE_DIR)"<<std::endl;
+
+		toolkitcommonconifg<<"FIND_PATH(MYSQL_INCLUDE_DIR mysql.h"<<std::endl;
+		  toolkitcommonconifg<<"/usr/local/include/mysql"<<std::endl;
+		  toolkitcommonconifg<<"/usr/include/mysql"<<std::endl;
+		toolkitcommonconifg<<")"<<std::endl;
+
+
+		toolkitcommonconifg<<"SET(MYSQL_NAMES mysqlclient mysqlclient_r)"<<std::endl;
+		toolkitcommonconifg<<"FIND_LIBRARY(MYSQL_LIBRARY"<<std::endl;
+		  toolkitcommonconifg<<"NAMES ${MYSQL_NAMES}"<<std::endl;
+		  toolkitcommonconifg<<"PATHS /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu"<<std::endl;
+		  toolkitcommonconifg<<"PATH_SUFFIXES mysql"<<std::endl;
+		toolkitcommonconifg<<")"<<std::endl;
+
+		toolkitcommonconifg<<"IF (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)"<<std::endl;
+		  toolkitcommonconifg<<"SET(MYSQL_FOUND TRUE)"<<std::endl;
+		  toolkitcommonconifg<<"SET( MYSQL_LIBRARIES ${MYSQL_LIBRARY} )"<<std::endl;
+		toolkitcommonconifg<<"ELSE (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)"<<std::endl;
+		  toolkitcommonconifg<<"SET(MYSQL_FOUND FALSE)"<<std::endl;
+		  toolkitcommonconifg<<"SET(MYSQL_LIBRARIES )"<<std::endl;
+		toolkitcommonconifg<<"ENDIF (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)"<<std::endl;
+
+		toolkitcommonconifg<<"IF (MYSQL_FOUND)"<<std::endl;
+		  toolkitcommonconifg<<"IF (NOT MYSQL_FIND_QUIETLY)"<<std::endl;
+			toolkitcommonconifg<<"MESSAGE(STATUS \"Found MySQL: ${MYSQL_LIBRARY}\")"<<std::endl;
+		  toolkitcommonconifg<<"ENDIF (NOT MYSQL_FIND_QUIETLY)"<<std::endl;
+		toolkitcommonconifg<<"ELSE (MYSQL_FOUND)"<<std::endl;
+		  toolkitcommonconifg<<"IF (MYSQL_FIND_REQUIRED)"<<std::endl;
+			toolkitcommonconifg<<"MESSAGE(STATUS \"Looked for mysqlclient libraries named ${MYSQL_NAMES}.\")"<<std::endl;
+			toolkitcommonconifg<<"MESSAGE(FATAL_ERROR \"Could NOT find mysqlclient library\")"<<std::endl;
+		  toolkitcommonconifg<<"ENDIF (MYSQL_FIND_REQUIRED)"<<std::endl;
+		toolkitcommonconifg<<"ENDIF (MYSQL_FOUND)"<<std::endl;
+
+		toolkitcommonconifg<<"MARK_AS_ADVANCED("<<std::endl;
+		  toolkitcommonconifg<<"MYSQL_LIBRARY"<<std::endl;
+		  toolkitcommonconifg<<"MYSQL_INCLUDE_DIR"<<std::endl;
+		  toolkitcommonconifg<<")"<<std::endl;
+		toolkitcommonconifg.close();
+
+
+
+
+
+
+
+
+
 		//std::cout<<"Creating config.h.in..."<<std::endl;
 		namefile = "config.h.in";
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))

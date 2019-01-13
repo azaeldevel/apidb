@@ -26,7 +26,7 @@
 
 int main()
 {
-	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","develop","123456"); 
+	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"worlds.alpha","develop","123456"); 
 	toolkit::Version version;
 	version.major = 0;
 	version.minor = 1;
@@ -34,8 +34,8 @@ int main()
 	version.stage = toolkit::Version::Stage::alpha;
 
 	apidb::ConfigureProject config;
-    	config.name = "nmp";
-    	config.directory = "nmp";
+    	config.name = "worlds";
+    	config.directory = "apidb";
     	config.conectordb = mysqlConnector;
     	config.version = version;
     	config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
@@ -52,7 +52,7 @@ int main()
 		std::cerr<<"Fail creation prject."<<std::endl;
 		return EXIT_FAILURE;		
 	}
-	std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;
+	/*std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;
 	std::cout<<"Version previa: " << config.getVersion().toString()<<std::endl;
 	apidb::ConfigureProject config2("nmp/apidb");
     	config2.directory = "nmp2";
@@ -68,7 +68,7 @@ int main()
 		return EXIT_FAILURE;		
 	}
 	std::cout<<"Configuracion posterior: " << config2.getConector().toString()<<std::endl;
-	std::cout<<"Version posterior: " << config2.getVersion().toString()<<std::endl;
+	std::cout<<"Version posterior: " << config2.getVersion().toString()<<std::endl;*/
 	
 	
 	

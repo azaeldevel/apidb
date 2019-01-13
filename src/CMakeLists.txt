@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
-PROJECT(apidb VERSION 0.7.0.0 LANGUAGES CXX)
+PROJECT(apidb VERSION 0.7.1.0 LANGUAGES CXX)
 SET(CMAKE_CXX_STANDARD 14)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
@@ -35,7 +35,7 @@ ENDIF()
 BISON_TARGET(parser parser.yy ${PROJECT_SOURCE_DIR}/parser.tab.cc)
 FLEX_TARGET(lexer lexer.l ${PROJECT_SOURCE_DIR}/lexer.yy.cc)
 ADD_FLEX_BISON_DEPENDENCY(lexer parser)
-
+SET(targetName apidbgen)
 SET(SOURCES_BUILDING driver.cpp scanner.cpp apidb.cpp common-mysql.cpp analyzer.cpp generator.cpp common.cpp ${FLEX_lexer_OUTPUTS} ${BISON_parser_OUTPUTS})
 
 
@@ -57,6 +57,10 @@ TARGET_LINK_LIBRARIES(Test ${TOOLKIT_COMMON_LIBRARY} ${TOOLKIT_CLIENTDB_LIBRARY}
 target_include_directories(Test PRIVATE . ${CMAKE_CURRENT_BINARY_DIR})
 SET_PROPERTY(TARGET Test PROPERTY CXX_STANDARD 14)
 ADD_CUSTOM_TARGET(Test.bin DEPENDS parser)
+
+INSTALL(TARGETS ${targetName} DESTINATION bin)
+INSTALL(TARGETS apidb DESTINATION lib/apidb)
+INSTALL(FILES apidb.hpp DESTINATION include/apidb)
 
 install (TARGETS apidbgen DESTINATION bin)
 include (InstallRequiredSystemLibraries)
