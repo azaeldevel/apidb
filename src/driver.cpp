@@ -170,7 +170,7 @@ namespace apidb
 					attribute->outType = analyzer->parse(attribute->inType);
 				}				
 			}	
-			//analyzer->getListTable().reorder();
+			analyzer->getListTable().reorder();
         	}  
           
 	return true;
