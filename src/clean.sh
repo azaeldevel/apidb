@@ -21,5 +21,10 @@ rm install_manifest.txt
 rm -r nmp
 rm -r nmp2
 rm apidb-*-Linux
+<<<<<<< HEAD
 rm CPackConfig.cmake
 rm CPackSourceConfig.cmake
+=======
+rm CPackSourceConfig.cmake
+rm CPackConfig.cmake
+>>>>>>> 24f759ded3c4bb6e14aec3b7836d9a56016953fe
