@@ -147,19 +147,19 @@ namespace apidb
 		//analyzer->setPramsLenguajes(configureProject->inputLenguaje,configureProject->outputLenguaje);
 		
 		if(analyzer->listing(*connector)) //reading tables
-        {
-            for(symbols::Table* table: analyzer->getListTable()) //reading attrubtes by table
-            {
+        	{
+            		for(symbols::Table* table: analyzer->getListTable()) //reading attrubtes by table
+            		{
 				analyzer->getOutputMessage() << "\tCreating basic simbols for " << table->name  << "." << std::endl;
-                //simbolos basicos 
-                if(!table->basicSymbols(*connector))
-                {
+                		//simbolos basicos 
+                		if(!table->basicSymbols(*connector))
+                		{
 					//std::cerr<<"Faill on basicSymbols"<<std::endl;
 					return false;
 				}				
 				//foreign key's
 				if(!table->fillKeyType(*connector,analyzer->getListTable()))
-                {
+                		{
 					//std::cerr<<"Faill on fillKeyType"<<std::endl;
 					return false;
 				}//parsing imput types
@@ -170,10 +170,10 @@ namespace apidb
 					attribute->outType = analyzer->parse(attribute->inType);
 				}				
 			}	
-			analyzer->getListTable().reorder();
-        }  
+			//analyzer->getListTable().reorder();
+        	}  
           
-		return true;
+	return true;
 	}
 		
 	/*Driver::Driver(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje,toolkit::Version version)

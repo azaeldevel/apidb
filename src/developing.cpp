@@ -40,12 +40,12 @@ int main()
     	config.version = version;
     	config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
     	config.outputLenguaje = apidb::OutputLenguajes::CPP;	
-	config.mvc = apidb::MVC::GTK3;
+	config.mvc = apidb::MVC::NO;
     	apidb::Driver driver(config);	
 	if(!driver.driving())
 	{
 		std::cerr<<mysqlConnector.toString()<<" - es incorrecta."<<std::endl;
-        return EXIT_FAILURE;
+        	return EXIT_FAILURE;
 	}	
     	if(!config.saveConfig())
     	{

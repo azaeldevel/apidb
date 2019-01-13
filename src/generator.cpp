@@ -849,8 +849,8 @@ namespace generators
 		ofile << std::endl; 
     }
     
-    void CPP::createSpaceCPP(std::ofstream& file)
-    {
+    	void CPP::createSpaceCPP(std::ofstream& file)
+    	{
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
 			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
@@ -863,11 +863,11 @@ namespace generators
 			file <<"namespace  controller" <<std::endl;
 			file <<"{" <<std::endl;
 		}
-        const symbols::Tables& tables = analyzer.getListTable();
-        for (apidb::symbols::Table* table : tables) 
-        {
-            createClassCPP(*table,file,table->name);       
-        }
+        	const symbols::Tables& tables = analyzer.getListTable();
+        	for (apidb::symbols::Table* table : tables) 
+        	{
+            		createClassCPP(*table,file,table->name);       
+        	}
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
 			file <<"}"<<std::endl;
@@ -877,13 +877,13 @@ namespace generators
 			file <<"}" <<std::endl;
 			file <<"}" <<std::endl;
 		}
-    }
+    	}
 	void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
-    {
+    	{
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  nameClass << "\";" << std::endl;
 		createClassMethodesCPP(cl,file);        
 		file<< std::endl<< std::endl;
-    }
+    	}
     
     void CPP::createClassMethodesH(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
@@ -984,30 +984,30 @@ namespace generators
 			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
 			file <<"{"<<std::endl;
 		}
-		else 
+		else if(configureProject.mvc != apidb::MVC::NO)
 		{
 			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
 			file <<"{" <<std::endl;
 			file <<"namespace  controller" <<std::endl;
 			file <<"{" <<std::endl;
 		}
-        const symbols::Tables& tables = analyzer.getListTable();
-        for (const apidb::symbols::Table* table : tables) 
-        {
+        	const symbols::Tables& tables = analyzer.getListTable();
+        	for (const apidb::symbols::Table* table : tables) 
+        	{
 			if(table->getCountRefereces() > 0) file << "\tclass " << table->name << ";"<<std::endl;
 		}
 		file<<std::endl;
-        for (const apidb::symbols::Table* table : tables) 
-        {
+        	for (const apidb::symbols::Table* table : tables) 
+        	{
 			//file <<"Declare Table " << table->name << std::endl;
-            createClassH(*table,file,table->name);       
-        }
+            		createClassH(*table,file,table->name);       
+        	}
 
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
 			file <<"}"<<std::endl;
 		}
-		else 
+		else  if(configureProject.mvc != apidb::MVC::NO)
 		{
 			file <<"}" <<std::endl;
 			file <<"}" <<std::endl;
@@ -1040,14 +1040,14 @@ namespace generators
         file <<"\t};"<<std::endl;
     }
     
-    bool CPP::generate()
-    {		
+	bool CPP::generate()
+	{		
 		analyzer.getOutputMessage() << "Generando archivos de codigo fuente... " << std::endl;
 		analyzer.getOutputMessage() << "\tLenguaje resultado: " << getOutputLenguajeString() << std::endl;
 		//includes in header file
-        std::string headers = "";
-        bool stringFlag = false;
-        const apidb::symbols::Tables& tables = analyzer.getListTable();
+		std::string headers = "";
+		bool stringFlag = false;
+		const apidb::symbols::Tables& tables = analyzer.getListTable();
 		for(symbols::Table* table: tables)
 		{
 			for(symbols::Symbol* attr : *table)
@@ -1062,23 +1062,13 @@ namespace generators
 			
 			
 		//inlcudes in source file
-        getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl; 
+        	getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl; 
 		getHeaderOutput()<< "#include <clientdb.hpp>"<<std::endl<<std::endl;
 			
-		//writing code
-		if(!analyzer.getNameProject().empty())
-		{			
-			createSpaceH(getHeaderOutput());  
-			createSpaceCPP(getSourceOutput()); 
-		}   
-		else
-		{
-			for (apidb::symbols::Table* table : tables) 
-			{
-				createClassH(*table,getHeaderOutput(),table->name);  
-				createClassCPP(*table,getSourceOutput(),table->name);     
-			}
-		}            
+		//writing code				
+		createSpaceH(getHeaderOutput());  
+		createSpaceCPP(getSourceOutput()); 
+          
         return true;    
     }
     

@@ -338,7 +338,7 @@ namespace apidb
         }
     }
     
-    namespace symbols
+    	namespace symbols
 	{
 		std::string Key::getOutType()
 		{
@@ -364,7 +364,7 @@ namespace apidb
 			return true;
 		}
 		
-        void Tables::reorder()
+        	void Tables::reorder()
 		{
 			short max = getMaxCountRef();
 			//std::cout<< "Max number: " << max <<std::endl;
