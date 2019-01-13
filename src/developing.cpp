@@ -28,7 +28,10 @@ int main()
 {
 	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"business.alpha","develop","123456"); 
 	toolkit::Version version;
-	version.set(0,1,0,toolkit::Version::Stage::alpha); 
+	version.major = 0;
+	version.minor = 1;
+	version.patch = 0;
+	version.stage = toolkit::Version::Stage::alpha;
 
 	apidb::ConfigureProject config;
     	config.name = "nmp";
@@ -66,5 +69,9 @@ int main()
 	}
 	std::cout<<"Configuracion posterior: " << config2.getConector().toString()<<std::endl;
 	std::cout<<"Version posterior: " << config2.getVersion().toString()<<std::endl;
+	
+	
+	
+	
 	return EXIT_SUCCESS;	
 }

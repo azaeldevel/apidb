@@ -116,14 +116,17 @@ int main(int argc, char *argv[])
 	}
 	
 	toolkit::Version version;
-	version.set(0,1,0,toolkit::Version::Stage::alpha);
+	version.major = 0;
+	version.minor = 1;
+	version.patch = 0;
+	version.stage = toolkit::Version::Stage::alpha;
 	apidb::ConfigureProject config;
-    config.name = name;
-    config.directory = dir;
-    config.conectordb = mysqlConnector;
-    config.version = version;
-    config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
-    config.outputLenguaje = apidb::OutputLenguajes::CPP;
+    	config.name = name;
+    	config.directory = dir;
+    	config.conectordb = mysqlConnector;
+    	config.version = version;
+    	config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
+    	config.outputLenguaje = apidb::OutputLenguajes::CPP;
 	apidb::Driver driver(config);
 	if(!driver.driving())
     {

@@ -11,7 +11,28 @@
 
 namespace apidb
 {
-
+	bool ConfigureProject::checkXML(xmlTextReaderPtr reader)
+	{
+		/*const xmlChar *name;
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"project") != 0)
+        {
+        	return false;
+        }
+        
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
+        if(strcmp((const char*)name,"name") != 0)
+        {
+        	return false;
+        }*/
+        
+        
+        
+        return true;
+	}
+	
 	bool ConfigureProject::saveConfig()
 	{
 		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
@@ -22,9 +43,9 @@ namespace apidb
 		//xmlNewChild(root_node, NULL, (const xmlChar *)"directory", (const xmlChar *)directory.c_str());
 				
 		xmlNodePtr version_node = xmlNewChild(root_node, NULL, (const xmlChar *)"version", NULL);
-		xmlNewChild(version_node, NULL, (const xmlChar *)"major", (const xmlChar *)std::to_string(version.getMajor()).c_str());
-		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(version.getMinor()).c_str());
-		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(version.getPatch()).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"major", (const xmlChar *)std::to_string(version.major).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(version.minor).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(version.patch).c_str());
 		//xmlNewChild(version_node, NULL, (const xmlChar *)"stage", (const xmlChar *)version.stage );
 		
 		xmlNodePtr db_node = xmlNewChild(root_node, NULL, (const xmlChar *)"ConectorDB", NULL);
@@ -269,12 +290,17 @@ namespace apidb
     {
         const xmlChar *name = xmlTextReaderConstName(reader);
 
-        if( xmlTextReaderNodeType(reader) == 1) //es d apertura?
-        {
-            if(strcmp((const char*)name,"project") == 0)
+        if(xmlTextReaderNodeType(reader) == 1) //es d apertura?
+        {        	
+            if(checkXML(reader))
             {
                 //std::cout<<(const char*)name<<std::endl;
                 getProjectNodes(reader);
+            }
+            else
+            {
+            	std::cerr << "El XML no cumple con el formato requerido(el roden de los nodos es importante)" << std::endl;
+            	return false;
             }
         }
         else if( xmlTextReaderNodeType(reader) == 15) //es d cerradura?

@@ -38,11 +38,15 @@ namespace generators
 	
 	CMake::CMake(apidb::Analyzer& d,const ConfigureProject& config): analyzer(d),configureProject(config), apidb::generators::Generator(config)
 	{
-		options.cmake_minimun_requiered.set(3,0);
+		options.cmake_minimun_requiered.major=3;
+		options.cmake_minimun_requiered.minor=0;
 		options.project.name = analyzer.getNameProject();
 		options.project.directory = analyzer.getDirectoryProject();
 		options.project.lenguague = configureProject.outputLenguaje;
-		options.project.version.set(0,1,0,toolkit::Version::alpha);		
+		options.project.version.major = 0;
+		options.project.version.minor = 1;
+		options.project.version.patch = 0;
+		options.project.version.stage = toolkit::Version::alpha;
 	}
 	
 	CMake::~CMake()
@@ -67,19 +71,19 @@ namespace generators
 		analyzer.getOutputMessage() << "\tTipo de Gestor: " << getOutputLenguajeString() << std::endl;
 		
 		cmakelists<<"CMAKE_MINIMUM_REQUIRED(VERSION ";
-		cmakelists<<options.cmake_minimun_requiered.getMajor();
+		cmakelists<<options.cmake_minimun_requiered.major;
 		cmakelists<<".";
-		cmakelists<<options.cmake_minimun_requiered.getMinor();
+		cmakelists<<options.cmake_minimun_requiered.minor;
 		cmakelists<<")"<<std::endl;
 		
 		cmakelists<<"PROJECT(";
 		cmakelists<<options.project.name;
 		cmakelists<<" VERSION ";
-		cmakelists<<options.project.version.getMajor();
+		cmakelists<<options.project.version.major;
 		cmakelists<<".";
-		cmakelists<<options.project.version.getMinor();
+		cmakelists<<options.project.version.minor;
 		cmakelists<<".";
-		cmakelists<<options.project.version.getPatch();
+		cmakelists<<options.project.version.patch;
 		cmakelists<<".";
 		cmakelists<<"0 ";
 		if(analyzer.getOutputLenguaje() == apidb::OutputLenguajes::CPP)

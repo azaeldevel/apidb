@@ -168,13 +168,14 @@ namespace apidb
         std::string directory;
         toolkit::Version version;
         toolkit::clientdb::DatconectionMySQL conectordb;
-	InputLenguajes inputLenguaje;
-	OutputLenguajes outputLenguaje;
-	MVC mvc;
+		InputLenguajes inputLenguaje;
+		OutputLenguajes outputLenguaje;
+		MVC mvc;
 		
         ConfigureProject(std::string filename);
         ConfigureProject();
         bool saveConfig();
+        bool checkXML(xmlTextReaderPtr);
 		
         const std::string& getName()const;
         const std::string& getDirectory()const;
