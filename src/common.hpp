@@ -92,20 +92,21 @@ namespace apidb
 			
 					
 			//in input lenguaje
-            		std::string inType;
-		    	//in input lenguaje
-		    	std::string name;                
-		    	//in out lenguaje
-		    	std::string get;
+            std::string inType;
+            //in input lenguaje
+            std::string name;                
+            //in out lenguaje
+            std::string get;
+			std::string upperName;
 			bool required;
-		    	KeyType keyType;
-		    	Table* classReferenced;
-		    	Table* classParent;
-		    	std::string outType; 
-		    	//bool forInsert; 
+            KeyType keyType;
+            Table* classReferenced;
+            Table* classParent;
+            std::string outType; 
+            //bool forInsert; 
             
-            		Symbol();
-            		int getID()const;
+            Symbol();
+            int getID()const;
 			private:
 			static int counter;
 			int id;	

@@ -250,16 +250,6 @@ namespace generators
 		  toolkitclientdbConfig<<")"<<std::endl;
 		toolkitclientdbConfig.close();
 		
-
-
-
-
-
-
-
-
-
-
 		//std::cout<<"Creating MySQLConfig.cmake..."<<std::endl;
 		namefile = "MySQLConfig.cmake";
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
@@ -313,14 +303,6 @@ namespace generators
 		  toolkitcommonconifg<<")"<<std::endl;
 		toolkitcommonconifg.close();
 
-
-
-
-
-
-
-
-
 		//std::cout<<"Creating config.h.in..."<<std::endl;
 		namefile = "config.h.in";
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
@@ -341,24 +323,36 @@ namespace generators
 		
 		//std::cout<<"Creating developing.cpp..."<<std::endl;
 		namefile = "developing.cpp";
+        bool preexits;
+        if (FILE *file = fopen(namefile.c_str(), "r")) 
+        {
+            fclose(file);
+            preexits = true;
+        }
+        else
+        {
+            preexits = false;
+        }
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
-			developing.open(namefile);
+			if(preexits) developing.open(namefile);
 		}
 		else
 		{
-			developing.open(analyzer.getDirectoryProject() + "/" + namefile);
+			if(preexits) developing.open(analyzer.getDirectoryProject() + "/" + namefile);
 		}
-		
-		developing<<"#include \""<<options.project.name<<".hpp\""<<std::endl;
-		developing<<std::endl;
-		developing<<"#include <iostream>"<<std::endl;
-		developing<<"#include <list>"<<std::endl;
-		developing<<std::endl;
-		developing<<"int main()"<<std::endl;
-		developing<<"{"<<std::endl;
-		developing<<"return 0;"<<std::endl;
-		developing<<"}"<<std::endl;		
+        if(preexits)
+        {
+            developing<<"#include \"" << options.project.name << ".hpp\""<<std::endl;
+            developing<<std::endl;
+            developing<<"#include <iostream>"<<std::endl;
+            developing<<"#include <list>"<<std::endl;
+            developing<<std::endl;
+            developing<<"int main()"<<std::endl;
+            developing<<"{"<<std::endl;
+            developing<<"return 0;"<<std::endl;
+            developing<<"}"<<std::endl;
+        }
 		//analyzer->getOutputMessage()<<"\tArchivo de develping phase: " << namefile <<std::endl;
 		//std::cout<<"return..."<<std::endl;
 		return true;
@@ -421,116 +415,106 @@ namespace generators
 	}
 	void CPP::writeInsertH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
+		int countFIelds = 0;
 		// creando insert
-        ofile << "\t\t"<< "bool ";
-        ofile << "insert(toolkit::clientdb::Connector& connector";
-        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
-        {
-			if((*i)->keyType != symbols::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
+        	ofile << "\t\t"<< "bool ";
+        	ofile << "insert(toolkit::clientdb::Connector& connector";
+        	for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
+        	{
+			if((*i)->keyType == symbols::Symbol::KeyType::PRIMARY) continue;
+			countFIelds++;
+			if(i != table.required.end())
 			{
-				if(i != table.required.end())
-				{
-					ofile << ","; //se agrega la coma si hay un segundo parametro
-				}
-				
-				//
-				if(((*i)->outType.compare("char") == 0) | ((*i)->outType.compare("short") == 0) | ((*i)->outType.compare("int") == 0) | ((*i)->outType.compare("long") == 0) | ((*i)->outType.compare("float") == 0) | ((*i)->outType.compare("double") == 0))
-				{
-					if((*i)->classReferenced == NULL)//si es foreing key
-					{
-						ofile << (*i)->outType << " ";						
-					}
-					else
-					{
-						ofile << "const " << (*i)->classReferenced->name << "& ";
-					}
-				}
-				else
-				{
-					ofile << "const " << (*i)->outType <<"& ";
-				}
-				ofile << (*i)->name;
+				ofile << " ,"; //se agrega la coma si hay un segundo parametro
 			}
+				
+			//
+			if((*i)->classReferenced == NULL)
+			{
+				ofile << (*i)->outType << " ";
+			}
+			else
+			{
+				ofile << "const " << (*i)->classReferenced->name << "& ";
+				//ofile << "const " << (*i)->outType <<"& ";
+			}
+			ofile << (*i)->name;
 		}
-        ofile << ");"<<std::endl;
+        	ofile << ");"<<std::endl;
+		if(countFIelds == 0) throw BuildException(table.name + " no tiene campo requerido por lo que no se puede generar metodo insert."); 
 	}
+
 	void CPP::writeInsertCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{	
+        std::string strmsg = "APIDB requiere que la tabla '" ;
+        strmsg += table.name;
+        strmsg += "' teng llave para continuar con el proceso.";
+        if(table.key == NULL) throw BuildException(strmsg);
+        
 		// Methodo insert
         ofile << "\t"<< "bool ";
         ofile <<table.name<< "::insert(toolkit::clientdb::Connector& connector";
         for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
-			if((*i)->keyType != symbols::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
-			{
-				if(i != table.required.end())
-				{
-					ofile << ","; //se agrega la coma si hay un segundo parametro
-				}
-				
-				//
-				if(((*i)->outType.compare("char") == 0) | ((*i)->outType.compare("short") == 0) | ((*i)->outType.compare("int") == 0) | ((*i)->outType.compare("long") == 0) | ((*i)->outType.compare("float") == 0) | ((*i)->outType.compare("double") == 0))
-				{
-					if((*i)->classReferenced == NULL)//si es foreing key
-					{
-						ofile << (*i)->outType << " ";						
-					}
-					else
-					{
-						ofile << "const " << (*i)->classReferenced->name << "& ";
-					}
-				}
-				else
-				{
-					ofile << "const " << (*i)->outType <<"& ";
-				}
-				ofile << (*i)->name;
-			}
-		}
+            if((*i)->keyType == symbols::Symbol::KeyType::PRIMARY) continue;
+
+            if(i != table.required.end())
+            {
+                    ofile << ","; //se agrega la coma si hay un segundo parametro
+            }
+                    
+                    //
+            if((*i)->classReferenced == NULL)
+            {
+                    ofile << (*i)->outType << " ";
+            }
+            else
+            {
+                    ofile << "const " << (*i)->classReferenced->name << "& ";
+                    //ofile << "const " << (*i)->outType <<"& ";
+            }
+            ofile << (*i)->name;
+        }
         ofile << ")"<<std::endl;
         ofile << "\t{"<<std::endl;
         ofile << "\t\t"<<"std::string sqlString = \"\";"<<std::endl;
         ofile << "\t\t"<<"sqlString = sqlString + \"INSERT INTO \" + TABLE_NAME; "<<std::endl;
-        ofile << "\t\t"<<"sqlString = sqlString + \"(\";"<<std::endl;
-        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
+        ofile << "\t\t"<<"sqlString = sqlString + \"(";
+        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); ++i)
         {
-			if((*i)->keyType != symbols::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
+            if((*i)->keyType == symbols::Symbol::KeyType::PRIMARY) continue;
+
+			ofile << (*i)->name;
+            auto penultimo = table.required.end();
+            penultimo--;					
+			if(i != penultimo)
 			{
-				if(i != table.required.begin())
-				{
-					ofile << ","; //se agrega la coma si hay un segundo parametro
-				}				
-				ofile <<"\t\tsqlString = sqlString + \"" << (*i)->name <<"\";"<< std::endl;
-			}
-		}
-		ofile << "\t\tsqlString = sqlString + \") VALUES(\";"<<std::endl;
-        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
-        {
-			if((*i)->keyType != symbols::Symbol::KeyType::PRIMARY)//la primary key es auto incremento no se agrega
-			{
-				if(i != table.required.begin())
-				{
-					ofile << ","; //se agrega la coma si hay un segundo parametro
-				}				
-				//ofile <<"\t\tsqlString = sqlString + \"" << (*i)->name;
-				if(((*i)->outType.compare("short") == 0) | ((*i)->outType.compare("int") == 0) | ((*i)->outType.compare("long") == 0) | ((*i)->outType.compare("float") == 0) | ((*i)->outType.compare("double") == 0))
-				{
-					if((*i)->classReferenced == NULL)//si es foreing key
-					{
-						ofile << "\t\tsqlString = sqlString + \"'\" + std::to_string(" << (*i)->name << ") + \"'\";"<< std::endl;						
-					}
-					else
-					{
-						ofile << "\t\tsqlString = sqlString + \"'\" + " << (*i)->name << ".toStringKey() + \"'\";"<< std::endl;
-					}
-				}
-				else
-				{
-					ofile << "\t\tsqlString = sqlString + \"'\" + " << (*i)->name << " + \"'\";" << std::endl;
-				}
+				ofile << ","; //se agrega la coma si hay un segundo parametro
 			}			
 		}
-		ofile << "\t\tsqlString = sqlString + \")\";"<< std::endl;
+		ofile << ")\";" << std::endl;
+		ofile << "\t\tsqlString = sqlString + \" VALUES(\"";
+        auto end = table.required.end();
+        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != end; ++i)
+        {
+			if((*i)->keyType == symbols::Symbol::KeyType::PRIMARY) continue;
+		
+            if((*i)->classReferenced != NULL)
+            {
+                ofile << " + \"'\" + " << (*i)->name << ".get" << (*i)->classReferenced->key->upperName << "String()) + \"'\" ";
+            }
+            else
+            {
+                ofile << " + \"'\" + " << (*i)->name << " + \"'\" ";
+            }
+            auto penultimo = table.required.end();
+            penultimo--;
+			if(i != penultimo)
+			{
+				ofile << " + \",\" ";
+			}		
+		}
+		ofile << " + \")\";"<< std::endl;
 		//asegurar que tiene key
 		if(table.key != NULL)
 		{
@@ -561,14 +545,14 @@ namespace generators
 		{
 			throw BuildException("La tabla no tiene llave que es necesaria para el constructor de la clase in writeInsertCPP");
 		}
-        ofile << "\t}"<<std::endl;
+        	ofile << "\t}"<<std::endl;
 	}
         
 	void CPP::writeKeyContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
-        //constructor que toma key como parametro
-        if(table.key != NULL)//tiene key
-        {
+        	//constructor que toma key como parametro
+        	if(table.key != NULL)//tiene key
+        	{
 			if(table.key->outType.compare("int") == 0)
 			{
 				ofile << "\t\t" <<table.name;
@@ -720,8 +704,8 @@ namespace generators
 		ofile <<"\t{"<<std::endl;
 		ofile <<"\t}"<<std::endl;
 	}
-    void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
-    {		
+	void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
+	{		
         for(const symbols::Symbol* attr : table)
         {
 			//gets
@@ -739,8 +723,9 @@ namespace generators
 			else
 			{
 				ofile <<"\t" << "const " << attr->outType <<"& ";
-			}				
-			ofile << table.name <<"::get" << attr->name << "()const"<< std::endl;
+			}
+				
+			ofile << table.name <<"::" << attr->get << " const"<< std::endl;
 			ofile << "\t{"<<std::endl;	
 			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 			{
@@ -763,9 +748,38 @@ namespace generators
 			if(attr->keyType == symbols::Symbol::KeyType::PRIMARY || attr->keyType == symbols::Symbol::KeyType::FOREIGN_UNIQUE)
 			{
 				continue;
-			}			
+			}	
+			
+			//getString()		
+			ofile << "\tstd::string "<< table.name <<"::get" << attr->upperName << "String() const "<< std::endl;
+			ofile << "\t{"<< std::endl;
+            
+            ofile << "\t\treturn ";
+            if(table.key == NULL)
+            {
+                    std::string strmsg = "APIDB neceista que la tabla '" + table.name + "' tenga llave primaria para poder contunuar.";
+                    throw BuildException(strmsg);
+            }
+            if(attr->classReferenced != NULL)
+            {
+                ofile <<"get" << table.key->upperName << "String();";   
+            }
+            else
+            {
+                if(attr->outType.compare("std::string") == 0 || attr->outType.compare("const char*") == 0)
+                {
+                    ofile << attr->name << ";";                    
+                }
+                else
+                {
+                    ofile <<"std::to_string(" << attr->name << ");";
+                } 
+            }
+            ofile << std::endl;			
+			ofile << "\t}"<< std::endl;
+            
 			//updates
-			ofile << "\tbool " << table.name <<"::update" << attr->name << "(toolkit::clientdb::Connector& connector,";
+			ofile << "\tbool " << table.name <<"::update" << attr->upperName << "(toolkit::clientdb::Connector& connector,";
 			if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
 			{
 				if(attr->classReferenced == NULL)//si es foreing key
@@ -851,8 +865,8 @@ namespace generators
 		ofile << std::endl; 
     }
     
-    	void CPP::createSpaceCPP(std::ofstream& file)
-    	{
+    void CPP::createSpaceCPP(std::ofstream& file)
+    {
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
 			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
@@ -879,19 +893,19 @@ namespace generators
 			file <<"}" <<std::endl;
 			file <<"}" <<std::endl;
 		}
-    	}
+    }
 	void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
-    	{
+    {
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  nameClass << "\";" << std::endl;
 		createClassMethodesCPP(cl,file);        
 		file<< std::endl<< std::endl;
-    	}
+    }
     
-    void CPP::createClassMethodesH(const apidb::symbols::Table& table,std::ofstream& ofile)
+	void CPP::createClassMethodesH(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
 		std::string insertMethode = "";
-        for(symbols::Symbol* attr : table)
-        {
+        	for(symbols::Symbol* attr : table)
+        	{
 			//get
 			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 			{
@@ -907,16 +921,18 @@ namespace generators
 			else
 			{
 				ofile <<"\t\t" << "const " << attr->outType <<"& ";
-			}				
-			ofile << "get" << attr->name << "() const;"<< std::endl;
+			}		
+			ofile << attr->get << " const;"<< std::endl;
 			
 			
 			if(attr->keyType == symbols::Symbol::KeyType::PRIMARY)
 			{
 				continue;
-			}			
+			}
+			//getString()			
+			ofile << "\t\tstd::string get" << attr->upperName << "String() const;"<< std::endl;		
 			//update
-			ofile << "\t\tbool " << "update" << attr->name << "(toolkit::clientdb::Connector& connector,";
+			ofile << "\t\tbool " << "update" << attr->upperName << "(toolkit::clientdb::Connector& connector,";
 			if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
 			{
 				if(attr->classReferenced == NULL)//si es foreing key

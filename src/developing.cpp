@@ -26,7 +26,7 @@
 
 int main()
 {
-	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"worlds.alpha","develop","123456"); 
+	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"sis","develop","123456"); 
 	toolkit::Version version;
 	version.major = 0;
 	version.minor = 1;
@@ -34,8 +34,8 @@ int main()
 	version.stage = toolkit::Version::Stage::alpha;
 
 	apidb::ConfigureProject config;
-    	config.name = "worlds";
-    	config.directory = "apidb";
+    	config.name = "sis";
+    	config.directory = "sis";
     	config.conectordb = mysqlConnector;
     	config.version = version;
     	config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;

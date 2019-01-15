@@ -80,7 +80,17 @@ namespace apidb
 				Symbol* attrribute = new Symbol();
 				attrribute->classParent = this;
 				attrribute->name = row[0];
-				attrribute->get = "get";attrribute->get += row[0];attrribute->get += "()";
+				std::string strName = attrribute->name;
+				if(strName.compare("id") == 0)
+				{
+					strName = "ID";
+				}
+				else
+				{
+					strName[0] = toupper(strName[0]);	
+				}
+				attrribute->get = "get";attrribute->get += strName;attrribute->get += "()";
+				attrribute->upperName = strName;
 				attrribute->inType = row[1];
 				std::string requiered = row[2];
 				if(requiered.compare("NO") == 0)//NULL permited in DB?

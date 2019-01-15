@@ -389,7 +389,7 @@ namespace apidb
 				{
 					if((*j)->classReferenced != NULL)
 					{
-						std::cout<<"Table : "<< (*i)->name << std::endl;
+						//std::cout<<"Table : "<< (*i)->name << std::endl;
 						//std::cout<<"\tField : "<< (*j)->name << " --> " << (*i)->name << std::endl;
 						//verificar que la tabla '(*j)->classReferenced' este en una posicion mas superior a la tabla 'i'
 						auto finded = find((*j)->classReferenced->name);
