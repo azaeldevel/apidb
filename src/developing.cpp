@@ -21,30 +21,42 @@
 #include "apidb.hpp"
 
 #include <iostream>
-#include <list>
 
 
 int main()
 {
-	toolkit::clientdb::DatconectionMySQL mysqlConnector("192.168.0.101",3306,"sis","develop","123456"); 
+	toolkit::clientdb::datasourcies::MySQL mysqlSource("192.168.0.101",3306,"sis","develop","123456"); 
 	toolkit::Version version;
-	version.major = 0;
-	version.minor = 1;
-	version.patch = 0;
-	version.stage = toolkit::Version::Stage::alpha;
+	version.set(0,1,0,toolkit::Version::Stage::alpha);
 
 	apidb::ConfigureProject config;
-    	config.name = "sis";
-    	config.directory = "sis";
-    	config.conectordb = mysqlConnector;
-    	config.version = version;
-    	config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
-    	config.outputLenguaje = apidb::OutputLenguajes::CPP;	
+    config.name = "sis";
+    config.directory = "sis";
+    config.conectordb = &mysqlSource;
+    config.version = version;
+    config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
+    config.outputLenguaje = apidb::OutputLenguajes::CPP;	
 	config.mvc = apidb::MVC::NO;
-    	apidb::Driver driver(config);	
+    apidb::ConfigureProject::Table tbP("Persons");
+    apidb::ConfigureProject::Function dwFullName("fullname");
+    apidb::ConfigureProject::Parameters params_FullName;
+    params_FullName.push_back("n1");
+    params_FullName.push_back("ns");
+    params_FullName.push_back("ap");
+    params_FullName.push_back("am");
+    dwFullName.push_back(&params_FullName);
+    tbP.insert(std::make_pair(dwFullName.getName().c_str(), &dwFullName));
+    apidb::ConfigureProject::Function dwShortName("shortname");
+    apidb::ConfigureProject::Parameters params_ShortName;
+    params_ShortName.push_back("n1");
+    params_ShortName.push_back("ap");
+    dwShortName.push_back(&params_ShortName);
+    tbP.insert(std::make_pair(dwShortName.getName().c_str(), &dwShortName));
+    config.downloads.push_back(tbP);
+    apidb::Driver driver(config);	
 	if(!driver.driving())
 	{
-		std::cerr<<mysqlConnector.toString()<<" - es incorrecta."<<std::endl;
+		std::cerr<<mysqlSource.toString()<<" - es incorrecta."<<std::endl;
         	return EXIT_FAILURE;
 	}	
     	if(!config.saveConfig())

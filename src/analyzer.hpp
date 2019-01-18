@@ -27,8 +27,7 @@
 
 
 namespace apidb
-{
-    
+{    
 	class Analyzer
 	{
 	public:
@@ -51,7 +50,7 @@ namespace apidb
 		
     protected:
 		symbols::Tables symbolsTables;		
-		toolkit::clientdb::Connector* connector;
+		toolkit::clientdb::connectors::Connector* connector;
 		std::ostream* outputMessages;//out stream
 		std::ostream* errorMessages;//out stream
 		
@@ -68,7 +67,7 @@ namespace apidb
         class Analyzer : public apidb::Analyzer
         {
         public:
-            bool listing(toolkit::clientdb::Connector& connect);
+            bool listing(toolkit::clientdb::connectors::Connector& connect);
             
             virtual std::ostream& getOutputMessage();
             virtual std::ostream& getErrorMessage();

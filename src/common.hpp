@@ -26,13 +26,14 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <map>
 #include <clientdb.hpp>
 #include <libxml/xmlreader.h>
 #include <iostream>
+#include <cstring>
 
 namespace apidb
-{	
-    
+{
 	enum InputLenguajes
 	{
 		MySQL_Server,
@@ -77,6 +78,13 @@ namespace apidb
 		struct Table;
 		struct Tables;
 		
+        struct cmp_str
+        {
+            bool operator()(char const *a, char const *b) const
+            {
+                return std::strcmp(a, b) < 0;
+            }
+        };
 		/**
 		 * Informacion sobre cada symbolo
 		 * */
@@ -127,18 +135,19 @@ namespace apidb
 		/**
 		 * Simbolos por alcance(tabla en SQL) 
 		 **/
-		struct Table : public std::list<Symbol*>
+		struct Table : public std::map<const char*,Symbol*,cmp_str>
 		{
 			std::string name;
-            		Symbol* key;
-            		std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
+            Symbol* key;
+            std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
             
-            		Table();
-            		~Table();
-			bool basicSymbols(toolkit::clientdb::Connector& connect);
-            		bool fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables);
-            		short getCountRefereces()const; 
-            		
+            Table();
+            ~Table();
+			bool basicSymbols(toolkit::clientdb::connectors::Connector& connect);
+            bool fillKeyType(toolkit::clientdb::connectors::Connector& connect,Tables& tables);
+            short getCountRefereces()const; 
+            //std::list<Symbol*>::iterator search(const std::string&);
+            
 		private:
 			short countRef;
 		};
@@ -150,32 +159,54 @@ namespace apidb
 		{
 		public:
 			~Tables();	
-            		Table* search(const std::string&); 
+            Table* search(const std::string&); 
 			std::list<Table*>::iterator find(const std::string& tableName);       
-			bool listing(toolkit::clientdb::Connector& connect);
+			bool listing(toolkit::clientdb::connectors::Connector& connect);
 			short getMaxCountRef();
+            bool reorder();
+            
+        private:
 			int floatup();
-            		bool reorder();
-		private:
-			bool push(Table* tb,std::list<Table*>& in);
 		};
 	}
-	
-
     class ConfigureProject
     {
     private:
         bool processNode(xmlTextReaderPtr);
         bool getProjectNodes(xmlTextReaderPtr);
         
-    public:    
+    public:        
+        class Parameters : public std::vector<const char*>
+        {
+            
+        };
+        class Function : public std::vector<const Parameters*>
+        {
+        private:
+            std::string name;
+        public:
+            const std::string& getName() const;
+            Function(const std::string&);
+            Function();
+        };
+        class Table : public std::map<const char*, const Function*>
+        {
+        private:
+            std::string name;
+        public:
+            const std::string& getName() const;
+            Table(const std::string&);
+            Table();
+        };
+        
         std::string name; 
         std::string directory;
         toolkit::Version version;
-        toolkit::clientdb::DatconectionMySQL conectordb;
+        toolkit::clientdb::datasourcies::MySQL* conectordb;
 		InputLenguajes inputLenguaje;
 		OutputLenguajes outputLenguaje;
 		MVC mvc;
+        std::vector<Table> downloads;
 		
         ConfigureProject(std::string filename);
         ConfigureProject();
@@ -185,7 +216,7 @@ namespace apidb
         const std::string& getName()const;
         const std::string& getDirectory()const;
         const toolkit::Version& getVersion()const;
-        const toolkit::clientdb::DatconectionMySQL& getConector()const;
+        const toolkit::clientdb::datasourcies::MySQL& getConector()const;
     };
 }
 

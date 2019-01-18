@@ -34,11 +34,11 @@ namespace apidb
 	{		
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL_Server)
 		{
-			connector = new toolkit::clientdb::Connector();
+			connector = new toolkit::clientdb::connectors::MySQL();
 			analyzer = new mysql::Analyzer(configureProject);		
 			try
 			{
-				bool flag = connector->connect(config.conectordb);
+				bool flag = connector->connect(*config.conectordb);
 				if(!flag)
 				{
 					delete connector;
@@ -147,13 +147,13 @@ namespace apidb
 		//analyzer->setPramsLenguajes(configureProject->inputLenguaje,configureProject->outputLenguaje);
 		
 		if(analyzer->listing(*connector)) //reading tables
-        	{
-            		for(symbols::Table* table: analyzer->getListTable()) //reading attrubtes by table
-            		{
+        {
+            for(symbols::Table* table: analyzer->getListTable()) //reading attrubtes by table
+            {
 				analyzer->getOutputMessage() << "\tCreating basic simbols for " << table->name  << "." << std::endl;
-                		//simbolos basicos 
-                		if(!table->basicSymbols(*connector))
-                		{
+                //simbolos basicos 
+                if(!table->basicSymbols(*connector))
+                {
 					//std::cerr<<"Faill on basicSymbols"<<std::endl;
 					return false;
 				}				
@@ -164,16 +164,16 @@ namespace apidb
 					return false;
 				}//parsing imput types
 				//std::cout<<"\t"<<table->name<<std::endl;
-				for(symbols::Symbol* attribute: *table)
+				for (auto const& [key, attribute] : *table)
 				{
 					//std::cout<<"\t"<<attribute->inType<<std::endl;
 					attribute->outType = analyzer->parse(attribute->inType);
 				}				
 			}	
 			analyzer->getListTable().reorder();
-        	}  
+        }  
           
-	return true;
+        return true;
 	}
 		
 	/*Driver::Driver(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje,toolkit::Version version)

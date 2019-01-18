@@ -81,7 +81,7 @@ namespace apidb
 	
 namespace mysql
 {
-	bool Analyzer::listing(toolkit::clientdb::Connector& connect)
+	bool Analyzer::listing(toolkit::clientdb::connectors::Connector& connect)
 	{
 		return symbolsTables.listing(connect);
 	}

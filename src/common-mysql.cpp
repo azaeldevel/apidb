@@ -26,11 +26,11 @@
 
 namespace apidb
 {
-	bool symbols::Table::fillKeyType(toolkit::clientdb::Connector& connect, symbols::Tables& tables)
+	bool symbols::Table::fillKeyType(toolkit::clientdb::connectors::Connector& connect, symbols::Tables& tables)
 	{
 		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME FROM information_schema.TABLE_CONSTRAINTS i  LEFT JOIN information_schema.KEY_COLUMN_USAGE k ON i.CONSTRAINT_NAME = k.CONSTRAINT_NAME WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =";
 		fks += "'" ;
-		fks += ((toolkit::clientdb::DatconectionMySQL&)(connect.getDatconection())).getDatabase();
+		fks += ((toolkit::clientdb::datasourcies::Datasource&)(connect.getDatconection())).getDatabase();
 		fks += "'";
 		fks += " AND i.TABLE_NAME = '";
 		fks += name;
@@ -42,7 +42,7 @@ namespace apidb
 			MYSQL_ROW row;
 			while((row = mysql_fetch_row(result)))
 			{
-				for(Symbol* attribute: *this) 
+                for (auto const& [key, attribute] : *this) 
 				{
 					if(attribute->name.compare(row[0]) == 0)
 					{
@@ -65,7 +65,7 @@ namespace apidb
 		return true;
 	}
 	
-    bool symbols::Table::basicSymbols(toolkit::clientdb::Connector& connect)
+    bool symbols::Table::basicSymbols(toolkit::clientdb::connectors::Connector& connect)
     {
 		std::string str = "DESCRIBE ";
 		str += name;
@@ -133,9 +133,8 @@ namespace apidb
 				if(attrribute->required && keyType.compare("UNI") == 0)//unique constraing
 				{
 					attrribute->keyType = symbols::Symbol::KeyType::UNIQUE;
-				}
-				
-				push_back(attrribute);//se agrega el atributo a la lista
+				}				
+                insert(std::make_pair(attrribute->name.c_str(),attrribute));
 				if(attrribute->required)
 				{
 					required.push_back(attrribute);//si attrribute->required tambie se agrega a un lista especial
@@ -152,13 +151,13 @@ namespace apidb
     }
     
     
-	bool symbols::Tables::listing(toolkit::clientdb::Connector& connect)
+	bool symbols::Tables::listing(toolkit::clientdb::connectors::Connector& connect)
 	{
 		std::string db;
 		switch(connect.getDatconection().getServerType())
 		{
-			case toolkit::clientdb::Datconection::ServerType::MySQL:
-				db = ((toolkit::clientdb::DatconectionMySQL&)(connect.getDatconection())).getDatabase();
+            case toolkit::clientdb::datasourcies::Datasource::ServerType::MySQL:
+				db = connect.getDatconection().getDatabase();
 				break;
 			default:
 			return false;

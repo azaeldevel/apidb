@@ -7,11 +7,45 @@
 #include <string.h>
 #include <stdio.h>
 #include <iostream>
+#include <map>
+
 
 #include "common.hpp"
 
 namespace apidb
 {
+    /*std::list<apidb::symbols::Symbol*>::iterator apidb::symbols::Table::search(const std::string& name)
+    {			
+        auto it = find(name.c_str());
+        return it;
+        
+    }*/
+    const std::string& ConfigureProject::Table::getName() const
+    {
+        return name;        
+    }
+    ConfigureProject::Table::Table(const std::string& name)
+    {
+        this->name = name;
+    }
+    ConfigureProject::Table::Table()
+    {
+        
+    }
+            
+    const std::string& ConfigureProject::Function::getName() const
+    {
+        return name;
+    }
+    ConfigureProject::Function::Function(const std::string& name)
+    {
+        this->name = name;
+    }
+    ConfigureProject::Function::Function()
+    {
+        
+    }
+            
 	bool ConfigureProject::checkXML(xmlTextReaderPtr reader)
 	{
 		/*const xmlChar *name;
@@ -44,20 +78,20 @@ namespace apidb
 		//xmlNewChild(root_node, NULL, (const xmlChar *)"directory", (const xmlChar *)directory.c_str());
 				
 		xmlNodePtr version_node = xmlNewChild(root_node, NULL, (const xmlChar *)"version", NULL);
-		xmlNewChild(version_node, NULL, (const xmlChar *)"major", (const xmlChar *)std::to_string(version.major).c_str());
-		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(version.minor).c_str());
-		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(version.patch).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"major", (const xmlChar *)std::to_string(version.getMajor()).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(version.getMinor()).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(version.getPatch()).c_str());
 		//xmlNewChild(version_node, NULL, (const xmlChar *)"stage", (const xmlChar *)version.stage );
 		
 		xmlNodePtr db_node = xmlNewChild(root_node, NULL, (const xmlChar *)"ConectorDB", NULL);
 		if(inputLenguaje == apidb::InputLenguajes::MySQL_Server)
 		{
 			//toolkit::clientdb::DatconectionMySQL* dat = (toolkit::clientdb::DatconectionMySQL*)connector;
-			xmlNewChild(db_node, NULL, (const xmlChar *)"host", (const xmlChar *)conectordb.host.c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"port", (const xmlChar *)std::to_string(conectordb.getPort()).c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"nameDB", (const xmlChar *)conectordb.database.c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"user", (const xmlChar *)conectordb.user.c_str());
-			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb.password.c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"host", (const xmlChar *)conectordb->getHost().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"port", (const xmlChar *)std::to_string(conectordb->getPort()).c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"nameDB", (const xmlChar *)conectordb->getDatabase().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"user", (const xmlChar *)conectordb->getUser().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb->getPassword().c_str());
 		}
 		else
         {
@@ -90,9 +124,9 @@ namespace apidb
 	}
 
 	
-    const toolkit::clientdb::DatconectionMySQL& ConfigureProject::getConector() const
+    const toolkit::clientdb::datasourcies::MySQL& ConfigureProject::getConector() const
     {
-        return conectordb;    
+        return *conectordb;    
     }
     const toolkit::Version& ConfigureProject::getVersion()const
     {
@@ -119,16 +153,7 @@ namespace apidb
             //std::cout<<"Find text."<<std::endl;   
             this->name = (const char*)xmlTextReaderConstValue(reader);
         }
-            
-        /*xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        name = xmlTextReaderConstName(reader);  
-        if(strcmp((const char*)name,"#text") == 0)
-        {
-            this->directory = (const char*)xmlTextReaderConstValue(reader);
-        }*/        
+                 
         
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
@@ -145,9 +170,10 @@ namespace apidb
             return true;
         }
         name = xmlTextReaderConstName(reader);
+        short major = 0;
         if(strcmp((const char*)name,"#text") == 0)
         {  
-            this->version.major = atoi((const char*)xmlTextReaderConstValue(reader));
+            major = atoi((const char*)xmlTextReaderConstValue(reader));
         }
         
 
@@ -164,9 +190,10 @@ namespace apidb
             return true;
         }  
         name = xmlTextReaderConstName(reader);
+        short minor = 0;
         if(strcmp((const char*)name,"#text") == 0)
         {
-            this->version.minor = atoi((const char*)xmlTextReaderConstValue(reader));
+            minor = atoi((const char*)xmlTextReaderConstValue(reader));
         }
         
 
@@ -185,12 +212,13 @@ namespace apidb
             return true;
         }
         name = xmlTextReaderConstName(reader);
+        short patch = 0;
         if(strcmp((const char*)name,"#text") == 0)
         {
-            this->version.patch = atoi((const char*)xmlTextReaderConstValue(reader));
+            patch = atoi((const char*)xmlTextReaderConstValue(reader));
         }
         
-        this->version.stage = toolkit::Version::Stage::alpha;
+        this->version.set(major,minor,patch,toolkit::Version::Stage::alpha);
         
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
@@ -207,9 +235,10 @@ namespace apidb
             return true;
         }
         name = xmlTextReaderConstName(reader);
+        std::string host = "";
         if(strcmp((const char*)name,"#text") == 0)
         {
-            this->conectordb.host = (const char*)xmlTextReaderConstValue(reader);
+            host = (const char*)xmlTextReaderConstValue(reader);
         }
         
         xmlTextReaderRead(reader);
@@ -225,9 +254,10 @@ namespace apidb
             return true;
         }
         name = xmlTextReaderConstName(reader);
+        int port = 0;
         if(strcmp((const char*)name,"#text") == 0)
         {
-            this->conectordb.port = atoi((const char*)xmlTextReaderConstValue(reader));
+            port = atoi((const char*)xmlTextReaderConstValue(reader));
         }
         
         xmlTextReaderRead(reader);
@@ -243,9 +273,10 @@ namespace apidb
             return true;
         }
         name = xmlTextReaderConstName(reader);
+        std::string database = "";
         if(strcmp((const char*)name,"#text") == 0)
         {
-            this->conectordb.database = (const char*)xmlTextReaderConstValue(reader);
+            database = (const char*)xmlTextReaderConstValue(reader);
         }
         
         xmlTextReaderRead(reader);
@@ -261,9 +292,10 @@ namespace apidb
             return true;
         }
         name = xmlTextReaderConstName(reader);
+        std::string user = "";
         if(strcmp((const char*)name,"#text") == 0)
         {
-            this->conectordb.user = (const char*)xmlTextReaderConstValue(reader);
+            user = (const char*)xmlTextReaderConstValue(reader);
         }
         
         xmlTextReaderRead(reader);
@@ -279,10 +311,14 @@ namespace apidb
             return true;
         }
         name = xmlTextReaderConstName(reader);
+        std::string password = "";
         if(strcmp((const char*)name,"#text") == 0)
         {
-            this->conectordb.password = (const char*)xmlTextReaderConstValue(reader);
+            password = (const char*)xmlTextReaderConstValue(reader);
         }
+        
+        conectordb = new toolkit::clientdb::datasourcies::MySQL(host,port,database,user,password);
+        
         return true;
     }
 
@@ -314,7 +350,7 @@ namespace apidb
 
     ConfigureProject::ConfigureProject()
     {
-        ;
+        conectordb = NULL;
     }
     
     ConfigureProject::ConfigureProject(std::string filename)
@@ -339,7 +375,7 @@ namespace apidb
         }
     }
     
-    	namespace symbols
+    namespace symbols
 	{
 		std::string Key::getOutType()
 		{
@@ -373,9 +409,10 @@ namespace apidb
 				flag = floatup();
 			//}
 			//while(flag > 0);
+                return true;
 		}
 	
-        	int Tables::floatup()
+        int Tables::floatup()
 		{		
 			std::list<Table*>::iterator firtsTb = (--begin());
 			std::list<Table*>::iterator lastTb = (--end());
@@ -383,16 +420,16 @@ namespace apidb
 			for (std::list<Table*>::iterator i = lastTb; firtsTb != i; --i) 
 			{
 				//std::cout<<"Table : "<< (*i)->name << std::endl;
-				std::list<Symbol*>::iterator firtsFl = (--((*i)->begin()));
-				std::list<Symbol*>::iterator lastFl = (--((*i)->end()));
-				for (std::list<Symbol*>::iterator j = lastFl; firtsFl != j; --j)
+				std::map<const char*,Symbol*>::iterator firtsFl = (--((*i)->begin()));
+				std::map<const char*,Symbol*>::iterator lastFl = (--((*i)->end()));
+				for (std::map<const char*,Symbol*>::iterator j = lastFl; firtsFl != j; --j)
 				{
-					if((*j)->classReferenced != NULL)
+					if((*j).second->classReferenced != NULL)
 					{
 						//std::cout<<"Table : "<< (*i)->name << std::endl;
 						//std::cout<<"\tField : "<< (*j)->name << " --> " << (*i)->name << std::endl;
 						//verificar que la tabla '(*j)->classReferenced' este en una posicion mas superior a la tabla 'i'
-						auto finded = find((*j)->classReferenced->name);
+						auto finded = find((*j).second->classReferenced->name);
 						if(std::distance(finded,i) < 0)
 						{
 							//std::cout<<"\t"<< (*j)->classReferenced->name << " Ya superior a " << (*i)->name << std::endl;
@@ -465,7 +502,7 @@ namespace apidb
 		
 		Table::~Table()
 		{
-			for (Symbol* symbol : *this)
+            for (auto const& [key, symbol] : *this)
 			{
 				delete symbol;
 			}	

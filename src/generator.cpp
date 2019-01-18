@@ -22,6 +22,8 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <map>
+
 
 #include "analyzer.hpp"
 #include "generator.hpp"
@@ -30,7 +32,7 @@
 namespace apidb
 {
 namespace generators
-{
+{ 
 	Generator::Generator(const ConfigureProject& config) : configureProject(config)
 	{
 		
@@ -38,7 +40,7 @@ namespace generators
 	
 	CMake::CMake(apidb::Analyzer& d,const ConfigureProject& config): analyzer(d),configureProject(config), apidb::generators::Generator(config)
 	{
-		options.cmake_minimun_requiered.major=3;
+		/*options.cmake_minimun_requiered.major=3;
 		options.cmake_minimun_requiered.minor=0;
 		options.project.name = analyzer.getNameProject();
 		options.project.directory = analyzer.getDirectoryProject();
@@ -46,7 +48,7 @@ namespace generators
 		options.project.version.major = 0;
 		options.project.version.minor = 1;
 		options.project.version.patch = 0;
-		options.project.version.stage = toolkit::Version::alpha;
+		options.project.version.stage = toolkit::Version::alpha;*/
 	}
 	
 	CMake::~CMake()
@@ -71,19 +73,19 @@ namespace generators
 		analyzer.getOutputMessage() << "\tTipo de Gestor: " << getOutputLenguajeString() << std::endl;
 		
 		cmakelists<<"CMAKE_MINIMUM_REQUIRED(VERSION ";
-		cmakelists<<options.cmake_minimun_requiered.major;
+		cmakelists<<"3";
 		cmakelists<<".";
-		cmakelists<<options.cmake_minimun_requiered.minor;
+		cmakelists<<"0";
 		cmakelists<<")"<<std::endl;
 		
 		cmakelists<<"PROJECT(";
-		cmakelists<<options.project.name;
+		cmakelists<<configureProject.getName();
 		cmakelists<<" VERSION ";
-		cmakelists<<options.project.version.major;
+		cmakelists<<configureProject.getVersion().getMajor();
 		cmakelists<<".";
-		cmakelists<<options.project.version.minor;
+		cmakelists<<configureProject.getVersion().getMinor();
 		cmakelists<<".";
-		cmakelists<<options.project.version.patch;
+		cmakelists<<configureProject.getVersion().getPatch();
 		cmakelists<<".";
 		cmakelists<<"0 ";
 		if(analyzer.getOutputLenguaje() == apidb::OutputLenguajes::CPP)
@@ -98,9 +100,8 @@ namespace generators
 		cmakelists<<"SET(CMAKE_CXX_STANDARD 14)"<<std::endl;
 		cmakelists<<"SET(CMAKE_CXX_STANDARD_REQUIRED ON)"<<std::endl;
 		cmakelists<<"SET(CMAKE_CXX_EXTENSIONS OFF)"<<std::endl;
-		cmakelists<<"SET(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -g -Wall\")"<<std::endl;
 		cmakelists<<std::endl;
-		cmakelists<<"SET(apidb_VERSION_STAGE \"alpha\")"<<std::endl;
+		cmakelists<<"SET(" << configureProject.name << "_VERSION_STAGE \"alpha\")"<<std::endl;
 		cmakelists<<"CONFIGURE_FILE(\"${PROJECT_SOURCE_DIR}/config.h.in\" \"${PROJECT_SOURCE_DIR}/config.h\")"<<std::endl;
 		cmakelists<<std::endl;
 		cmakelists<<"FIND_PACKAGE(MySQL REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
@@ -116,10 +117,10 @@ namespace generators
 			cmakelists<<"INCLUDE_DIRECTORIES(${TOOLKIT_CLIENTDB_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
 		cmakelists<<std::endl;
-		cmakelists<<"ADD_EXECUTABLE(developing "<< options.project.name <<".cpp developing.cpp)"<<std::endl;
+		cmakelists<<"ADD_EXECUTABLE(developing "<< configureProject.name <<".cpp developing.cpp)"<<std::endl;
 		cmakelists<<"TARGET_LINK_LIBRARIES(developing ${TOOLKIT_CLIENTDB_LIBRARY} ${TOOLKIT_COMMON_LIBRARY} ${MYSQL_LIBRARY})"<<std::endl;
-		cmakelists<<"ADD_LIBRARY("<< options.project.name <<" STATIC "<< options.project.name <<".cpp )"<<std::endl;
-		cmakelists<<"TARGET_LINK_LIBRARIES("<< options.project.name <<" ${MYSQL_LIBRARY} ${TOOLKIT_COMMON_LIBRARY}  ${TOOLKIT_CLIENDB_LIBRARY} )"<<std::endl;
+		cmakelists<<"ADD_LIBRARY("<< configureProject.name <<" STATIC "<< configureProject.name <<".cpp )"<<std::endl;
+		cmakelists<<"TARGET_LINK_LIBRARIES("<< configureProject.name <<" ${MYSQL_LIBRARY} ${TOOLKIT_COMMON_LIBRARY}  ${TOOLKIT_CLIENDB_LIBRARY} )"<<std::endl;
 		cmakelists.close();
 		analyzer.getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
 		
@@ -343,7 +344,7 @@ namespace generators
 		}
         if(preexits)
         {
-            developing<<"#include \"" << options.project.name << ".hpp\""<<std::endl;
+            developing<<"#include \"" << configureProject.name << ".hpp\""<<std::endl;
             developing<<std::endl;
             developing<<"#include <iostream>"<<std::endl;
             developing<<"#include <list>"<<std::endl;
@@ -376,7 +377,146 @@ namespace generators
 		return configureProject.outputLenguaje;
 	}
 	
+	void CPP::writeDownloadsCPP(const apidb::symbols::Table& table, std::ofstream& ofile,const ConfigureProject& config)
+    {
+        std::string strmsg = "APIDB requiere que la tabla '";
+        strmsg += table.name;
+        strmsg += "' tenga llave primaria para continuar";
+        if(table.key == NULL) throw BuildException(strmsg);
+                
+        std::vector<apidb::ConfigureProject::Table> tbs = config.downloads;
+        //std::find(config.downloadsSelects.begin(), config.downloadsSelects.end(), table.name);
+        for( auto tb: tbs)//std::vector<Table>
+        {
+            if(table.name.compare(tb.getName()) != 0) 
+            {                
+                continue;//buscar la configuracion de la tabla correspondiente
+            }
+            
+            for (auto const& [key, val] : tb)//class Table : public std::map<const char*, const Function*>
+            {
+                ofile << "\tvoid " << table.name << "::download_" << key << "(toolkit::clientdb::connectors::Connector& connector)"<<std::endl;
+                ofile << "\t{ " << std::endl;
+                ofile << "\t\tstd::string sqlString = \"SELECT ";
+                for(auto func : *val)//class Function : public std::vector<const Parameters*>
+                {
+                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = func->end();
+                    itParamEnd--;
+                    for(const char* param : *func)
+                    {
+                        ofile << param; 
+                        if(param != *itParamEnd)
+                        {
+                            ofile << ",";
+                        }
+                    }                    
+                    ofile << " FROM " << table.name << " WHERE " << table.key->name << " = '\" + get" << table.key->upperName << "String() + \"'\";" << std::endl;
+                    ofile << "\t\tif(connector.query(sqlString))"  << std::endl;
+                    ofile << "\t\t{" << std::endl;
+                    ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
+                    ofile << "\t\t\tif (result == NULL)"  << std::endl;
+                    ofile << "\t\t\t{"  << std::endl;
+                    ofile << "\t\t\t\tthrow toolkit::clientdb::SQLException(\"La descarga de los datos fallo con la consulta '\" + sqlString + \"'\");"<< std::endl;
+                    ofile << "\t\t\t}"  << std::endl;
+                    ofile << "\t\t\tint num_fields = mysql_num_fields(result);"<< std::endl;
+                    ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
+                    ofile << "\t\t\twhile ((row = mysql_fetch_row(result))) "<< std::endl;
+                    ofile << "\t\t\t{"<< std::endl;
+                    ofile << "\t\t\t\tfor(int i = 0; i < num_fields; i++)"<< std::endl;
+                    ofile << "\t\t\t\t{"<< std::endl;
+                    itParamEnd = func->end();
+                    for(const char* param : *func)
+                    {
+                        //ofile << param; 
+                        if(param != *itParamEnd)
+                        {
+                            //ofile << "\t\t\t\t\tthis->" << param << " = (row[i] ? row[i] : NULL);"<< std::endl;
+                            ofile << "\t\t\t\t\tthis->" << param << " = ";
+                            auto fl = table.find(param);
+                            if(fl != table.end())
+                            {
+                                if((*fl).second->classReferenced != NULL)
+                                {
+                                    ofile << " new " << (*fl).second->classReferenced->name << "(row[i])" << ";" << std::endl ;
+                                }
+                                else if((*fl).second->outType.compare("int") == 0)
+                                {
+                                    ofile << " std::stoi(row[i])" << ";"<< std::endl ;
+                                }
+                                else if((*fl).second->outType.compare("std::string") == 0 || (*fl).second->outType.compare("const char*") == 0)
+                                {
+                                    ofile << " row[i]" << ";" << std::endl ;
+                                }
+                                else
+                                {
+                                    ofile << " row[i]" << ";" << std::endl ;
+                                }
+                            }
+                            else
+                            {
+                                std::string strmsg = "No se encontro el campo ";
+                                strmsg = strmsg + "'" + param + "' en la tabla '" + table.name + "'";
+                                throw BuildException(strmsg);
+                            }
+                        }
+                    }
+                    //ofile << "\t\t\t;"<< std::endl;
+                    ofile << "\t\t\t\t}"<< std::endl;
+                    ofile << "\t\t\t}"<< std::endl;
+                    ofile << "\t\t\t;"<< std::endl;
+                    ofile << "\t\t}" << std::endl;
+                    ofile << "\t\telse" << std::endl;
+                    ofile << "\t\t{" << std::endl;
+                    ofile << "\t\t}" << std::endl;
+                }
+                ofile << "\t} " << std::endl;
+            }         
+        }   
+        
+    }
+    void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile,const ConfigureProject& config)
+    {
+        std::string strmsg = "APIDB requiere que la tabla '";
+        strmsg += table.name;
+        strmsg += "' tenga llave primaria para continuar";
+        if(table.key == NULL) throw BuildException(strmsg);
+                
+        std::vector<apidb::ConfigureProject::Table> tbs = config.downloads;
+        for( auto tb: tbs)//std::vector<Table>
+        {
+            //std::cout<<"Iterate on '" << tb.getName() << "'" << std::endl;
+            if(table.name.compare(tb.getName()) != 0) 
+            {          
+                continue;//buscar la configuracion de la tabla correspondiente
+            }            
+            for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
+            {
+                ofile << "\t\tvoid download_" << key << "(toolkit::clientdb::connectors::Connector& connector);"<<std::endl;
+            }         
+        }
+    }
 	
+    void CPP::writeSelectH(const apidb::symbols::Table& table,std::ofstream& ofile)
+    {
+        std::string strmsg = "APIDB requiere que la tabla '";
+        strmsg += table.name;
+        strmsg += "' tenga llave primaria para continuar";
+        if(table.key == NULL) throw BuildException(strmsg);
+        
+        if(table.key->outType.compare("int") == 0 || table.key->outType.compare("std::string") == 0 || table.key->outType.compare("const char*") == 0)
+        {
+            ofile << "\t\tvoid select(" << table.key->outType << ");"<< std::endl;
+        }
+        else
+        {
+            strmsg += " y la llave debe ser de tipo entero y no de tipo '" + table.key->outType + "'";
+            throw BuildException(strmsg);
+        }
+    }
+    void CPP::writeSelectCPP(const apidb::symbols::Table&,std::ofstream&)
+    {
+        
+    }
 	CPP::~CPP()
 	{
 		delete[] writeResults;
@@ -417,10 +557,10 @@ namespace generators
 	{
 		int countFIelds = 0;
 		// creando insert
-        	ofile << "\t\t"<< "bool ";
-        	ofile << "insert(toolkit::clientdb::Connector& connector";
-        	for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
-        	{
+        ofile << "\t\t"<< "bool ";
+        ofile << "insert(toolkit::clientdb::connectors::Connector& connector";
+        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
+        {
 			if((*i)->keyType == symbols::Symbol::KeyType::PRIMARY) continue;
 			countFIelds++;
 			if(i != table.required.end())
@@ -440,7 +580,7 @@ namespace generators
 			}
 			ofile << (*i)->name;
 		}
-        	ofile << ");"<<std::endl;
+        ofile << ");"<<std::endl;
 		if(countFIelds == 0) throw BuildException(table.name + " no tiene campo requerido por lo que no se puede generar metodo insert."); 
 	}
 
@@ -448,12 +588,12 @@ namespace generators
 	{	
         std::string strmsg = "APIDB requiere que la tabla '" ;
         strmsg += table.name;
-        strmsg += "' teng llave para continuar con el proceso.";
+        strmsg += "' tenga llave para continuar con el proceso.";
         if(table.key == NULL) throw BuildException(strmsg);
         
 		// Methodo insert
         ofile << "\t"<< "bool ";
-        ofile <<table.name<< "::insert(toolkit::clientdb::Connector& connector";
+        ofile <<table.name<< "::insert(toolkit::clientdb::connectors::Connector& connector";
         for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
             if((*i)->keyType == symbols::Symbol::KeyType::PRIMARY) continue;
@@ -572,7 +712,7 @@ namespace generators
 			}
 			else
 			{
-				throw BuildException("EL tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema'" + table.key->outType + "'");
+				throw BuildException("El tipo de dato correspondiente a la llave es inmanejable para este esquema este esquema'" + table.key->outType + "'");
 			}
 		}
 		else
@@ -641,7 +781,7 @@ namespace generators
 		//constructor de copias 
 		ofile << "\t" << table.name << "::" << table.name <<"(const " << table.name <<"& obj)"<<std::endl;
 		ofile << "\t{"<<std::endl;
-		for(const symbols::Symbol* attr : table)
+        for (auto const& [key, attr] : table)
 		{
 			ofile << "\t\tthis->"<< attr->name << " = obj." << attr->name<<";"<<std::endl;
 		}
@@ -704,10 +844,10 @@ namespace generators
 		ofile <<"\t{"<<std::endl;
 		ofile <<"\t}"<<std::endl;
 	}
-	void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
-	{		
-        for(const symbols::Symbol* attr : table)
-        {
+	void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile,const ConfigureProject& config)
+	{
+        for (auto const& [key, attr] : table)
+        {            
 			//gets
 			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 			{
@@ -745,10 +885,10 @@ namespace generators
 			ofile << "\t}"<<std::endl;
 			
 			
-			if(attr->keyType == symbols::Symbol::KeyType::PRIMARY || attr->keyType == symbols::Symbol::KeyType::FOREIGN_UNIQUE)
+			/*if(attr->keyType == symbols::Symbol::KeyType::PRIMARY || attr->keyType == symbols::Symbol::KeyType::FOREIGN_UNIQUE)
 			{
 				continue;
-			}	
+			}*/	
 			
 			//getString()		
 			ofile << "\tstd::string "<< table.name <<"::get" << attr->upperName << "String() const "<< std::endl;
@@ -779,7 +919,7 @@ namespace generators
 			ofile << "\t}"<< std::endl;
             
 			//updates
-			ofile << "\tbool " << table.name <<"::update" << attr->upperName << "(toolkit::clientdb::Connector& connector,";
+			ofile << "\tbool " << table.name <<"::update" << attr->upperName << "(toolkit::clientdb::connectors::Connector& connector,";
 			if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
 			{
 				if(attr->classReferenced == NULL)//si es foreing key
@@ -797,54 +937,46 @@ namespace generators
 			}
 			ofile <<")"<< std::endl;
 			ofile << "\t{"<<std::endl;
-			ofile <<"\t\tstd::string sqlString = \"\";"<<std::endl;
-			ofile <<"\t\tsqlString = \"UPDATE \" + TABLE_NAME;"<<std::endl;
-			ofile <<"\t\tsqlString = sqlString + \" SET " << attr->name << " = \" " ;
-			if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
+			ofile << "\t\tstd::string sqlString = \"\";"<<std::endl;
+			ofile << "\t\tsqlString = \"UPDATE \" + TABLE_NAME;"<<std::endl;
+			ofile << "\t\tsqlString = sqlString + \" SET " << attr->name << " = \" " ;
+			if(attr->classReferenced != NULL)
+            {
+                if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
+                {
+                    ofile << " + \"'\" + " << attr->name << ".get" << attr->classReferenced->key->upperName <<"String() + \"'\";"<<std::endl;
+                }
+                else if((attr->outType.compare("std::string") == 0 | attr->outType.compare("const char*") == 0))
+                {
+                    ofile << " \"'\" + " << attr->name << ".get" << attr->classReferenced->key->upperName <<"String() + \"'\";"<<std::endl;	
+                }
+                else
+                {
+                    ofile <<"  \"'\" + " << attr->name << ".get" << attr->classReferenced->key->upperName <<"String() + \"'\";"<<std::endl;		
+                }
+            }
+            else if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
 			{
-				if(attr->classReferenced == NULL)//si es foreing key
-				{
-					ofile << "\"'\" + std::to_string(" << attr->name <<") + \"'\";";						
-				}
-				else
-				{
-					ofile << "\"'\" + std::to_string(" << attr->name ;	
-					const symbols::Symbol* actual = attr;
-					do
-					{
-						ofile << "." << actual->classReferenced->key->get;
-						actual = actual->classReferenced->key;						
-					}
-					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));				
-					ofile <<") + \"'\";"<<std::endl;						
-				}
+				ofile << " + \"'\" + std::to_string(" << attr->name <<") + \"'\";"<<std::endl;
 			}
-			else if((attr->outType.compare("std::string") == 0))
+			else if((attr->outType.compare("std::string") == 0 | attr->outType.compare("const char*") == 0))
 			{
 				ofile << " \"'\" + " << attr->name <<" + \"'\";"<<std::endl;	
 			}
 			else
 			{
-				ofile <<" + std::to_string(" << attr->name <<");"<<std::endl;		
+				ofile <<"  \"'\" +  std::to_string(" << attr->name <<") + \"'\";"<<std::endl;		
 			}
 			ofile <<"\t\tsqlString = sqlString + \" WHERE " << table.key->name << "  = \" ";			
 			if((table.key->outType.compare("int") == 0) | (table.key->outType.compare("long") == 0))
 			{
-				if(table.key->classReferenced == NULL)//si es foreing key
+				if(table.key->classReferenced == NULL)//si no es foreing key
 				{
-					ofile << " + std::to_string(" << table.key->get <<");"<<std::endl; ;	
+					ofile << " + \"'\" + this->get" << table.key->upperName <<"String() + \"'\";"<<std::endl;
 				}
 				else
 				{
-					ofile << " + std::to_string(" << table.key->name ;	
-					const symbols::Symbol* actual = table.key;
-					do
-					{
-						ofile << "->" << actual->classReferenced->key->get;
-						actual = actual->classReferenced->key;						
-					}
-					while((actual->outType.compare("int") == 0) && (actual->classReferenced != NULL));	
-					ofile <<");"<<std::endl;		
+					ofile << " + \"'\" + this->get" << table.key->upperName <<"String() + \"'\";"<<std::endl;	
 				}
 			}
 			else
@@ -862,10 +994,11 @@ namespace generators
 			
 		writeInsertCPP(table,ofile);		
 		writeKeyValueCPP(table,ofile);
+        writeDownloadsCPP(table,ofile,config);
 		ofile << std::endl; 
     }
     
-    void CPP::createSpaceCPP(std::ofstream& file)
+    void CPP::createSpaceCPP(std::ofstream& file,const ConfigureProject& config)
     {
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
@@ -882,7 +1015,7 @@ namespace generators
         	const symbols::Tables& tables = analyzer.getListTable();
         	for (apidb::symbols::Table* table : tables) 
         	{
-            		createClassCPP(*table,file,table->name);       
+            		createClassCPP(*table,file,table->name,config);       
         	}
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
@@ -894,18 +1027,18 @@ namespace generators
 			file <<"}" <<std::endl;
 		}
     }
-	void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
+	void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass,const ConfigureProject& config)
     {
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  nameClass << "\";" << std::endl;
-		createClassMethodesCPP(cl,file);        
+		createClassMethodesCPP(cl,file,config);        
 		file<< std::endl<< std::endl;
     }
     
-	void CPP::createClassMethodesH(const apidb::symbols::Table& table,std::ofstream& ofile)
+	void CPP::createClassMethodesH(const apidb::symbols::Table& table,std::ofstream& ofile,const ConfigureProject& config)
     {
 		std::string insertMethode = "";
-        	for(symbols::Symbol* attr : table)
-        	{
+        for (auto const& [key, attr] : table)
+        {
 			//get
 			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 			{
@@ -925,14 +1058,14 @@ namespace generators
 			ofile << attr->get << " const;"<< std::endl;
 			
 			
-			if(attr->keyType == symbols::Symbol::KeyType::PRIMARY)
+			/*if(attr->keyType == symbols::Symbol::KeyType::PRIMARY)
 			{
 				continue;
-			}
+			}*/
 			//getString()			
 			ofile << "\t\tstd::string get" << attr->upperName << "String() const;"<< std::endl;		
 			//update
-			ofile << "\t\tbool " << "update" << attr->upperName << "(toolkit::clientdb::Connector& connector,";
+			ofile << "\t\tbool " << "update" << attr->upperName << "(toolkit::clientdb::connectors::Connector& connector,";
 			if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
 			{
 				if(attr->classReferenced == NULL)//si es foreing key
@@ -951,7 +1084,6 @@ namespace generators
 			ofile << ");"<< std::endl;					
         }  
                  
-          
 		writeKeyContructorH(table,ofile);		
 		writeCopyContructorH(table,ofile);
 		writeDefaultContructorH(table,ofile);
@@ -959,12 +1091,14 @@ namespace generators
 		writeInsertH(table,ofile);	
 		writeKeyValueH(table,ofile);
 		ofile << std::endl; 		
-		  
+        writeSelectH(table,ofile);
+        writeDownloadsH(table,ofile,config);
+        ofile << std::endl;
     }
     
     void CPP::createClassAttributesH(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
-        for(symbols::Symbol* attr : table)
+        for (auto const& [key, attr] : table)
         {
 			//ofile <<"["<<attr->outType<<"]"<<std::endl;
 			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
@@ -995,7 +1129,7 @@ namespace generators
         }        
     }
     
-    void CPP::createSpaceH(std::ofstream& file)
+    void CPP::createSpaceH(std::ofstream& file,const ConfigureProject& config)
     {
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
@@ -1018,7 +1152,7 @@ namespace generators
         	for (const apidb::symbols::Table* table : tables) 
         	{
 			//file <<"Declare Table " << table->name << std::endl;
-            		createClassH(*table,file,table->name);       
+            		createClassH(*table,file,table->name,config);       
         	}
 
 		if(configureProject.mvc == apidb::MVC::NO)
@@ -1041,7 +1175,7 @@ namespace generators
     {
         file << "\tprivate:" <<std::endl;
     }
-    void CPP::createClassH(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
+    void CPP::createClassH(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass,const ConfigureProject& config)
     {
 		//file <<"keyword"<<std::endl;
 		analyzer.getOutputMessage() <<"\tHeading class " << cl.name<<std::endl;
@@ -1054,7 +1188,7 @@ namespace generators
         createClassAttributesH(cl,file);
         createClassPublicH(file);
         //file <<"methodes"<<std::endl;
-        createClassMethodesH(cl,file);
+        createClassMethodesH(cl,file,config);
         file <<"\t};"<<std::endl;
     }
     
@@ -1068,7 +1202,7 @@ namespace generators
 		const apidb::symbols::Tables& tables = analyzer.getListTable();
 		for(symbols::Table* table: tables)
 		{
-			for(symbols::Symbol* attr : *table)
+            for (auto const& [key, attr] : *table)
 			{
 				if(attr->outType.compare("std::string")==0 && stringFlag == false)
 				{
@@ -1080,12 +1214,14 @@ namespace generators
 			
 			
 		//inlcudes in source file
-        	getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl; 
+        getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl; 
+        getSourceOutput()<< "#include <mysql/my_global.h>"<<std::endl;
+        getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
 		getHeaderOutput()<< "#include <clientdb.hpp>"<<std::endl<<std::endl;
 			
 		//writing code				
-		createSpaceH(getHeaderOutput());  
-		createSpaceCPP(getSourceOutput()); 
+		createSpaceH(getHeaderOutput(),configureProject);  
+		createSpaceCPP(getSourceOutput(),configureProject); 
           
         return true;    
     }

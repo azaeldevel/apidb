@@ -50,18 +50,18 @@
 			virtual ~CPP();
 			
 		private:
-			void createSpaceH(std::ofstream& file);
-			void createClassH(const apidb::symbols::Table&,std::ofstream&,const std::string&);
+			void createSpaceH(std::ofstream& file,const ConfigureProject&);
+			void createClassH(const apidb::symbols::Table&,std::ofstream&,const std::string&,const ConfigureProject&);
 			void createClassPrivateH(std::ofstream&);
 			void createClassAttributesH(const apidb::symbols::Table&,std::ofstream&);
 			void createClassPublicH(std::ofstream&);
-			void createClassMethodesH(const apidb::symbols::Table&,std::ofstream&);
-			void createSpaceCPP(std::ofstream& file);
-			void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&);
+			void createClassMethodesH(const apidb::symbols::Table&,std::ofstream&,const ConfigureProject&);
+			void createSpaceCPP(std::ofstream& file,const ConfigureProject&);
+			void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&,const ConfigureProject&);
 			void createClassPrivateCPP(std::ofstream&);
 			void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);
 			void createClassPublicCPP(std::ofstream&);
-			void createClassMethodesCPP(const apidb::symbols::Table&,std::ofstream&);
+			void createClassMethodesCPP(const apidb::symbols::Table&,std::ofstream&,const ConfigureProject&);
 			void writeDefaultContructorH(const apidb::symbols::Table&,std::ofstream&);
 			void writeDefaultContructorCPP(const apidb::symbols::Table&,std::ofstream&);
 			void writeKeyValueH(const apidb::symbols::Table&,std::ofstream&);
@@ -72,6 +72,10 @@
 			void writeKeyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
 			void writeInsertH(const apidb::symbols::Table&,std::ofstream&);
 			void writeInsertCPP(const apidb::symbols::Table&,std::ofstream&);
+            void writeSelectH(const apidb::symbols::Table& table, std::ofstream& ofile);
+            void writeSelectCPP(const apidb::symbols::Table&,std::ofstream&);
+            void writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile,const ConfigureProject&);
+            void writeDownloadsCPP(const apidb::symbols::Table&,std::ofstream&,const ConfigureProject&);
 			
 			apidb::Analyzer& analyzer;
 			std::ofstream* writeResults;//erreglo de writeoutput files
@@ -82,20 +86,7 @@
 		
 		class CMake : public Generator
 		{
-		public:
-			struct Options
-			{
-				toolkit::Version cmake_minimun_requiered;
-				struct Project
-				{
-					std::string name;
-					toolkit::Version version;
-					OutputLenguajes lenguague;
-					std::string directory;
-				};
-				Project project;
-			};
-			
+		public:			
 			virtual bool generate();
 			virtual ~CMake();
 			CMake(apidb::Analyzer&,const ConfigureProject&);
@@ -107,10 +98,9 @@
 			std::ofstream toolkitclientdbConfig;
 			std::ofstream config;
 			std::ofstream developing;
-			Options options;
+			//Options options;
 			const ConfigureProject& configureProject;
-		};
-	
+		};	
 	}
 		
 }
