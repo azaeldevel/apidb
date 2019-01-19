@@ -72,10 +72,12 @@
 			void writeKeyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
 			void writeInsertH(const apidb::symbols::Table&,std::ofstream&);
 			void writeInsertCPP(const apidb::symbols::Table&,std::ofstream&);
-            void writeSelectH(const apidb::symbols::Table& table, std::ofstream& ofile);
-            void writeSelectCPP(const apidb::symbols::Table&,std::ofstream&);
+            //void writeSelectH(const apidb::symbols::Table& table, std::ofstream& ofile);
+            //void writeSelectCPP(const apidb::symbols::Table&,std::ofstream&);
             void writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile,const ConfigureProject&);
             void writeDownloadsCPP(const apidb::symbols::Table&,std::ofstream&,const ConfigureProject&);
+            void writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile,const ConfigureProject&);
+            void writeSelectsCPP(const apidb::symbols::Table&,std::ofstream&,const ConfigureProject&);
 			
 			apidb::Analyzer& analyzer;
 			std::ofstream* writeResults;//erreglo de writeoutput files

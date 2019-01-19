@@ -52,15 +52,33 @@ int main(int argc, char **argv)
 		std::cerr << "Commit fail"<< std::endl;
 	}
 	
+	if(person1.download_shortname(connector))
+    {
+        std::cout << ""<< person1.getN1() << " " << person1.getAp() << std::endl;
+    }
+    else
+    {
+        std::cout << "Fallo la descarga de person1" << std::endl;
+    }
+    
+    static std::vector<sis::Persons*>* lst = sis::Persons::select(connector,"n1 like 'n1-%8'");
+    for(auto p : *lst)
+    {
+        if(p->download_shortname(connector))
+        {
+            std::cout << ""<< p->getN1() << " " << p->getAp() << std::endl;
+        }
+    }
+    
     /*sis::Persons* person2 = new sis::Persons();
-    if(person2->selectRandom(connector))
+    if(person2->select(connector,"n1-4182","ap-4182"))
     {
 		std::cout << "Select Random "<< person2->toString() << std::endl;
 	}
 	else
 	{
 		std::cerr << "Fail Slected random "<< n1 << std::endl;
-	}  */  
+	} */
 	
 	//std::string db = ((toolkit::clientdb::DatconectionMySQL&)(connector.getDatconection())).getDatabase();
 	//std::cout<<db<<std::endl;

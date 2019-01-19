@@ -207,6 +207,7 @@ namespace apidb
 		OutputLenguajes outputLenguaje;
 		MVC mvc;
         std::vector<Table> downloads;
+        std::vector<Table> selects;
 		
         ConfigureProject(std::string filename);
         ConfigureProject();

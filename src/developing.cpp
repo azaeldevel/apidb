@@ -53,14 +53,15 @@ int main()
     dwShortName.push_back(&params_ShortName);
     tbP.insert(std::make_pair(dwShortName.getName().c_str(), &dwShortName));
     config.downloads.push_back(tbP);
+    config.selects.push_back(tbP);
     apidb::Driver driver(config);	
 	if(!driver.driving())
 	{
 		std::cerr<<mysqlSource.toString()<<" - es incorrecta."<<std::endl;
-        	return EXIT_FAILURE;
+        return EXIT_FAILURE;
 	}	
-    	if(!config.saveConfig())
-    	{
+    if(!config.saveConfig())
+    {
 		std::cerr<<"Fail creation prject."<<std::endl;
 		return EXIT_FAILURE;		
 	}

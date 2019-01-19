@@ -40,15 +40,6 @@ namespace generators
 	
 	CMake::CMake(apidb::Analyzer& d,const ConfigureProject& config): analyzer(d),configureProject(config), apidb::generators::Generator(config)
 	{
-		/*options.cmake_minimun_requiered.major=3;
-		options.cmake_minimun_requiered.minor=0;
-		options.project.name = analyzer.getNameProject();
-		options.project.directory = analyzer.getDirectoryProject();
-		options.project.lenguague = configureProject.outputLenguaje;
-		options.project.version.major = 0;
-		options.project.version.minor = 1;
-		options.project.version.patch = 0;
-		options.project.version.stage = toolkit::Version::alpha;*/
 	}
 	
 	CMake::~CMake()
@@ -376,7 +367,236 @@ namespace generators
 	{
 		return configureProject.outputLenguaje;
 	}
-	
+	void CPP::writeSelectsCPP(const apidb::symbols::Table& table, std::ofstream& ofile,const ConfigureProject& config)
+    {
+        std::string strmsg = "APIDB requiere que la tabla '";
+        strmsg += table.name;
+        strmsg += "' tenga llave primaria para continuar";
+        if(table.key == NULL) throw BuildException(strmsg);
+        
+        ofile << "\tstd::vector<"  << table.name << "*>* " << table.name << "::select(toolkit::clientdb::connectors::Connector& connector, const std::string& where)"<<std::endl;
+        ofile << "\t{" <<std::endl;
+        ofile << "\t\tstd::string sqlString = \"SELECT ";
+        {
+            ofile << table.key->name;
+            ofile << " FROM " << table.name << " WHERE \" + where ;"<< std::endl;
+            ofile << "\t\tif(connector.query(sqlString))"  << std::endl;
+            ofile << "\t\t{" << std::endl;
+            ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
+            ofile << "\t\t\tif (result == NULL)"  << std::endl;
+            ofile << "\t\t\t{"  << std::endl;
+            ofile << "\t\t\t\t//throw toolkit::clientdb::SQLException(\"La descarga de los datos fallo con la consulta '\" + sqlString + \"'\");"<< std::endl;
+            ofile << "\t\t\t\t return NULL;"<< std::endl;
+            ofile << "\t\t\t}"  << std::endl;
+            ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
+            ofile << "\t\t\tstd::vector<"<< table.name << "*>* tmpVc = new std::vector<" << table.name << "*>;" << std::endl;
+            ofile << "\t\t\twhile((row = mysql_fetch_row(result))) " << std::endl;
+            ofile << "\t\t\t{"<< std::endl;
+            ofile << "\t\t\t\t"<< table.name << "* tmp = NULL;" << std::endl;
+            auto fl = table.find(table.key->name.c_str());
+            if(fl != table.end())
+            {
+                if((*fl).second->outType.compare("int") == 0)
+                {
+                    ofile << "\t\t\t\ttmp = new " << table.name << "(std::stoi(row[0]))" << ";" << std::endl ;
+                    ofile << "\t\t\t\ttmpVc->push_back(tmp);" << std::endl;
+                }
+                else if((*fl).second->outType.compare("std::string") == 0)
+                {
+                    ofile << "\t\t\t\ttmp = new " << table.name << "(row[0])" << ";" << std::endl ;
+                    ofile << "\t\t\t\ttmpVc->push_back(tmp);" << std::endl;
+                }
+                else
+                {
+                     
+                }
+                
+            }
+            else
+            {
+                std::string strmsg = "No se encontro el campo ";
+                strmsg = strmsg + "'" + table.key->name + "' en la tabla '" + table.name + "'";
+                throw BuildException(strmsg);
+            }
+            ofile << "\t\t\t}"<< std::endl;
+                ofile << "\t\t\treturn tmpVc;" << std::endl;
+            ofile << "\t\t}" << std::endl;
+            ofile << "\t\treturn NULL;" << std::endl;
+        }
+        ofile << "\t}" <<std::endl;
+        
+        std::vector<apidb::ConfigureProject::Table> tbs = config.selects;
+        for( auto tb: tbs)//std::vector<Table>
+        {
+            if(table.name.compare(tb.getName()) != 0) 
+            {
+                continue;//buscar la configuracion de la tabla correspondiente
+            }
+            for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
+            {
+                ofile << "\tstd::vector<" << table.name<< "*>* " << table.name << "::select(toolkit::clientdb::connectors::Connector& connector,";
+                
+                for(auto func : *val)//class Function : public std::vector<const Parameters*>
+                {
+                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = func->end();
+                    itParamEnd--;
+                    for(const char* param : *func)
+                    {
+                        auto fl = table.find(param);
+                        if(fl != table.end())
+                        {
+                            ofile << (*fl).second->outType << " ";                            
+                        }
+                        ofile << param; 
+                        if(param != *itParamEnd)
+                        {
+                            ofile << ",";
+                        }
+                    }
+                }
+                ofile << ")"<<std::endl;
+                ofile << "\t{"<<std::endl;
+                ofile << "\t\tstd::string sqlString = \"SELECT ";
+                for(auto func : *val)//class Function : public std::vector<const Parameters*>
+                {
+                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = func->end();
+                    --itParamEnd;
+                    ofile << table.key->name;
+                    ofile << " FROM " << table.name << " WHERE \";"<< std::endl;
+                    for(const char* param : *func)
+                    {
+                        auto fl = table.find(param);
+                        if(fl != table.end())
+                        {
+                            if((*fl).second->outType.compare("int") == 0)
+                            {
+                                ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + std::stoi(" << (*fl).second->name << ") + \"'\"";
+                            }
+                            else if((*fl).second->outType.compare("std::string") == 0)
+                            {
+                                ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + " << (*fl).second->name << " + \"'\"";
+                            }
+                            else
+                            {
+                                std::string strmsg = "No se encontro el campo ";
+                                strmsg = strmsg + "'" + (*fl).second->name + "' en la tabla '" + table.name + "'";
+                                throw BuildException(strmsg);                                
+                            }
+                        }
+                        else
+                        {
+                                std::string strmsg = "No se encontro el campo ";
+                                strmsg = strmsg + "'" + param + "' en la tabla '" + table.name + "'";
+                                throw BuildException(strmsg);
+                        }
+                        if(param != *itParamEnd)
+                        {
+                            ofile << " + \",\";"<< std::endl;
+                        }
+                    }
+                    ofile << ";" << std::endl;
+                    ofile << "\t\tif(connector.query(sqlString))"  << std::endl;
+                    ofile << "\t\t{" << std::endl;
+                    ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
+                    ofile << "\t\t\tif (result == NULL)"  << std::endl;
+                    ofile << "\t\t\t{"  << std::endl;
+                    ofile << "\t\t\t\t//throw toolkit::clientdb::SQLException(\"La descarga de los datos fallo con la consulta '\" + sqlString + \"'\");"<< std::endl;
+                    ofile << "\t\t\t\treturn NULL;"<< std::endl;
+                    ofile << "\t\t\t}"  << std::endl;
+                    ofile << "\t\t\tstd::vector<"<< table.name << "*>* tmpVc = new std::vector<" << table.name << "*>;" << std::endl;
+                    ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
+                    ofile << "\t\t\twhile((row = mysql_fetch_row(result))) "<< std::endl;
+                    ofile << "\t\t\t{"<< std::endl;     
+                    ofile << "\t\t\t\t"<< table.name << "* tmp = NULL;" << std::endl;               
+                    //for(const char* param : *func)
+                    {
+                        //ofile << param; 
+                        //if(param != *itParamEnd)
+                        {
+                            //ofile << "\t\t\t\t\tthis->" << param << " = (row[i] ? row[i] : NULL);"<< std::endl;
+                            //ofile << "\t\t\t\tthis->" << table.key->name << " = ";
+                            auto fl = table.find(table.key->name.c_str());
+                            if(fl != table.end())
+                            {
+                                if((*fl).second->outType.compare("int") == 0)
+                                {
+                                    ofile << "\t\t\t\ttmp = new " << table.name << "(std::stoi(row[0]));" << std::endl ;
+                                    ofile << "\t\t\t\ttmpVc->push_back(tmp);" << std::endl;
+                                }
+                                else if((*fl).second->outType.compare("std::string") == 0)
+                                {
+                                    ofile << "\t\t\t\ttmp = new " << table.name << "(row[0])" << ";" << std::endl ;
+                                    ofile << "\t\t\t\ttmpVc->push_back(tmp);" << std::endl;
+                                }
+                                else
+                                {
+                                    
+                                }
+                            }
+                            else
+                            {
+                                std::string strmsg = "No se encontro el campo ";
+                                strmsg = strmsg + "'" + table.key->name + "' en la tabla '" + table.name + "'";
+                                throw BuildException(strmsg);
+                            }
+                        }
+                    }
+                    ofile << "\t\t\t}"<< std::endl;
+                    ofile << "\t\t\treturn tmpVc;"<< std::endl;
+                    ofile << "\t\t}" << std::endl;
+                    ofile << "\t\telse" << std::endl;
+                    ofile << "\t\t{" << std::endl;
+                    ofile << "\t\t\treturn NULL;" << std::endl;
+                    ofile << "\t\t}" << std::endl;
+                }
+                ofile << "\t}"<<std::endl;
+                
+            }
+        }
+    }
+	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile,const ConfigureProject& config)
+    {        
+        std::string strmsg = "APIDB requiere que la tabla '";
+        strmsg += table.name;
+        strmsg += "' tenga llave primaria para continuar";
+        if(table.key == NULL) throw BuildException(strmsg);
+        
+        ofile << "\t\tstatic std::vector<" << table.name << "*>* select(toolkit::clientdb::connectors::Connector& connector,const std::string& where);"<<std::endl;
+        
+        std::vector<apidb::ConfigureProject::Table> tbs = config.selects;
+        for( auto tb: tbs)//std::vector<Table>
+        {
+            if(table.name.compare(tb.getName()) != 0) 
+            {
+                continue;//buscar la configuracion de la tabla correspondiente
+            }
+            for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
+            {
+                ofile << "\t\tstatic std::vector<" << table.name << "*>* select(toolkit::clientdb::connectors::Connector& connector,";
+                
+                for(auto func : *val)//class Function : public std::vector<const Parameters*>
+                {
+                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = func->end();
+                    itParamEnd--;
+                    for(const char* param : *func)
+                    {
+                        auto fl = table.find(param);
+                        if(fl != table.end())
+                        {
+                            ofile << (*fl).second->outType << " ";                            
+                        }
+                        ofile << param; 
+                        if(param != *itParamEnd)
+                        {
+                            ofile << ",";
+                        }
+                    }
+                }
+                ofile << ");"<<std::endl;
+                
+            }
+        }
+    }
 	void CPP::writeDownloadsCPP(const apidb::symbols::Table& table, std::ofstream& ofile,const ConfigureProject& config)
     {
         std::string strmsg = "APIDB requiere que la tabla '";
@@ -385,7 +605,6 @@ namespace generators
         if(table.key == NULL) throw BuildException(strmsg);
                 
         std::vector<apidb::ConfigureProject::Table> tbs = config.downloads;
-        //std::find(config.downloadsSelects.begin(), config.downloadsSelects.end(), table.name);
         for( auto tb: tbs)//std::vector<Table>
         {
             if(table.name.compare(tb.getName()) != 0) 
@@ -395,7 +614,7 @@ namespace generators
             
             for (auto const& [key, val] : tb)//class Table : public std::map<const char*, const Function*>
             {
-                ofile << "\tvoid " << table.name << "::download_" << key << "(toolkit::clientdb::connectors::Connector& connector)"<<std::endl;
+                ofile << "\tbool " << table.name << "::download_" << key << "(toolkit::clientdb::connectors::Connector& connector)"<<std::endl;
                 ofile << "\t{ " << std::endl;
                 ofile << "\t\tstd::string sqlString = \"SELECT ";
                 for(auto func : *val)//class Function : public std::vector<const Parameters*>
@@ -416,15 +635,16 @@ namespace generators
                     ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
                     ofile << "\t\t\tif (result == NULL)"  << std::endl;
                     ofile << "\t\t\t{"  << std::endl;
-                    ofile << "\t\t\t\tthrow toolkit::clientdb::SQLException(\"La descarga de los datos fallo con la consulta '\" + sqlString + \"'\");"<< std::endl;
+                    ofile << "\t\t\t\treturn false;"  << std::endl;
                     ofile << "\t\t\t}"  << std::endl;
-                    ofile << "\t\t\tint num_fields = mysql_num_fields(result);"<< std::endl;
+                    //ofile << "\t\t\tint num_fields = mysql_num_fields(result);"<< std::endl;
                     ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
                     ofile << "\t\t\twhile ((row = mysql_fetch_row(result))) "<< std::endl;
                     ofile << "\t\t\t{"<< std::endl;
-                    ofile << "\t\t\t\tfor(int i = 0; i < num_fields; i++)"<< std::endl;
+                    //ofile << "\t\t\t\tfor(int i = 0; i < num_fields; i++)"<< std::endl;
                     ofile << "\t\t\t\t{"<< std::endl;
                     itParamEnd = func->end();
+                    int countparam = 0;
                     for(const char* param : *func)
                     {
                         //ofile << param; 
@@ -437,19 +657,23 @@ namespace generators
                             {
                                 if((*fl).second->classReferenced != NULL)
                                 {
-                                    ofile << " new " << (*fl).second->classReferenced->name << "(row[i])" << ";" << std::endl ;
+                                    ofile << " new " << (*fl).second->classReferenced->name << "(row[" << countparam << "])" << ";" << std::endl ;
                                 }
                                 else if((*fl).second->outType.compare("int") == 0)
                                 {
-                                    ofile << " std::stoi(row[i])" << ";"<< std::endl ;
+                                    ofile << " std::stoi(row[" << countparam << "] ? row[" << countparam << "] : 0)" << ";"<< std::endl ;
+                                }
+                                else if((*fl).second->outType.compare("long") == 0)
+                                {
+                                    ofile << " std::stol(row[" << countparam << "] ? row[" << countparam << "] : 0)" << ";"<< std::endl ;
                                 }
                                 else if((*fl).second->outType.compare("std::string") == 0 || (*fl).second->outType.compare("const char*") == 0)
                                 {
-                                    ofile << " row[i]" << ";" << std::endl ;
+                                    ofile << " row[" << countparam << "] ? row[" << countparam << "] : \"NULL\"" << ";" << std::endl ;
                                 }
                                 else
                                 {
-                                    ofile << " row[i]" << ";" << std::endl ;
+                                    ofile << " row[" << countparam << "] ? row[" << countparam << "] : \"NULL\"" << ";" << std::endl ;
                                 }
                             }
                             else
@@ -459,14 +683,17 @@ namespace generators
                                 throw BuildException(strmsg);
                             }
                         }
+                        countparam++;
                     }
                     //ofile << "\t\t\t;"<< std::endl;
                     ofile << "\t\t\t\t}"<< std::endl;
-                    ofile << "\t\t\t}"<< std::endl;
-                    ofile << "\t\t\t;"<< std::endl;
+                    ofile << "\t\t\t}"<< std::endl;;
+                    ofile << "\t\t\tmysql_free_result(result);" << std::endl;
+                    ofile << "\t\t\treturn true;" << std::endl;
                     ofile << "\t\t}" << std::endl;
                     ofile << "\t\telse" << std::endl;
                     ofile << "\t\t{" << std::endl;
+                    ofile << "\t\t\treturn false;" << std::endl;
                     ofile << "\t\t}" << std::endl;
                 }
                 ofile << "\t} " << std::endl;
@@ -491,12 +718,12 @@ namespace generators
             }            
             for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
             {
-                ofile << "\t\tvoid download_" << key << "(toolkit::clientdb::connectors::Connector& connector);"<<std::endl;
+                ofile << "\t\tbool download_" << key << "(toolkit::clientdb::connectors::Connector& connector);"<<std::endl;
             }         
         }
     }
 	
-    void CPP::writeSelectH(const apidb::symbols::Table& table,std::ofstream& ofile)
+    /*void CPP::writeSelectH(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
         std::string strmsg = "APIDB requiere que la tabla '";
         strmsg += table.name;
@@ -512,11 +739,7 @@ namespace generators
             strmsg += " y la llave debe ser de tipo entero y no de tipo '" + table.key->outType + "'";
             throw BuildException(strmsg);
         }
-    }
-    void CPP::writeSelectCPP(const apidb::symbols::Table&,std::ofstream&)
-    {
-        
-    }
+    }*/
 	CPP::~CPP()
 	{
 		delete[] writeResults;
@@ -585,7 +808,7 @@ namespace generators
 	}
 
 	void CPP::writeInsertCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
-	{	
+	{
         std::string strmsg = "APIDB requiere que la tabla '" ;
         strmsg += table.name;
         strmsg += "' tenga llave para continuar con el proceso.";
@@ -995,6 +1218,8 @@ namespace generators
 		writeInsertCPP(table,ofile);		
 		writeKeyValueCPP(table,ofile);
         writeDownloadsCPP(table,ofile,config);
+		//writeSelectCPP(table,ofile);
+		writeSelectsCPP(table,ofile,config);
 		ofile << std::endl; 
     }
     
@@ -1090,8 +1315,9 @@ namespace generators
 		ofile << std::endl; 	
 		writeInsertH(table,ofile);	
 		writeKeyValueH(table,ofile);
-		ofile << std::endl; 		
-        writeSelectH(table,ofile);
+		ofile << std::endl; 
+        //writeSelectH(table,ofile);		
+        writeSelectsH(table,ofile,config);
         writeDownloadsH(table,ofile,config);
         ofile << std::endl;
     }
