@@ -90,6 +90,8 @@ namespace apidb
 		 * */
 		struct Symbol 
 		{
+            friend class Table;
+            
 			enum KeyType
 			{
 				PRIMARY,
@@ -111,26 +113,23 @@ namespace apidb
             Table* classReferenced;
             Table* classParent;
             std::string outType; 
-            //bool forInsert; 
+            Symbol* symbolReferenced;
+            bool isPrimaryKey();
+            bool isForeignKey();
+            bool isAutoIncrement();
             
             Symbol();
             int getID()const;
 			private:
 			static int counter;
 			int id;	
+            bool isPK;
+            bool isFK;
+            bool isAutoInc;
 		};
 		
 		struct Key : public std::vector<Symbol*>
 		{
-			/**
-			 * return true si los campos son iguales o es inico, falso en otro caso.
-			 * */
-			bool isHomogeneous();
-			
-			/**
-			 * 	para las llaves homegenesa retorna el valor de outType, si no lo son returna una cadaena vacia.
-			 * */
-			std::string getOutType();
 		};
 		/**
 		 * Simbolos por alcance(tabla en SQL) 
@@ -138,7 +137,7 @@ namespace apidb
 		struct Table : public std::map<const char*,Symbol*,cmp_str>
 		{
 			std::string name;
-            Symbol* key;
+            Key key;
             std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
             
             Table();

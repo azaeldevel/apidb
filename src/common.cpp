@@ -377,29 +377,6 @@ namespace apidb
     
     namespace symbols
 	{
-		std::string Key::getOutType()
-		{
-			if(isHomogeneous()) return (*begin())->outType;	
-			return "";
-		}
-		bool Key::isHomogeneous()
-		{
-			if(size() == 1) return true;
-			
-			std::vector<Symbol*>::iterator firts = begin();
-			std::vector<Symbol*>::iterator actual = begin();
-			std::vector<Symbol*>::iterator last  = end();		
-			
-			while (actual != last) 
-			{
-				if((*actual)->outType.compare((*firts)->outType) != 0)
-				{
-					return false;
-				}
-				actual++;
-			}
-			return true;
-		}
 			
 		bool Tables::reorder()
 		{
@@ -455,6 +432,20 @@ namespace apidb
 			return countFloatup;
 		}
 		
+
+        bool Symbol::isPrimaryKey()
+        {
+            return isPK;
+        }
+        bool Symbol::isForeignKey()
+        {
+            return isFK;
+        }
+        bool Symbol::isAutoIncrement()
+        {
+            return isAutoInc;
+        }
+        
         int Symbol::getID()const
         {
             return id;
@@ -468,6 +459,8 @@ namespace apidb
             classParent = NULL;
             keyType = NOKEY;
             id = 0;
+            isPK = false;
+            isFK = false;
         }
 		int Symbol::counter = 0;	
 		
@@ -497,7 +490,7 @@ namespace apidb
 		Table::Table()
 		{
 			countRef = 0;
-			key = NULL;
+			//key = NULL;
 		}
 		
 		Table::~Table()

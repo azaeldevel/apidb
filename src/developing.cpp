@@ -25,18 +25,19 @@
 
 int main()
 {
-	toolkit::clientdb::datasourcies::MySQL mysqlSource("192.168.0.101",3306,"sis","develop","123456"); 
+	toolkit::clientdb::datasourcies::MySQL mysqlSource("192.168.0.101",3306,"worlds.alpha","develop","123456"); 
 	toolkit::Version version;
 	version.set(0,1,0,toolkit::Version::Stage::alpha);
 
 	apidb::ConfigureProject config;
-    config.name = "sis";
-    config.directory = "sis";
+    config.name = "worlds";
+    config.directory = "worlds";
     config.conectordb = &mysqlSource;
     config.version = version;
     config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
     config.outputLenguaje = apidb::OutputLenguajes::CPP;	
 	config.mvc = apidb::MVC::NO;
+    //config.keyMode = apidb::KeyModel::BY_MODEL_DB;
     apidb::ConfigureProject::Table tbP("Persons");
     apidb::ConfigureProject::Function dwFullName("fullname");
     apidb::ConfigureProject::Parameters params_FullName;
@@ -53,7 +54,16 @@ int main()
     dwShortName.push_back(&params_ShortName);
     tbP.insert(std::make_pair(dwShortName.getName().c_str(), &dwShortName));
     config.downloads.push_back(tbP);
+    apidb::ConfigureProject::Table table1("table1");
+    apidb::ConfigureProject::Function byPerson("byPerson");    
+    apidb::ConfigureProject::Parameters params_byPerson;
+    params_byPerson.push_back("dataSel");
+    params_byPerson.push_back("person");
+    byPerson.push_back(&params_byPerson);
+    table1.insert(std::make_pair(byPerson.getName().c_str(), &byPerson));
     config.selects.push_back(tbP);
+    config.selects.push_back(table1);
+    
     apidb::Driver driver(config);	
 	if(!driver.driving())
 	{
@@ -65,7 +75,8 @@ int main()
 		std::cerr<<"Fail creation prject."<<std::endl;
 		return EXIT_FAILURE;		
 	}
-	/*std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;
+	/*
+    std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;
 	std::cout<<"Version previa: " << config.getVersion().toString()<<std::endl;
 	apidb::ConfigureProject config2("nmp/apidb");
     	config2.directory = "nmp2";
@@ -81,7 +92,8 @@ int main()
 		return EXIT_FAILURE;		
 	}
 	std::cout<<"Configuracion posterior: " << config2.getConector().toString()<<std::endl;
-	std::cout<<"Version posterior: " << config2.getVersion().toString()<<std::endl;*/
+	std::cout<<"Version posterior: " << config2.getVersion().toString()<<std::endl;
+    */
 	
 	
 	

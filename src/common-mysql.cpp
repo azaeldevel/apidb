@@ -26,14 +26,19 @@
 
 namespace apidb
 {
-	bool symbols::Table::fillKeyType(toolkit::clientdb::connectors::Connector& connect, symbols::Tables& tables)
+    /**
+     * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
+     */
+	bool symbols::Table::fillKeyType(toolkit::clientdb::connectors::Connector& connect,Tables& tables)
 	{
-		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME FROM information_schema.TABLE_CONSTRAINTS i  LEFT JOIN information_schema.KEY_COLUMN_USAGE k ON i.CONSTRAINT_NAME = k.CONSTRAINT_NAME WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =";
-		fks += "'" ;
-		fks += ((toolkit::clientdb::datasourcies::Datasource&)(connect.getDatconection())).getDatabase();
-		fks += "'";
-		fks += " AND i.TABLE_NAME = '";
+        /**
+         * En la tabla actual, ¿cuales son los campos con llaves foraneas?
+         */
+		std::string fks = "SELECT k.REFERENCED_COLUMN_NAME, k.REFERENCED_TABLE_NAME FROM information_schema.TABLE_CONSTRAINTS i,information_schema.KEY_COLUMN_USAGE k WHERE i.CONSTRAINT_NAME = k.CONSTRAINT_NAME  AND i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =k.TABLE_SCHEMA AND i.TABLE_NAME = "; 
+        fks += "'";
 		fks += name;
+		fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
+		fks += ((toolkit::clientdb::datasourcies::Datasource&)(connect.getDatconection())).getDatabase();
 		fks += "'";
 		//std::cout<<fks<<std::endl;
 		if(connect.query(fks.c_str()))
@@ -50,12 +55,24 @@ namespace apidb
 						if(attribute->classReferenced != NULL)
 						{
 							attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
+							auto finded = attribute->classReferenced->find(row[0]);
+                            if(finded != attribute->classReferenced->end())
+                            {
+                                attribute->symbolReferenced = (*finded).second;
+                            }
+                            else
+                            {
+                                std::string strmsg = "No se encontro el campo '";
+                                strmsg = strmsg + row[0] + "' en la tabla '" + row[1] + "', es necesario para construir la referencia a dicho campo.";
+                                throw BuildException(strmsg);
+                            }
 						}		
-						if(attribute->classReferenced != NULL && attribute->keyType == symbols::Symbol::KeyType::UNIQUE)	
+						/*if(attribute->classReferenced != NULL && attribute->keyType == symbols::Symbol::KeyType::UNIQUE)	
 						{
 							//std::cout<< "FOREIGN UNIQUE : " << attribute->classReferenced->name << "." << attribute->name <<std::endl;
 							attribute->keyType = symbols::Symbol::KeyType::FOREIGN_UNIQUE;//usada como llave
-						}
+						}*/
+						
 					}
 				}
 			}
@@ -80,6 +97,7 @@ namespace apidb
 				Symbol* attrribute = new Symbol();
 				attrribute->classParent = this;
 				attrribute->name = row[0];
+                //std::cout<<attrribute->name<<std::endl;
 				std::string strName = attrribute->name;
 				if(strName.compare("id") == 0)
 				{
@@ -103,42 +121,34 @@ namespace apidb
 				}
 				std::string keyType = row[3];
 				std::string extra = row[5];
-				if(keyType.size() == 0)//si esta vacio (row[3]) el campo no es key
+
+				if(attrribute->required && keyType.compare("PRI") == 0 && extra.compare("auto_increment") == 0)//primary key
 				{
-					attrribute->keyType = symbols::Symbol::KeyType::NOKEY;
-				}
-				else if(attrribute->required && keyType.compare("PRI") == 0 && extra.compare("auto_increment") == 0)//primary key
-				{
-					if(key != NULL)
-					{
-						throw new BuildException("No hay soporto para llave compuesta.");
-					}
-					key = attrribute;
-					attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
+					key.push_back(attrribute);
+					attrribute->isPK = true;//attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
+                    attrribute->isAutoInc = true;
 				}
 				else if(attrribute->required && (keyType.compare("PRI") == 0))//unique constraing
 				{
-					if(key != NULL)
-					{
-						throw new BuildException("No hay soporto para llave compuesta.");
-					}
-					key = attrribute;
-					attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
+					key.push_back(attrribute);
+					attrribute->isPK = true;//attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
+                    attrribute->isAutoInc = false;
 				}
 				else
 				{
-					attrribute->keyType = symbols::Symbol::KeyType::NOKEY;				
+                    
+				}				
+				if(attrribute->isPK && keyType.compare("UNI") == 0)//unique constraing
+				{
+					attrribute->isFK = true;//attrribute->keyType = symbols::Symbol::KeyType::UNIQUE;
 				}
 				
-				if(attrribute->required && keyType.compare("UNI") == 0)//unique constraing
-				{
-					attrribute->keyType = symbols::Symbol::KeyType::UNIQUE;
-				}				
                 insert(std::make_pair(attrribute->name.c_str(),attrribute));
 				if(attrribute->required)
 				{
 					required.push_back(attrribute);//si attrribute->required tambie se agrega a un lista especial
 				}
+				//std::cout<<"Termitade with:" << attrribute->name<<std::endl;
 			}
 			mysql_free_result(result);
 			return true;			

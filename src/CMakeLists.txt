@@ -35,7 +35,7 @@ BISON_TARGET(parser parser.yy ${PROJECT_SOURCE_DIR}/parser.tab.cc)
 FLEX_TARGET(lexer lexer.l ${PROJECT_SOURCE_DIR}/lexer.yy.cc)
 ADD_FLEX_BISON_DEPENDENCY(lexer parser)
 SET(targetName apidbgen)
-SET(SOURCES_BUILDING driver.cpp scanner.cpp apidb.cpp common-mysql.cpp analyzer.cpp generator.cpp common.cpp ${FLEX_lexer_OUTPUTS} ${BISON_parser_OUTPUTS})
+SET(SOURCES_BUILDING driver.cpp scanner.cpp apidb.cpp common-mysql.cpp analyzer.cpp generator.cpp generator-c++.cpp common.cpp ${FLEX_lexer_OUTPUTS} ${BISON_parser_OUTPUTS})
 
 
 
