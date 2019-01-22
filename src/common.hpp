@@ -162,10 +162,10 @@ namespace apidb
 			std::list<Table*>::iterator find(const std::string& tableName);       
 			bool listing(toolkit::clientdb::connectors::Connector& connect);
 			short getMaxCountRef();
-            bool reorder();
+            //bool reorder();
             
         private:
-			int floatup();
+			//int floatup(Tables::iterator&);
 		};
 	}
     class ConfigureProject

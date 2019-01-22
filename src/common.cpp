@@ -378,61 +378,6 @@ namespace apidb
     namespace symbols
 	{
 			
-		bool Tables::reorder()
-		{
-			int flag = 0;
-			//do
-			//{
-				flag = floatup();
-			//}
-			//while(flag > 0);
-                return true;
-		}
-	
-        int Tables::floatup()
-		{		
-			std::list<Table*>::iterator firtsTb = (--begin());
-			std::list<Table*>::iterator lastTb = (--end());
-			int countFloatup  = 0;
-			for (std::list<Table*>::iterator i = lastTb; firtsTb != i; --i) 
-			{
-				//std::cout<<"Table : "<< (*i)->name << std::endl;
-				std::map<const char*,Symbol*>::iterator firtsFl = (--((*i)->begin()));
-				std::map<const char*,Symbol*>::iterator lastFl = (--((*i)->end()));
-				for (std::map<const char*,Symbol*>::iterator j = lastFl; firtsFl != j; --j)
-				{
-					if((*j).second->classReferenced != NULL)
-					{
-						//std::cout<<"Table : "<< (*i)->name << std::endl;
-						//std::cout<<"\tField : "<< (*j)->name << " --> " << (*i)->name << std::endl;
-						//verificar que la tabla '(*j)->classReferenced' este en una posicion mas superior a la tabla 'i'
-						auto finded = find((*j).second->classReferenced->name);
-						if(std::distance(finded,i) < 0)
-						{
-							//std::cout<<"\t"<< (*j)->classReferenced->name << " Ya superior a " << (*i)->name << std::endl;
-						}
-						else
-						{							
-							auto newpos = finded;
-							if(newpos != begin() && newpos != end()) 
-							{
-								//std::cout<<"\tFlotando "<< (*finded)->name << " antes de " << (*i)->name << std::endl;
-								--newpos;
-								splice(newpos,*this,finded);
-								countFloatup++;
-							}
-						}
-					}
-					else
-					{
-						
-					}
-				}
-			}
-			return countFloatup;
-		}
-		
-
         bool Symbol::isPrimaryKey()
         {
             return isPK;
@@ -445,7 +390,7 @@ namespace apidb
         {
             return isAutoInc;
         }
-        
+		
         int Symbol::getID()const
         {
             return id;

@@ -934,7 +934,7 @@ namespace generators
 		}
         for (const apidb::symbols::Table* table : analyzer.getListTable()) 
         {
-			if(table->getCountRefereces() > 0) file << "\tclass " << table->name << ";"<<std::endl;
+			file << "\tclass " << table->name << ";"<<std::endl;
 		}
 		file<<std::endl;
         for (const apidb::symbols::Table* table : analyzer.getListTable()) 
