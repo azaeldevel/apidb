@@ -70,7 +70,18 @@ int main(int argc, char **argv)
         }
     }
     
-    
+    sis::table1 tb1;
+    int id1 = random;
+    std::string id2  = "id2-";
+    id2 += std::to_string(random);
+    if(tb1.insert(connector,id1,id2))
+    {
+		std::cout << "Inserted " << id2 << std::endl;
+	}
+	else
+	{
+		std::cerr << "Fail "<< id2 << std::endl;
+	}
     
     return EXIT_SUCCESS;
 

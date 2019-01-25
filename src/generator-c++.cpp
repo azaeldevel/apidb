@@ -451,19 +451,20 @@ namespace generators
             }            
             else if(table.key.size() > 1)
             {
-                ofile << "\t\tif(connector.insert(sqlString))" << std::endl;
+                ofile << "\t\tif(connector.query(sqlString))" << std::endl;
                 ofile << "\t\t{" << std::endl;
                 for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); ++i)
                 {
                     ofile << "\t\t\tthis->" << (*i)->name << " = " << (*i)->name << ";" << std::endl;
                 }
+                 ofile << "\t\t\treturn true;" << std::endl;
                 ofile << "\t\t}" << std::endl;
             }
         }
         else if(table.key.size() == 0)
         {
             ofile << "\t\tthis->" << table.key.at(0)->name;
-            ofile << " = connector.insert(sqlString);"<< std::endl;
+            ofile << " = connector.query(sqlString);"<< std::endl;
             ofile << "\t\tif(this->" << table.key[0]->name << " > 0) return true;"<< std::endl;
             ofile << "\t\telse return false;"<< std::endl;   
         }
@@ -471,6 +472,7 @@ namespace generators
         {
             
         }
+        ofile << "\t\treturn false;"<<std::endl;
         ofile << "\t}"<<std::endl;
 	}
 	void CPP::writeDefaultContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
