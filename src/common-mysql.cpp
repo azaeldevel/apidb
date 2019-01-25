@@ -82,6 +82,41 @@ namespace apidb
                         //std::cout<<"Se ignoro '" << row[1] << "' de '" << row[0] << "', clase actual es '" << name << "' y el atributi actual es '" << attribute->name << "'" <<std::endl;
                     }
 				}
+				for (auto attribute : required) 
+				{//en cada attributo
+                    Tables::iterator itFinded = tables.find(row[1]);//buscar la tabla del campo referido
+					if(attribute->name.compare(row[0]) == 0 && itFinded != tables.end()) //verificar se corresponde con alguno encontrado en la lista de constraings
+					{
+						if(itFinded != tables.end())
+						{
+                            attribute->classReferenced = (*itFinded);
+                            //std::cout << "attribute->classReferenced->name = " << attribute->classReferenced->name << std::endl;
+							attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
+							Table::iterator finded = attribute->classReferenced->find(row[2]);
+                            if(finded != attribute->classReferenced->end())
+                            {
+                                attribute->symbolReferenced = (*finded).second;
+                                //std::cout << "attribute->symbolReferenced = " << attribute->symbolReferenced->name << std::endl;
+                            }
+                            else
+                            {
+                                std::string strmsg = "No se encontro el campo '";
+                                strmsg = strmsg + row[0] + "' en la tabla '" + row[1] + "', es necesario para construir la referencia a dicho campo.";
+                                throw BuildException(strmsg);
+                            }
+						}
+                        else
+                        {
+                            std::string strmsg = "No se encontro el la tabla '";
+                            strmsg = strmsg + row[1] + "'";
+                            throw BuildException(strmsg);
+                        }
+					}
+					else
+                    {
+                        //std::cout<<"Se ignoro '" << row[1] << "' de '" << row[0] << "', clase actual es '" << name << "' y el atributi actual es '" << attribute->name << "'" <<std::endl;
+                    }
+				}
 			}
 			mysql_free_result(result);
 			return true;	

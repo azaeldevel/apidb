@@ -400,8 +400,7 @@ namespace generators
             if((*i)->outType.compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
             
 			ofile << (*i)->name;
-            auto penultimo = table.required.end();
-            penultimo--;					
+            auto penultimo = --table.required.end();
 			if(i != penultimo)
 			{
 				ofile << ","; //se agrega la coma si hay un segundo parametro
@@ -409,14 +408,13 @@ namespace generators
 		}
 		ofile << ")\";" << std::endl;
 		ofile << "\t\tsqlString = sqlString + \" VALUES(\"";
-        auto end = table.required.end();
-        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != end; ++i)
+        for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); ++i)
         {
             if((*i)->outType.compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
             
-            if((*i)->classReferenced != NULL && (*i)->outType.compare("int"))
+            if((*i)->classReferenced != NULL && (*i)->outType.compare("int") == 0)
             {
-                ofile << " + \"'\" + " << (*i)->name << "." << (*i)->symbolReferenced->get << " + \"'\" ";
+                ofile << " + \"'\" + " << (*i)->name << ".get" << (*i)->symbolReferenced->upperName << "String() + \"'\" ";
             }
             else if((*i)->outType.compare("std::string") == 0)
             {
@@ -426,26 +424,43 @@ namespace generators
             {
                 ofile << " + std::to_string(" << (*i)->name << ")";
             }
-            auto penultimo = table.required.end();
-            penultimo--;
+            auto penultimo = --table.required.end();
 			if(i != penultimo)
 			{
 				ofile << " + \",\" ";
-			}		
+			}
 		}
 		ofile << " + \")\";"<< std::endl;
 		
-        //if(table.key.size() == 0 && table.key.at(0)->outType.compare("int") == 0)
-        {//sin la llave es de tipo intero con auto incremento se asigna el valor a la llave
+        if(table.key.size() > 0)
+        {
+            if(table.key.size() == 1 && table.key.at(0)->outType.compare("int") == 0 && table.key.at(0)->classReferenced != NULL)
+            {
+                ofile << "\t\tthis->" << table.key.at(0)->name << " = new " << table.key.at(0)->classReferenced->name << "(";
+                ofile << " connector.insert(sqlString));" << std::endl;
+                ofile << "\t\tif(this->" << table.key.at(0)->name << " != NULL) return true;"<< std::endl;
+                ofile << "\t\telse return false;"<< std::endl;                 
+                    
+            }
+            else if(table.key.size() == 1 && table.key.at(0)->outType.compare("int") == 0)
+            {
+                ofile << "\t\tthis->" << table.key.at(0)->name << " = ";
+                ofile << " connector.insert(sqlString);" << std::endl;
+                ofile << "\t\tif(this->" << table.key.at(0)->name << " > 0) return true;"<< std::endl;
+                ofile << "\t\telse return false;"<< std::endl;                
+            }
+        }
+        else if(table.key.size() == 0)
+        {
             ofile << "\t\tthis->" << table.key.at(0)->name;
             ofile << " = connector.insert(sqlString);"<< std::endl;
             ofile << "\t\tif(this->" << table.key[0]->name << " > 0) return true;"<< std::endl;
-            ofile << "\t\telse return false;"<< std::endl;            
+            ofile << "\t\telse return false;"<< std::endl;   
         }
-		//else //no se requiere llave primaria para generar insert
-		{
-			
-		}
+        else 
+        {
+            
+        }
         ofile << "\t}"<<std::endl;
 	}
 	void CPP::writeDefaultContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
@@ -611,7 +626,11 @@ namespace generators
                 kEnd--;
                 for(auto k : table.key)
                 {
-                    if(k->outType.compare("std::string") == 0)
+                    if(k->outType.compare("int") == 0 && k->classReferenced != NULL)
+                    {
+                        ofile << " + \"" << k->name << " = \" +  " << k->name << ".get" << k->upperName << "String() ";
+                    }
+                    else if(k->outType.compare("std::string") == 0)
                     {
                         ofile << " + \"" << k->name << " = \" + \"'\" + " << k->name <<" + \"'\" ";
                     }
