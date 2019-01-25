@@ -148,7 +148,9 @@ namespace apidb
 		
 		if(analyzer->listing(*connector)) //reading tables
         {
-            for(symbols::Table* table: analyzer->getListTable()) //reading attrubtes by table
+            symbols::Tables& tbs = analyzer->getListTable();
+			
+            for(auto table: tbs) //reading attrubtes by table
             {
 				analyzer->getOutputMessage() << "\tCreating basic simbols for " << table->name  << "." << std::endl;
                 //simbolos basicos 
@@ -156,19 +158,24 @@ namespace apidb
                 {
 					//std::cerr<<"Faill on basicSymbols"<<std::endl;
 					return false;
-				}				
+				}
+			}			
+            for(auto table: tbs) //reading attrubtes by table
+            {
 				//foreign key's
 				if(!table->fillKeyType(*connector,analyzer->getListTable()))
-                		{
+                {
 					//std::cerr<<"Faill on fillKeyType"<<std::endl;
 					return false;
-				}//parsing imput types
-				//std::cout<<"\t"<<table->name<<std::endl;
+				}
+            }
+            for(auto table: tbs) //reading attrubtes by table
+            {
 				for (auto const& [key, attribute] : *table)
 				{
 					//std::cout<<"\t"<<attribute->inType<<std::endl;
 					attribute->outType = analyzer->parse(attribute->inType);
-				}				
+				}
 			}	
 			//analyzer->getListTable().reorder();
         }  

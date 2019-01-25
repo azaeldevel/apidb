@@ -161,7 +161,7 @@ data_type: BIT opt_length end
 		{
 			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
 			{
-				driver.oneLine = "int";
+				driver.oneLine = "long";
 			}
 			else
 			{

@@ -34,7 +34,7 @@ namespace apidb
         /**
          * En la tabla actual, ¿cuales son los campos con llaves foraneas?
          */
-		std::string fks = "SELECT k.REFERENCED_COLUMN_NAME, k.REFERENCED_TABLE_NAME FROM information_schema.TABLE_CONSTRAINTS i,information_schema.KEY_COLUMN_USAGE k WHERE i.CONSTRAINT_NAME = k.CONSTRAINT_NAME  AND i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =k.TABLE_SCHEMA AND i.TABLE_NAME = "; 
+		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME FROM information_schema.TABLE_CONSTRAINTS i,information_schema.KEY_COLUMN_USAGE k WHERE i.CONSTRAINT_NAME = k.CONSTRAINT_NAME  AND i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =k.TABLE_SCHEMA AND i.TABLE_NAME = "; 
         fks += "'";
 		fks += name;
 		fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
@@ -48,17 +48,20 @@ namespace apidb
 			while((row = mysql_fetch_row(result)))
 			{
                 for (auto const& [key, attribute] : *this) 
-				{
-					if(attribute->name.compare(row[0]) == 0)
-					{
-						attribute->classReferenced = tables.search(row[1]);//returna null o un puntero valido.
-						if(attribute->classReferenced != NULL)
+				{//en cada attributo  
+                    Tables::iterator itFinded = tables.find(row[1]);//buscar la tabla del campo referido
+					if(attribute->name.compare(row[0]) == 0 && itFinded != tables.end()) //verificar se corresponde con alguno encontrado en la lista de constraings
+					{                                                 
+						if(itFinded != tables.end())
 						{
+                            attribute->classReferenced = (*itFinded);
+                            //std::cout << "attribute->classReferenced->name = " << attribute->classReferenced->name << std::endl;
 							attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
-							auto finded = attribute->classReferenced->find(row[0]);
+							Table::iterator finded = attribute->classReferenced->find(row[2]);
                             if(finded != attribute->classReferenced->end())
                             {
                                 attribute->symbolReferenced = (*finded).second;
+                                //std::cout << "attribute->symbolReferenced = " << attribute->symbolReferenced->name << std::endl;
                             }
                             else
                             {
@@ -66,14 +69,18 @@ namespace apidb
                                 strmsg = strmsg + row[0] + "' en la tabla '" + row[1] + "', es necesario para construir la referencia a dicho campo.";
                                 throw BuildException(strmsg);
                             }
-						}		
-						/*if(attribute->classReferenced != NULL && attribute->keyType == symbols::Symbol::KeyType::UNIQUE)	
-						{
-							//std::cout<< "FOREIGN UNIQUE : " << attribute->classReferenced->name << "." << attribute->name <<std::endl;
-							attribute->keyType = symbols::Symbol::KeyType::FOREIGN_UNIQUE;//usada como llave
-						}*/
-						
+						}
+                        else
+                        {
+                            std::string strmsg = "No se encontro el la tabla '";
+                            strmsg = strmsg + row[1] + "'";
+                            throw BuildException(strmsg);
+                        }
 					}
+					else
+                    {
+                        //std::cout<<"Se ignoro '" << row[1] << "' de '" << row[0] << "', clase actual es '" << name << "' y el atributi actual es '" << attribute->name << "'" <<std::endl;
+                    }
 				}
 			}
 			mysql_free_result(result);

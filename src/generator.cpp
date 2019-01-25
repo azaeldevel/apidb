@@ -422,8 +422,7 @@ namespace generators
 				}
 			}
 		}
-			
-			
+                
 		//inlcudes in source file
         getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl; 
         getSourceOutput()<< "#include <mysql/my_global.h>"<<std::endl;

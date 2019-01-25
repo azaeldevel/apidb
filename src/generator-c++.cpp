@@ -131,7 +131,7 @@ namespace generators
                         }
                         else if((*fl).second->symbolReferenced != NULL)
                         {
-                                ofile << "const " << (*fl).second->symbolReferenced->classParent->name << "& ";
+                                ofile << "const " << (*fl).second->symbolReferenced->classParent->name << "& " << param;
                         }
                         else
                         {
@@ -166,7 +166,11 @@ namespace generators
                         auto fl = table.find(param);
                         if(fl != table.end())
                         {
-                            if((*fl).second->outType.compare("int") == 0)
+                            if((*fl).second->classReferenced != NULL && (*fl).second->outType.compare("int") == 0)
+                            {
+                                ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + " << (*fl).second->name << ".get" << (*fl).second->upperName << "String() + \"'\"";
+                            }
+                            else if((*fl).second->outType.compare("int") == 0)
                             {
                                 ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + std::stoi(" << (*fl).second->name << ") + \"'\"";
                             }
@@ -410,7 +414,11 @@ namespace generators
         {
             if((*i)->outType.compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
             
-            if((*i)->outType.compare("std::string") == 0)
+            if((*i)->classReferenced != NULL && (*i)->outType.compare("int"))
+            {
+                ofile << " + \"'\" + " << (*i)->name << "." << (*i)->symbolReferenced->get << " + \"'\" ";
+            }
+            else if((*i)->outType.compare("std::string") == 0)
             {
                 ofile << " + \"'\" + " << (*i)->name << " + \"'\" ";
             }
@@ -427,14 +435,14 @@ namespace generators
 		}
 		ofile << " + \")\";"<< std::endl;
 		
-        if(table.key.size() == 0 && table.key.at(0)->outType.compare("int") == 0)
+        //if(table.key.size() == 0 && table.key.at(0)->outType.compare("int") == 0)
         {//sin la llave es de tipo intero con auto incremento se asigna el valor a la llave
             ofile << "\t\tthis->" << table.key.at(0)->name;
             ofile << " = connector.insert(sqlString);"<< std::endl;
             ofile << "\t\tif(this->" << table.key[0]->name << " > 0) return true;"<< std::endl;
             ofile << "\t\telse return false;"<< std::endl;            
         }
-		else //no se requiere llave primaria para generar insert
+		//else //no se requiere llave primaria para generar insert
 		{
 			
 		}
@@ -564,7 +572,11 @@ namespace generators
 			//updates
             if((*attr).isPrimaryKey()) goto postUpdatePosition; //si es una llave primary no se puede modificar
 			ofile << "\tbool " << table.name <<"::update" << attr->upperName << "(toolkit::clientdb::connectors::Connector& connector,";
-			if(attr->outType.compare("std::string") == 0)
+			if((attr->outType.compare("std::string") == 0 || attr->outType.compare("int") == 0) && attr->symbolReferenced != NULL)
+            {
+                ofile << "const " << attr->classReferenced->name << "& " << attr->name;
+            }
+            else if(attr->outType.compare("std::string") == 0)
             {
                 ofile << "const " << attr->outType << "& " << attr->name;
             }
@@ -579,7 +591,11 @@ namespace generators
 			ofile << "\t\tsqlString = sqlString + \" SET " ;
             
             ofile << attr->name << " = " ;
-            if(attr->outType.compare("std::string") == 0)
+            if((attr->outType.compare("std::string") == 0 || attr->outType.compare("int") == 0) && attr->symbolReferenced != NULL)
+            {
+                ofile << "'\" + " << attr->name << ".get" << attr->upperName << "String() + \"'\";" << std::endl;
+            }
+            else if(attr->outType.compare("std::string") == 0)
             {
                 ofile << "'\" + " << attr->name << " + \"'\";" << std::endl;
             }
@@ -820,12 +836,12 @@ namespace generators
 				}
 				else
 				{
-					ofile <<"\t\t"<< "const " << attr->classReferenced->name << "& ";
+					ofile <<"\t\t"<< " const " << attr->classReferenced->name << "& ";
 				}
 			}
 			else
 			{
-				ofile <<"\t\t" << "const " << attr->outType <<"& ";
+				ofile <<"\t\t" << " const " << attr->outType <<"& ";
 			}		
 			ofile << attr->get << " const;"<< std::endl;
 			
@@ -836,7 +852,7 @@ namespace generators
 			ofile << "\t\tbool " << "update" << attr->upperName << "(toolkit::clientdb::connectors::Connector& connector,";
 			if(attr->classReferenced != 0)
             {
-                ofile << " " << attr->classReferenced->name << "& " << attr->name;
+                ofile << " const " << attr->classReferenced->name << "& " << attr->name;
             }
             else if((attr->outType.compare("std::string") == 0))
             {
@@ -866,32 +882,16 @@ namespace generators
         for (auto const& [key, attr] : table)
         {
 			//ofile <<"["<<attr->outType<<"]"<<std::endl;
-			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
-			{
-				if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
-				{
-					if(attr->classReferenced == NULL)//si es foreing key
-					{
-						//ofile <<"[1]"<<std::endl;
-						ofile <<"\t\t"<< attr->outType << " "<< attr->name<<";"<< std::endl;						
-					}
-					else
-					{
-						//ofile <<"[2]"<<std::endl;
-						ofile <<"\t\t"<< attr->classReferenced->name << "* "<< attr->name<<";"<< std::endl;
-					}
-				}
-				else
-				{
-					//ofile <<"[3]"<<std::endl;
-					ofile <<"\t\t" << attr->outType <<" "<< attr->name <<";"<< std::endl;
-				}
-			}
-			else
-			{
-				analyzer.getErrorMessage()<<"OutputLenguaje is unknow.";
-			}             
-        }        
+            if(attr->classReferenced != NULL && (attr->outType.compare("int") == 0 || attr->outType.compare("std::string") == 0))
+            {
+                ofile << "\t\t" << attr->classReferenced->name << "* "<< attr->name<<";"<< std::endl;
+            }
+            else
+            {
+                //ofile <<"[3]"<<std::endl;
+                ofile << "\t\t" << attr->outType << " " << attr->name <<";"<< std::endl;
+            }
+        }
     }
     void CPP::createClassPublicH(std::ofstream& file)
     {

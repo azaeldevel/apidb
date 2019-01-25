@@ -25,13 +25,13 @@
 
 int main()
 {
-	toolkit::clientdb::datasourcies::MySQL mysqlSource("192.168.0.101",3306,"worlds.alpha","develop","123456"); 
+	toolkit::clientdb::datasourcies::MySQL mysqlSource("192.168.0.101",3306,"sis","develop","123456"); 
 	toolkit::Version version;
 	version.set(0,1,0,toolkit::Version::Stage::alpha);
 
 	apidb::ConfigureProject config;
-    config.name = "worlds";
-    config.directory = "worlds";
+    config.name = "sis";
+    config.directory = "sis";
     config.conectordb = &mysqlSource;
     config.version = version;
     config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
