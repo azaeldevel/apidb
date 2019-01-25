@@ -70,18 +70,9 @@ int main(int argc, char **argv)
         }
     }
     
-    /*sis::Persons* person2 = new sis::Persons();
-    if(person2->select(connector,"n1-4182","ap-4182"))
-    {
-		std::cout << "Select Random "<< person2->toString() << std::endl;
-	}
-	else
-	{
-		std::cerr << "Fail Slected random "<< n1 << std::endl;
-	} */
-	
-	//std::string db = ((toolkit::clientdb::DatconectionMySQL&)(connector.getDatconection())).getDatabase();
-	//std::cout<<db<<std::endl;
+    
+    
+    return EXIT_SUCCESS;
 
 }
 

@@ -448,6 +448,16 @@ namespace generators
                 ofile << " connector.insert(sqlString);" << std::endl;
                 ofile << "\t\tif(this->" << table.key.at(0)->name << " > 0) return true;"<< std::endl;
                 ofile << "\t\telse return false;"<< std::endl;                
+            }            
+            else if(table.key.size() > 1)
+            {
+                ofile << "\t\tif(connector.insert(sqlString))" << std::endl;
+                ofile << "\t\t{" << std::endl;
+                for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); ++i)
+                {
+                    ofile << "\t\t\tthis->" << (*i)->name << " = " << (*i)->name << ";" << std::endl;
+                }
+                ofile << "\t\t}" << std::endl;
             }
         }
         else if(table.key.size() == 0)
@@ -513,9 +523,23 @@ namespace generators
 			throw BuildException(msg);
 		}
 		ofile << "\t{" <<std::endl;
-        for(auto k : table.key)
+        if(table.key.size() > 0)//tiene key
         {
-            ofile << "\t\tthis->" << k->name << " = " << k->name << ";" << std::endl;
+            for(auto k : table.key)
+            {
+                if(k->classReferenced != NULL)
+                {
+                    ofile << "\t\tthis->" << k->name << " = new " << k->classReferenced->name << "(" << k->name << ");" << std::endl;
+                }
+                else
+                {
+                    ofile << "\t\tthis->" << k->name << " = " << k->name << ";" << std::endl;
+                }
+            }
+        }
+        else 
+        {
+            
         }
 		ofile << "\t}" <<std::endl;
 	}
@@ -626,9 +650,9 @@ namespace generators
                 kEnd--;
                 for(auto k : table.key)
                 {
-                    if(k->outType.compare("int") == 0 && k->classReferenced != NULL)
+                    if(k->outType.compare("int") == 0 && k->symbolReferenced != NULL)
                     {
-                        ofile << " + \"" << k->name << " = \" +  " << k->name << ".get" << k->upperName << "String() ";
+                        ofile << " + \"" << k->name << " = \" +  " << k->name << "->get" << k->symbolReferenced->upperName << "String() ";
                     }
                     else if(k->outType.compare("std::string") == 0)
                     {
