@@ -10,6 +10,8 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	- toolkit-common 2.0
 	- MySQL Client 5.7
 	- toolkit-clientedb 1.0
+	- libxml2 2
+	- Bost 1.67
 
 -------------
 - Instalación
