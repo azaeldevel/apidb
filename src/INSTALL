@@ -1,0 +1,27 @@
+﻿
+
+--------------------
+- Requisitos mínimos
+--------------------
+Los siquientes requisitos expresan las versiones mas actuales en el momento de la generacion del codigo por lo que muy posiblemente versiones anteriores funcionen tambien.
+
+	- CMake 3.5
+	- GCC 8.2
+	- toolkit-common 2.0
+	- MySQL Client 5.7
+	- toolkit-clientedb 1.0
+
+-------------
+- Instalación
+-------------
+	1.- Descargar el código fuente desde 'https://github.com/azaelrmartz/toolkit.git'
+	2.- Descomprimir si es necesario
+	3.- cd toolkit/clientdb // entrar en el directorio
+	4.- mkdir build //crear directorio de construcción
+	5.- cd build  //entrar en el directorio de construcción
+	6.- cmake ..
+	7.- make
+	8.- cpack --config CPackConfig.cmake
+	8.- sudo ./toolkit-clientdb-*-Linux.sh –prefix=/usr
+
+
