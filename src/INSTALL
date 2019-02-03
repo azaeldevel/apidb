@@ -8,10 +8,12 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	- CMake 3.5
 	- GCC 8.2
 	- toolkit-common 2.0
+	- toolkit-clientdb 1.0
 	- MySQL Client 5.7
-	- toolkit-clientedb 1.0
 	- libxml2 2
 	- Bost 1.67
+	- Bison 3.2
+	- Flex 2.6
 
 -------------
 - Instalación
@@ -24,6 +26,6 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	6.- cmake ..
 	7.- make
 	8.- cpack --config CPackConfig.cmake
-	8.- sudo ./toolkit-clientdb-*-Linux.sh –prefix=/usr
+	9.- sudo ./apidb-*-Linux.sh --prefix=/usr
 
 
