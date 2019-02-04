@@ -112,11 +112,11 @@ namespace generators
             {
                 ofile << "\tstd::vector<" << table.name<< "*>* " << table.name << "::select(toolkit::clientdb::connectors::Connector& connector,";
                 
-                for(auto func : *val)//class Function : public std::vector<const Parameters*>
+                const apidb::ConfigureProject::Parameters& params = val->getParameters();
                 {
-                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = func->end();
+                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
                     itParamEnd--;
-                    for(const char* param : *func)
+                    for(const char* param : params)
                     {
                         auto fl = table.find(param);
                         if(fl == table.end())
@@ -146,7 +146,7 @@ namespace generators
                 ofile << ")"<<std::endl;
                 ofile << "\t{"<<std::endl;
                 ofile << "\t\tstd::string sqlString = \"SELECT ";
-                for(auto func : *val)//class Function : public std::vector<const Parameters*>
+                //const apidb::ConfigureProject::Parameters& params = val->getParameters();
                 {
                     auto endK = table.key.end();
                     endK--;
@@ -159,9 +159,9 @@ namespace generators
                         }
                     }
                     ofile << " FROM " << table.name << " WHERE \";"<< std::endl;                    
-                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = func->end();
+                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
                     --itParamEnd;
-                    for(const char* param : *func)
+                    for(const char* param : params)
                     {
                         auto fl = table.find(param);
                         if(fl != table.end())
@@ -264,11 +264,11 @@ namespace generators
                 ofile << "\tbool " << table.name << "::download_" << key << "(toolkit::clientdb::connectors::Connector& connector)"<<std::endl;
                 ofile << "\t{ " << std::endl;
                 ofile << "\t\tstd::string sqlString = \"SELECT ";
-                for(auto func : *val)//class Function : public std::vector<const Parameters*>
+                const apidb::ConfigureProject::Parameters& params = val->getParameters();
                 {
-                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = func->end();
+                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
                     itParamEnd--;
-                    for(const char* param : *func)
+                    for(const char* param : params)
                     {
                         ofile << param; 
                         if(param != *itParamEnd)
@@ -308,9 +308,9 @@ namespace generators
                     ofile << "\t\t\t{"<< std::endl;
                     //ofile << "\t\t\t\tfor(int i = 0; i < num_fields; i++)"<< std::endl;
                     ofile << "\t\t\t\t{"<< std::endl;
-                    itParamEnd = func->end();
+                    itParamEnd = params.end();
                     int countparam = 0;
-                    for(const char* param : *func)
+                    for(const char* param : params)
                     {
                         //ofile << param; 
                         if(param != *itParamEnd)
@@ -756,11 +756,11 @@ namespace generators
             {
                 ofile << "\t\tstatic std::vector<" << table.name << "*>* select(toolkit::clientdb::connectors::Connector& connector,";
                 
-                for(auto func : *val)//class Function : public std::vector<const Parameters*>
+                const apidb::ConfigureProject::Parameters& params = val->getParameters();
                 {
-                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = func->end();
+                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
                     itParamEnd--;
-                    for(const char* param : *func)
+                    for(const char* param : params)
                     {
                         auto fl = table.find(param);
                         if(fl != table.end())

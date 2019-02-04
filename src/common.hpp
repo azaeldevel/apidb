@@ -178,15 +178,31 @@ namespace apidb
         class Parameters : public std::vector<const char*>
         {
             
-        };
-        class Function : public std::vector<const Parameters*>
+        };        
+        class Function
         {
+        public:
+        	enum Skeleton
+        	{
+        		DOWNLOAD,
+        		SELECT,
+        		INSERT,
+        		UPDATE,
+        		COSTUM
+        	};
+            const std::string& getName() const;
+            Function(const std::string&,Skeleton skeleton);
+            Function();
+            Skeleton getSkeleton() const;
+            void setHeader(const Parameters*);
+            void setBody(const std::string&);
+            const Parameters& getParameters() const;
+            
         private:
             std::string name;
-        public:
-            const std::string& getName() const;
-            Function(const std::string&);
-            Function();
+            Skeleton skeleton;
+            const Parameters* header; 
+            std::string body;
         };
         class Table : public std::map<const char*, const Function*>
         {

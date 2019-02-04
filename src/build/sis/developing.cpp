@@ -70,20 +70,18 @@ int main(int argc, char **argv)
         }
     }
     
-    sis::table1 tb1;
-    int id1 = random;
-    std::string id2  = "id2-";
-    id2 += std::to_string(random);
-    if(tb1.insert(connector,id1,id2))
+    /*sis::Persons* person2 = new sis::Persons();
+    if(person2->select(connector,"n1-4182","ap-4182"))
     {
-		std::cout << "Inserted " << id2 << std::endl;
+		std::cout << "Select Random "<< person2->toString() << std::endl;
 	}
 	else
 	{
-		std::cerr << "Fail "<< id2 << std::endl;
-	}
-    
-    return EXIT_SUCCESS;
+		std::cerr << "Fail Slected random "<< n1 << std::endl;
+	} */
+	
+	//std::string db = ((toolkit::clientdb::DatconectionMySQL&)(connector.getDatconection())).getDatabase();
+	//std::cout<<db<<std::endl;
 
 }
 
