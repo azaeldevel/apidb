@@ -21,7 +21,6 @@
 #include "common.hpp"
 
 #include <iostream>
-#include <mysql/my_global.h>
 #include <mysql/mysql.h>
 
 namespace apidb
@@ -29,7 +28,7 @@ namespace apidb
     /**
      * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
      */
-	bool symbols::Table::fillKeyType(toolkit::clientdb::connectors::Connector& connect,Tables& tables)
+	bool symbols::Table::fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables)
 	{
         /**
          * En la tabla actual, ¿cuales son los campos con llaves foraneas?
@@ -38,7 +37,7 @@ namespace apidb
         fks += "'";
 		fks += name;
 		fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
-		fks += ((toolkit::clientdb::datasourcies::Datasource&)(connect.getDatconection())).getDatabase();
+		fks += ((toolkit::clientdb::Datasource&)(connect.getDatconection())).getDatabase();
 		fks += "'";
 		//std::cout<<fks<<std::endl;
 		if(connect.query(fks.c_str()))
@@ -124,7 +123,7 @@ namespace apidb
 		return true;
 	}
 	
-    bool symbols::Table::basicSymbols(toolkit::clientdb::connectors::Connector& connect)
+    bool symbols::Table::basicSymbols(toolkit::clientdb::Connector& connect)
     {
 		std::string str = "DESCRIBE ";
 		str += name;
@@ -203,12 +202,12 @@ namespace apidb
     }
     
     
-	bool symbols::Tables::listing(toolkit::clientdb::connectors::Connector& connect)
+	bool symbols::Tables::listing(toolkit::clientdb::Connector& connect)
 	{
 		std::string db;
 		switch(connect.getDatconection().getServerType())
 		{
-            case toolkit::clientdb::datasourcies::Datasource::ServerType::MySQL:
+            case toolkit::clientdb::Datasource::ServerType::MySQL:
 				db = connect.getDatconection().getDatabase();
 				break;
 			default:

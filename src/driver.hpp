@@ -36,7 +36,7 @@ namespace apidb
         Driver(const ConfigureProject&);
 		
 	private:
-		toolkit::clientdb::connectors::Connector* connector;
+		toolkit::clientdb::Connector* connector;
 		apidb::Analyzer* analyzer;
 		apidb::generators::Generator* generator;
 		const ConfigureProject& configureProject;

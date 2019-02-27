@@ -34,7 +34,7 @@ namespace apidb
 	{		
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL_Server)
 		{
-			connector = new toolkit::clientdb::connectors::MySQL();
+			connector = new toolkit::clientdb::mysql::Connector();
 			analyzer = new mysql::Analyzer(configureProject);		
 			try
 			{
@@ -59,10 +59,7 @@ namespace apidb
 			analyzer->getErrorMessage() <<"Lenguaje de entrada desconocido."<<std::endl;
 		}	
 	}
-	
-
-	
-	
+		
 	OutputLenguajes Driver::getOutputLenguaje() const
 	{
 		return generator->getOutputLenguaje();

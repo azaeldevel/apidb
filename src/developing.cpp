@@ -19,13 +19,12 @@
  * */
 
 #include "apidb.hpp"
-
 #include <iostream>
 
 
 int main()
 {
-	toolkit::clientdb::datasourcies::MySQL mysqlSource("192.168.0.101",3306,"sis","develop","123456"); 
+	toolkit::clientdb::mysql::Datasource mysqlSource("192.168.0.101",3306,"sis","develop","123456"); 
 	toolkit::Version version;
 	version.set(0,1,0,toolkit::Version::Stage::alpha);
 
