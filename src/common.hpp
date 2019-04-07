@@ -85,6 +85,7 @@ namespace apidb
                 return std::strcmp(a, b) < 0;
             }
         };
+        
 		/**
 		 * Informacion sobre cada symbolo
 		 * */
@@ -225,6 +226,7 @@ namespace apidb
         std::vector<Table> selects;
 		
         ConfigureProject(std::string filename);
+        ConfigureProject(const ConfigureProject& configProy);
         ConfigureProject();
         bool saveConfig();
         bool checkXML(xmlTextReaderPtr);

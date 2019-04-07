@@ -38,7 +38,7 @@ namespace apidb
 			analyzer = new mysql::Analyzer(configureProject);		
 			try
 			{
-				bool flag = connector->connect(*config.conectordb);
+				bool flag = ((toolkit::clientdb::mysql::Connector*)connector)->connect(*config.conectordb);
 				if(!flag)
 				{
 					delete connector;
@@ -47,10 +47,13 @@ namespace apidb
 					analyzer = NULL;
 					//throw toolkit::Exception(msg);
 				}
+				else
+                {
+                    ;
+                }
 			}
 			catch(toolkit::clientdb::SQLException ex)
-			{
-				
+			{				
 				analyzer->getErrorMessage() <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
 			}
 		}
@@ -67,12 +70,28 @@ namespace apidb
 	
 	bool Driver::driving()
 	{
-		if(connector == NULL) return false;
+		if(connector == NULL) 
+        {
+            std::cout<<"El conector es NULL." << std::endl;
+            return false;
+        }
 
 		if(analyze())
 		{
-			if(generate()) return true;
+			if(generate())
+            {                
+                return true;
+            }
+            else
+            {
+                std::cout<<"Fallo la etapa de generacion" << std::endl;                
+            }
 		}
+		else
+        {
+            std::cout<<"Fallo la etapa de analisis." << std::endl;
+            
+        }
 		
 		return false;
 	}
@@ -138,6 +157,7 @@ namespace apidb
 		}
 		else
 		{
+            std::cout << "El lenguaje '" << this->analyzer->getInputLenguajeString() << "' no tiene soporte aun." << std::endl;
 			return false;
 		}
 		
@@ -176,6 +196,11 @@ namespace apidb
 			}	
 			//analyzer->getListTable().reorder();
         }  
+        else
+        {
+            std::cout<<"Faill reading table."<<std::endl;
+            return false;
+        }
           
         return true;
 	}

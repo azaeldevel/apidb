@@ -386,6 +386,18 @@ namespace apidb
         conectordb = NULL;
     }
     
+    ConfigureProject::ConfigureProject(const ConfigureProject& configProy)
+    {
+        this->name = configProy.name;
+        this->directory = configProy.directory;
+        this->version = configProy.version;
+        this->conectordb = configProy.conectordb;
+		this->inputLenguaje = configProy.inputLenguaje;
+		this->outputLenguaje = configProy.outputLenguaje;
+		this->mvc = configProy.mvc;
+        this->downloads = configProy.downloads;
+        this->selects = configProy.selects;
+    }
     ConfigureProject::ConfigureProject(std::string filename)
     {    
         xmlTextReaderPtr reader;

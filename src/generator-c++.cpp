@@ -476,7 +476,7 @@ namespace generators
         ofile << "\t}"<<std::endl;
 	}
 	void CPP::writeDefaultContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
-    {
+        {
 		ofile <<"\t"<<table.name<< "::" <<table.name<<"()"<<std::endl;
 		ofile <<"\t{"<<std::endl;
 		ofile <<"\t}"<<std::endl;
@@ -486,7 +486,7 @@ namespace generators
 		//constructor de copias 
 		ofile << "\t" << table.name << "::" << table.name <<"(const " << table.name <<"& obj)"<<std::endl;
 		ofile << "\t{"<<std::endl;
-        for (auto const& [key, attr] : table)
+                for (auto const& [key, attr] : table)
 		{
 			ofile << "\t\tthis->"<< attr->name << " = obj." << attr->name<<";"<<std::endl;
 		}
@@ -547,9 +547,9 @@ namespace generators
 	}
 	void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
-        for (auto const& [key, attr] : table)
-        {
-			//gets
+                for (auto const& [key, attr] : table)
+                {
+                        //gets
 			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 			{
 				if(attr->classReferenced == NULL)//si es foreing key
@@ -590,91 +590,91 @@ namespace generators
 			ofile << "\tstd::string "<< table.name <<"::get" << attr->upperName << "String() const "<< std::endl;
 			ofile << "\t{"<< std::endl;
             
-            ofile << "\t\treturn ";
+                        ofile << "\t\treturn ";
             
-            if(attr->classReferenced != NULL)
-            {
-                ofile <<"get" << attr->upperName << "String();";   
-            }
-            else
-            {
-                if(attr->outType.compare("std::string") == 0 || attr->outType.compare("const char*") == 0)
-                {
-                    ofile << attr->name << ";";                    
-                }
-                else
-                {
-                    ofile <<"std::to_string(" << attr->name << ");";
-                }
-            }
-            ofile << std::endl;			
+                        if(attr->classReferenced != NULL)
+                        {
+                                ofile <<"get" << attr->upperName << "String();";   
+                        }
+                        else
+                        {
+                                if(attr->outType.compare("std::string") == 0 || attr->outType.compare("const char*") == 0)
+                                {
+                                ofile << attr->name << ";";                    
+                                }
+                                else
+                                {
+                                ofile <<"std::to_string(" << attr->name << ");";
+                                }
+                        }
+                        ofile << std::endl;			
 			ofile << "\t}"<< std::endl;
             
 			//updates
-            if((*attr).isPrimaryKey()) goto postUpdatePosition; //si es una llave primary no se puede modificar
+                        if((*attr).isPrimaryKey()) goto postUpdatePosition; //si es una llave primary no se puede modificar
 			ofile << "\tbool " << table.name <<"::update" << attr->upperName << "(toolkit::clientdb::connectors::Connector& connector,";
 			if((attr->outType.compare("std::string") == 0 || attr->outType.compare("int") == 0) && attr->symbolReferenced != NULL)
-            {
-                ofile << "const " << attr->classReferenced->name << "& " << attr->name;
-            }
-            else if(attr->outType.compare("std::string") == 0)
-            {
-                ofile << "const " << attr->outType << "& " << attr->name;
-            }
-            else
-            {
-                ofile << attr->outType << " " << attr->name;
-            }
+                        {
+                                ofile << "const " << attr->classReferenced->name << "& " << attr->name;
+                        }
+                        else if(attr->outType.compare("std::string") == 0)
+                        {
+                                ofile << "const " << attr->outType << "& " << attr->name;
+                        }
+                        else
+                        {
+                                ofile << attr->outType << " " << attr->name;
+                        }
 			ofile <<")"<< std::endl;
 			ofile << "\t{"<<std::endl;
 			ofile << "\t\tstd::string sqlString = \"\";"<<std::endl;
 			ofile << "\t\tsqlString = \"UPDATE \" + TABLE_NAME;"<<std::endl;
 			ofile << "\t\tsqlString = sqlString + \" SET " ;
             
-            ofile << attr->name << " = " ;
-            if((attr->outType.compare("std::string") == 0 || attr->outType.compare("int") == 0) && attr->symbolReferenced != NULL)
-            {
-                ofile << "'\" + " << attr->name << ".get" << attr->upperName << "String() + \"'\";" << std::endl;
-            }
-            else if(attr->outType.compare("std::string") == 0)
-            {
-                ofile << "'\" + " << attr->name << " + \"'\";" << std::endl;
-            }
-            else
-            {
-                ofile << "\" + std::to_string(" << attr->name << ");" << std::endl;
-            }
+                        ofile << attr->name << " = " ;
+                        if((attr->outType.compare("std::string") == 0 || attr->outType.compare("int") == 0) && attr->symbolReferenced != NULL)
+                        {
+                                ofile << "'\" + " << attr->name << ".get" << attr->upperName << "String() + \"'\";" << std::endl;
+                        }
+                        else if(attr->outType.compare("std::string") == 0)
+                        {
+                                ofile << "'\" + " << attr->name << " + \"'\";" << std::endl;
+                        }
+                        else
+                        {
+                                ofile << "\" + std::to_string(" << attr->name << ");" << std::endl;
+                        }
 			
-			ofile <<"\t\tsqlString = sqlString + \" WHERE \" ";
-            if(table.key.size() > 0)
-            {
-                auto kEnd = table.key.end();
-                kEnd--;
-                for(auto k : table.key)
-                {
-                    if(k->outType.compare("int") == 0 && k->symbolReferenced != NULL)
-                    {
-                        ofile << " + \"" << k->name << " = \" +  " << k->name << "->get" << k->symbolReferenced->upperName << "String() ";
-                    }
-                    else if(k->outType.compare("std::string") == 0)
-                    {
-                        ofile << " + \"" << k->name << " = \" + \"'\" + " << k->name <<" + \"'\" ";
-                    }
-                    else
-                    {
-                        ofile << " + \"" << k->name << " = \" + std::to_string(" << k->name <<") ";
-                    }                    
-                    if(k != *kEnd)
-                    {
-                        ofile << " + \" and \" ";
-                    }
-                }
-                ofile << ";" << std::endl;
-            }
-            else
-            {
-                throw BuildException("No hay soporte para table sin llave");
-            }
+			ofile << "\t\tsqlString = sqlString + \" WHERE \" ";
+                        if(table.key.size() > 0)
+                        {
+                                auto kEnd = table.key.end();
+                                kEnd--;
+                                for(auto k : table.key)
+                                {
+                                if(k->outType.compare("int") == 0 && k->symbolReferenced != NULL)
+                                {
+                                        ofile << " + \"" << k->name << " = \" +  " << k->name << "->get" << k->symbolReferenced->upperName << "String() ";
+                                }
+                                else if(k->outType.compare("std::string") == 0)
+                                {
+                                        ofile << " + \"" << k->name << " = \" + \"'\" + " << k->name <<" + \"'\" ";
+                                }
+                                else
+                                {
+                                        ofile << " + \"" << k->name << " = \" + std::to_string(" << k->name <<") ";
+                                }                    
+                                if(k != *kEnd)
+                                {
+                                        ofile << " + \" and \" ";
+                                }
+                                }
+                                ofile << ";" << std::endl;
+                        }
+                        else
+                        {
+                                throw BuildException("No hay soporte para table sin llave");
+                        }
 			
 			ofile <<"\t\treturn connector.query(sqlString);"<<std::endl;
 			ofile << "\t}"<<std::endl;	
@@ -686,7 +686,7 @@ namespace generators
 		writeCopyContructorCPP(table,ofile);
 		writeDefaultContructorCPP(table,ofile);			
 		writeInsertCPP(table,ofile);
-        writeDownloadsCPP(table,ofile);
+                writeDownloadsCPP(table,ofile);
 		writeSelectsCPP(table,ofile);
 		ofile << std::endl; 
     }

@@ -211,6 +211,7 @@ namespace apidb
 				db = connect.getDatconection().getDatabase();
 				break;
 			default:
+                std::cout << "No hay soporte para " << connect.getDatconection().getServerTypeString() << std::endl;
 			return false;
 		}
 		//std::cout<< "db:" << db <<std::endl;
@@ -221,6 +222,7 @@ namespace apidb
 			while((row = mysql_fetch_row(result)))
 			{		
 				Table* prw = new Table();
+               // std::cout << row[0] << std::endl;
 				prw->name = row[0];
 				push_back(prw);
 			}
