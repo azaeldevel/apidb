@@ -91,7 +91,7 @@ namespace apidb
 		 * */
 		struct Symbol 
 		{
-            friend class Table;
+                        friend class Table;
             
 			enum KeyType
 			{
@@ -103,30 +103,30 @@ namespace apidb
 			
 					
 			//in input lenguaje
-            std::string inType;
-            //in input lenguaje
-            std::string name;                
-            //in out lenguaje
-            std::string get;
+                        std::string inType;
+                        //in input lenguaje
+                        std::string name;                
+                        //in out lenguaje
+                        std::string get;
 			std::string upperName;
 			bool required;
-            KeyType keyType;
-            Table* classReferenced;
-            Table* classParent;
-            std::string outType; 
-            Symbol* symbolReferenced;
-            bool isPrimaryKey();
-            bool isForeignKey();
-            bool isAutoIncrement();
+                        KeyType keyType;
+                        Table* classReferenced;
+                        Table* classParent;
+                        std::string outType; 
+                        Symbol* symbolReferenced;
+                        bool isPrimaryKey();
+                        bool isForeignKey();
+                        bool isAutoIncrement();
             
-            Symbol();
-            int getID()const;
+                        Symbol();
+                        int getID()const;
 			private:
 			static int counter;
 			int id;	
-            bool isPK;
-            bool isFK;
-            bool isAutoInc;
+                        bool isPK;
+                        bool isFK;
+                        bool isAutoInc;
 		};
 		
 		struct Key : public std::vector<Symbol*>

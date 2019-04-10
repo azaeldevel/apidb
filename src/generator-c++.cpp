@@ -613,7 +613,7 @@ namespace generators
 			//updates
                         if((*attr).isPrimaryKey()) goto postUpdatePosition; //si es una llave primary no se puede modificar
 			ofile << "\tbool " << table.name <<"::update" << attr->upperName << "(toolkit::clientdb::connectors::Connector& connector,";
-			if((attr->outType.compare("std::string") == 0 || attr->outType.compare("int") == 0) && attr->symbolReferenced != NULL)
+			if((attr->outType.compare("std::string") == 0 || attr->outType.compare("int") == 0) && attr->classReferenced != NULL)
                         {
                                 ofile << "const " << attr->classReferenced->name << "& " << attr->name;
                         }
@@ -652,22 +652,27 @@ namespace generators
                                 kEnd--;
                                 for(auto k : table.key)
                                 {
-                                if(k->outType.compare("int") == 0 && k->symbolReferenced != NULL)
-                                {
-                                        ofile << " + \"" << k->name << " = \" +  " << k->name << "->get" << k->symbolReferenced->upperName << "String() ";
-                                }
-                                else if(k->outType.compare("std::string") == 0)
-                                {
-                                        ofile << " + \"" << k->name << " = \" + \"'\" + " << k->name <<" + \"'\" ";
-                                }
-                                else
-                                {
-                                        ofile << " + \"" << k->name << " = \" + std::to_string(" << k->name <<") ";
-                                }                    
-                                if(k != *kEnd)
-                                {
-                                        ofile << " + \" and \" ";
-                                }
+                                        //std::cout << "Debug 1 :" << std::endl;
+                                        //std::cout << k->name << std::endl;
+                                        //std::cout << k->classReferenced->upperName << std::endl;
+                                        
+                                        if(k->outType.compare("int") == 0)
+                                        {
+                                                //ofile << " + \"" << k->name << " = \" +  " << k->name << "->get" << k->symbolReferenced->upperName << "String() ";
+                                                ofile << " + \"" << k->name << " = \" +  " << k->name;
+                                        }
+                                        else if(k->outType.compare("std::string") == 0)
+                                        {
+                                                ofile << " + \"" << k->name << " = \" + \"'\" + " << k->name <<" + \"'\" ";
+                                        }
+                                        else
+                                        {
+                                                ofile << " + \"" << k->name << " = \" + std::to_string(" << k->name <<") ";
+                                        }                    
+                                        if(k != *kEnd)
+                                        {
+                                                ofile << " + \" and \" ";
+                                        }
                                 }
                                 ofile << ";" << std::endl;
                         }
