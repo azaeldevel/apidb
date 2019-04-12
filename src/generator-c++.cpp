@@ -36,7 +36,7 @@ namespace generators
 	void CPP::writeSelectsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
     {        
         //select(conector,where)
-        ofile << "\tstd::vector<"  << table.name << "*>* " << table.name << "::select(toolkit::clientdb::connectors::Connector& connector, const std::string& where)"<<std::endl;
+        ofile << "\tstd::vector<"  << table.name << "*>* " << table.name << "::select(toolkit::clientdb::mysql::Connector& connector, const std::string& where)"<<std::endl;
         ofile << "\t{" <<std::endl;
         ofile << "\t\tstd::string sqlString = \"SELECT ";
         //selecciona los campos de las llaves
@@ -110,7 +110,7 @@ namespace generators
             
             for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
             {
-                ofile << "\tstd::vector<" << table.name<< "*>* " << table.name << "::select(toolkit::clientdb::connectors::Connector& connector,";
+                ofile << "\tstd::vector<" << table.name<< "*>* " << table.name << "::select(toolkit::clientdb::mysql::Connector& connector,";
                 
                 const apidb::ConfigureProject::Parameters& params = val->getParameters();
                 {
@@ -261,7 +261,7 @@ namespace generators
             
             for (auto const& [key, val] : tb)//class Table : public std::map<const char*, const Function*>
             {
-                ofile << "\tbool " << table.name << "::download_" << key << "(toolkit::clientdb::connectors::Connector& connector)"<<std::endl;
+                ofile << "\tbool " << table.name << "::download_" << key << "(toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
                 ofile << "\t{ " << std::endl;
                 ofile << "\t\tstd::string sqlString = \"SELECT ";
                 const apidb::ConfigureProject::Parameters& params = val->getParameters();
@@ -370,7 +370,7 @@ namespace generators
 	{        
 		// Methodo insert
         ofile << "\t"<< "bool ";
-        ofile <<table.name<< "::insert(toolkit::clientdb::connectors::Connector& connector";
+        ofile <<table.name<< "::insert(toolkit::clientdb::mysql::Connector& connector";
         for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
             if((*i)->outType.compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
@@ -612,7 +612,7 @@ namespace generators
             
 			//updates
                         if((*attr).isPrimaryKey()) goto postUpdatePosition; //si es una llave primary no se puede modificar
-			ofile << "\tbool " << table.name <<"::update" << attr->upperName << "(toolkit::clientdb::connectors::Connector& connector,";
+			ofile << "\tbool " << table.name <<"::update" << attr->upperName << "(toolkit::clientdb::mysql::Connector& connector,";
 			if((attr->outType.compare("std::string") == 0 || attr->outType.compare("int") == 0) && attr->classReferenced != NULL)
                         {
                                 ofile << "const " << attr->classReferenced->name << "& " << attr->name;
@@ -632,9 +632,9 @@ namespace generators
 			ofile << "\t\tsqlString = sqlString + \" SET " ;
             
                         ofile << attr->name << " = " ;
-                        if((attr->outType.compare("std::string") == 0 || attr->outType.compare("int") == 0) && attr->symbolReferenced != NULL)
+                        if( attr->outType.compare("int") == 0 && attr->symbolReferenced != NULL)
                         {
-                                ofile << "'\" + " << attr->name << ".get" << attr->upperName << "String() + \"'\";" << std::endl;
+                                ofile << "'\" + " << attr->name << ".get" << attr->symbolReferenced->classParent->upperName << "String() + \"'\";" << std::endl;
                         }
                         else if(attr->outType.compare("std::string") == 0)
                         {
@@ -652,14 +652,13 @@ namespace generators
                                 kEnd--;
                                 for(auto k : table.key)
                                 {
-                                        //std::cout << "Debug 1 :" << std::endl;
-                                        //std::cout << k->name << std::endl;
-                                        //std::cout << k->classReferenced->upperName << std::endl;
-                                        
-                                        if(k->outType.compare("int") == 0)
+                                        if(k->outType.compare("int") == 0 && k->symbolReferenced != NULL)
                                         {
-                                                //ofile << " + \"" << k->name << " = \" +  " << k->name << "->get" << k->symbolReferenced->upperName << "String() ";
-                                                ofile << " + \"" << k->name << " = \" +  " << k->name;
+                                                ofile << " + \"" << k->name << " = \" + std::to_string(" << k->name << ")";
+                                        }
+                                        else if(k->outType.compare("int") == 0 && k->symbolReferenced == NULL)
+                                        {
+                                                 ofile << " + \"" << k->name << " = \" +  " << k->name;
                                         }
                                         else if(k->outType.compare("std::string") == 0)
                                         {
@@ -668,7 +667,7 @@ namespace generators
                                         else
                                         {
                                                 ofile << " + \"" << k->name << " = \" + std::to_string(" << k->name <<") ";
-                                        }                    
+                                        }                     
                                         if(k != *kEnd)
                                         {
                                                 ofile << " + \" and \" ";
@@ -742,13 +741,13 @@ namespace generators
             }            
             for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
             {
-                ofile << "\t\tbool download_" << key << "(toolkit::clientdb::connectors::Connector& connector);"<<std::endl;
+                ofile << "\t\tbool download_" << key << "(toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
             }         
         }
     }
 	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
-        ofile << "\t\tstatic std::vector<" << table.name << "*>* select(toolkit::clientdb::connectors::Connector& connector,const std::string& where);"<<std::endl;
+        ofile << "\t\tstatic std::vector<" << table.name << "*>* select(toolkit::clientdb::mysql::Connector& connector,const std::string& where);"<<std::endl;
         
         std::vector<apidb::ConfigureProject::Table> tbs = configureProject.selects;
         for( auto tb: tbs)//std::vector<Table>
@@ -759,7 +758,7 @@ namespace generators
             }
             for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
             {
-                ofile << "\t\tstatic std::vector<" << table.name << "*>* select(toolkit::clientdb::connectors::Connector& connector,";
+                ofile << "\t\tstatic std::vector<" << table.name << "*>* select(toolkit::clientdb::mysql::Connector& connector,";
                 
                 const apidb::ConfigureProject::Parameters& params = val->getParameters();
                 {
@@ -803,7 +802,7 @@ namespace generators
 		int countFIelds = 0;
 		// creando insert
         ofile << "\t\t"<< "bool ";
-        ofile << "insert(toolkit::clientdb::connectors::Connector& connector";
+        ofile << "insert(toolkit::clientdb::mysql::Connector& connector";
         for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
             if((*i)->outType.compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
@@ -828,7 +827,7 @@ namespace generators
 		}
         ofile << ");"<<std::endl;
         
-		if(countFIelds == 0) throw BuildException(table.name + " no tiene campo requerido por lo que no se puede generar metodo insert."); 
+		//if(countFIelds == 0) throw BuildException(table.name + " no tiene campo requerido por lo que no se puede generar metodo insert."); 
 	}
 	void CPP::writeDefaultContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
@@ -899,16 +898,16 @@ namespace generators
 			//getString()			
 			ofile << "\t\tstd::string get" << attr->upperName << "String() const;"<< std::endl;		
 			//update
-			ofile << "\t\tbool " << "update" << attr->upperName << "(toolkit::clientdb::connectors::Connector& connector,";
+			ofile << "\t\tbool " << "update" << attr->upperName << "(toolkit::clientdb::mysql::Connector& connector,";
 			if(attr->classReferenced != 0)
-            {
-                ofile << " const " << attr->classReferenced->name << "& " << attr->name;
-            }
-            else if((attr->outType.compare("std::string") == 0))
-            {
-                ofile << "const std::string& " << attr->name;
-            }
-            else if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
+                        {
+                                ofile << " const " << attr->classReferenced->name << "& " << attr->name;
+                        }
+                        else if((attr->outType.compare("std::string") == 0))
+                        {
+                                ofile << "const std::string& " << attr->name;
+                        }
+                        else if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
 			{
 				ofile << attr->outType << " " << attr->name;						
 			}

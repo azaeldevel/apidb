@@ -148,12 +148,11 @@ namespace generators
 		{
 			toolkitcommonconifg.open(analyzer.getDirectoryProject() + "/cmake.modules/" + namefile);
 		}
-		
 		toolkitcommonconifg<<"IF (TOOLKIT_COMMON_INCLUDE_DIR)"<<std::endl;
 		  toolkitcommonconifg<<"SET(TOOLKIT_COMMON_FIND_QUIETLY TRUE)"<<std::endl;
 		toolkitcommonconifg<<"ENDIF (TOOLKIT_COMMON_INCLUDE_DIR)"<<std::endl;
 
-		toolkitcommonconifg<<"FIND_PATH(TOOLKIT_COMMON_INCLUDE_DIR common.hpp"<<std::endl;
+		toolkitcommonconifg<<"FIND_PATH(TOOLKIT_COMMON_INCLUDE_DIR toolkit-common.hpp"<<std::endl;
 		  toolkitcommonconifg<<"/usr/local/include/toolkit"<<std::endl;
 		  toolkitcommonconifg<<"/usr/include/toolkit"<<std::endl;
 		toolkitcommonconifg<<")"<<std::endl;
@@ -189,7 +188,9 @@ namespace generators
 		  toolkitcommonconifg<<"TOOLKIT_COMMON_INCLUDE_DIR"<<std::endl;
 		  toolkitcommonconifg<<")"<<std::endl;
 		toolkitcommonconifg.close();
-		
+                
+                if(configureProject.inputLenguaje  == InputLenguajes::MySQL_Server)
+                {                
 		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
 		namefile = "toolkit-clientdb-c++Config.cmake";
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
@@ -205,16 +206,16 @@ namespace generators
 		  toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_FIND_QUIETLY TRUE)"<<std::endl;
 		toolkitclientdbConfig<<"ENDIF (TOOLKIT_CLIENTDB_INCLUDE_DIR)"<<std::endl;
 
-		toolkitclientdbConfig<<"FIND_PATH(TOOLKIT_CLIENTDB_INCLUDE_DIR clientdb.hpp"<<std::endl;
+		toolkitclientdbConfig<<"FIND_PATH(TOOLKIT_CLIENTDB_INCLUDE_DIR toolkit-clientdb-mysql.hpp"<<std::endl;
 		  toolkitclientdbConfig<<"/usr/local/include/toolkit"<<std::endl;
 		  toolkitclientdbConfig<<"/usr/include/toolkit"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
-		toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_NAMES toolkit-clientdb-c++)"<<std::endl;
+		toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_NAMES toolkit-clientdb-c++-mysql)"<<std::endl;
 		toolkitclientdbConfig<<"FIND_LIBRARY(TOOLKIT_CLIENTDB_LIBRARY"<<std::endl;
 		  toolkitclientdbConfig<<"NAMES ${TOOLKIT_CLIENTDB_NAMES}"<<std::endl;
 		  toolkitclientdbConfig<<"PATHS /usr/lib/toolkit /usr/local/lib/toolkit /usr/lib/x86_64-linux-gnu/toolkit"<<std::endl;
-		  toolkitclientdbConfig<<"PATH_SUFFIXES toolkit-clientdb-c++"<<std::endl;
+		  toolkitclientdbConfig<<"PATH_SUFFIXES toolkit-clientdb-c++-mysql"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
 		toolkitclientdbConfig<<"IF (TOOLKIT_CLIENTDB_INCLUDE_DIR AND TOOLKIT_CLIENTDB_LIBRARY)"<<std::endl;
@@ -241,7 +242,12 @@ namespace generators
 		  toolkitclientdbConfig<<"TOOLKIT_CLIENTDB_INCLUDE_DIR"<<std::endl;
 		  toolkitclientdbConfig<<")"<<std::endl;
 		toolkitclientdbConfig.close();
-		
+                }                
+                else
+                {
+                        std::cerr << "No hay soporte para este lenguaje en cmake" << std::endl;
+                        return false;
+                }
 		//std::cout<<"Creating MySQLConfig.cmake..."<<std::endl;
 		namefile = "MySQLConfig.cmake";
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
@@ -413,7 +419,7 @@ namespace generators
 		const apidb::symbols::Tables& tables = analyzer.getListTable();
 		for(symbols::Table* table: tables)
 		{
-            for (auto const& [key, attr] : *table)
+                        for (auto const& [key, attr] : *table)
 			{
 				if(attr->outType.compare("std::string")==0 && stringFlag == false)
 				{
@@ -421,13 +427,13 @@ namespace generators
 					stringFlag = true;
 				}
 			}
-		}
+                }
                 
 		//inlcudes in source file
-        getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl; 
-        getSourceOutput()<< "#include <mysql/my_global.h>"<<std::endl;
-        getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
-		getHeaderOutput()<< "#include <clientdb.hpp>"<<std::endl<<std::endl;
+                getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl; 
+                getSourceOutput()<< "#include <mysql/my_global.h>"<<std::endl;
+                getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
+		getHeaderOutput()<< "#include <toolkit-clientdb-mysql.hpp>"<<std::endl<<std::endl;
 			
 		//writing code				
 		createSpaceH(getHeaderOutput());  

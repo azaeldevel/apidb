@@ -78,13 +78,13 @@ namespace apidb
 		struct Table;
 		struct Tables;
 		
-        struct cmp_str
-        {
-            bool operator()(char const *a, char const *b) const
-            {
-                return std::strcmp(a, b) < 0;
-            }
-        };
+                struct cmp_str
+                {
+                bool operator()(char const *a, char const *b) const
+                {
+                        return std::strcmp(a, b) < 0;
+                }
+                };
         
 		/**
 		 * Informacion sobre cada symbolo
@@ -138,15 +138,16 @@ namespace apidb
 		struct Table : public std::map<const char*,Symbol*,cmp_str>
 		{
 			std::string name;
-            Key key;
-            std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
+                        std::string upperName;
+                        Key key;
+                        std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
             
-            Table();
-            ~Table();
+                        Table();
+                        ~Table();
 			bool basicSymbols(toolkit::clientdb::Connector& connect);
-            bool fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables);
-            short getCountRefereces()const; 
-            //std::list<Symbol*>::iterator search(const std::string&);
+                        bool fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables);
+                        short getCountRefereces()const; 
+                        //std::list<Symbol*>::iterator search(const std::string&);
             
 		private:
 			short countRef;
@@ -159,7 +160,7 @@ namespace apidb
 		{
 		public:
 			~Tables();	
-            Table* search(const std::string&); 
+                        Table* search(const std::string&); 
 			std::list<Table*>::iterator find(const std::string& tableName);       
 			bool listing(toolkit::clientdb::Connector& connect);
 			short getMaxCountRef();
@@ -191,37 +192,37 @@ namespace apidb
         		UPDATE,
         		COSTUM
         	};
-            const std::string& getName() const;
-            Function(const std::string&,Skeleton skeleton);
-            Function();
-            Skeleton getSkeleton() const;
-            void setHeader(const Parameters*);
-            void setBody(const std::string&);
-            const Parameters& getParameters() const;
+                const std::string& getName() const;
+                Function(const std::string&,Skeleton skeleton);
+                Function();
+                Skeleton getSkeleton() const;
+                void setHeader(const Parameters*);
+                void setBody(const std::string&);
+                const Parameters& getParameters() const;
             
         private:
-            std::string name;
-            Skeleton skeleton;
-            const Parameters* header; 
-            std::string body;
+                std::string name;
+                Skeleton skeleton;
+                const Parameters* header; 
+                std::string body;
         };
         class Table : public std::map<const char*, const Function*>
         {
         private:
-            std::string name;
+                std::string name;
         public:
-            const std::string& getName() const;
-            Table(const std::string&);
-            Table();
+                const std::string& getName() const;
+                Table(const std::string&);
+                Table();
         };
         
         std::string name; 
         std::string directory;
         toolkit::Version version;
         toolkit::clientdb::mysql::Datasource* conectordb;
-		InputLenguajes inputLenguaje;
-		OutputLenguajes outputLenguaje;
-		MVC mvc;
+        InputLenguajes inputLenguaje;
+        OutputLenguajes outputLenguaje;
+        MVC mvc;
         std::vector<Table> downloads;
         std::vector<Table> selects;
 		

@@ -30,92 +30,63 @@ namespace apidb
      */
 	bool symbols::Table::fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables)
 	{
-        /**
-         * En la tabla actual, ¿cuales son los campos con llaves foraneas?
-         */
+                /**
+                * Lista las relaciones de llaves foraneas para la tabla actual
+                */
 		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME FROM information_schema.TABLE_CONSTRAINTS i,information_schema.KEY_COLUMN_USAGE k WHERE i.CONSTRAINT_NAME = k.CONSTRAINT_NAME  AND i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =k.TABLE_SCHEMA AND i.TABLE_NAME = "; 
                 fks += "'";
 		fks += name;
 		fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
 		fks += ((toolkit::clientdb::Datasource&)(connect.getDatconection())).getDatabase();
 		fks += "'";
-		//std::cout<<fks<<std::endl;
+		std::cout<<fks<<std::endl;
 		if(connect.query(fks.c_str()))
 		{
 			MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());
 			MYSQL_ROW row;
 			while((row = mysql_fetch_row(result)))
 			{
-                                for (auto const& [key, attribute] : *this) 
-				{//en cada attributo  
-                                        Tables::iterator itFinded = tables.find(row[1]);//buscar la tabla del campo referido
-					if(attribute->name.compare(row[0]) == 0 && itFinded != tables.end()) //verificar se corresponde con alguno encontrado en la lista de constraings
-					{                                                 
-						if(itFinded != tables.end())
-						{
-                                                        attribute->classReferenced = (*itFinded);
-                                                        //std::cout << "attribute->classReferenced->name = " << attribute->classReferenced->name << std::endl;
-							attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
-							Table::iterator finded = attribute->classReferenced->find(row[2]);
+                                        std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
+                                        Tables::iterator itFinded = tables.find(row[1]);//buscar la tabla del campo que se refiere en el registro actual 'row[1]'
+                                        if( itFinded != tables.end())
+                                        {//si se encontro la tabla
+                                                Table* tbFinded = *itFinded;
+                                                std::cout<<"Se encontro tabla '" << tbFinded->name << "'" << std::endl;
+                                                std::cout<<"Buscando campo '" << row[0] << "'" << std::endl;
+                                                iterator itatt = find(row[0]);//buscar el compo en la tabla correpondiente
+                                                if(itatt != tbFinded->end()) //buscar
+                                                {//si se encontro la tabla                                                 
+                                                        //if(itFinded != tables.end())
+                                                        Symbol* attribute = itatt->second;
+                                                        std::cout<<"Se encontro campo '"<< attribute->name << "'" << std::endl;
+                                                        attribute->classReferenced = *itFinded;
+                                                        //std::cout  << attribute->classParent->name << "-->" << attribute->classReferenced->name << std::endl;
+                                                        attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
+                                                        Table::iterator finded = attribute->classReferenced->find(row[2]);
                                                         if(finded != attribute->classReferenced->end())
                                                         {
-                                                                attribute->symbolReferenced = (*finded).second;
-                                                                //std::cout << "attribute->symbolReferenced = " << attribute->symbolReferenced->name << std::endl;
+                                                                        attribute->symbolReferenced = (*finded).second;
+                                                                        std::cout <<  attribute->classParent->name << ":" << attribute->name << "-->" << attribute->classReferenced->name << ":" << attribute->symbolReferenced->name << std::endl;
                                                         }
                                                         else
                                                         {
-                                                                std::string strmsg = "No se encontro el campo '";
-                                                                strmsg = strmsg + row[0] + "' en la tabla '" + row[1] + "', es necesario para construir la referencia a dicho campo.";
-                                                                throw BuildException(strmsg);
+                                                                        std::string strmsg = "No se encontro el campo '";
+                                                                        strmsg = strmsg + row[0] + "' en la tabla '" + row[1] + "', es necesario para construir la referencia a dicho campo.";
+                                                                        throw BuildException(strmsg);
                                                         }
-						}
+                                                }
                                                 else
                                                 {
+                                                       
+                                                        
+                                                }
+                                        }
+                                        else
+                                        {
                                                 std::string strmsg = "No se encontro el la tabla '";
                                                 strmsg = strmsg + row[1] + "'";
                                                 throw BuildException(strmsg);
-                                                }
-					}
-					else
-                                        {
-                                                //std::cout<<"Se ignoro '" << row[1] << "' de '" << row[0] << "', clase actual es '" << name << "' y el atributi actual es '" << attribute->name << "'" <<std::endl;
                                         }
-				}
-				for (auto attribute : required) 
-				{//en cada attributo
-                                        Tables::iterator itFinded = tables.find(row[1]);//buscar la tabla del campo referido
-					if(attribute->name.compare(row[0]) == 0 && itFinded != tables.end()) //verificar se corresponde con alguno encontrado en la lista de constraings
-					{
-						if(itFinded != tables.end())
-						{
-                                                        attribute->classReferenced = (*itFinded);
-                                                        //std::cout << "attribute->classReferenced->name = " << attribute->classReferenced->name << std::endl;
-							attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
-							Table::iterator finded = attribute->classReferenced->find(row[2]);
-                                                        if(finded != attribute->classReferenced->end())
-                                                        {
-                                                                attribute->symbolReferenced = (*finded).second;
-                                                                //std::cout << "attribute->symbolReferenced = " << attribute->symbolReferenced->name << std::endl;
-                                                        }
-                                                        else
-                                                        {
-                                                                std::string strmsg = "No se encontro el campo '";
-                                                                strmsg = strmsg + row[0] + "' en la tabla '" + row[1] + "', es necesario para construir la referencia a dicho campo.";
-                                                                throw BuildException(strmsg);
-                                                        }
-						}
-                                                else
-                                                {
-                                                std::string strmsg = "No se encontro el la tabla '";
-                                                strmsg = strmsg + row[1] + "'";
-                                                throw BuildException(strmsg);
-                                                }
-					}
-					else
-                                        {
-                                                //std::cout<<"Se ignoro '" << row[1] << "' de '" << row[0] << "', clase actual es '" << name << "' y el atributi actual es '" << attribute->name << "'" <<std::endl;
-                                        }
-				}
 			}
 			mysql_free_result(result);
 			return true;	
@@ -224,6 +195,9 @@ namespace apidb
 				Table* prw = new Table();
                                 // std::cout << row[0] << std::endl;
 				prw->name = row[0];
+                                std::string upper = row[0];
+                                prw->upperName = upper; 
+                                prw->upperName[0] = toupper(prw->upperName[0]);
 				push_back(prw);
 			}
 			mysql_free_result(result);

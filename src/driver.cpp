@@ -157,37 +157,35 @@ namespace apidb
 		}
 		else
 		{
-            std::cout << "El lenguaje '" << this->analyzer->getInputLenguajeString() << "' no tiene soporte aun." << std::endl;
+                        std::cout << "El lenguaje '" << this->analyzer->getInputLenguajeString() << "' no tiene soporte aun." << std::endl;
 			return false;
-		}
-		
-		//analyzer->setPramsLenguajes(configureProject->inputLenguaje,configureProject->outputLenguaje);
-		
+		}		
+		//analyzer->setPramsLenguajes(configureProject->inputLenguaje,configureProject->outputLenguaje);		
 		if(analyzer->listing(*connector)) //reading tables
-        {
-            symbols::Tables& tbs = analyzer->getListTable();
-			
-            for(auto table: tbs) //reading attrubtes by table
-            {
-				analyzer->getOutputMessage() << "\tCreating basic simbols for " << table->name  << "." << std::endl;
-                //simbolos basicos 
-                if(!table->basicSymbols(*connector))
                 {
+                        symbols::Tables& tbs = analyzer->getListTable();
+			
+                        for(auto table: tbs) //reading attrubtes by table
+                        {
+				analyzer->getOutputMessage() << "\tCreating basic simbols for " << table->name  << "." << std::endl;
+                                //simbolos basicos 
+                                if(!table->basicSymbols(*connector))
+                                {
 					//std::cerr<<"Faill on basicSymbols"<<std::endl;
 					return false;
 				}
 			}			
-            for(auto table: tbs) //reading attrubtes by table
-            {
+                        for(auto table: tbs) //reading attrubtes by table
+                        {
 				//foreign key's
 				if(!table->fillKeyType(*connector,analyzer->getListTable()))
-                {
-					//std::cerr<<"Faill on fillKeyType"<<std::endl;
-					return false;
-				}
-            }
-            for(auto table: tbs) //reading attrubtes by table
-            {
+                                {
+                                                //std::cerr<<"Faill on fillKeyType"<<std::endl;
+                                                return false;
+                                }
+                        }
+                        for(auto table: tbs) //reading attrubtes by table
+                        {
 				for (auto const& [key, attribute] : *table)
 				{
 					//std::cout<<"\t"<<attribute->inType<<std::endl;
