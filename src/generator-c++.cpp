@@ -634,7 +634,7 @@ namespace generators
                         ofile << attr->name << " = " ;
                         if( attr->outType.compare("int") == 0 && attr->symbolReferenced != NULL)
                         {
-                                ofile << "'\" + " << attr->name << ".get" << attr->symbolReferenced->classParent->upperName << "String() + \"'\";" << std::endl;
+                                ofile << "'\" + " << attr->name << ".get" << attr->symbolReferenced->classReferenced->upperName << "String() + \"'\";" << std::endl;
                         }
                         else if(attr->outType.compare("std::string") == 0)
                         {
@@ -658,7 +658,7 @@ namespace generators
                                         }
                                         else if(k->outType.compare("int") == 0 && k->symbolReferenced == NULL)
                                         {
-                                                 ofile << " + \"" << k->name << " = \" +  " << k->name;
+                                                 ofile << " + \"" << k->name << " = \" +  std::to_string(" << k->name << ")";
                                         }
                                         else if(k->outType.compare("std::string") == 0)
                                         {

@@ -37,7 +37,7 @@ int main()
     config.outputLenguaje = apidb::OutputLenguajes::CPP;	
 	config.mvc = apidb::MVC::NO;
     //config.keyMode = apidb::KeyModel::BY_MODEL_DB;
-    apidb::ConfigureProject::Table tbP("Persons");
+    apidb::ConfigureProject::Table tbP("Person");
     apidb::ConfigureProject::Function dwFullName("fullname",apidb::ConfigureProject::Function::DOWNLOAD);
     apidb::ConfigureProject::Parameters params_FullName;
     params_FullName.push_back("n1");
@@ -53,15 +53,15 @@ int main()
     dwShortName.setHeader(&params_ShortName);
     tbP.insert(std::make_pair(dwShortName.getName().c_str(), &dwShortName));
     config.downloads.push_back(tbP);
-    apidb::ConfigureProject::Table table1("table1");
-    apidb::ConfigureProject::Function byPerson("byPerson",apidb::ConfigureProject::Function::SELECT);    
-    apidb::ConfigureProject::Parameters params_byPerson;
-    params_byPerson.push_back("dataSel");
-    params_byPerson.push_back("person");
-    byPerson.setHeader(&params_byPerson);
-    table1.insert(std::make_pair(byPerson.getName().c_str(), &byPerson));
+    //apidb::ConfigureProject::Table table1("table1");
+    //apidb::ConfigureProject::Function byPerson("byPerson",apidb::ConfigureProject::Function::SELECT);    
+   // apidb::ConfigureProject::Parameters params_byPerson;
+    //params_byPerson.push_back("dataSel");
+    //params_byPerson.push_back("person");
+    //byPerson.setHeader(&params_byPerson);
+    //table1.insert(std::make_pair(byPerson.getName().c_str(), &byPerson));
     config.selects.push_back(tbP);
-    config.selects.push_back(table1);
+    //config.selects.push_back(table1);
     
     apidb::Driver driver(config);	
 	if(!driver.driving())
