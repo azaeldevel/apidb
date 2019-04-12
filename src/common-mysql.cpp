@@ -39,26 +39,26 @@ namespace apidb
 		fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
 		fks += ((toolkit::clientdb::Datasource&)(connect.getDatconection())).getDatabase();
 		fks += "'";
-		std::cout<<fks<<std::endl;
+		//std::cout<<fks<<std::endl;
 		if(connect.query(fks.c_str()))
 		{
 			MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());
 			MYSQL_ROW row;
 			while((row = mysql_fetch_row(result)))
 			{
-                                        std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
+                                        //std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
                                         Tables::iterator itFinded = tables.find(row[1]);//buscar la tabla del campo que se refiere en el registro actual 'row[1]'
                                         if( itFinded != tables.end())
                                         {//si se encontro la tabla
                                                 Table* tbFinded = *itFinded;
-                                                std::cout<<"Se encontro tabla '" << tbFinded->name << "'" << std::endl;
-                                                std::cout<<"Buscando campo '" << row[0] << "'" << std::endl;
+                                                //std::cout<<"Se encontro tabla '" << tbFinded->name << "'" << std::endl;
+                                                //std::cout<<"Buscando campo '" << row[0] << "'" << std::endl;
                                                 iterator itatt = find(row[0]);//buscar el compo en la tabla correpondiente
                                                 if(itatt != tbFinded->end()) //buscar
                                                 {//si se encontro la tabla                                                 
                                                         //if(itFinded != tables.end())
                                                         Symbol* attribute = itatt->second;
-                                                        std::cout<<"Se encontro campo '"<< attribute->name << "'" << std::endl;
+                                                        //std::cout<<"Se encontro campo '"<< attribute->name << "'" << std::endl;
                                                         attribute->classReferenced = *itFinded;
                                                         //std::cout  << attribute->classParent->name << "-->" << attribute->classReferenced->name << std::endl;
                                                         attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
@@ -66,7 +66,7 @@ namespace apidb
                                                         if(finded != attribute->classReferenced->end())
                                                         {
                                                                         attribute->symbolReferenced = (*finded).second;
-                                                                        std::cout <<  attribute->classParent->name << ":" << attribute->name << "-->" << attribute->classReferenced->name << ":" << attribute->symbolReferenced->name << std::endl;
+                                                                       //std::cout <<  attribute->classParent->name << ":" << attribute->name << "-->" << attribute->classReferenced->name << ":" << attribute->symbolReferenced->name << std::endl;
                                                         }
                                                         else
                                                         {
