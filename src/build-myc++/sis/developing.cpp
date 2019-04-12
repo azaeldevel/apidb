@@ -62,12 +62,15 @@ int main(int argc, char **argv)
     }
     
     static std::vector<sis::Person*>* lst = sis::Person::select(connector,"n1 like 'n1-%8'");
-    for(auto p : *lst)
+    if(lst != NULL)
     {
-        if(p->download_shortname(connector))
-        {
-            std::cout << ""<< p->getN1() << " " << p->getAp() << std::endl;
-        }
+		for(auto p : *lst)
+		{
+		    if(p->download_shortname(connector))
+		    {
+		        std::cout << ""<< p->getN1() << " " << p->getAp() << std::endl;
+		    }
+		}
     }
     
     /*sis::Persons* person2 = new sis::Persons();

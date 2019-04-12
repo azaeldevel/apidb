@@ -91,6 +91,7 @@ namespace generators
 		cmakelists<<"SET(CMAKE_CXX_STANDARD 14)"<<std::endl;
 		cmakelists<<"SET(CMAKE_CXX_STANDARD_REQUIRED ON)"<<std::endl;
 		cmakelists<<"SET(CMAKE_CXX_EXTENSIONS OFF)"<<std::endl;
+               cmakelists<<" SET(CMAKE_BUILD_TYPE Debug)"<<std::endl;
 		cmakelists<<std::endl;
 		cmakelists<<"SET(" << configureProject.name << "_VERSION_STAGE \"alpha\")"<<std::endl;
 		cmakelists<<"CONFIGURE_FILE(\"${PROJECT_SOURCE_DIR}/config.h.in\" \"${PROJECT_SOURCE_DIR}/config.h\")"<<std::endl;
