@@ -121,7 +121,8 @@ namespace apidb
             
                         Symbol();
                         int getID()const;
-			private:
+                
+                private:
 			static int counter;
 			int id;	
                         bool isPK;

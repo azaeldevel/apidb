@@ -66,6 +66,7 @@ namespace apidb
                                                         if(finded != attribute->classReferenced->end())
                                                         {
                                                                         attribute->symbolReferenced = (*finded).second;
+                                                                        attribute->isFK = true;
                                                                        //std::cout <<  attribute->classParent->name << ":" << attribute->name << "-->" << attribute->classReferenced->name << ":" << attribute->symbolReferenced->name << std::endl;
                                                         }
                                                         else
@@ -150,10 +151,10 @@ namespace apidb
 				{
                     
 				}				
-				if(attrribute->isPK && keyType.compare("UNI") == 0)//unique constraing
+				/*if(attrribute->isPK && keyType.compare("UNI") == 0)//unique constraing
 				{
 					attrribute->isFK = true;//attrribute->keyType = symbols::Symbol::KeyType::UNIQUE;
-				}
+				}*/
 				
                                 insert(std::make_pair(attrribute->name.c_str(),attrribute));
 				if(attrribute->required)

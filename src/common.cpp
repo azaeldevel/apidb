@@ -420,38 +420,38 @@ namespace apidb
         }
     }
     
-    namespace symbols
+        namespace symbols
 	{
 			
-        bool Symbol::isPrimaryKey()
-        {
-            return isPK;
-        }
-        bool Symbol::isForeignKey()
-        {
-            return isFK;
-        }
-        bool Symbol::isAutoIncrement()
-        {
-            return isAutoInc;
-        }
+                bool Symbol::isPrimaryKey()
+                {
+                return isPK;
+                }
+                bool Symbol::isForeignKey()
+                {
+                return isFK;
+                }
+                bool Symbol::isAutoIncrement()
+                {
+                return isAutoInc;
+                }
 		
-        int Symbol::getID()const
-        {
-            return id;
-        }
+                int Symbol::getID()const
+                {
+                return id;
+                }
         
-        Symbol::Symbol()
-        {
-            counter++;
-            id = counter;
-            classReferenced = NULL;
-            classParent = NULL;
-            keyType = NOKEY;
-            id = 0;
-            isPK = false;
-            isFK = false;
-        }
+                Symbol::Symbol()
+                {
+                        counter++;
+                        id = counter;
+                        classReferenced = NULL;
+                        classParent = NULL;
+                        keyType = NOKEY;
+                        id = 0;
+                        isPK = false;
+                        isFK = false;
+                }
 		int Symbol::counter = 0;	
 		
 		short Tables::getMaxCountRef()
@@ -485,7 +485,7 @@ namespace apidb
 		
 		Table::~Table()
 		{
-            for (auto const& [key, symbol] : *this)
+                        for (auto const& [key, symbol] : *this)
 			{
 				delete symbol;
 			}	

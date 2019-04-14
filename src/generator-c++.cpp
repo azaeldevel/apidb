@@ -585,6 +585,28 @@ namespace generators
 			}								
 			ofile << "\t}"<<std::endl;
 			
+                        
+                        
+                        
+                        //gets foreing key
+                         if(attr->isForeignKey())
+                        {
+                                ofile <<"\t"<< attr->symbolReferenced->outType << " " << table.name << "::getKey" << attr->upperName << "() const"<< std::endl;
+                                ofile <<"\t{"<< std::endl;
+                                if(attr->symbolReferenced->isForeignKey())//la referencia es terminal
+                                {
+                                        ofile <<"\t\t" << "return " << attr->name << "->getKey" << attr->symbolReferenced->upperName << "();" << std::endl;
+                                }
+                                else
+                                {
+                                        ofile <<"\t\t" << "return " << attr->name << "->" << attr->symbolReferenced->get << ";" << std::endl;
+                                }
+                                ofile <<"\t}"<< std::endl;
+                        }
+                        
+                        
+                        
+                        
 			
 			//getString()		
 			ofile << "\tstd::string "<< table.name <<"::get" << attr->upperName << "String() const "<< std::endl;
@@ -634,7 +656,14 @@ namespace generators
                         ofile << attr->name << " = " ;
                         if( attr->outType.compare("int") == 0 && attr->symbolReferenced != NULL)
                         {
-                                ofile << "'\" + " << attr->name << ".get" << attr->classReferenced->upperName << "String() + \"'\";" << std::endl;
+                                if(attr->isForeignKey())
+                                {
+                                        ofile << "'\" +  std::to_string(" << attr->name  << ".getKey"<< attr->upperName << "())+ \"'\";" << std::endl;                                         
+                                }
+                                else
+                                {
+                                        ofile << "'\" +  std::to_string(" << attr->name  << "."<< attr->get << ")+ \"'\";" << std::endl;  
+                                }                           
                         }
                         else if(attr->outType.compare("std::string") == 0)
                         {
@@ -872,10 +901,10 @@ namespace generators
 		}
 	}
 	void CPP::createClassMethodesH(const apidb::symbols::Table& table,std::ofstream& ofile)
-    {
-		std::string insertMethode = "";
-        for (auto const& [key, attr] : table)
         {
+		std::string insertMethode = "";
+                for (auto const& [key, attr] : table)
+                {
 			//get
 			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
 			{
@@ -885,15 +914,21 @@ namespace generators
 				}
 				else
 				{
-					ofile <<"\t\t"<< " const " << attr->classReferenced->name << "& ";
+					ofile <<"\t\t"<< "const " << attr->classReferenced->name << "& ";
 				}
 			}
 			else
 			{
-				ofile <<"\t\t" << " const " << attr->outType <<"& ";
+				ofile <<"\t\t" << "const " << attr->outType <<"& ";
 			}		
 			ofile << attr->get << " const;"<< std::endl;
 			
+                        
+                        //get forign key
+                         if(attr->isForeignKey())
+                        {
+                                ofile <<"\t\t"<< attr->symbolReferenced->outType << " getKey" << attr->upperName << "() const;"<< std::endl;
+                        }
 			
 			//getString()			
 			ofile << "\t\tstd::string get" << attr->upperName << "String() const;"<< std::endl;		
@@ -916,15 +951,14 @@ namespace generators
 				ofile << attr->outType << " " << attr->name;
 			}
 			ofile << ");"<< std::endl;            
-        }  
+                }  
                  
 		writeKeyContructorH(table,ofile);		
 		writeCopyContructorH(table,ofile);
 		writeDefaultContructorH(table,ofile);
 		writeInsertH(table,ofile);	
-        writeSelectsH(table,ofile);
-        writeDownloadsH(table,ofile);
-        ofile << std::endl;
+                writeSelectsH(table,ofile);
+                writeDownloadsH(table,ofile);
     }
     void CPP::createClassAttributesH(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
