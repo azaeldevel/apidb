@@ -416,23 +416,11 @@ namespace generators
 		analyzer.getOutputMessage() << "\tLenguaje resultado: " << getOutputLenguajeString() << std::endl;
 		//includes in header file
 		std::string headers = "";
-		bool stringFlag = false;
-		const apidb::symbols::Tables& tables = analyzer.getListTable();
-		for(symbols::Table* table: tables)
-		{
-                        for (auto const& [key, attr] : *table)
-			{
-				if(attr->outType.compare("std::string")==0 && stringFlag == false)
-				{
-					getHeaderOutput()<< "#include <string>" <<std::endl;
-					stringFlag = true;
-				}
-			}
-                }
+		getHeaderOutput()<< "#include <string>" <<std::endl;
                 
 		//inlcudes in source file
                 getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl; 
-                getSourceOutput()<< "#include <mysql/my_global.h>"<<std::endl;
+                //getSourceOutput()<< "#include <mysql/my_global.h>"<<std::endl;
                 getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
 		getHeaderOutput()<< "#include <toolkit-clientdb-mysql.hpp>"<<std::endl<<std::endl;
 			

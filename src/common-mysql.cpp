@@ -37,7 +37,7 @@ namespace apidb
                 fks += "'";
 		fks += name;
 		fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
-		fks += ((toolkit::clientdb::Datasource&)(connect.getDatconection())).getDatabase();
+		fks += ((toolkit::clientdb::Datconnect&)(connect.getDatconection())).getDatabase();
 		fks += "'";
 		//std::cout<<fks<<std::endl;
 		if(connect.query(fks.c_str()))
@@ -178,7 +178,7 @@ namespace apidb
 		std::string db;
 		switch(connect.getDatconection().getServerType())
 		{
-                        case toolkit::clientdb::Datasource::ServerType::MySQL:
+                        case toolkit::clientdb::Datconnect::ServerType::MySQL:
 				db = connect.getDatconection().getDatabase();
 				break;
 			default:
@@ -196,8 +196,8 @@ namespace apidb
                                 // std::cout << row[0] << std::endl;
 				prw->name = row[0];
                                 std::string upper = row[0];
-                                prw->upperName = upper; 
-                                prw->upperName[0] = toupper(prw->upperName[0]);
+                                upper[0] = toupper(upper[0]);
+                                prw->upperName = upper;
 				push_back(prw);
 			}
 			mysql_free_result(result);

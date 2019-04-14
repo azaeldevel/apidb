@@ -547,7 +547,7 @@ namespace generators
 	}
 	void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
-                for (auto const& [key, attr] : table)
+                for (auto const& [key, attr] : table) //para cada atributo se crean las funciones de operacion get, set y update
                 {
                         //gets
 			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
@@ -589,7 +589,7 @@ namespace generators
 			//getString()		
 			ofile << "\tstd::string "<< table.name <<"::get" << attr->upperName << "String() const "<< std::endl;
 			ofile << "\t{"<< std::endl;
-            
+                        
                         ofile << "\t\treturn ";
             
                         if(attr->classReferenced != NULL)
@@ -634,7 +634,7 @@ namespace generators
                         ofile << attr->name << " = " ;
                         if( attr->outType.compare("int") == 0 && attr->symbolReferenced != NULL)
                         {
-                                ofile << "'\" + " << attr->name << ".get" << attr->symbolReferenced->classReferenced->upperName << "String() + \"'\";" << std::endl;
+                                ofile << "'\" + " << attr->name << ".get" << attr->classReferenced->upperName << "String() + \"'\";" << std::endl;
                         }
                         else if(attr->outType.compare("std::string") == 0)
                         {
@@ -704,21 +704,21 @@ namespace generators
     {
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
-			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+			file <<"namespace "<< analyzer.getNameProject() << std::endl;
 			file <<"{"<<std::endl;
 		}
 		else 
 		{
-			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+			file <<"namespace "<< analyzer.getNameProject() << std::endl;
 			file <<"{" <<std::endl;
 			file <<"namespace  controller" <<std::endl;
 			file <<"{" <<std::endl;
 		}
-        const symbols::Tables& tables = analyzer.getListTable();
-        for (apidb::symbols::Table* table : tables) 
-        {
-            createClassCPP(*table,file,table->name);       
-        }
+                const symbols::Tables& tables = analyzer.getListTable();
+                for (apidb::symbols::Table* table : tables) 
+                {
+                        createClassCPP(*table,file,table->name);       
+                }
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
 			file <<"}"<<std::endl;

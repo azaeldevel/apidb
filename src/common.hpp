@@ -219,7 +219,7 @@ namespace apidb
         std::string name; 
         std::string directory;
         toolkit::Version version;
-        toolkit::clientdb::mysql::Datasource* conectordb;
+        toolkit::clientdb::mysql::Datconnect* conectordb;
         InputLenguajes inputLenguaje;
         OutputLenguajes outputLenguaje;
         MVC mvc;
@@ -235,7 +235,7 @@ namespace apidb
         const std::string& getName()const;
         const std::string& getDirectory()const;
         const toolkit::Version& getVersion()const;
-        const toolkit::clientdb::mysql::Datasource& getConector()const;
+        const toolkit::clientdb::mysql::Datconnect& getConector()const;
     };
 }
 

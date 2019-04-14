@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 	std::cin >>  dbPW;
 	
 	
-	toolkit::clientdb::mysql::Datasource mysqlConnector(server,puerto,dbName,dbUser,dbPW); 
+	toolkit::clientdb::mysql::Datconnect mysqlConnector(server,puerto,dbName,dbUser,dbPW); 
 	toolkit::clientdb::mysql::Connector connector;    
     bool flagServer = connector.connect(mysqlConnector);
     if(flagServer)

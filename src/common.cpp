@@ -157,7 +157,7 @@ namespace apidb
 	}
 
 	
-    const toolkit::clientdb::mysql::Datasource& ConfigureProject::getConector() const
+    const toolkit::clientdb::mysql::Datconnect& ConfigureProject::getConector() const
     {
         return *conectordb;    
     }
@@ -350,7 +350,7 @@ namespace apidb
             password = (const char*)xmlTextReaderConstValue(reader);
         }
         
-        conectordb = new toolkit::clientdb::mysql::Datasource(host,port,database,user,password);
+        conectordb = new toolkit::clientdb::mysql::Datconnect(host,port,database,user,password);
         
         return true;
     }

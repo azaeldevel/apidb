@@ -24,58 +24,58 @@
 
 int main()
 {
-	toolkit::clientdb::mysql::Datasource mysqlSource("192.168.0.101",3306,"sis","develop","123456"); 
+	toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
 	toolkit::Version version;
 	version.set(0,1,0,toolkit::Version::Stage::alpha);
 
 	apidb::ConfigureProject config;
-    config.name = "sis";
-    config.directory = "sis";
-    config.conectordb = &mysqlSource;
-    config.version = version;
-    config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
-    config.outputLenguaje = apidb::OutputLenguajes::CPP;	
+        config.name = "sysapp";
+        config.directory = "apidb";
+        config.conectordb = &mysqlSource;
+        config.version = version;
+        config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
+        config.outputLenguaje = apidb::OutputLenguajes::CPP;	
 	config.mvc = apidb::MVC::NO;
-    //config.keyMode = apidb::KeyModel::BY_MODEL_DB;
-    apidb::ConfigureProject::Table tbP("Person");
-    apidb::ConfigureProject::Function dwFullName("fullname",apidb::ConfigureProject::Function::DOWNLOAD);
-    apidb::ConfigureProject::Parameters params_FullName;
-    params_FullName.push_back("n1");
-    params_FullName.push_back("ns");
-    params_FullName.push_back("ap");
-    params_FullName.push_back("am");
-    dwFullName.setHeader(&params_FullName);
-    tbP.insert(std::make_pair(dwFullName.getName().c_str(), &dwFullName));
-    apidb::ConfigureProject::Function dwShortName("shortname",apidb::ConfigureProject::Function::DOWNLOAD);
-    apidb::ConfigureProject::Parameters params_ShortName;
-    params_ShortName.push_back("n1");
-    params_ShortName.push_back("ap");
-    dwShortName.setHeader(&params_ShortName);
-    tbP.insert(std::make_pair(dwShortName.getName().c_str(), &dwShortName));
-    config.downloads.push_back(tbP);
-    //apidb::ConfigureProject::Table table1("table1");
-    //apidb::ConfigureProject::Function byPerson("byPerson",apidb::ConfigureProject::Function::SELECT);    
-   // apidb::ConfigureProject::Parameters params_byPerson;
-    //params_byPerson.push_back("dataSel");
-    //params_byPerson.push_back("person");
-    //byPerson.setHeader(&params_byPerson);
-    //table1.insert(std::make_pair(byPerson.getName().c_str(), &byPerson));
-    config.selects.push_back(tbP);
-    //config.selects.push_back(table1);
+        //config.keyMode = apidb::KeyModel::BY_MODEL_DB;
+        apidb::ConfigureProject::Table tbP("Person");
+        apidb::ConfigureProject::Function dwFullName("fullname",apidb::ConfigureProject::Function::DOWNLOAD);
+        apidb::ConfigureProject::Parameters params_FullName;
+        params_FullName.push_back("n1");
+        params_FullName.push_back("ns");
+        params_FullName.push_back("ap");
+        params_FullName.push_back("am");
+        dwFullName.setHeader(&params_FullName);
+        tbP.insert(std::make_pair(dwFullName.getName().c_str(), &dwFullName));
+        apidb::ConfigureProject::Function dwShortName("shortname",apidb::ConfigureProject::Function::DOWNLOAD);
+        apidb::ConfigureProject::Parameters params_ShortName;
+        params_ShortName.push_back("n1");
+        params_ShortName.push_back("ap");
+        dwShortName.setHeader(&params_ShortName);
+        tbP.insert(std::make_pair(dwShortName.getName().c_str(), &dwShortName));
+        config.downloads.push_back(tbP);
+        //apidb::ConfigureProject::Table table1("table1");
+        //apidb::ConfigureProject::Function byPerson("byPerson",apidb::ConfigureProject::Function::SELECT);    
+        // apidb::ConfigureProject::Parameters params_byPerson;
+        //params_byPerson.push_back("dataSel");
+        //params_byPerson.push_back("person");
+        //byPerson.setHeader(&params_byPerson);
+        //table1.insert(std::make_pair(byPerson.getName().c_str(), &byPerson));
+        config.selects.push_back(tbP);
+        //config.selects.push_back(table1);
     
-    apidb::Driver driver(config);	
+        apidb::Driver driver(config);	
 	if(!driver.driving())
 	{
 		std::cerr<<mysqlSource.toString()<<" - es incorrecta."<<std::endl;
-        return EXIT_FAILURE;
+                return EXIT_FAILURE;
 	}	
-    if(!config.saveConfig())
-    {
+        if(!config.saveConfig())
+        {
 		std::cerr<<"Fail creation prject."<<std::endl;
 		return EXIT_FAILURE;		
 	}
 	/*
-    std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;
+        std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;
 	std::cout<<"Version previa: " << config.getVersion().toString()<<std::endl;
 	apidb::ConfigureProject config2("nmp/apidb");
     	config2.directory = "nmp2";
@@ -92,10 +92,7 @@ int main()
 	}
 	std::cout<<"Configuracion posterior: " << config2.getConector().toString()<<std::endl;
 	std::cout<<"Version posterior: " << config2.getVersion().toString()<<std::endl;
-    */
-	
-	
-	
+        */
 	
 	return EXIT_SUCCESS;	
 }
