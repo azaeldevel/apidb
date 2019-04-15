@@ -33,8 +33,9 @@ int main()
         config.directory = "apidb";
         config.conectordb = &mysqlSource;
         config.version = version;
-        config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
+        config.inputLenguaje = apidb::InputLenguajes::MySQL;
         config.outputLenguaje = apidb::OutputLenguajes::CPP;	
+        config.packing = apidb::PackingLenguajes::CMake;
 	config.mvc = apidb::MVC::NO;
         //config.keyMode = apidb::KeyModel::BY_MODEL_DB;
         apidb::ConfigureProject::Table tbP("Person");

@@ -49,7 +49,7 @@ namespace apidb
 	{
 		switch(configureProject.inputLenguaje)
 		{
-			case InputLenguajes::MySQL_Server:
+			case InputLenguajes::MySQL:
 				return "Servidor MySQL";
 			default:
 				return "Unknow";

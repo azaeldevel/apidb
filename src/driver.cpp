@@ -32,7 +32,7 @@ namespace apidb
 {
     Driver::Driver(const ConfigureProject& config) : configureProject(config)
 	{		
-		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL_Server)
+		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
 			connector = new toolkit::clientdb::mysql::Connector();
 			analyzer = new mysql::Analyzer(configureProject);		
@@ -124,6 +124,7 @@ namespace apidb
 			flagCPP = cpp.generate();
 			
 			//std::cout<<"apidb::generators::CMake cmake(*analyzer);..."<<std::endl;
+                        
 			apidb::generators::CMake cmake(*analyzer,configureProject);			
 			flagCMAKE = cmake.generate();
 			
@@ -151,7 +152,7 @@ namespace apidb
 		analyzer->getOutputMessage() << "\tLenguaje de entrada: " << analyzer->getInputLenguajeString() << std::endl;
 		
 		apidb::mysql::Analyzer* analyzer = NULL;
-		if(this->analyzer->getInputLenguaje() == apidb::InputLenguajes::MySQL_Server)
+		if(this->analyzer->getInputLenguaje() == apidb::InputLenguajes::MySQL)
 		{
 			analyzer = (apidb::mysql::Analyzer*)(this->analyzer);
 		}

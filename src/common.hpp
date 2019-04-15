@@ -34,13 +34,18 @@
 
 namespace apidb
 {
-	enum InputLenguajes
+	/*enum InputLenguajes
 	{
 		MySQL_Server,
 		//MySQL_Script,
 		//PostgresSQL
-	};
+	};*/
+        typedef toolkit::clientdb::Datconnect::ServerType InputLenguajes;
 	
+        enum PackingLenguajes
+        {
+                CMake
+        };
 	enum OutputLenguajes
 	{
 		C,
@@ -48,8 +53,7 @@ namespace apidb
 		//JAVA,
 		//CSHARP,
 		//PERL,
-		//PYTHON,
-		CMAKE		
+		//PYTHON
 	};
 	
 	enum MVC
@@ -223,6 +227,7 @@ namespace apidb
         toolkit::clientdb::mysql::Datconnect* conectordb;
         InputLenguajes inputLenguaje;
         OutputLenguajes outputLenguaje;
+        PackingLenguajes packing;
         MVC mvc;
         std::vector<Table> downloads;
         std::vector<Table> selects;

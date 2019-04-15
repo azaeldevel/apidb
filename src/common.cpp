@@ -117,7 +117,7 @@ namespace apidb
 		//xmlNewChild(version_node, NULL, (const xmlChar *)"stage", (const xmlChar *)version.stage );
 		
 		xmlNodePtr db_node = xmlNewChild(root_node, NULL, (const xmlChar *)"ConectorDB", NULL);
-		if(inputLenguaje == apidb::InputLenguajes::MySQL_Server)
+		if(inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
 			//toolkit::clientdb::DatconectionMySQL* dat = (toolkit::clientdb::DatconectionMySQL*)connector;
 			xmlNewChild(db_node, NULL, (const xmlChar *)"host", (const xmlChar *)conectordb->getHost().c_str());
@@ -402,7 +402,7 @@ namespace apidb
     {    
         xmlTextReaderPtr reader;
         int ret;
-        inputLenguaje = apidb::InputLenguajes::MySQL_Server;
+        inputLenguaje = apidb::InputLenguajes::MySQL;
         outputLenguaje = apidb::OutputLenguajes::CPP;	
         reader = xmlReaderForFile(filename.c_str(), NULL, 0);
         if (reader != NULL) 

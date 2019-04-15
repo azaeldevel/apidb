@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
     	config.directory = dir;
     	config.conectordb = &mysqlConnector;
     	config.version = version;
-    	config.inputLenguaje = apidb::InputLenguajes::MySQL_Server;
+    	config.inputLenguaje = apidb::InputLenguajes::MySQL;
     	config.outputLenguaje = apidb::OutputLenguajes::CPP;
 	apidb::Driver driver(config);
 	if(!driver.driving())

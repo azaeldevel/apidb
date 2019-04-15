@@ -33,13 +33,19 @@ namespace apidb
 {
 namespace generators
 { 
-	Generator::Generator(const ConfigureProject& config) : configureProject(config)
+	Generator::Generator(const ConfigureProject& config,apidb::Analyzer& d)  : configureProject(config),analyzer(d)
 	{
 		
 	}
 	
-	CMake::CMake(apidb::Analyzer& d,const ConfigureProject& config): analyzer(d),configureProject(config), apidb::generators::Generator(config)
+	CMake::CMake(apidb::Analyzer& d,const ConfigureProject& config): apidb::generators::Generator(config,d)
 	{
+                if(config.packing != PackingLenguajes::CMake)
+                {
+                        std::string msg = "La configuracion indica '" ;
+                        msg = msg + getPackingLenguajeString() + "', pero el componente es CMake.";
+                        throw BuildException(msg);
+                }
 	}
 	
 	CMake::~CMake()
@@ -61,7 +67,7 @@ namespace generators
 			
 		//CMakeLists.txt
 		analyzer.getOutputMessage() << "Generando archivos de gestor de projecto... " << std::endl;
-		analyzer.getOutputMessage() << "\tTipo de Gestor: " << getOutputLenguajeString() << std::endl;
+		analyzer.getOutputMessage() << "\tTipo de Gestor: " << getPackingLenguajeString() << std::endl;
 		
 		cmakelists<<"CMAKE_MINIMUM_REQUIRED(VERSION ";
 		cmakelists<<"3";
@@ -190,7 +196,7 @@ namespace generators
 		  toolkitcommonconifg<<")"<<std::endl;
 		toolkitcommonconifg.close();
                 
-                if(configureProject.inputLenguaje  == InputLenguajes::MySQL_Server)
+                if(configureProject.inputLenguaje  == InputLenguajes::MySQL)
                 {                
 		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
 		namefile = "toolkit-clientdb-c++Config.cmake";
@@ -322,16 +328,16 @@ namespace generators
 		
 		//std::cout<<"Creating developing.cpp..."<<std::endl;
 		namefile = "developing.cpp";
-        bool preexits;
-        if (FILE *file = fopen(namefile.c_str(), "r")) 
-        {
-            fclose(file);
-            preexits = true;
-        }
-        else
-        {
-            preexits = false;
-        }
+                bool preexits;
+                if (FILE *file = fopen(namefile.c_str(), "r")) 
+                {
+                        fclose(file);
+                        preexits = true;
+                }
+                else
+                {
+                        preexits = false;
+                }
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
 			if(preexits) developing.open(namefile);
@@ -356,13 +362,27 @@ namespace generators
 		//std::cout<<"return..."<<std::endl;
 		return true;
 	}
-
+	
+        std::string Generator::getPackingLenguajeString()const
+	{
+		switch(configureProject.packing)
+		{
+			case PackingLenguajes::CMake:		
+				return "CMake";
+			default:
+				return "Unknow";
+		}
+	}
+		
+	PackingLenguajes Generator::getPackingLenguaje()const
+	{
+		return configureProject.packing;
+	}
+	
 	std::string Generator::getOutputLenguajeString()const
 	{
 		switch(configureProject.outputLenguaje)
 		{
-			case OutputLenguajes::CMAKE:		
-				return "CMake";
 			case OutputLenguajes::CPP:
 				return "C++";
 			default:
@@ -391,7 +411,7 @@ namespace generators
 		return writeResults[0];
 	}
 	
-	CPP::CPP(apidb::Analyzer& d,const ConfigureProject& config) : analyzer(d), apidb::generators::Generator(config)
+	CPP::CPP(apidb::Analyzer& d,const ConfigureProject& config) : apidb::generators::Generator(config,d)
 	{
 		//outputLenguaje = d.getOutputLenguaje();
 		writeResults = new std::ofstream[2];

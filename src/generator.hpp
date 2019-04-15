@@ -31,12 +31,15 @@
 		public:			
 			virtual bool generate() = 0;
 			OutputLenguajes getOutputLenguaje() const;
-			std::string getOutputLenguajeString()const;	
-			Generator(const ConfigureProject& config);
+			std::string getOutputLenguajeString()const;
+			PackingLenguajes getPackingLenguaje() const;
+			std::string getPackingLenguajeString()const;	
+			Generator(const ConfigureProject& config,apidb::Analyzer& analyzer);
 			
 		protected:		
 			//OutputLenguajes outputLenguaje;//se 
 			const ConfigureProject& configureProject;
+                        apidb::Analyzer& analyzer;
 		};
 		
 		class CPP : public Generator
@@ -72,14 +75,14 @@
 			void writeKeyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
 			void writeInsertH(const apidb::symbols::Table&,std::ofstream&);
 			void writeInsertCPP(const apidb::symbols::Table&,std::ofstream&);
-            //void writeSelectH(const apidb::symbols::Table& table, std::ofstream& ofile);
-            //void writeSelectCPP(const apidb::symbols::Table&,std::ofstream&);
-            void writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile);
-            void writeDownloadsCPP(const apidb::symbols::Table&,std::ofstream&);
-            void writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile);
-            void writeSelectsCPP(const apidb::symbols::Table&,std::ofstream&);
+                        //void writeSelectH(const apidb::symbols::Table& table, std::ofstream& ofile);
+                        //void writeSelectCPP(const apidb::symbols::Table&,std::ofstream&);
+                        void writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile);
+                        void writeDownloadsCPP(const apidb::symbols::Table&,std::ofstream&);
+                        void writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile);
+                        void writeSelectsCPP(const apidb::symbols::Table&,std::ofstream&);
 			
-			apidb::Analyzer& analyzer;
+			//apidb::Analyzer& analyzer;
 			std::ofstream* writeResults;//erreglo de writeoutput files
 			std::string projectH;
 			std::string projectCPP;
@@ -94,14 +97,14 @@
 			CMake(apidb::Analyzer&,const ConfigureProject&);
 			
 		private:
-			apidb::Analyzer& analyzer;
+			//apidb::Analyzer& analyzer;
 			std::ofstream cmakelists;
 			std::ofstream toolkitcommonconifg;
 			std::ofstream toolkitclientdbConfig;
 			std::ofstream config;
 			std::ofstream developing;
 			//Options options;
-			const ConfigureProject& configureProject;
+			//const ConfigureProject& configureProject;
 		};	
 	}
 		
