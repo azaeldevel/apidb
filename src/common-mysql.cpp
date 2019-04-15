@@ -174,7 +174,7 @@ namespace apidb
     }
     
     
-	bool symbols::Tables::listing(toolkit::clientdb::Connector& connect)
+	bool symbols::Tables::listing(toolkit::clientdb::mysql::Connector& connect)
 	{
 		std::string db;
 		switch(connect.getDatconection().getServerType())

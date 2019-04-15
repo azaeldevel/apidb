@@ -28,6 +28,7 @@
 #include <vector>
 #include <map>
 #include <toolkit-clientdb-mysql.hpp>
+//#include <toolkit-clientdb-postgresql.hpp>
 #include <libxml/xmlreader.h>
 #include <iostream>
 #include <cstring>
@@ -167,7 +168,8 @@ namespace apidb
 			~Tables();	
                         Table* search(const std::string&); 
 			std::list<Table*>::iterator find(const std::string& tableName);       
-			bool listing(toolkit::clientdb::Connector& connect);
+			bool listing(toolkit::clientdb::mysql::Connector& connect);
+                        //bool listing(toolkit::clientdb::postgresql::Connector& connect);
 			short getMaxCountRef();
             //bool reorder();
             

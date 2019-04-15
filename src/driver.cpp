@@ -30,12 +30,12 @@
 
 namespace apidb
 {
-    Driver::Driver(const ConfigureProject& config) : configureProject(config)
+        Driver::Driver(const ConfigureProject& config) : configureProject(config)
 	{		
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
 			connector = new toolkit::clientdb::mysql::Connector();
-			analyzer = new mysql::Analyzer(configureProject);		
+			analyzer = new mysql::Analyzer(configureProject,connector);		
 			try
 			{
 				bool flag = ((toolkit::clientdb::mysql::Connector*)connector)->connect(*config.conectordb);
@@ -45,12 +45,11 @@ namespace apidb
 					delete analyzer;
 					connector = NULL;
 					analyzer = NULL;
-					//throw toolkit::Exception(msg);
 				}
 				else
-                {
-                    ;
-                }
+                                {
+                                        ;
+                                }
 			}
 			catch(toolkit::clientdb::SQLException ex)
 			{				
@@ -71,27 +70,26 @@ namespace apidb
 	bool Driver::driving()
 	{
 		if(connector == NULL) 
-        {
-            std::cout<<"El conector es NULL." << std::endl;
-            return false;
-        }
+                {
+                        std::cout<<"El conector es NULL." << std::endl;
+                        return false;
+                }
 
 		if(analyze())
 		{
 			if(generate())
-            {                
-                return true;
-            }
-            else
-            {
-                std::cout<<"Fallo la etapa de generacion" << std::endl;                
-            }
+                        {                
+                                return true;
+                        }
+                        else
+                        {
+                                std::cout<<"Fallo la etapa de generacion" << std::endl;                
+                        }
 		}
 		else
-        {
-            std::cout<<"Fallo la etapa de analisis." << std::endl;
-            
-        }
+                {
+                        std::cout<<"Fallo la etapa de analisis." << std::endl;                
+                }
 		
 		return false;
 	}
@@ -162,44 +160,15 @@ namespace apidb
 			return false;
 		}		
 		//analyzer->setPramsLenguajes(configureProject->inputLenguaje,configureProject->outputLenguaje);		
-		if(analyzer->listing(*connector)) //reading tables
+		if(analyzer->analyze()) //reading tables
                 {
-                        symbols::Tables& tbs = analyzer->getListTable();
-			
-                        for(auto table: tbs) //reading attrubtes by table
-                        {
-				analyzer->getOutputMessage() << "\tCreating basic simbols for " << table->name  << "." << std::endl;
-                                //simbolos basicos 
-                                if(!table->basicSymbols(*connector))
-                                {
-					//std::cerr<<"Faill on basicSymbols"<<std::endl;
-					return false;
-				}
-			}			
-                        for(auto table: tbs) //reading attrubtes by table
-                        {
-				//foreign key's
-				if(!table->fillKeyType(*connector,analyzer->getListTable()))
-                                {
-                                                //std::cerr<<"Faill on fillKeyType"<<std::endl;
-                                                return false;
-                                }
-                        }
-                        for(auto table: tbs) //reading attrubtes by table
-                        {
-				for (auto const& [key, attribute] : *table)
-				{
-					//std::cout<<"\t"<<attribute->inType<<std::endl;
-					attribute->outType = analyzer->parse(attribute->inType);
-				}
-			}	
-			//analyzer->getListTable().reorder();
-        }  
-        else
-        {
-            std::cout<<"Faill reading table."<<std::endl;
-            return false;
-        }
+                        
+                }  
+                else
+                {
+                std::cout<<"Faill reading table."<<std::endl;
+                return false;
+                }
           
         return true;
 	}

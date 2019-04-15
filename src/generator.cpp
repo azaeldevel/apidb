@@ -412,7 +412,14 @@ namespace generators
 	}
 	
 	CPP::CPP(apidb::Analyzer& d,const ConfigureProject& config) : apidb::generators::Generator(config,d)
-	{
+	{                
+                if(config.outputLenguaje != OutputLenguajes::CPP)
+                {
+                        std::string msg = "La configuracion indica '" ;
+                        msg = msg + getOutputLenguajeString()+ "', pero el componente es CMake.";
+                        throw BuildException(msg);
+                }
+                
 		//outputLenguaje = d.getOutputLenguaje();
 		writeResults = new std::ofstream[2];
 		if((d.getDirectoryProject().empty()) | (d.getDirectoryProject().compare(".") == 0)) 

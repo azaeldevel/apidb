@@ -8,10 +8,6 @@
 namespace apidb
 {	
 	
-	Analyzer::Analyzer(const ConfigureProject& config) : configureProject(config)
-	{
-		
-	}
 
 	BuildException::~BuildException() throw()
 	{
@@ -21,30 +17,33 @@ namespace apidb
 	{
 		return description.c_str();
 	}
-    BuildException::BuildException(const std::string &description) throw()
-    {
+        BuildException::BuildException(const std::string &description) throw()
+        {
 		this->description = description;
 	}
 	
 
 	
-	
-	/*void Analyzer::setPramsLenguajes(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje)
+	std::ostream& Analyzer::getErrorMessage()
 	{
-		//this->inputLenguaje = inputLenguaje;
-		//this->outputLenguaje = outputLenguaje;		
-	}*/
-	
+		return *errorMessages;
+	}		
+	std::ostream& Analyzer::getOutputMessage()
+	{
+		return *outputMessages;
+	}
+	Analyzer::Analyzer(const ConfigureProject& config,toolkit::clientdb::Connector* conn) : configureProject(config), connector(conn)
+	{
+		
+	}
 	OutputLenguajes Analyzer::getOutputLenguaje() const
 	{
 		return configureProject.outputLenguaje;
-	}
-	
+	}	
 	symbols::Tables& Analyzer::getListTable() 
 	{
 		return symbolsTables;
-	}
-		
+	}		
 	std::string Analyzer::getInputLenguajeString() const
 	{
 		switch(configureProject.inputLenguaje)
@@ -54,24 +53,15 @@ namespace apidb
 			default:
 				return "Unknow";
 		}
-	}
-	
+	}	
 	const std::string& Analyzer::getNameProject()
 	{
 		return configureProject.name;
-	}
-	
-	/*void Analyzer::setPramsProject(const std::string& name,const std::string& directory)
-	{
-		//nameProject = name;
-		//directoryProject = directory;
-	}*/
-	
+	}		
 	const std::string& Analyzer::getDirectoryProject()
 	{
 		return configureProject.directory;
-	}
-	
+	}	
 	InputLenguajes Analyzer::getInputLenguaje()const
 	{
 		return configureProject.inputLenguaje;
@@ -81,29 +71,47 @@ namespace apidb
 	
 namespace mysql
 {
-	bool Analyzer::listing(toolkit::clientdb::Connector& connect)
+	bool Analyzer::analyze()
 	{
-		return symbolsTables.listing(connect);
+		bool flag = symbolsTables.listing(*(toolkit::clientdb::mysql::Connector*)connector);
+                
+                for(auto table: symbolsTables) //reading attrubtes by table
+                {
+                        *outputMessages << "\tCreating basic simbols for " << table->name  << "." << std::endl;
+                        //simbolos basicos 
+                        if(!table->basicSymbols(*connector))
+                        {
+                                //std::cerr<<"Faill on basicSymbols"<<std::endl;
+                                return false;
+                        }
+                }			
+                for(auto table: symbolsTables) //reading attrubtes by table
+                {
+                        //foreign key's
+                        if(!table->fillKeyType(*connector,getListTable()))
+                        {
+                                //std::cerr<<"Faill on fillKeyType"<<std::endl;
+                                return false;
+                        }
+                }
+                for(auto table: symbolsTables) //reading attrubtes by table
+                {
+                        for (auto const& [key, attribute] : *table)
+                        {
+                                //std::cout<<"\t"<<attribute->inType<<std::endl;
+                                attribute->outType = parse(attribute->inType);
+                        }
+                }
+                
+                return flag;
 	}
-	
-	Analyzer::Analyzer(const ConfigureProject& config) : apidb::Analyzer(config)
+	Analyzer::Analyzer(const ConfigureProject& config,toolkit::clientdb::Connector* conn) : apidb::Analyzer(config,conn)
 	{
-		//this->inputLenguaje = inputLenguaje;
-		//this->outputLenguaje = outputLenguaje;
 		outputMessages = &std::cout;	  
 		errorMessages = &std::cerr; 
 	}
 	
-	std::ostream& Analyzer::getErrorMessage()
-	{
-		return *errorMessages;
-	}
 
-		
-	std::ostream& Analyzer::getOutputMessage()
-	{
-		return *outputMessages;
-	}
 	
 	/*Analyzer::Analyzer()
 	{

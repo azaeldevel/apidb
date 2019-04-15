@@ -31,33 +31,24 @@ namespace apidb
 	class Analyzer
 	{
 	public:
-		virtual std::ostream& getOutputMessage() = 0;
-		virtual std::ostream& getErrorMessage() = 0;
+		virtual std::ostream& getOutputMessage();
+		virtual std::ostream& getErrorMessage();
 		virtual std::string parse(const std::string& line) = 0;
-		
-		symbols::Tables& getListTable();
-		
-		std::string getInputLenguajeString()const;
-		
+		virtual bool analyze() = 0;
+                
+		symbols::Tables& getListTable();                		
+		std::string getInputLenguajeString()const;		
 		const std::string& getNameProject();
-		const std::string& getDirectoryProject();
-		//void setPramsProject(const std::string& name,const std::string& directory);
-		//void setPramsLenguajes(InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje);
-				
+		const std::string& getDirectoryProject();				
 		InputLenguajes getInputLenguaje() const;
 		OutputLenguajes getOutputLenguaje() const;
-		Analyzer(const ConfigureProject&);
+		Analyzer(const ConfigureProject&,toolkit::clientdb::Connector*);
 		
     protected:
 		symbols::Tables symbolsTables;		
 		toolkit::clientdb::Connector* connector;
 		std::ostream* outputMessages;//out stream
-		std::ostream* errorMessages;//out stream
-		
-		//std::string nameProject;
-		//std::string directoryProject;
-		//InputLenguajes inputLenguaje;
-		//OutputLenguajes outputLenguaje;
+		std::ostream* errorMessages;//out stream		
 		const ConfigureProject& configureProject;
 	};
 
@@ -66,16 +57,8 @@ namespace apidb
     {
         class Analyzer : public apidb::Analyzer
         {
-        public:
-            bool listing(toolkit::clientdb::Connector& connect);
-            
-            virtual std::ostream& getOutputMessage();
-            virtual std::ostream& getErrorMessage();
-            
-            //Analyzer();
-            Analyzer(const ConfigureProject&);		
-            virtual ~Analyzer();
-            
+        public:            
+            virtual bool analyze();
             /**
             * Parse desde una std::string
             **/
@@ -91,11 +74,16 @@ namespace apidb
             */
             void parse(std::istream &iss);
             
+            //Analyzer();
+            Analyzer(const ConfigureProject&,toolkit::clientdb::Connector*);		
+            virtual ~Analyzer();         
+            
             void message(const std::string&);		
             std::ostream& print(std::ostream &stream);
             
             //Don't use, is temporal: usada por parse para retorna sui resultado
             std::string oneLine;
+            
         private:
             void parse_helper(std::istream &stream);
             Parser  *parser  = nullptr;
