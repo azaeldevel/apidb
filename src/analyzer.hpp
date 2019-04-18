@@ -42,7 +42,8 @@ namespace apidb
 		const std::string& getDirectoryProject();				
 		InputLenguajes getInputLenguaje() const;
 		OutputLenguajes getOutputLenguaje() const;
-		Analyzer(const ConfigureProject&,toolkit::clientdb::Connector*);
+		Analyzer(const ConfigureProject&, toolkit::clientdb::Connector*);
+                virtual ~Analyzer();
 		
     protected:
 		symbols::Tables symbolsTables;		

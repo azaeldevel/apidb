@@ -658,11 +658,12 @@ namespace generators
                         {
                                 if(attr->isForeignKey())
                                 {
-                                        ofile << "'\" +  std::to_string(" << attr->name  << ".getKey"<< attr->upperName << "())+ \"'\";" << std::endl;                                         
+                                        ofile << "'\" +  std::to_string(" << attr->name  << "."<< attr->get << ")+ \"'\";" << std::endl;                                      
                                 }
                                 else
                                 {
-                                        ofile << "'\" +  std::to_string(" << attr->name  << "."<< attr->get << ")+ \"'\";" << std::endl;  
+                                        //ofile << "'\" +  std::to_string(" << attr->name  << ".getKey"<< attr->upperName << "())+ \"'\";" << std::endl;     
+                                        ofile << "'\" +  std::to_string(" << attr->name  << ");"<< std::endl;
                                 }                           
                         }
                         else if(attr->outType.compare("std::string") == 0)
@@ -989,17 +990,17 @@ namespace generators
     {
 		//file <<"keyword"<<std::endl;
 		analyzer.getOutputMessage() <<"\tHeading class " << cl.name<<std::endl;
-        file <<"\tclass "<<nameClass<<std::endl;        
-        file <<"\t{"<<std::endl;
-        //file <<"private"<<std::endl;
-        createClassPrivateH(file);
-        file << "\t\tstatic const std::string TABLE_NAME;" <<std::endl;
-        //file <<"atributes"<<std::endl;
-        createClassAttributesH(cl,file);
-        createClassPublicH(file);
-        //file <<"methodes"<<std::endl;
-        createClassMethodesH(cl,file);
-        file <<"\t};"<<std::endl;
+                file <<"\tclass "<<nameClass<<std::endl;        
+                file <<"\t{"<<std::endl;
+                //file <<"private"<<std::endl;
+                createClassPrivateH(file);
+                file << "\t\tstatic const std::string TABLE_NAME;" <<std::endl;
+                //file <<"atributes"<<std::endl;
+                createClassAttributesH(cl,file);
+                createClassPublicH(file);
+                //file <<"methodes"<<std::endl;
+                createClassMethodesH(cl,file);
+                file <<"\t};"<<std::endl;
     }
     void CPP::createSpaceH(std::ofstream& file)
     {

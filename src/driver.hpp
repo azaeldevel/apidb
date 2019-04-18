@@ -33,7 +33,7 @@ namespace apidb
 		virtual bool analyze();
 		virtual bool generate();
 		bool driving();
-        Driver(const ConfigureProject&);
+                Driver(const ConfigureProject&);
 		
 	private:
 		toolkit::clientdb::Connector* connector;

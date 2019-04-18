@@ -32,9 +32,11 @@ namespace apidb
 	{
 		return *outputMessages;
 	}
+	Analyzer::~Analyzer()
+	{
+	}
 	Analyzer::Analyzer(const ConfigureProject& config,toolkit::clientdb::Connector* conn) : configureProject(config), connector(conn)
 	{
-		
 	}
 	OutputLenguajes Analyzer::getOutputLenguaje() const
 	{

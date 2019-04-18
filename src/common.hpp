@@ -171,9 +171,9 @@ namespace apidb
 			bool listing(toolkit::clientdb::mysql::Connector& connect);
                         //bool listing(toolkit::clientdb::postgresql::Connector& connect);
 			short getMaxCountRef();
-            //bool reorder();
+                        //bool reorder();
             
-        private:
+                private:
 			//int floatup(Tables::iterator&);
 		};
 	}

@@ -38,7 +38,7 @@ namespace apidb
 			analyzer = new mysql::Analyzer(configureProject,connector);		
 			try
 			{
-				bool flag = ((toolkit::clientdb::mysql::Connector*)connector)->connect(*config.conectordb);
+				bool flag = connector->connect(config.conectordb);
 				if(!flag)
 				{
 					delete connector;
@@ -46,10 +46,6 @@ namespace apidb
 					connector = NULL;
 					analyzer = NULL;
 				}
-				else
-                                {
-                                        ;
-                                }
 			}
 			catch(toolkit::clientdb::SQLException ex)
 			{				
@@ -158,16 +154,16 @@ namespace apidb
 		{
                         std::cout << "El lenguaje '" << this->analyzer->getInputLenguajeString() << "' no tiene soporte aun." << std::endl;
 			return false;
-		}		
-		//analyzer->setPramsLenguajes(configureProject->inputLenguaje,configureProject->outputLenguaje);		
+		}
+		
 		if(analyzer->analyze()) //reading tables
                 {
                         
                 }  
                 else
                 {
-                std::cout<<"Faill reading table."<<std::endl;
-                return false;
+                        std::cout<<"Faill reading table."<<std::endl;
+                        return false;
                 }
           
         return true;

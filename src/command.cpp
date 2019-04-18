@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 	
 	toolkit::clientdb::mysql::Datconnect mysqlConnector(server,puerto,dbName,dbUser,dbPW); 
 	toolkit::clientdb::mysql::Connector connector;    
-    bool flagServer = connector.connect(mysqlConnector);
+    bool flagServer = connector.connect(&mysqlConnector);
     if(flagServer)
     {
 		std::cout<<"\tConexion a servidor completada."<<std::endl;
