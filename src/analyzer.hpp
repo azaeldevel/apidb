@@ -85,6 +85,7 @@ namespace apidb
             //Don't use, is temporal: usada por parse para retorna sui resultado
             std::string oneLine;
             
+            
         private:
             void parse_helper(std::istream &stream);
             Parser  *parser  = nullptr;

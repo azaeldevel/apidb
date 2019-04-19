@@ -51,7 +51,7 @@ namespace generators
             }
         }
         ofile << " FROM " << table.name << " WHERE \" + where ;"<< std::endl;
-        ofile << "\t\tif(connector.query(sqlString))"  << std::endl;
+        ofile << "\t\tif(connector.query(sqlString.c_str()))"  << std::endl;
         ofile << "\t\t{" << std::endl;
         ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
         ofile << "\t\t\tif (result == NULL)"  << std::endl;
@@ -197,7 +197,7 @@ namespace generators
                         }
                     }
                     ofile << ";" << std::endl;
-                    ofile << "\t\tif(connector.query(sqlString))"  << std::endl;
+                    ofile << "\t\tif(connector.query(sqlString.c_str()))"  << std::endl;
                     ofile << "\t\t{" << std::endl;
                     ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
                     ofile << "\t\t\tif (result == NULL)"  << std::endl;
@@ -295,7 +295,7 @@ namespace generators
                         }
                     }
                     ofile << ";" << std::endl;
-                    ofile << "\t\tif(connector.query(sqlString))"  << std::endl;
+                    ofile << "\t\tif(connector.query(sqlString.c_str()))"  << std::endl;
                     ofile << "\t\t{" << std::endl;
                     ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
                     ofile << "\t\t\tif (result == NULL)"  << std::endl;
@@ -437,7 +437,7 @@ namespace generators
             if(table.key.size() == 1 && table.key.at(0)->outType.compare("int") == 0 && table.key.at(0)->classReferenced != NULL)
             {
                 ofile << "\t\tthis->" << table.key.at(0)->name << " = new " << table.key.at(0)->classReferenced->name << "(";
-                ofile << " connector.insert(sqlString));" << std::endl;
+                ofile << " connector.insert(sqlString.c_str()));" << std::endl;
                 ofile << "\t\tif(this->" << table.key.at(0)->name << " != NULL) return true;"<< std::endl;
                 ofile << "\t\telse return false;"<< std::endl;                 
                     
@@ -445,13 +445,13 @@ namespace generators
             else if(table.key.size() == 1 && table.key.at(0)->outType.compare("int") == 0)
             {
                 ofile << "\t\tthis->" << table.key.at(0)->name << " = ";
-                ofile << " connector.insert(sqlString);" << std::endl;
+                ofile << " connector.insert(sqlString.c_str());" << std::endl;
                 ofile << "\t\tif(this->" << table.key.at(0)->name << " > 0) return true;"<< std::endl;
                 ofile << "\t\telse return false;"<< std::endl;                
             }            
             else if(table.key.size() > 1)
             {
-                ofile << "\t\tif(connector.query(sqlString))" << std::endl;
+                ofile << "\t\tif(connector.query(sqlString.c_str()))" << std::endl;
                 ofile << "\t\t{" << std::endl;
                 for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); ++i)
                 {
@@ -464,7 +464,7 @@ namespace generators
         else if(table.key.size() == 0)
         {
             ofile << "\t\tthis->" << table.key.at(0)->name;
-            ofile << " = connector.query(sqlString);"<< std::endl;
+            ofile << " = connector.query(sqlString.c_str());"<< std::endl;
             ofile << "\t\tif(this->" << table.key[0]->name << " > 0) return true;"<< std::endl;
             ofile << "\t\telse return false;"<< std::endl;   
         }
@@ -588,23 +588,45 @@ namespace generators
                         
                         
                         
-                        //gets foreing key
-                         if(attr->isForeignKey())
+                        //gets foreing key                        
+                         if(attr->isPrimaryKey() && !attr->isForeignKey())
+                        {
+                                ofile <<"\t"<< attr->outType << " " << table.name << "::getKey" << attr->upperName << "() const"<< std::endl;
+                                ofile <<"\t{"<< std::endl;
+                                if(attr->outType.compare("int") == 0)
+                                {
+                                        ofile <<"\t\t" << "return " << attr->name << ";" << std::endl;
+                                }
+                                ofile <<"\t}"<< std::endl;
+                        }
+                        else if(attr->isForeignKey())
+                        {
+                                ofile <<"\t"<< attr->outType << " " << table.name << "::getKey" << attr->upperName << "() const"<< std::endl;
+                                ofile <<"\t{"<< std::endl;
+                                if(attr->outType.compare("int") == 0)
+                                {
+                                        ofile <<"\t\t" << "return " << attr->name << "->getKey" << attr->symbolReferenced->upperName << "();" << std::endl;
+                                }
+                                ofile <<"\t}"<< std::endl;
+                        }
+                        /* if(attr->symbolReferenced != NULL)
+                        {
+                                ofile <<"\t"<< attr->symbolReferenced->outType << " " << table.name << "::getKey" << attr->upperName << "() const"<< std::endl;
+                                ofile <<"\t{"<< std::endl;
+                                ofile <<"\t\t" << "return " << attr->name << "->getKey" << attr->symbolReferenced->upperName << "();" << std::endl;
+                                ofile <<"\t}"<< std::endl;
+                        }*/
+                        /*else if(attr->symbolReferenced == NULL && attr->isPrimaryKey())
                         {
                                 ofile <<"\t"<< attr->symbolReferenced->outType << " " << table.name << "::getKey" << attr->upperName << "() const"<< std::endl;
                                 ofile <<"\t{"<< std::endl;
                                 if(attr->symbolReferenced->isForeignKey())//la referencia es terminal
                                 {
-                                        ofile <<"\t\t" << "return " << attr->name << "->getKey" << attr->symbolReferenced->upperName << "();" << std::endl;
-                                }
-                                else
-                                {
-                                        ofile <<"\t\t" << "return " << attr->name << "->" << attr->symbolReferenced->get << ";" << std::endl;
+                                        ofile <<"\t\t" << "return " << attr->name << "->" << attr->get << ";" << std::endl;
                                 }
                                 ofile <<"\t}"<< std::endl;
-                        }
-                        
-                        
+                        }*/
+                                           
                         
                         
 			
@@ -654,19 +676,19 @@ namespace generators
 			ofile << "\t\tsqlString = sqlString + \" SET " ;
             
                         ofile << attr->name << " = " ;
-                        if( attr->outType.compare("int") == 0 && attr->symbolReferenced != NULL)
+                         if( attr->outType.compare("int") == 0 && attr->symbolReferenced != NULL)
+                         {
+                                ofile << "'\" +  std::to_string(" << attr->name  << ".getKey" << attr->symbolReferenced->upperName << "())+ \"'\";" << std::endl;                                    
+                         }
+                        else if( attr->outType.compare("int") == 0 && attr->symbolReferenced == NULL)
                         {
-                                if(attr->isForeignKey())
-                                {
-                                        ofile << "'\" +  std::to_string(" << attr->name  << "."<< attr->get << ")+ \"'\";" << std::endl;                                      
-                                }
-                                else
-                                {
-                                        //ofile << "'\" +  std::to_string(" << attr->name  << ".getKey"<< attr->upperName << "())+ \"'\";" << std::endl;     
-                                        ofile << "'\" +  std::to_string(" << attr->name  << ");"<< std::endl;
-                                }                           
+                                ofile << "'\" +  std::to_string(" << attr->name  << ")+ \"'\";" << std::endl;                            
                         }
-                        else if(attr->outType.compare("std::string") == 0)
+                        else if(attr->outType.compare("std::string") == 0 && attr->symbolReferenced != NULL)
+                        {
+                                ofile << "'\" + " << attr->name << " + \"'\";" << std::endl;
+                        }
+                        else if(attr->outType.compare("std::string") == 0  && attr->symbolReferenced == NULL)
                         {
                                 ofile << "'\" + " << attr->name << " + \"'\";" << std::endl;
                         }
@@ -684,7 +706,7 @@ namespace generators
                                 {
                                         if(k->outType.compare("int") == 0 && k->symbolReferenced != NULL)
                                         {
-                                                ofile << " + \"" << k->name << " = \" + std::to_string(" << k->name << ")";
+                                                ofile << " + \"" << k->name << " = \" + std::to_string(" << k->name << "->getKey" << k->symbolReferenced->upperName << "())";
                                         }
                                         else if(k->outType.compare("int") == 0 && k->symbolReferenced == NULL)
                                         {
@@ -710,7 +732,7 @@ namespace generators
                                 throw BuildException("No hay soporte para table sin llave");
                         }
 			
-			ofile <<"\t\treturn connector.query(sqlString);"<<std::endl;
+			ofile <<"\t\treturn connector.query(sqlString.c_str());"<<std::endl;
 			ofile << "\t}"<<std::endl;	
         postUpdatePosition:;
         
@@ -925,10 +947,14 @@ namespace generators
 			ofile << attr->get << " const;"<< std::endl;
 			
                         
-                        //get forign key
-                         if(attr->isForeignKey())
+                        //get key
+                         if(attr->isPrimaryKey() && !attr->isForeignKey())
                         {
-                                ofile <<"\t\t"<< attr->symbolReferenced->outType << " getKey" << attr->upperName << "() const;"<< std::endl;
+                                ofile <<"\t\t"<< attr->outType << " getKey" << attr->upperName << "() const;"<< std::endl;
+                        }
+                        else if(attr->isForeignKey())
+                        {
+                                ofile <<"\t\t"<< attr->outType << " getKey" << attr->upperName << "() const;"<< std::endl;
                         }
 			
 			//getString()			

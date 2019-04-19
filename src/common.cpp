@@ -447,8 +447,12 @@ namespace apidb
                         id = counter;
                         classReferenced = NULL;
                         classParent = NULL;
+                        symbolReferenced = NULL;
+                        inType = "";
+                        outType = "";
+                        get = "";
+                        upperName = "";
                         keyType = NOKEY;
-                        id = 0;
                         isPK = false;
                         isFK = false;
                 }

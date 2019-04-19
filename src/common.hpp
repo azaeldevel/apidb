@@ -100,10 +100,10 @@ namespace apidb
             
 			enum KeyType
 			{
+				NOKEY,
 				PRIMARY,
 				UNIQUE,
 				FOREIGN_UNIQUE,
-				NOKEY
 			};
 			
 					

@@ -39,36 +39,36 @@ namespace apidb
 		fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
 		fks += ((toolkit::clientdb::Datconnect*)(connect.getDatconection()))->getDatabase();
 		fks += "'";
-		std::cout<<fks<<std::endl;
+		//std::cout<<fks<<std::endl;
                 toolkit::clientdb::Datresult* dt = connect.query(fks.c_str());
                 if(dt != NULL)
                 {
-			MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());                        
+			//MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());                        
 			MYSQL_ROW row;
-			while((row = mysql_fetch_row(result)))
+			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
-                                        std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
-                                        Tables::iterator iFTBinded = tables.find(row[1]);//buscar la tabla del campo que se refiere en el registro actual 'row[1]'
-                                        if( iFTBinded != tables.end())
+                                        //std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
+                                        Tables::iterator itTBReference = tables.find(row[1]);//buscar la tabla del campo que se refiere en el registro actual 'row[1]'
+                                        if( itTBReference != tables.end())
                                         {//si se encontro la tabla
-                                                Table* tbFinded = *iFTBinded;
-                                                std::cout<<"Se encontro tabla '" << tbFinded->name << "'" << std::endl;
+                                                Table* tbReference = *itTBReference;
+                                                //std::cout<<"Se encontro tabla '" << tbFinded->name << "'" << std::endl;
                                                 //std::cout<<"Buscando campo '" << row[0] << "'" << std::endl;
                                                 iterator itatt = find(row[0]);//buscar el compo referido (REFERENCED_COLUMN_NAME) en la tabla
-                                                if(itatt != tbFinded->end()) //buscar
+                                                if(itatt != tbReference->end()) //buscar
                                                 {//si se encontro la tabla                                                 
                                                         //if(itFinded != tables.end())
                                                         Symbol* attribute = itatt->second;
                                                         //std::cout<<"Se encontro campo '"<< attribute->name << "'" << std::endl;
-                                                        attribute->classReferenced = *iFTBinded;
                                                         //std::cout  << attribute->classParent->name << "-->" << attribute->classReferenced->name << std::endl;
-                                                        attribute->classReferenced->countRef++;//contando la cantiad de veces que es referida la clase
-                                                        Table::iterator attfinded = attribute->classReferenced->find(row[2]);
-                                                        if(attfinded != attribute->classReferenced->end())
+                                                        tbReference->countRef++;//contando la cantiad de veces que es referida la clase
+                                                        Table::iterator itAttRefence = tbReference->find(row[2]);
+                                                        if(itAttRefence != attribute->classReferenced->end())
                                                         {
-                                                                attribute->symbolReferenced = (*attfinded).second;
+                                                                attribute->classReferenced = tbReference;
+                                                                attribute->symbolReferenced = (*itAttRefence).second;
                                                                 attribute->isFK = true;
-                                                                std::cout <<  attribute->classParent->name << ":" << attribute->name << "-->" << attribute->classReferenced->name << ":" << attribute->symbolReferenced->name << std::endl;
+                                                                //std::cout <<  attribute->classParent->name << ":" << attribute->name << "-->" << attribute->classReferenced->name << ":" << attribute->symbolReferenced->name << std::endl;
                                                         }
                                                         else
                                                         {
@@ -91,10 +91,11 @@ namespace apidb
                                                 throw BuildException(strmsg);
                                         }
 			}
-                        delete &dt;
+			delete dt; 
 			return true;	
                 }
                 
+                delete dt;                
                 return false;
 	}
 	
@@ -106,10 +107,10 @@ namespace apidb
 		if(dt != NULL) 
 		{
 			//std::cout<<str<<std::endl;
-			MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());
+			//MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());
 			MYSQL_ROW row;
 			bool setkey = false;
-			while((row = mysql_fetch_row(result)))
+			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
 				Symbol* attrribute = new Symbol();
 				attrribute->classParent = this;
@@ -136,29 +137,29 @@ namespace apidb
 				{
 					attrribute->required = false;
 				}
-				std::string keyType = row[3];
+				//std::string keyType = row[3];
+				if(strcmp(row[3],"PRI") == 0)
+                                {
+                                        attrribute->keyType = Symbol::KeyType::PRIMARY;
+                                }
+                                else if(strcmp(row[3],"MUL") == 0)
+                                {
+                                        attrribute->keyType = Symbol::KeyType::FOREIGN_UNIQUE;
+                                }
 				std::string extra = row[5];
 
-				if(attrribute->required && keyType.compare("PRI") == 0 && extra.compare("auto_increment") == 0)//primary key
+				if(attrribute->required && attrribute->keyType == Symbol::KeyType::PRIMARY && extra.compare("auto_increment") == 0)//primary key
 				{
 					key.push_back(attrribute);
 					attrribute->isPK = true;//attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
                                         attrribute->isAutoInc = true;
 				}
-				else if(attrribute->required && (keyType.compare("PRI") == 0))//unique constraing
+				else if(attrribute->required && attrribute->keyType == Symbol::KeyType::PRIMARY)//unique constraing
 				{
 					key.push_back(attrribute);
 					attrribute->isPK = true;//attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
                                         attrribute->isAutoInc = false;
 				}
-				else
-				{
-                    
-				}				
-				/*if(attrribute->isPK && keyType.compare("UNI") == 0)//unique constraing
-				{
-					attrribute->isFK = true;//attrribute->keyType = symbols::Symbol::KeyType::UNIQUE;
-				}*/
 				
                                 insert(std::make_pair(attrribute->name.c_str(),attrribute));
 				if(attrribute->required)
@@ -186,6 +187,7 @@ namespace apidb
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
                 str = str + db + "' and TABLE_TYPE = 'BASE TABLE'";
                 toolkit::clientdb::Datresult* dt = connect.query(str.c_str());   
+                std::cout<< "query:" << str <<std::endl;
                 /*if (mysql_ping((MYSQL*)connect.getServerConnector()) != 0)
                 {
                         std::cout << "Fallo ñla conecio al servidor" << std::endl;
@@ -196,9 +198,8 @@ namespace apidb
                 }*/
 		if(dt != NULL) 
 		{
-                        //std::cout<< "query:" << str <<std::endl;
-			MYSQL_RES* result = mysql_store_result((MYSQL*)connect.getServerConnector());
-                        if (result == NULL) 
+			//MYSQL_RES* result = mysql_store_result((MYSQL*)connect.getServerConnector());
+                        /*if (result == NULL) 
                         {
                                 std::string msg = "";
                                 msg = msg + " MySQL Server Error No. : '";
@@ -206,19 +207,19 @@ namespace apidb
                                 msg = msg + "' ";
                                 msg = msg + mysql_error((MYSQL*)connect.getServerConnector());
                                 throw toolkit::clientdb::SQLException(msg); 
-                        }
+                        }*/
 			MYSQL_ROW row;
-			while ((row = mysql_fetch_row(result))) 
+			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{		
 				Table* prw = new Table();
-                                 std::cout << row[0] << std::endl;
+                                 //std::cout << row[0] << std::endl;
 				prw->name = row[0];
                                 std::string upper = row[0];
                                 upper[0] = toupper(upper[0]);
                                 prw->upperName = upper;
 				push_back(prw);
 			}
-			mysql_free_result(result);
+			mysql_free_result((MYSQL_RES*)(dt->getResult()));
                         delete dt;
 			return true;
 		}
