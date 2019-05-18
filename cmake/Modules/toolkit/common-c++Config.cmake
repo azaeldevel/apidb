@@ -1,20 +1,20 @@
-SET(TARGET_OBJECT_SUFFIX toolkit-common-c++)
+SET(TARGET_OBJECT_SUFFIX common-c++)
 
 IF (TOOLKIT_COMMON_INCLUDE_DIR)
   # Already in cache, be silent
   SET(TOOLKIT_COMMON_FIND_QUIETLY TRUE)
 ENDIF (TOOLKIT_COMMON_INCLUDE_DIR)
 
-FIND_PATH(TOOLKIT_COMMON_INCLUDE_DIR toolkit-common.hpp
-  /usr/include/toolkit
-  /usr/local/include/toolkit
+FIND_PATH(TOOLKIT_COMMON_INCLUDE_DIR common.hpp
+  /usr/include/toolkit/common
+  /usr/local/include/toolkit/common
   
 )
 
 SET(TOOLKIT_COMMON_NAMES ${TARGET_OBJECT_SUFFIX})
 FIND_LIBRARY(TOOLKIT_COMMON_LIBRARY
   NAMES ${TOOLKIT_COMMON_NAMES}
-  PATHS /usr/lib/toolkit /usr/local/lib/toolkit $ENV{HOME}/development/toolkit/common/build-c++
+  PATHS /usr/lib/toolkit/common/ /usr/local/lib/toolkit/common/ /usr/lib/x86_64-linux-gnu/toolkit/common/ /usr/lib/x86_64-linux-gnu/
   PATH_SUFFIXES ${TARGET_OBJECT_SUFFIX}
 )
 

@@ -1,11 +1,11 @@
-SET(TARGET_OBJECT_SUFFIX toolkit-clientdb-c++-mysql)
+SET(TARGET_OBJECT_SUFFIX mysql-c++)
 
 IF (TOOLKIT_CLIENTDB_INCLUDE_DIR)
   # Already in cache, be silent
   SET(TOOLKIT_CLIENTDB_FIND_QUIETLY TRUE)
 ENDIF (TOOLKIT_CLIENTDB_INCLUDE_DIR)
 
-FIND_PATH(TOOLKIT_CLIENTDB_INCLUDE_DIR toolkit-clientdb-mysql.hpp
+FIND_PATH(TOOLKIT_CLIENTDB_INCLUDE_DIR clientdb/clientdb-mysql.hpp
   /usr/include/toolkit
   /usr/local/include/toolkit
 )
@@ -13,7 +13,7 @@ FIND_PATH(TOOLKIT_CLIENTDB_INCLUDE_DIR toolkit-clientdb-mysql.hpp
 SET(TOOLKIT_CLIENTDB_NAMES ${TARGET_OBJECT_SUFFIX})
 FIND_LIBRARY(TOOLKIT_CLIENTDB_LIBRARIES
   NAMES ${TOOLKIT_CLIENTDB_NAMES}
-  PATHS /usr/lib/toolkit /usr/local/lib/toolkit 
+  PATHS /usr/lib/toolkit/clientdb/ /usr/local/lib/toolkit/clientdb/ /usr/lib/x86_64-linux-gnu/toolkit/clientdb/ /usr/lib/x86_64-linux-gnu/
   PATH_SUFFIXES ${TARGET_OBJECT_SUFFIX}
 )
 
