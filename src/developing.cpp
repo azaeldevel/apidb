@@ -36,6 +36,7 @@ int main()
         config.inputLenguaje = apidb::InputLenguajes::MySQL;
         config.outputLenguaje = apidb::OutputLenguajes::CPP;	
         config.packing = apidb::PackingLenguajes::CMake;
+        config.compiled = apidb::Compiled::SHARED;
 	config.mvc = apidb::MVC::NO;
         //config.keyMode = apidb::KeyModel::BY_MODEL_DB;
         apidb::ConfigureProject::Table tbP("Persons");

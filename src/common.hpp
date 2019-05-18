@@ -65,7 +65,12 @@ namespace apidb
 		GTK3
 		//WIN32
 	};
-		
+        enum Compiled
+        {
+                STATIC,
+                SHARED
+        };
+        
 	class BuildException : public std::exception
 	{
 	public:
@@ -230,6 +235,7 @@ namespace apidb
         InputLenguajes inputLenguaje;
         OutputLenguajes outputLenguaje;
         PackingLenguajes packing;
+        Compiled compiled;
         MVC mvc;
         std::vector<Table> downloads;
         std::vector<Table> selects;

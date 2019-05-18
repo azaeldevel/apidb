@@ -97,7 +97,7 @@ namespace generators
 		cmakelists<<"SET(CMAKE_CXX_STANDARD 14)"<<std::endl;
 		cmakelists<<"SET(CMAKE_CXX_STANDARD_REQUIRED ON)"<<std::endl;
 		cmakelists<<"SET(CMAKE_CXX_EXTENSIONS OFF)"<<std::endl;
-               cmakelists<<" SET(CMAKE_BUILD_TYPE Debug)"<<std::endl;
+                cmakelists<<" SET(CMAKE_BUILD_TYPE Debug)"<<std::endl;
 		cmakelists<<std::endl;
 		cmakelists<<"SET(" << configureProject.name << "_VERSION_STAGE \"alpha\")"<<std::endl;
 		cmakelists<<"CONFIGURE_FILE(\"${PROJECT_SOURCE_DIR}/config.h.in\" \"${PROJECT_SOURCE_DIR}/config.h\")"<<std::endl;
@@ -117,7 +117,16 @@ namespace generators
 		cmakelists<<std::endl;
 		cmakelists<<"ADD_EXECUTABLE(developing "<< configureProject.name <<".cpp developing.cpp)"<<std::endl;
 		cmakelists<<"TARGET_LINK_LIBRARIES(developing ${TOOLKIT_CLIENTDB_LIBRARY} ${TOOLKIT_COMMON_LIBRARY} ${MYSQL_LIBRARY})"<<std::endl;
-		cmakelists<<"ADD_LIBRARY("<< configureProject.name <<" STATIC "<< configureProject.name <<".cpp )"<<std::endl;
+		cmakelists<<"ADD_LIBRARY("<< configureProject.name;
+                if(configureProject.compiled == apidb::Compiled::SHARED)
+                {
+                        cmakelists << " SHARED ";
+                }
+                else if(configureProject.compiled == apidb::Compiled::STATIC)
+                {
+                         cmakelists  << " STATIC ";
+                }                
+                cmakelists << configureProject.name <<".cpp )"<<std::endl;
 		cmakelists<<"TARGET_LINK_LIBRARIES("<< configureProject.name <<" ${MYSQL_LIBRARY} ${TOOLKIT_COMMON_LIBRARY}  ${TOOLKIT_CLIENDB_LIBRARY} )"<<std::endl;
 		cmakelists.close();
 		analyzer.getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;

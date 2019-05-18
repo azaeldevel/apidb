@@ -25,9 +25,9 @@
 
 namespace apidb
 {
-    /**
-     * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
-     */
+        /**
+        * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
+        */
 	bool symbols::Table::fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables)
 	{
                 /**
