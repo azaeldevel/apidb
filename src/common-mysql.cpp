@@ -219,8 +219,8 @@ namespace apidb
                                 prw->upperName = upper;
 				push_back(prw);
 			}
-			mysql_free_result((MYSQL_RES*)(dt->getResult()));
-                        delete dt;
+			
+                        delete dt;//mysql_free_result((MYSQL_RES*)(dt->getResult()));
 			return true;
 		}
 		else
