@@ -251,7 +251,8 @@ namespace apidb
             patch = atoi((const char*)xmlTextReaderConstValue(reader));
         }
         
-        this->version.set(major,minor,patch,toolkit::Version::Stage::alpha);
+        this->version.setNumbers(major,minor,patch);
+       // this->version.setStage(toolkit::Version::Stage::alpha);
         
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);

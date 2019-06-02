@@ -19,16 +19,23 @@
  * */
 
 #include "driver.hpp"
-#include "config.h"
+#include "versionInfo.h"
+#include <string>
+#include <iostream>
+
 
 namespace apidb
 {
-    const char* getPakageName()
-    {
-        return PAKAGENAME;
-    }
+	std::string getPakageName()
+	{
+		return std::string(PAKAGENAME);
+	}
 	toolkit::Version getPakageVersion()
 	{
-		return toolkit::Version(VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,VERSION_STAGE);		
+                toolkit::Version v;
+                v.setNumbers(VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH);
+                v.setStage(VERSION_STAGE);
+                v.setBuild(std::stoul(VERSION_BUILD));
+		return v;		
 	}
 } 

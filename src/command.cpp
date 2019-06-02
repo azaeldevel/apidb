@@ -129,7 +129,9 @@ int main(int argc, char *argv[])
 		std::cout<<"\tFallo conexion a servidor."<<std::endl;
 	}
 	
-	toolkit::Version version(0,1,0,toolkit::Version::Stage::alpha);
+	toolkit::Version version;
+        version.setNumbers(0,1,0);
+        version.setStage(toolkit::Version::Stage::alpha);
 	apidb::ConfigureProject config;
     	config.name = name;
     	config.directory = dir;
