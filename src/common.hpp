@@ -250,6 +250,8 @@ namespace apidb
         const toolkit::Version& getVersion()const;
         const toolkit::clientdb::mysql::Datconnect& getConector()const;
     };
+    
+  
 }
 
 #endif

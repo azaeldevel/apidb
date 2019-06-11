@@ -118,9 +118,9 @@ int main(int argc, char *argv[])
 	
 	toolkit::clientdb::mysql::Datconnect mysqlConnector(server,puerto,dbName,dbUser,dbPW); 
 	toolkit::clientdb::mysql::Connector connector;    
-    bool flagServer = connector.connect(&mysqlConnector);
-    if(flagServer)
-    {
+        bool flagServer = connector.connect(&mysqlConnector);
+        if(flagServer)
+        {
 		std::cout<<"\tConexion a servidor completada."<<std::endl;
 		connector.close();
 	}
@@ -141,10 +141,10 @@ int main(int argc, char *argv[])
     	config.outputLenguaje = apidb::OutputLenguajes::CPP;
 	apidb::Driver driver(config);
 	if(!driver.driving())
-    {
-        std::cerr<<mysqlConnector.toString()<<" - is bat "<<std::endl;
-        return -1;
-    }  
+        {
+                std::cerr<<mysqlConnector.toString()<<" - is bat "<<std::endl;
+                return -1;
+        }  
     
 repeatconfigCh:
 	std::cout<< "Archivo de configuracion(s/n):";

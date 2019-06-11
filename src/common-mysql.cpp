@@ -187,7 +187,7 @@ namespace apidb
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
                 str = str + db + "' and TABLE_TYPE = 'BASE TABLE'";
                 toolkit::clientdb::Datresult* dt = connect.query(str.c_str());   
-                std::cout<< "query:" << str <<std::endl;
+                //std::cout<< "query:" << str <<std::endl;
                 /*if (mysql_ping((MYSQL*)connect.getServerConnector()) != 0)
                 {
                         std::cout << "Fallo ñla conecio al servidor" << std::endl;

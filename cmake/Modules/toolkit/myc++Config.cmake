@@ -1,4 +1,4 @@
-SET(TARGET_OBJECT_SUFFIX mysql-c++)
+SET(TARGET_OBJECT_SUFFIX myc++)
 
 IF (TOOLKIT_CLIENTDB_INCLUDE_DIR)
   # Already in cache, be silent
