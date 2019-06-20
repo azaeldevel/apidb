@@ -35,7 +35,7 @@ namespace apidb
 	Analyzer::~Analyzer()
 	{
 	}
-	Analyzer::Analyzer(const ConfigureProject& config,toolkit::clientdb::Connector* conn) : configureProject(config), connector(conn)
+	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn) : configureProject(config), connector(conn)
 	{
 	}
 	OutputLenguajes Analyzer::getOutputLenguaje() const
@@ -75,7 +75,7 @@ namespace mysql
 {
 	bool Analyzer::analyze()
 	{
-		bool flag = symbolsTables.listing(*(toolkit::clientdb::mysql::Connector*)connector);
+		bool flag = symbolsTables.listing(*(octetos::toolkit::clientdb::mysql::Connector*)connector);
                 
                 for(auto table: symbolsTables) //reading attrubtes by table
                 {
@@ -107,7 +107,7 @@ namespace mysql
                 
                 return flag;
 	}
-	Analyzer::Analyzer(const ConfigureProject& config,toolkit::clientdb::Connector* conn) : apidb::Analyzer(config,conn)
+	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn) : apidb::Analyzer(config,conn)
 	{
 		outputMessages = &std::cout;	  
 		errorMessages = &std::cerr; 

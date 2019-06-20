@@ -42,12 +42,12 @@ namespace apidb
 		const std::string& getDirectoryProject();				
 		InputLenguajes getInputLenguaje() const;
 		OutputLenguajes getOutputLenguaje() const;
-		Analyzer(const ConfigureProject&, toolkit::clientdb::Connector*);
+		Analyzer(const ConfigureProject&, octetos::toolkit::clientdb::Connector*);
                 virtual ~Analyzer();
 		
     protected:
 		symbols::Tables symbolsTables;		
-		toolkit::clientdb::Connector* connector;
+		octetos::toolkit::clientdb::Connector* connector;
 		std::ostream* outputMessages;//out stream
 		std::ostream* errorMessages;//out stream		
 		const ConfigureProject& configureProject;
@@ -76,7 +76,7 @@ namespace apidb
             void parse(std::istream &iss);
             
             //Analyzer();
-            Analyzer(const ConfigureProject&,toolkit::clientdb::Connector*);		
+            Analyzer(const ConfigureProject&,octetos::toolkit::clientdb::Connector*);		
             virtual ~Analyzer();         
             
             void message(const std::string&);		

@@ -28,7 +28,7 @@ namespace apidb
         /**
         * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
         */
-	bool symbols::Table::fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables)
+	bool symbols::Table::fillKeyType(octetos::toolkit::clientdb::Connector& connect,Tables& tables)
 	{
                 /**
                 * Lista las relaciones de llaves foraneas para la tabla actual
@@ -37,10 +37,10 @@ namespace apidb
                 fks += "'";
 		fks += name;
 		fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
-		fks += ((toolkit::clientdb::Datconnect*)(connect.getDatconection()))->getDatabase();
+		fks += ((octetos::toolkit::clientdb::Datconnect*)(connect.getDatconection()))->getDatabase();
 		fks += "'";
 		//std::cout<<fks<<std::endl;
-                toolkit::clientdb::Datresult* dt = connect.query(fks.c_str());
+                octetos::toolkit::clientdb::Datresult* dt = connect.query(fks.c_str());
                 if(dt != NULL)
                 {
 			//MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());                        
@@ -99,11 +99,11 @@ namespace apidb
                 return false;
 	}
 	
-    bool symbols::Table::basicSymbols(toolkit::clientdb::Connector& connect)
+    bool symbols::Table::basicSymbols(octetos::toolkit::clientdb::Connector& connect)
     {
 		std::string str = "DESCRIBE ";
 		str += name;
-                toolkit::clientdb::Datresult* dt = connect.query(str.c_str());
+                octetos::toolkit::clientdb::Datresult* dt = connect.query(str.c_str());
 		if(dt != NULL) 
 		{
 			//std::cout<<str<<std::endl;
@@ -180,13 +180,13 @@ namespace apidb
     }
     
     
-	bool symbols::Tables::listing(toolkit::clientdb::mysql::Connector& connect)
+	bool symbols::Tables::listing(octetos::toolkit::clientdb::mysql::Connector& connect)
 	{
 		std::string db = connect.getDatconection()->getDatabase();
 		//std::cout<< "db:" << db <<std::endl;
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
                 str = str + db + "' and TABLE_TYPE = 'BASE TABLE'";
-                toolkit::clientdb::Datresult* dt = connect.query(str.c_str());   
+                octetos::toolkit::clientdb::Datresult* dt = connect.query(str.c_str());   
                 //std::cout<< "query:" << str <<std::endl;
                 /*if (mysql_ping((MYSQL*)connect.getServerConnector()) != 0)
                 {
@@ -230,7 +230,7 @@ namespace apidb
                         msg = msg + std::to_string(mysql_errno((MYSQL*)connect.getServerConnector()));
                         msg = msg + "' ";
                         msg = msg + mysql_error((MYSQL*)connect.getServerConnector());
-                        throw toolkit::clientdb::SQLException(msg);                         
+                        throw octetos::toolkit::clientdb::SQLException(msg);                         
                 }
 		return false;	
 	}

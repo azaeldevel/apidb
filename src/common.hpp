@@ -21,13 +21,11 @@
  *  author: Azael Reyes
  * */
  
- 
-
 #include <string>
 #include <list>
 #include <vector>
 #include <map>
-#include <clientdb/clientdb-mysql.hpp>
+#include <clientdb-mysql.hpp>
 #include <libxml/xmlreader.h>
 #include <iostream>
 #include <cstring>
@@ -40,7 +38,7 @@ namespace apidb
 		//MySQL_Script,
 		//PostgresSQL
 	};*/
-        typedef toolkit::clientdb::Datconnect::ServerType InputLenguajes;
+        typedef octetos::toolkit::clientdb::Datconnect::ServerType InputLenguajes;
 	
         enum PackingLenguajes
         {
@@ -154,8 +152,8 @@ namespace apidb
             
                         Table();
                         ~Table();
-			bool basicSymbols(toolkit::clientdb::Connector& connect);
-                        bool fillKeyType(toolkit::clientdb::Connector& connect,Tables& tables);
+			bool basicSymbols(octetos::toolkit::clientdb::Connector& connect);
+                        bool fillKeyType(octetos::toolkit::clientdb::Connector& connect,Tables& tables);
                         short getCountRefereces()const; 
                         //std::list<Symbol*>::iterator search(const std::string&);
             
@@ -172,8 +170,8 @@ namespace apidb
 			~Tables();	
                         Table* search(const std::string&); 
 			std::list<Table*>::iterator find(const std::string& tableName);       
-			bool listing(toolkit::clientdb::mysql::Connector& connect);
-                        //bool listing(toolkit::clientdb::postgresql::Connector& connect);
+			bool listing(octetos::toolkit::clientdb::mysql::Connector& connect);
+                        //bool listing(octetos::toolkit::clientdb::postgresql::Connector& connect);
 			short getMaxCountRef();
                         //bool reorder();
             
@@ -229,8 +227,8 @@ namespace apidb
         
         std::string name; 
         std::string directory;
-        toolkit::Version version;
-        toolkit::clientdb::mysql::Datconnect* conectordb;
+        octetos::toolkit::Version version;
+        octetos::toolkit::clientdb::mysql::Datconnect* conectordb;
         InputLenguajes inputLenguaje;
         OutputLenguajes outputLenguaje;
         PackingLenguajes packing;
@@ -247,8 +245,8 @@ namespace apidb
 		
         const std::string& getName()const;
         const std::string& getDirectory()const;
-        const toolkit::Version& getVersion()const;
-        const toolkit::clientdb::mysql::Datconnect& getConector()const;
+        const octetos::toolkit::Version& getVersion()const;
+        const octetos::toolkit::clientdb::mysql::Datconnect& getConector()const;
     };
     
   

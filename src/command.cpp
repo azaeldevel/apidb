@@ -116,8 +116,8 @@ int main(int argc, char *argv[])
 	std::cin >>  dbPW;
 	
 	
-	toolkit::clientdb::mysql::Datconnect mysqlConnector(server,puerto,dbName,dbUser,dbPW); 
-	toolkit::clientdb::mysql::Connector connector;    
+	octetos::toolkit::clientdb::mysql::Datconnect mysqlConnector(server,puerto,dbName,dbUser,dbPW); 
+	octetos::toolkit::clientdb::mysql::Connector connector;    
         bool flagServer = connector.connect(&mysqlConnector);
         if(flagServer)
         {
@@ -129,9 +129,9 @@ int main(int argc, char *argv[])
 		std::cout<<"\tFallo conexion a servidor."<<std::endl;
 	}
 	
-	toolkit::Version version;
+	octetos::toolkit::Version version;
         version.setNumbers(0,1,0);
-        version.setStage(toolkit::Version::Stage::alpha);
+        version.setStage(octetos::toolkit::Version::Stage::alpha);
 	apidb::ConfigureProject config;
     	config.name = name;
     	config.directory = dir;

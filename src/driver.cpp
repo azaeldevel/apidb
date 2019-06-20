@@ -34,7 +34,7 @@ namespace apidb
 	{		
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
-			connector = new toolkit::clientdb::mysql::Connector();
+			connector = new octetos::toolkit::clientdb::mysql::Connector();
 			analyzer = new mysql::Analyzer(configureProject,connector);		
 			try
 			{
@@ -47,7 +47,7 @@ namespace apidb
 					analyzer = NULL;
 				}
 			}
-			catch(toolkit::clientdb::SQLException ex)
+			catch(octetos::toolkit::clientdb::SQLException ex)
 			{				
 				analyzer->getErrorMessage() <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
 			}

@@ -25,7 +25,7 @@
 
 namespace apidb
 {
-	toolkit::Version getPakageVersion();
+	octetos::toolkit::Version getPakageVersion();
 	std::string getPakageName();	
 
 }

@@ -24,10 +24,10 @@
 
 int main()
 {
-	toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
-	toolkit::Version version;
+	octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
+	octetos::toolkit::Version version;
 	version.setNumbers(0,1,0);
-        version.setStage(toolkit::Version::Stage::alpha);
+        version.setStage(octetos::toolkit::Version::Stage::alpha);
 
 	apidb::ConfigureProject config;
         config.name = "sysapp";

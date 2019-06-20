@@ -30,9 +30,9 @@ namespace apidb
 	{
 		return std::string(PAKAGENAME);
 	}
-	toolkit::Version getPakageVersion()
+	octetos::toolkit::Version getPakageVersion()
 	{
-                toolkit::Version v;
+                octetos::toolkit::Version v;
                 v.setNumbers(VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH);
                 v.setStage(VERSION_STAGE);
                 v.setBuild(std::stoul(VERSION_BUILD));

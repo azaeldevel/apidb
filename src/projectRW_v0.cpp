@@ -60,38 +60,34 @@ namespace apidb
 			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb->getPassword().c_str());
 		}
 		else
-                {
-                        return false;
-                }
+        {
+           	return false;
+        }
 		
-                std::string dirProy = "";
+        
+		
+        std::string nmFile = "";
 		if((directory.empty()) || (directory.compare(".") == 0))
 		{
-			dirProy = "apidb";
+			nmFile = "apidb";
 		}
 		else
-                {
-                        dirProy = directory + "/apidb";
-                }
-                
-                struct stat st = {0};
-                if (stat(dirProy.c_str(), &st) == -1) 
-                {
-                        mkdir(dirProy.c_str(), 0700);
-                }
-                
-                std::ofstream verFile (dirProy + "/version");
-                verFile << apidb::getPakageVersion().toString()<< std::endl;
-                verFile.flush();
-                verFile.close();
-                
-                std::string xmlFile = dirProy + "/main.xml";                
-		int ret = xmlSaveFormatFileEnc(xmlFile.c_str(), doc, "UTF-8", 1);	
+        {
+            std::ifstream ifile(directory);
+            if (ifile) 
+            {            
+                nmFile = directory + "/apidb";
+            }
+            else
+            {            
+                return false;
+            }
+        }
+        
+		int ret = xmlSaveFormatFileEnc(nmFile.c_str(), doc, "UTF-8", 1);	
 		xmlFreeDoc(doc);
 		xmlCleanupParser();
-		if( ret == -1) return false;  
-                             
-                
+		if( ret == -1) return false;	
 		return true;
 	}
 
@@ -293,7 +289,7 @@ namespace apidb
             password = (const char*)xmlTextReaderConstValue(reader);
         }
         
-        conectordb = new toolkit::clientdb::mysql::Datconnect(host,port,database,user,password);
+        conectordb = new octetos::toolkit::clientdb::mysql::Datconnect(host,port,database,user,password);
         
         return true;
     }

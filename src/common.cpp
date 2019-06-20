@@ -81,11 +81,11 @@ namespace apidb
 
 	
 	
-    const toolkit::clientdb::mysql::Datconnect& ConfigureProject::getConector() const
+    const octetos::toolkit::clientdb::mysql::Datconnect& ConfigureProject::getConector() const
     {
         return *conectordb;    
     }
-    const toolkit::Version& ConfigureProject::getVersion()const
+    const octetos::toolkit::Version& ConfigureProject::getVersion()const
     {
         return version;
     }
