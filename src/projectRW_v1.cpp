@@ -1,18 +1,34 @@
 
-#include <cctype>
-#include <fstream>
-#include <cassert>
-#include <sstream> 
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
-#include <string.h>
+//generic
 #include <stdio.h>
-#include <iostream>
-#include <map>
+
+//file operations 
+#include <fstream>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
+//xml
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
+
+//
+#include <cctype>
+#include <cassert>
+#include <sstream> 
+#include <string.h>
+#include <iostream>
+#include <map>
+
+//Tar>>>>>>>>>>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <fcntl.h>
+#include <libtar.h>
+//Tar<<<<<<<<<<
+
+//local
 #include "common.hpp"
 #include "apidb.hpp"
 
@@ -47,38 +63,81 @@ namespace apidb
 			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb->getPassword().c_str());
 		}
 		else
-        {
-        	return false;
-        }
+                {
+                        return false;
+                }
 		
         
-        std::string dirProy = "";
+                std::string dirProy = "";
 		if((directory.empty()) || (directory.compare(".") == 0))
 		{
 			dirProy = "apidb";
 		}
 		else
-        {
-                        dirProy = directory + "/apidb";
-        }
+                {
+                                dirProy = directory + "/apidb";
+                }
+                        
+                struct stat st = {0};
+                if (stat(dirProy.c_str(), &st) == -1) 
+                {
+                        mkdir(dirProy.c_str(), 0700);
+                }
                 
-        struct stat st = {0};
-        if (stat(dirProy.c_str(), &st) == -1) 
-        {
-           	mkdir(dirProy.c_str(), 0700);
-        }
+                std::string nameVerFile = dirProy + "/version";
+                std::ofstream verFile (nameVerFile);
+                verFile << apidb::getPakageVersion().toString()<< std::endl;
+                verFile.flush();
+                verFile.close();
                 
-        std::ofstream verFile (dirProy + "/version");
-        verFile << apidb::getPakageVersion().toString()<< std::endl;
-        verFile.flush();
-        verFile.close();
-                
-        std::string xmlFile = dirProy + "/main.xml";                
+                std::string xmlFile = dirProy + "/main.xml";                
 		int ret = xmlSaveFormatFileEnc(xmlFile.c_str(), doc, "UTF-8", 1);	
 		xmlFreeDoc(doc);
 		xmlCleanupParser();
 		if( ret == -1) return false;  
-                             
+                           
+                //comprimiendo archivo
+                TAR *pTar;
+                std::string tarFilename= dirProy + ".tar";
+                //char *srcDir = (char*)dirProy.c_str();
+                //char *extractTo = (char*)dirProy.c_str();
+                tar_open(&pTar, (char*)tarFilename.c_str(), NULL, O_WRONLY | O_CREAT, 0644, TAR_IGNORE_MAGIC);
+                tar_append_tree(pTar, (char*)dirProy.c_str(), "apidb");
+                tar_append_eof(pTar);
+                tar_close(pTar);
+       
+                //eliminando archivo de projecto temporal
+                if(remove(xmlFile.c_str() )!= 0)
+                {
+                        std::cout << "No se elimino el archivo temporal del proyecto." << std::endl;
+                        char buffer[ 256 ];
+                        char * errorMsg = strerror_r( errno, buffer, 256 ); // GNU-specific version, Linux default
+                        printf("Error %s\n", errorMsg);
+                        return false;
+                }
+                if(remove(nameVerFile.c_str() )!= 0)
+                {
+                        std::cout << "No se elimino el archivo temporal del proyecto." << std::endl;
+                        char buffer[ 256 ];
+                        char * errorMsg = strerror_r( errno, buffer, 256 ); // GNU-specific version, Linux default
+                        printf("Error %s\n", errorMsg);
+                        return false;
+                }
+                if(rmdir(dirProy.c_str() )!= 0)
+                {
+                        std::cout << "No se elimino el archivo temporal del proyecto." << std::endl;
+                        char buffer[ 256 ];
+                        char * errorMsg = strerror_r( errno, buffer, 256 ); // GNU-specific version, Linux default
+                        printf("Error %s\n", errorMsg);
+                        return false;
+                }
+                
+                
+                if(rename(tarFilename.c_str(),dirProy.c_str()) != 0)
+                {
+                        std::cout << "Fallo al mover el archivo de proyecto." << std::endl;
+                        return false;
+                }
                 
 		return true;
 	}
