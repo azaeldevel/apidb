@@ -44,16 +44,23 @@ namespace apidb
                 outputLenguaje = apidb::OutputLenguajes::CPP;
                 packing = PackingLenguajes::CMake;
                 
+                //leeer xml
                 xmlTextReaderPtr reader;
                 int ret;                
                 std::cout << "Descomprimiendo achivo." << std::endl;
                 TAR* tar_handle;
                 tar_open(&tar_handle, (char*) filename.c_str(), NULL,  O_RDONLY,  0644,  TAR_GNU);
-                char* savefold = "temp";
-                tar_extract_all(tar_handle, savefold);
+                char tmp_filepath[] =  "/tmp/dxmg-XXXXXX";
+                char * tmp_apidbDir  = mkdtemp(tmp_filepath);
+                if (tmp_apidbDir == NULL) 
+                {
+                        fprintf(stderr, "Failed to build temp file.\n");
+                        //exitcode = 2;
+                }
+                tar_extract_all(tar_handle, tmp_filepath);
                 tar_close(tar_handle);
                 std::cout << "Lellendo archivo." << std::endl;  
-                std::string xmlfile = savefold;
+                std::string xmlfile = tmp_apidbDir;
                 xmlfile += "/apidb/main.xml";
                 reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);
                 if (reader != NULL) 
