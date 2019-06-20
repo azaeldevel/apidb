@@ -125,12 +125,12 @@ namespace apidb
 			///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
 			if(flagCPP && flagCMAKE)
 			{
-				analyzer->getOutputMessage() <<"Completado."<<std::endl;				
+				analyzer->getOutputMessage() << "Generacion completada." <<std::endl;				
 				return true;				
 			}
 			else
 			{
-				analyzer->getOutputMessage() <<"Fallo."<<std::endl;
+				analyzer->getOutputMessage() << "Fallo."<<std::endl;
 				return false;
 			}
 		}

@@ -47,7 +47,7 @@ namespace apidb
                 //leeer xml
                 xmlTextReaderPtr reader;
                 int ret;                
-                std::cout << "Descomprimiendo achivo." << std::endl;
+                //std::cout << "Descomprimiendo achivo." << std::endl;
                 TAR* tar_handle;
                 tar_open(&tar_handle, (char*) filename.c_str(), NULL,  O_RDONLY,  0644,  TAR_GNU);
                 char tmp_filepath[] =  "/tmp/dxmg-XXXXXX";
@@ -118,61 +118,39 @@ namespace apidb
                 {
                                 dirProy = directory + "/apidb";
                 }
-                        
-                struct stat st = {0};
-                if (stat(dirProy.c_str(), &st) == -1) 
-                {
-                        mkdir(dirProy.c_str(), 0700);
-                }
                 
-                std::string nameVerFile = dirProy + "/version";
-                std::ofstream verFile (nameVerFile);
-                verFile << apidb::getPakageVersion().toString()<< std::endl;
-                verFile.flush();
-                verFile.close();
+                char tmp_dirpath[] =  "/tmp/apidb-XXXXXX";
+                char * tmp_apidbDir  = mkdtemp(tmp_dirpath);
+                std::string tmpDir = tmp_apidbDir;
                 
-                std::string xmlFile = dirProy + "/main.xml";                
+                //std::cout<< "Generando archivo de version" << std::endl;
+                std::string nameVerFile = tmp_dirpath;
+                nameVerFile +=  "/version";
+                std::ofstream verF;
+                verF.open(nameVerFile);                
+                verF << apidb::getPakageVersion().toString()<< std::endl;
+                verF.flush();
+                verF.close();
+                
+                 std::string xmlFile = tmp_dirpath;
+                 xmlFile += "/main.xml";
+                //std::cout<< "Generando archivo de " <<  xmlFile << std::endl;
 		int ret = xmlSaveFormatFileEnc(xmlFile.c_str(), doc, "UTF-8", 1);	
 		xmlFreeDoc(doc);
 		xmlCleanupParser();
 		if( ret == -1) return false;  
-                           
+                
                 //comprimiendo archivo
+                //std::cout<< "Comprimiendo projecto." << std::endl;
                 TAR *pTar;
                 std::string tarFilename= dirProy + ".tar";
                 //char *srcDir = (char*)dirProy.c_str();
                 //char *extractTo = (char*)dirProy.c_str();
                 tar_open(&pTar, (char*)tarFilename.c_str(), NULL, O_WRONLY | O_CREAT, 0644, TAR_IGNORE_MAGIC);
-                tar_append_tree(pTar, (char*)dirProy.c_str(), "apidb");
+                tar_append_tree(pTar, tmp_dirpath, "apidb");
                 tar_append_eof(pTar);
                 tar_close(pTar);
-       
-                //eliminando archivo de projecto temporal
-                if(remove(xmlFile.c_str() )!= 0)
-                {
-                        std::cout << "No se elimino el archivo temporal del proyecto." << std::endl;
-                        char buffer[ 256 ];
-                        char * errorMsg = strerror_r( errno, buffer, 256 ); // GNU-specific version, Linux default
-                        printf("Error %s\n", errorMsg);
-                        return false;
-                }
-                if(remove(nameVerFile.c_str() )!= 0)
-                {
-                        std::cout << "No se elimino el archivo temporal del proyecto." << std::endl;
-                        char buffer[ 256 ];
-                        char * errorMsg = strerror_r( errno, buffer, 256 ); // GNU-specific version, Linux default
-                        printf("Error %s\n", errorMsg);
-                        return false;
-                }
-                if(rmdir(dirProy.c_str() )!= 0)
-                {
-                        std::cout << "No se elimino el archivo temporal del proyecto." << std::endl;
-                        char buffer[ 256 ];
-                        char * errorMsg = strerror_r( errno, buffer, 256 ); // GNU-specific version, Linux default
-                        printf("Error %s\n", errorMsg);
-                        return false;
-                }
-                
+                //std::cout<< "Archivo comprimido" << std::endl;
                 
                 if(rename(tarFilename.c_str(),dirProy.c_str()) != 0)
                 {
@@ -180,6 +158,7 @@ namespace apidb
                         return false;
                 }
                 
+                std::cout<< "Escritura de proyecto completada." << std::endl;
 		return true;
 	}
 

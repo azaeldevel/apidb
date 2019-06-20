@@ -83,29 +83,29 @@ namespace apidb
 			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb->getPassword().c_str());
 		}
 		else
-        {
-           	return false;
-        }
+                {
+                        return false;
+                }
 		
         
 		
-        std::string nmFile = "";
+                std::string nmFile = "";
 		if((directory.empty()) || (directory.compare(".") == 0))
 		{
 			nmFile = "apidb";
 		}
 		else
-        {
-            std::ifstream ifile(directory);
-            if (ifile) 
-            {            
-                nmFile = directory + "/apidb";
-            }
-            else
-            {            
-                return false;
-            }
-        }
+                {
+                std::ifstream ifile(directory);
+                if (ifile) 
+                {            
+                        nmFile = directory + "/apidb";
+                }
+                else
+                {            
+                        return false;
+                }
+                }
         
 		int ret = xmlSaveFormatFileEnc(nmFile.c_str(), doc, "UTF-8", 1);	
 		xmlFreeDoc(doc);
