@@ -107,37 +107,19 @@ namespace apidb
     
     ConfigureProject::ConfigureProject(const ConfigureProject& configProy)
     {
-        this->name = configProy.name;
-        this->directory = configProy.directory;
-        this->version = configProy.version;
-        this->conectordb = configProy.conectordb;
-		this->inputLenguaje = configProy.inputLenguaje;
-		this->outputLenguaje = configProy.outputLenguaje;
-		this->mvc = configProy.mvc;
-        this->downloads = configProy.downloads;
-        this->selects = configProy.selects;
+                this->name = configProy.name;
+                this->directory = configProy.directory;
+                this->version = configProy.version;
+                this->conectordb = configProy.conectordb;
+                this->inputLenguaje = configProy.inputLenguaje;
+                this->outputLenguaje = configProy.outputLenguaje;
+                this->mvc = configProy.mvc;
+                this->downloads = configProy.downloads;
+                this->selects = configProy.selects;
+                this->packing = configProy.packing;
     }
-    ConfigureProject::ConfigureProject(std::string filename)
-    {    
-        xmlTextReaderPtr reader;
-        int ret;
-        inputLenguaje = apidb::InputLenguajes::MySQL;
-        outputLenguaje = apidb::OutputLenguajes::CPP;	
-        reader = xmlReaderForFile(filename.c_str(), NULL, 0);
-        if (reader != NULL) 
-        {
-            ret = xmlTextReaderRead(reader);               
-            if (!processNode(reader)) 
-            {
-                fprintf(stderr, "%s : failed to parse\n", filename.c_str());
-            }
-            xmlFreeTextReader(reader);
-        }
-        else 
-        {
-            fprintf(stderr, "Unable to open %s\n", filename.c_str());
-        }
-    }
+    
+    
     
         namespace symbols
 	{

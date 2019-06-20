@@ -34,6 +34,29 @@
 
 namespace apidb
 {        
+        
+        ConfigureProject::ConfigureProject(std::string filename)
+    {    
+        xmlTextReaderPtr reader;
+        int ret;
+        inputLenguaje = apidb::InputLenguajes::MySQL;
+        outputLenguaje = apidb::OutputLenguajes::CPP;	         
+        reader = xmlReaderForFile(filename.c_str(), NULL, 0);
+        if (reader != NULL) 
+        {
+            ret = xmlTextReaderRead(reader);               
+            if (!processNode(reader)) 
+            {
+                fprintf(stderr, "%s : failed to parse\n", filename.c_str());
+            }
+            xmlFreeTextReader(reader);
+        }
+        else 
+        {
+            fprintf(stderr, "Unable to open %s\n", filename.c_str());
+        }
+    }
+    
 	bool ConfigureProject::saveConfig()
 	{
 		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");

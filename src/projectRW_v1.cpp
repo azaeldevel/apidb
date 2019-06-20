@@ -37,6 +37,40 @@
 namespace apidb
 {
         
+        ConfigureProject::ConfigureProject(std::string filename)
+        {    
+                //variables no almacenas en el archivo de configuracion.
+                inputLenguaje = apidb::InputLenguajes::MySQL;
+                outputLenguaje = apidb::OutputLenguajes::CPP;
+                packing = PackingLenguajes::CMake;
+                
+                xmlTextReaderPtr reader;
+                int ret;                
+                std::cout << "Descomprimiendo achivo." << std::endl;
+                TAR* tar_handle;
+                tar_open(&tar_handle, (char*) filename.c_str(), NULL,  O_RDONLY,  0644,  TAR_GNU);
+                char* savefold = "temp";
+                tar_extract_all(tar_handle, savefold);
+                tar_close(tar_handle);
+                std::cout << "Lellendo archivo." << std::endl;  
+                std::string xmlfile = savefold;
+                xmlfile += "/apidb/main.xml";
+                reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);
+                if (reader != NULL) 
+                {
+                        ret = xmlTextReaderRead(reader);               
+                        if (!processNode(reader)) 
+                        {
+                                fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
+                        }
+                        xmlFreeTextReader(reader);
+                }
+                else 
+                {
+                        fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
+                }
+        }
+    
 	bool ConfigureProject::saveConfig()
 	{
 		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
@@ -165,7 +199,7 @@ namespace apidb
 	}
 	
     bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
-    {
+    {         
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);

@@ -28,7 +28,7 @@ int main()
 	octetos::toolkit::Version version;
 	version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
-
+        
 	apidb::ConfigureProject config;
         config.name = "sysapp";
         config.directory = "apidb";
@@ -76,12 +76,13 @@ int main()
         {
 		std::cerr<<"Fail creation prject."<<std::endl;
 		return EXIT_FAILURE;		
-	}
-	/*
+	}	
+	
+	
         std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;
 	std::cout<<"Version previa: " << config.getVersion().toString()<<std::endl;
-	apidb::ConfigureProject config2("nmp/apidb");
-    	config2.directory = "nmp2";
+	apidb::ConfigureProject config2("apidb/apidb");
+    	config2.directory = "nmp";
     	apidb::Driver driver2(config2);
     	if(!driver2.driving())
     	{
@@ -94,8 +95,8 @@ int main()
 		return EXIT_FAILURE;		
 	}
 	std::cout<<"Configuracion posterior: " << config2.getConector().toString()<<std::endl;
-	std::cout<<"Version posterior: " << config2.getVersion().toString()<<std::endl;
-        */
+	std::cout<<"Version posterior: " << config2.getVersion().toString()<<std::endl;       
 	
+        
 	return EXIT_SUCCESS;	
 }
