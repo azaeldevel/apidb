@@ -4,14 +4,14 @@
 
 int main(int argc, char **argv)
 {	
-	toolkit::clientdb::mysql::Datconnect mysqlConnector("192.168.0.101",3306,"sysapp.alpha","develop","123456");  
-    toolkit::clientdb::mysql::Connector connector; 
+	octetos::toolkit::clientdb::mysql::Datconnect mysqlConnector("192.168.0.101",3306,"sysapp.alpha","develop","123456");  
+    octetos::toolkit::clientdb::mysql::Connector connector; 
     bool flag = false;  
     try
     {
 		flag = connector.connect(&mysqlConnector);
 	}
-	catch(toolkit::clientdb::SQLException& ex)
+	catch(octetos::toolkit::clientdb::SQLException& ex)
 	{
 		std::cerr<<ex.what()<< std::endl;
 	}

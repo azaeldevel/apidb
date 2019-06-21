@@ -149,7 +149,8 @@ namespace apidb
                         std::string upperName;
                         Key key;
                         std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
-            
+                        std::string space;
+                        
                         Table();
                         ~Table();
 			bool basicSymbols(octetos::toolkit::clientdb::Connector& connect);

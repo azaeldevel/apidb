@@ -106,17 +106,17 @@ namespace generators
 		cmakelists<<"IF(MySQL_FOUND)"<<std::endl;
 			cmakelists<<"INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
-		cmakelists<<"FIND_PACKAGE(toolkit-common-c++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
-		cmakelists<<"IF(TOOLKIT_COMMON_FOUND)"<<std::endl;
-			cmakelists<<"INCLUDE_DIRECTORIES(${TOOLKIT_COMMON_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"FIND_PACKAGE(octeos-toolkit-common-c++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
+		cmakelists<<"IF(OCTETOS_TOOLKIT_COMMON_CPP_FOUND)"<<std::endl;
+                cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
-		cmakelists<<"FIND_PACKAGE(toolkit-clientdb-c++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
-		cmakelists<<"IF(TOOLKIT_CLIENTDB_FOUND)"<<std::endl;
-			cmakelists<<"INCLUDE_DIRECTORIES(${TOOLKIT_CLIENTDB_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"FIND_PACKAGE(octetos-toolkit-clientdb-myc++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
+		cmakelists<<"IF(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)"<<std::endl;
+                cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
 		cmakelists<<std::endl;
 		cmakelists<<"ADD_EXECUTABLE(developing "<< configureProject.name <<".cpp developing.cpp)"<<std::endl;
-		cmakelists<<"TARGET_LINK_LIBRARIES(developing ${TOOLKIT_CLIENTDB_LIBRARY} ${TOOLKIT_COMMON_LIBRARY} ${MYSQL_LIBRARY})"<<std::endl;
+		cmakelists<<"TARGET_LINK_LIBRARIES(developing ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
 		cmakelists<<"ADD_LIBRARY("<< configureProject.name;
                 if(configureProject.compiled == apidb::Compiled::SHARED)
                 {
@@ -127,7 +127,7 @@ namespace generators
                          cmakelists  << " STATIC ";
                 }                
                 cmakelists << configureProject.name <<".cpp )"<<std::endl;
-		cmakelists<<"TARGET_LINK_LIBRARIES("<< configureProject.name <<" ${MYSQL_LIBRARY} ${TOOLKIT_COMMON_LIBRARY}  ${TOOLKIT_CLIENDB_LIBRARY} )"<<std::endl;
+		cmakelists<<"TARGET_LINK_LIBRARIES("<< configureProject.name <<" ${MYSQL_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_LIBRARIES}  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} )"<<std::endl;
 		cmakelists.close();
 		analyzer.getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
 		
@@ -155,7 +155,7 @@ namespace generators
 		}
 	
 		//std::cout<<"Creating toolkit-commonConfig.cmake..."<<std::endl;
-		namefile = "toolkit-common-c++Config.cmake";
+		namefile = "octeos-toolkit-common-c++Config.cmake";
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
 			toolkitcommonconifg.open(namefile);
@@ -164,51 +164,51 @@ namespace generators
 		{
 			toolkitcommonconifg.open(analyzer.getDirectoryProject() + "/cmake.modules/" + namefile);
 		}
-		toolkitcommonconifg<<"IF (TOOLKIT_COMMON_INCLUDE_DIR)"<<std::endl;
-		  toolkitcommonconifg<<"SET(TOOLKIT_COMMON_FIND_QUIETLY TRUE)"<<std::endl;
-		toolkitcommonconifg<<"ENDIF (TOOLKIT_COMMON_INCLUDE_DIR)"<<std::endl;
+		toolkitcommonconifg<<"IF(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)"<<std::endl;
+		  toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_FIND_QUIETLY TRUE)"<<std::endl;
+		toolkitcommonconifg<<"ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)"<<std::endl;
 
-		toolkitcommonconifg<<"FIND_PATH(TOOLKIT_COMMON_INCLUDE_DIR toolkit-common.hpp"<<std::endl;
-		  toolkitcommonconifg<<"/usr/local/include/toolkit"<<std::endl;
-		  toolkitcommonconifg<<"/usr/include/toolkit"<<std::endl;
+		toolkitcommonconifg<<"FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR common.hpp"<<std::endl;
+		  toolkitcommonconifg<<"/usr/local/include/octetos/toolkit/common"<<std::endl;
+		  toolkitcommonconifg<<"/usr/include/octetos/toolkit/common"<<std::endl;
 		toolkitcommonconifg<<")"<<std::endl;
 
-		toolkitcommonconifg<<"SET(TOOLKIT_COMMON_NAMES toolkit-common-c++)"<<std::endl;
-		toolkitcommonconifg<<"FIND_LIBRARY(TOOLKIT_COMMON_LIBRARY"<<std::endl;
-		  toolkitcommonconifg<<"NAMES ${TOOLKIT_COMMON_NAMES}"<<std::endl;
-		  toolkitcommonconifg<<"PATHS /usr/lib/toolkit /usr/local/lib/toolkit /usr/lib/x86_64-linux-gnu/toolkit"<<std::endl;
-		  toolkitcommonconifg<<"PATH_SUFFIXES toolkit-common-c++"<<std::endl;
+		toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_NAMES octetos-toolkit-common-c++)"<<std::endl;
+		toolkitcommonconifg<<"FIND_LIBRARY(OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY"<<std::endl;
+		  toolkitcommonconifg<<"NAMES ${OCTETOS_TOOLKIT_COMMON_CPP_NAMES}"<<std::endl;
+		  toolkitcommonconifg<<"PATHS /usr/lib/octetos/toolkit/common /usr/local/lib/octetos/toolkit/common /usr/lib/x86_64-linux-gnu/octetos/toolkit/common"<<std::endl;
+		  toolkitcommonconifg<<"PATH_SUFFIXES octetos-toolkit-common-c++"<<std::endl;
 		toolkitcommonconifg<<")"<<std::endl;
 
-		toolkitcommonconifg<<"IF (TOOLKIT_COMMON_INCLUDE_DIR AND TOOLKIT_COMMON_LIBRARY)"<<std::endl;
-		  toolkitcommonconifg<<"SET(TOOLKIT_COMMON_FOUND TRUE)"<<std::endl;
-		  toolkitcommonconifg<<"SET( TOOLKIT_COMMON_LIBRARIES ${TOOLKIT_COMMON_LIBRARY} )"<<std::endl;
-		toolkitcommonconifg<<"ELSE (TOOLKIT_COMMON_INCLUDE_DIR AND TOOLKIT_COMMON_LIBRARY)"<<std::endl;
-		  toolkitcommonconifg<<"SET(TOOLKIT_COMMON_FOUND FALSE)"<<std::endl;
-		  toolkitcommonconifg<<"SET( TOOLKIT_COMMON_LIBRARIES )"<<std::endl;
-		toolkitcommonconifg<<"ENDIF (TOOLKIT_COMMON_INCLUDE_DIR AND TOOLKIT_COMMON_LIBRARY)"<<std::endl;
+		toolkitcommonconifg<<"IF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY)"<<std::endl;
+		  toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_FOUND TRUE)"<<std::endl;
+		  toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY} )"<<std::endl;
+		toolkitcommonconifg<<"ELSE (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY)"<<std::endl;
+		  toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_FOUND FALSE)"<<std::endl;
+		  toolkitcommonconifg<<"SET( OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES )"<<std::endl;
+		toolkitcommonconifg<<"ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY)"<<std::endl;
 
-		toolkitcommonconifg<<"IF (TOOLKIT_COMMON_FOUND)"<<std::endl;
-		  toolkitcommonconifg<<"IF (NOT TOOLKIT_COMMON_FIND_QUIETLY)"<<std::endl;
-			toolkitcommonconifg<<"MESSAGE(STATUS \"Found toolkit-common: ${TOOLKIT_COMMON_LIBRARY}\")"<<std::endl;
-		  toolkitcommonconifg<<"ENDIF (NOT TOOLKIT_COMMON_FIND_QUIETLY)"<<std::endl;
-		toolkitcommonconifg<<"ELSE (TOOLKIT_COMMON_FOUND)"<<std::endl;
-		  toolkitcommonconifg<<"IF (TOOLKIT_COMMON_FIND_REQUIRED)"<<std::endl;
-			toolkitcommonconifg<<"MESSAGE(STATUS \"Looked for toolkit-common libraries named ${TOOLKIT_COMMON_NAMES}.\")"<<std::endl;
+		toolkitcommonconifg<<"IF (OCTETOS_TOOLKIT_COMMON_CPP_FOUND)"<<std::endl;
+		  toolkitcommonconifg<<"IF (NOT OCTETOS_TOOLKIT_COMMON_CPP_FIND_QUIETLY)"<<std::endl;
+			toolkitcommonconifg<<"MESSAGE(STATUS \"Found toolkit-common: ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY}\")"<<std::endl;
+		  toolkitcommonconifg<<"ENDIF (NOT OCTETOS_TOOLKIT_COMMON_CPP_FIND_QUIETLY)"<<std::endl;
+		toolkitcommonconifg<<"ELSE (OCTETOS_TOOLKIT_COMMON_CPP_FOUND)"<<std::endl;
+		  toolkitcommonconifg<<"IF (OCTETOS_TOOLKIT_COMMON_CPP_FIND_REQUIRED)"<<std::endl;
+			toolkitcommonconifg<<"MESSAGE(STATUS \"Looked for toolkit-common libraries named ${OCTETOS_TOOLKIT_COMMON_CPP_NAMES}.\")"<<std::endl;
 			toolkitcommonconifg<<"MESSAGE(FATAL_ERROR \"Could NOT find toolkit-common library\")"<<std::endl;
-		  toolkitcommonconifg<<"ENDIF (TOOLKIT_COMMON_FIND_REQUIRED)"<<std::endl;
-		toolkitcommonconifg<<"ENDIF (TOOLKIT_COMMON_FOUND)"<<std::endl;
+		  toolkitcommonconifg<<"ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_FIND_REQUIRED)"<<std::endl;
+		toolkitcommonconifg<<"ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_FOUND)"<<std::endl;
 
 		toolkitcommonconifg<<"MARK_AS_ADVANCED("<<std::endl;
-		  toolkitcommonconifg<<"TOOLKIT_COMMON_LIBRARY"<<std::endl;
-		  toolkitcommonconifg<<"TOOLKIT_COMMON_INCLUDE_DIR"<<std::endl;
+		  toolkitcommonconifg<<"OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES"<<std::endl;
+		  toolkitcommonconifg<<"OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR"<<std::endl;
 		  toolkitcommonconifg<<")"<<std::endl;
 		toolkitcommonconifg.close();
                 
                 if(configureProject.inputLenguaje  == InputLenguajes::MySQL)
-                {                
+                {
 		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
-		namefile = "toolkit-clientdb-c++Config.cmake";
+		namefile = "octetos-toolkit-clientdb-myc++Config.cmake";
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
 		{
 			toolkitclientdbConfig.open(namefile);
@@ -216,46 +216,46 @@ namespace generators
 		else
 		{
 			toolkitclientdbConfig.open(analyzer.getDirectoryProject() + "/cmake.modules/" + namefile);
-		}		
+		}	
 		
-		toolkitclientdbConfig<<"IF (TOOLKIT_CLIENTDB_INCLUDE_DIR)"<<std::endl;
-		  toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_FIND_QUIETLY TRUE)"<<std::endl;
-		toolkitclientdbConfig<<"ENDIF (TOOLKIT_CLIENTDB_INCLUDE_DIR)"<<std::endl;
+		toolkitclientdbConfig<<"IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_QUIETLY TRUE)"<<std::endl;
+		toolkitclientdbConfig<<"ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR)"<<std::endl;
 
-		toolkitclientdbConfig<<"FIND_PATH(TOOLKIT_CLIENTDB_INCLUDE_DIR toolkit-clientdb-mysql.hpp"<<std::endl;
-		  toolkitclientdbConfig<<"/usr/local/include/toolkit"<<std::endl;
-		  toolkitclientdbConfig<<"/usr/include/toolkit"<<std::endl;
+		toolkitclientdbConfig<<"FIND_PATH(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR clientdb.hpp"<<std::endl;
+		  toolkitclientdbConfig<<"/usr/local/include/octetos/toolkit/clientdb"<<std::endl;
+		  toolkitclientdbConfig<<"/usr/include/octetos/toolkit/clientdb"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
-		toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_NAMES toolkit-clientdb-c++-mysql)"<<std::endl;
-		toolkitclientdbConfig<<"FIND_LIBRARY(TOOLKIT_CLIENTDB_LIBRARY"<<std::endl;
-		  toolkitclientdbConfig<<"NAMES ${TOOLKIT_CLIENTDB_NAMES}"<<std::endl;
-		  toolkitclientdbConfig<<"PATHS /usr/lib/toolkit /usr/local/lib/toolkit /usr/lib/x86_64-linux-gnu/toolkit"<<std::endl;
-		  toolkitclientdbConfig<<"PATH_SUFFIXES toolkit-clientdb-c++-mysql"<<std::endl;
+		toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES octetos-toolkit-clientdb-myc++)"<<std::endl;
+		toolkitclientdbConfig<<"FIND_LIBRARY(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY"<<std::endl;
+		  toolkitclientdbConfig<<"NAMES ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES}"<<std::endl;
+		  toolkitclientdbConfig<<"PATHS /usr/lib/octetos/toolkit/clientdb /usr/local/lib/octetos/toolkit/clientdb /usr/lib/x86_64-linux-gnu/octetos/toolkit/clientdb"<<std::endl;
+		  toolkitclientdbConfig<<"PATH_SUFFIXES octetos-toolkit-clientdb-myc++"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
-		toolkitclientdbConfig<<"IF (TOOLKIT_CLIENTDB_INCLUDE_DIR AND TOOLKIT_CLIENTDB_LIBRARY)"<<std::endl;
-		  toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_FOUND TRUE)"<<std::endl;
-		  toolkitclientdbConfig<<"SET( TOOLKIT_CLIENTDB_LIBRARIES ${TOOLKIT_CLIENTDB_LIBRARY} )"<<std::endl;
-		toolkitclientdbConfig<<"ELSE (TOOLKIT_CLIENTDB_INCLUDE_DIR AND TOOLKIT_CLIENTDB_LIBRARY)"<<std::endl;
-		  toolkitclientdbConfig<<"SET(TOOLKIT_CLIENTDB_FOUND FALSE)"<<std::endl;
-		  toolkitclientdbConfig<<"SET( TOOLKIT_CLIENTDB_LIBRARIES )"<<std::endl;
-		toolkitclientdbConfig<<"ENDIF (TOOLKIT_CLIENTDB_INCLUDE_DIR AND TOOLKIT_CLIENTDB_LIBRARY)"<<std::endl;
+		toolkitclientdbConfig<<"IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND TRUE)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY} )"<<std::endl;
+		toolkitclientdbConfig<<"ELSE (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND FALSE)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES )"<<std::endl;
+		toolkitclientdbConfig<<"ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY)"<<std::endl;
 
-		toolkitclientdbConfig<<"IF (TOOLKIT_CLIENTDB_FOUND)"<<std::endl;
-		  toolkitclientdbConfig<<"IF (NOT TOOLKIT_CLIENTDB_FIND_QUIETLY)"<<std::endl;
-			toolkitclientdbConfig<<"MESSAGE(STATUS \"Found toolkit-cliendb: ${TOOLKIT_CLIENTDB_LIBRARY}\")"<<std::endl;
-		  toolkitclientdbConfig<<"ENDIF (NOT TOOLKIT_CLIENTDB_FIND_QUIETLY)"<<std::endl;
-		toolkitclientdbConfig<<"ELSE (TOOLKIT_CLIENTDB_FOUND)"<<std::endl;
-		  toolkitclientdbConfig<<"IF (TOOLKIT_CLIENTDB_FIND_REQUIRED)"<<std::endl;
-			toolkitclientdbConfig<<"MESSAGE(STATUS \"Looked for toolkit-client libraries named ${TOOLKIT_CLIENTDB_NAMES}.\")"<<std::endl;
+		toolkitclientdbConfig<<"IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)"<<std::endl;
+		  toolkitclientdbConfig<<"IF (NOT OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_QUIETLY)"<<std::endl;
+			toolkitclientdbConfig<<"MESSAGE(STATUS \"Found toolkit-cliendb: ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY}\")"<<std::endl;
+		  toolkitclientdbConfig<<"ENDIF (NOT OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_QUIETLY)"<<std::endl;
+		toolkitclientdbConfig<<"ELSE (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)"<<std::endl;
+		  toolkitclientdbConfig<<"IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_REQUIRED)"<<std::endl;
+			toolkitclientdbConfig<<"MESSAGE(STATUS \"Looked for toolkit-client libraries named ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES}.\")"<<std::endl;
 			toolkitclientdbConfig<<"MESSAGE(FATAL_ERROR \"Could NOT find toolkit-client library\")"<<std::endl;
-		  toolkitclientdbConfig<<"ENDIF (TOOLKIT_CLIENTDB_FIND_REQUIRED)"<<std::endl;
-		toolkitclientdbConfig<<"ENDIF (TOOLKIT_CLIENTDB_FOUND)"<<std::endl;
+		  toolkitclientdbConfig<<"ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_REQUIRED)"<<std::endl;
+		toolkitclientdbConfig<<"ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)"<<std::endl;
 
 		toolkitclientdbConfig<<"MARK_AS_ADVANCED("<<std::endl;
-		  toolkitclientdbConfig<<"TOOLKIT_CLIENTDB_LIBRARY"<<std::endl;
-		  toolkitclientdbConfig<<"TOOLKIT_CLIENTDB_INCLUDE_DIR"<<std::endl;
+		  toolkitclientdbConfig<<"OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY"<<std::endl;
+		  toolkitclientdbConfig<<"OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR"<<std::endl;
 		  toolkitclientdbConfig<<")"<<std::endl;
 		toolkitclientdbConfig.close();
                 }                
@@ -455,10 +455,9 @@ namespace generators
 		getHeaderOutput()<< "#include <string>" <<std::endl;
                 
 		//inlcudes in source file
-                getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl; 
-                //getSourceOutput()<< "#include <mysql/my_global.h>"<<std::endl;
+                getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl;
                 getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
-		getHeaderOutput()<< "#include <toolkit-clientdb-mysql.hpp>"<<std::endl<<std::endl;
+		getHeaderOutput()<< "#include <clientdb-mysql.hpp>"<<std::endl<<std::endl;
 			
 		//writing code				
 		createSpaceH(getHeaderOutput());  

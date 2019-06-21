@@ -91,12 +91,10 @@ namespace apidb
 		xmlNewChild(version_node, NULL, (const xmlChar *)"major", (const xmlChar *)std::to_string(version.getMajor()).c_str());
 		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(version.getMinor()).c_str());
 		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(version.getPatch()).c_str());
-		//xmlNewChild(version_node, NULL, (const xmlChar *)"stage", (const xmlChar *)version.stage );
 		
 		xmlNodePtr db_node = xmlNewChild(root_node, NULL, (const xmlChar *)"ConectorDB", NULL);
 		if(inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
-			//toolkit::clientdb::DatconectionMySQL* dat = (toolkit::clientdb::DatconectionMySQL*)connector;
 			xmlNewChild(db_node, NULL, (const xmlChar *)"host", (const xmlChar *)conectordb->getHost().c_str());
 			xmlNewChild(db_node, NULL, (const xmlChar *)"port", (const xmlChar *)std::to_string(conectordb->getPort()).c_str());
 			xmlNewChild(db_node, NULL, (const xmlChar *)"nameDB", (const xmlChar *)conectordb->getDatabase().c_str());
@@ -123,7 +121,6 @@ namespace apidb
                 char * tmp_apidbDir  = mkdtemp(tmp_dirpath);
                 std::string tmpDir = tmp_apidbDir;
                 
-                //std::cout<< "Generando archivo de version" << std::endl;
                 std::string nameVerFile = tmp_dirpath;
                 nameVerFile +=  "/version";
                 std::ofstream verF;
@@ -144,8 +141,6 @@ namespace apidb
                 //std::cout<< "Comprimiendo projecto." << std::endl;
                 TAR *pTar;
                 std::string tarFilename= dirProy + ".tar";
-                //char *srcDir = (char*)dirProy.c_str();
-                //char *extractTo = (char*)dirProy.c_str();
                 tar_open(&pTar, (char*)tarFilename.c_str(), NULL, O_WRONLY | O_CREAT, 0644, TAR_IGNORE_MAGIC);
                 tar_append_tree(pTar, tmp_dirpath, "apidb");
                 tar_append_eof(pTar);
@@ -163,29 +158,12 @@ namespace apidb
 	}
 
 	bool ConfigureProject::checkXML(xmlTextReaderPtr reader)
-	{
-		/*const xmlChar *name;
-        name = xmlTextReaderConstName(reader);
-        if(strcmp((const char*)name,"project") != 0)
-        {
-        	return false;
-        }
-        
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        name = xmlTextReaderConstName(reader);
-        if(strcmp((const char*)name,"name") != 0)
-        {
-        	return false;
-        }*/
-        
-        
-        
-        return true;
+	{                
+                return true;
 	}
 	
-    bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
-    {         
+        bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
+        {         
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
@@ -216,8 +194,7 @@ namespace apidb
         if(strcmp((const char*)name,"#text") == 0)
         {  
             major = atoi((const char*)xmlTextReaderConstValue(reader));
-        }
-        
+        }        
 
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
@@ -238,7 +215,6 @@ namespace apidb
             minor = atoi((const char*)xmlTextReaderConstValue(reader));
         }
         
-
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);

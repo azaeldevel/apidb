@@ -102,7 +102,7 @@ namespace apidb
     bool symbols::Table::basicSymbols(octetos::toolkit::clientdb::Connector& connect)
     {
 		std::string str = "DESCRIBE ";
-		str += name;
+		str += "`" + name + "`";
                 octetos::toolkit::clientdb::Datresult* dt = connect.query(str.c_str());
 		if(dt != NULL) 
 		{

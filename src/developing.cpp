@@ -37,7 +37,7 @@ int main()
         config.inputLenguaje = apidb::InputLenguajes::MySQL;
         config.outputLenguaje = apidb::OutputLenguajes::CPP;	
         config.packing = apidb::PackingLenguajes::CMake;
-        config.compiled = apidb::Compiled::SHARED;
+        config.compiled = apidb::Compiled::STATIC;
 	config.mvc = apidb::MVC::NO;
         //config.keyMode = apidb::KeyModel::BY_MODEL_DB;
         apidb::ConfigureProject::Table tbP("Persons");
@@ -78,7 +78,7 @@ int main()
 		return EXIT_FAILURE;		
 	}	
 	
-	/*
+	
         std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;
 	std::cout<<"Version previa: " << config.getVersion().toString()<<std::endl;
 	apidb::ConfigureProject config2("apidb/apidb");
@@ -96,7 +96,7 @@ int main()
 	}
 	std::cout<<"Configuracion posterior: " << config2.getConector().toString()<<std::endl;
 	std::cout<<"Version posterior: " << config2.getVersion().toString()<<std::endl;       
-	*/
+	
         
 	return EXIT_SUCCESS;	
 }

@@ -34,9 +34,9 @@ namespace apidb
 namespace generators
 {
 	void CPP::writeSelectsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
-    {        
+        {        
         //select(conector,where)
-        ofile << "\tstd::vector<"  << table.name << "*>* " << table.name << "::select(toolkit::clientdb::mysql::Connector& connector, const std::string& where)"<<std::endl;
+        ofile << "\tstd::vector<"  << table.name << "*>* " << table.name << "::select(octetos::toolkit::clientdb::mysql::Connector& connector, const std::string& where)"<<std::endl;
         ofile << "\t{" <<std::endl;
         ofile << "\t\tstd::string sqlString = \"SELECT ";
         //selecciona los campos de las llaves
@@ -56,7 +56,7 @@ namespace generators
         ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
         ofile << "\t\t\tif (result == NULL)"  << std::endl;
         ofile << "\t\t\t{"  << std::endl;
-        ofile << "\t\t\t\t//throw toolkit::clientdb::SQLException(\"La descarga de los datos fallo con la consulta '\" + sqlString + \"'\");"<< std::endl;
+        ofile << "\t\t\t\t//throw octetos::toolkit::clientdb::SQLException(\"La descarga de los datos fallo con la consulta '\" + sqlString + \"'\");"<< std::endl;
         ofile << "\t\t\t\t return NULL;"<< std::endl;
         ofile << "\t\t\t}"  << std::endl;
         ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
@@ -110,7 +110,7 @@ namespace generators
             
             for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
             {
-                ofile << "\tstd::vector<" << table.name<< "*>* " << table.name << "::select(toolkit::clientdb::mysql::Connector& connector,";
+                ofile << "\tstd::vector<" << table.name<< "*>* " << table.name << "::select(octetos::toolkit::clientdb::mysql::Connector& connector,";
                 
                 const apidb::ConfigureProject::Parameters& params = val->getParameters();
                 {
@@ -202,7 +202,7 @@ namespace generators
                     ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
                     ofile << "\t\t\tif (result == NULL)"  << std::endl;
                     ofile << "\t\t\t{"  << std::endl;
-                    ofile << "\t\t\t\t//throw toolkit::clientdb::SQLException(\"La descarga de los datos fallo con la consulta '\" + sqlString + \"'\");"<< std::endl;
+                    ofile << "\t\t\t\t//throw octetos::toolkit::clientdb::SQLException(\"La descarga de los datos fallo con la consulta '\" + sqlString + \"'\");"<< std::endl;
                     ofile << "\t\t\t\treturn NULL;"<< std::endl;
                     ofile << "\t\t\t}"  << std::endl;
                     ofile << "\t\t\tstd::vector<"<< table.name << "*>* tmpVc = new std::vector<" << table.name << "*>;" << std::endl;
@@ -261,7 +261,7 @@ namespace generators
             
             for (auto const& [key, val] : tb)//class Table : public std::map<const char*, const Function*>
             {
-                ofile << "\tbool " << table.name << "::download_" << key << "(toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
+                ofile << "\tbool " << table.name << "::download_" << key << "(octetos::toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
                 ofile << "\t{ " << std::endl;
                 ofile << "\t\tstd::string sqlString = \"SELECT ";
                 const apidb::ConfigureProject::Parameters& params = val->getParameters();
@@ -370,7 +370,7 @@ namespace generators
 	{        
 		// Methodo insert
         ofile << "\t"<< "bool ";
-        ofile <<table.name<< "::insert(toolkit::clientdb::mysql::Connector& connector";
+        ofile <<table.name<< "::insert(octetos::toolkit::clientdb::mysql::Connector& connector";
         for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
             if((*i)->outType.compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
@@ -608,26 +608,7 @@ namespace generators
                                         ofile <<"\t\t" << "return " << attr->name << "->getKey" << attr->symbolReferenced->upperName << "();" << std::endl;
                                 }
                                 ofile <<"\t}"<< std::endl;
-                        }
-                        /* if(attr->symbolReferenced != NULL)
-                        {
-                                ofile <<"\t"<< attr->symbolReferenced->outType << " " << table.name << "::getKey" << attr->upperName << "() const"<< std::endl;
-                                ofile <<"\t{"<< std::endl;
-                                ofile <<"\t\t" << "return " << attr->name << "->getKey" << attr->symbolReferenced->upperName << "();" << std::endl;
-                                ofile <<"\t}"<< std::endl;
-                        }*/
-                        /*else if(attr->symbolReferenced == NULL && attr->isPrimaryKey())
-                        {
-                                ofile <<"\t"<< attr->symbolReferenced->outType << " " << table.name << "::getKey" << attr->upperName << "() const"<< std::endl;
-                                ofile <<"\t{"<< std::endl;
-                                if(attr->symbolReferenced->isForeignKey())//la referencia es terminal
-                                {
-                                        ofile <<"\t\t" << "return " << attr->name << "->" << attr->get << ";" << std::endl;
-                                }
-                                ofile <<"\t}"<< std::endl;
-                        }*/
-                                           
-                        
+                        }                     
                         
 			
 			//getString()		
@@ -656,7 +637,7 @@ namespace generators
             
 			//updates
                         if((*attr).isPrimaryKey()) goto postUpdatePosition; //si es una llave primary no se puede modificar
-			ofile << "\tbool " << table.name <<"::update" << attr->upperName << "(toolkit::clientdb::mysql::Connector& connector,";
+			ofile << "\tbool " << table.name <<"::update" << attr->upperName << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
 			if((attr->outType.compare("std::string") == 0 || attr->outType.compare("int") == 0) && attr->classReferenced != NULL)
                         {
                                 ofile << "const " << attr->classReferenced->name << "& " << attr->name;
@@ -793,13 +774,13 @@ namespace generators
             }            
             for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
             {
-                ofile << "\t\tbool download_" << key << "(toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
+                ofile << "\t\tbool download_" << key << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
             }         
         }
     }
 	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
-        ofile << "\t\tstatic std::vector<" << table.name << "*>* select(toolkit::clientdb::mysql::Connector& connector,const std::string& where);"<<std::endl;
+        ofile << "\t\tstatic std::vector<" << table.name << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where);"<<std::endl;
         
         std::vector<apidb::ConfigureProject::Table> tbs = configureProject.selects;
         for( auto tb: tbs)//std::vector<Table>
@@ -810,7 +791,7 @@ namespace generators
             }
             for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
             {
-                ofile << "\t\tstatic std::vector<" << table.name << "*>* select(toolkit::clientdb::mysql::Connector& connector,";
+                ofile << "\t\tstatic std::vector<" << table.name << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,";
                 
                 const apidb::ConfigureProject::Parameters& params = val->getParameters();
                 {
@@ -854,7 +835,7 @@ namespace generators
 		int countFIelds = 0;
 		// creando insert
         ofile << "\t\t"<< "bool ";
-        ofile << "insert(toolkit::clientdb::mysql::Connector& connector";
+        ofile << "insert(octetos::toolkit::clientdb::mysql::Connector& connector";
         for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
             if((*i)->outType.compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
@@ -960,7 +941,7 @@ namespace generators
 			//getString()			
 			ofile << "\t\tstd::string get" << attr->upperName << "String() const;"<< std::endl;		
 			//update
-			ofile << "\t\tbool " << "update" << attr->upperName << "(toolkit::clientdb::mysql::Connector& connector,";
+			ofile << "\t\tbool " << "update" << attr->upperName << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
 			if(attr->classReferenced != 0)
                         {
                                 ofile << " const " << attr->classReferenced->name << "& " << attr->name;
@@ -1042,16 +1023,16 @@ namespace generators
 			file <<"namespace  controller" <<std::endl;
 			file <<"{" <<std::endl;
 		}
-        for (const apidb::symbols::Table* table : analyzer.getListTable()) 
-        {
+                for (const apidb::symbols::Table* table : analyzer.getListTable()) 
+                {
 			file << "\tclass " << table->name << ";"<<std::endl;
 		}
 		file<<std::endl;
-        for (const apidb::symbols::Table* table : analyzer.getListTable()) 
-        {
-			//file <<"Declare Table " << table->name << std::endl;
-            createClassH(*table,file,table->name);       
-        }
+                for (const apidb::symbols::Table* table : analyzer.getListTable()) 
+                {
+                                //file <<"Declare Table " << table->name << std::endl;
+                createClassH(*table,file,table->name);       
+                }
 
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
