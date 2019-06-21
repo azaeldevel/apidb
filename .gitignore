@@ -98,4 +98,25 @@ src/build-my/sis/cmake.modules/
 src/build-my/sis/config.h.in
 src/build-my/sis/sis.cpp
 src/build-my/sis/sis.hpp
+src/build/apidb/CMakeCache.txt
+src/build/apidb/CMakeFiles/*
+src/build/apidb/CMakeLists.txt
+src/build/apidb/Makefile
+src/build/apidb/apidb
+src/build/apidb/cmake.modules/
+src/build/apidb/cmake_install.cmake
+src/build/apidb/config.h
+src/build/apidb/config.h.in
+src/build/apidb/developing
+src/build/apidb/libsysapp.a
+src/build/apidb/sysapp.cpp
+src/build/apidb/sysapp.hpp
+src/build/compile_commands.json
+src/build/nmp/*
+src/build/uncom
+src/build/writetar
+src/uncompress.cpp
+src/versionInfo.h
+src/writetar-2.cpp
+src/writetar.cpp
 
