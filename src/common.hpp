@@ -165,20 +165,26 @@ namespace apidb
 		/**
 		 * Conjunto de tablas
 		 * */
-		struct Tables: public std::list<Table*>
+		struct Tables : public std::list<Table*>
 		{
 		public:
 			~Tables();	
                         Table* search(const std::string&); 
-			std::list<Table*>::iterator find(const std::string& tableName);       
-			bool listing(octetos::toolkit::clientdb::mysql::Connector& connect);
-                        //bool listing(octetos::toolkit::clientdb::postgresql::Connector& connect);
+			std::list<Table*>::iterator find(const std::string& tableName);
+			
 			short getMaxCountRef();
-                        //bool reorder();
-            
+                        const std::string& getName();                        
                 private:
-			//int floatup(Tables::iterator&);
+                        std::string name;                        
 		};
+                
+                struct Spacies  : public std::map<const char*,Tables*>
+                {
+                        
+                };
+                bool listing(octetos::toolkit::clientdb::mysql::Connector& connect, symbols::Tables& tables);
+                std::string getTableName(std::string fullname);
+                std::string getTableSpace(std::string fullname);
 	}
     class ConfigureProject
     {

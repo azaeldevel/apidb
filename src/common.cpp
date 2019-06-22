@@ -28,11 +28,21 @@
 #include <stdio.h>
 #include <iostream>
 #include <map>
+#include <vector>
+#include <string>
+#include <stdio.h>
+#include <string.h>
+#include <boost/algorithm/string.hpp>
+
 
 #include "common.hpp"
 
 namespace apidb
 {
+        
+               
+                       
+        
     /*std::list<apidb::symbols::Symbol*>::iterator apidb::symbols::Table::search(const std::string& name)
     {			
         auto it = find(name.c_str());
@@ -123,7 +133,45 @@ namespace apidb
     
         namespace symbols
 	{
-			
+                std::string getTableSpace(std::string fullname)
+                {
+                        std::vector<std::string> comps;
+                        std::string str;
+                        boost::split(comps, fullname, boost::is_any_of( "." ) );
+                        if(comps.size() == 1) 
+                        {
+                                return "";
+                        }
+                        else if(comps.size() > 1) 
+                        {
+                                for(int i = 0; i < comps.size() ; i++)
+                                {
+                                        str += "::" + comps[i];
+                                        if(i == (comps.size()-2))
+                                        {
+                                                break;
+                                        }
+                                }
+                        }
+                        return str;
+                }
+                
+                std::string getTableName(std::string fullname)
+                {                        
+                        std::vector<std::string> comps;
+                        boost::split( comps, fullname, boost::is_any_of( "." ) );
+                        if(comps.size() == 1) 
+                        {
+                                return fullname;
+                        }
+                        else if(comps.size() > 1) 
+                        {
+                                return comps.back();
+                        }
+                        
+                        return "";
+                }
+        
                 bool Symbol::isPrimaryKey()
                 {
                 return isPK;
@@ -196,6 +244,14 @@ namespace apidb
 			}	
 			clear();
 		}
+		
+		
+		            
+               /* const std::string& Tables::getName()
+                {
+                        return name;
+                }*/
+		
 		
 		Tables::~Tables()
 		{

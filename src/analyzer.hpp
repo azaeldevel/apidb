@@ -47,6 +47,7 @@ namespace apidb
 		
     protected:
 		symbols::Tables symbolsTables;		
+                //symbols::Spacies spacies;
 		octetos::toolkit::clientdb::Connector* connector;
 		std::ostream* outputMessages;//out stream
 		std::ostream* errorMessages;//out stream		

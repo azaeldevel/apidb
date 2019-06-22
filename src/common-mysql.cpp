@@ -99,8 +99,8 @@ namespace apidb
                 return false;
 	}
 	
-    bool symbols::Table::basicSymbols(octetos::toolkit::clientdb::Connector& connect)
-    {
+        bool symbols::Table::basicSymbols(octetos::toolkit::clientdb::Connector& connect)
+        {
 		std::string str = "DESCRIBE ";
 		str += "`" + name + "`";
                 octetos::toolkit::clientdb::Datresult* dt = connect.query(str.c_str());
@@ -177,49 +177,43 @@ namespace apidb
 			delete dt;//mysql_free_result(result);
 			return false;
 		}
-    }
+        }
     
     
-	bool symbols::Tables::listing(octetos::toolkit::clientdb::mysql::Connector& connect)
+	bool symbols::listing(octetos::toolkit::clientdb::mysql::Connector& connect, symbols::Tables& tables)
 	{
 		std::string db = connect.getDatconection()->getDatabase();
 		//std::cout<< "db:" << db <<std::endl;
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
-                str = str + db + "' and TABLE_TYPE = 'BASE TABLE'";
+                str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
                 octetos::toolkit::clientdb::Datresult* dt = connect.query(str.c_str());   
-                //std::cout<< "query:" << str <<std::endl;
-                /*if (mysql_ping((MYSQL*)connect.getServerConnector()) != 0)
-                {
-                        std::cout << "Fallo ñla conecio al servidor" << std::endl;
-                }
-                else
-                {
-                        std::cout << "El servidor esta bien" << std::endl;
-                }*/
 		if(dt != NULL) 
 		{
-			//MYSQL_RES* result = mysql_store_result((MYSQL*)connect.getServerConnector());
-                        /*if (result == NULL) 
-                        {
-                                std::string msg = "";
-                                msg = msg + " MySQL Server Error No. : '";
-                                msg = msg + std::to_string(mysql_errno((MYSQL*)connect.getServerConnector()));
-                                msg = msg + "' ";
-                                msg = msg + mysql_error((MYSQL*)connect.getServerConnector());
-                                throw toolkit::clientdb::SQLException(msg); 
-                        }*/
 			MYSQL_ROW row;
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
-			{		
+			{
 				Table* prw = new Table();
-                                 //std::cout << row[0] << std::endl;
+                                //std::cout << row[0] << std::endl;
 				prw->name = row[0];
                                 std::string upper = row[0];
                                 upper[0] = toupper(upper[0]);
                                 prw->upperName = upper;
-				push_back(prw);
-			}
-			
+                                prw->space = getTableSpace(prw->name);
+                                tables.push_back(prw);
+                                /*if(spacies.at(prw->space.c_str()) == nullptr)
+                                {
+                                        Tables* tables  = new Tables();
+                                        tables->push_back(prw);
+                                        spacies[prw->space] = tables;
+                                }
+                                else
+                                {
+                                        Tables* tables  = spacies.at(prw->space.c_str());
+                                        tables->push_back(prw);
+                                }*/
+                                
+                                //std::cout << getTableSpace(prw->name) << "::"<< getTableName(prw->name) << std::endl;
+			}			
                         delete dt;//mysql_free_result((MYSQL_RES*)(dt->getResult()));
 			return true;
 		}

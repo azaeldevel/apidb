@@ -75,10 +75,11 @@ namespace mysql
 {
 	bool Analyzer::analyze()
 	{
-		bool flag = symbolsTables.listing(*(octetos::toolkit::clientdb::mysql::Connector*)connector);
+		bool flag = symbols::listing(*(octetos::toolkit::clientdb::mysql::Connector*)connector,symbolsTables);
                 
                 for(auto table: symbolsTables) //reading attrubtes by table
                 {
+                        for (auto const& [key, attribute] : *table)
                         *outputMessages << "\tCreating basic simbols for " << table->name  << "." << std::endl;
                         //simbolos basicos 
                         if(!table->basicSymbols(*connector))
