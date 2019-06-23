@@ -42,9 +42,9 @@ namespace apidb
 	{
 		return configureProject.outputLenguaje;
 	}	
-	symbols::Tables& Analyzer::getListTable() 
+	std::map<const char*,symbols::Tables*,symbols::cmp_str>& Analyzer::getListTable() 
 	{
-		return symbolsTables;
+		return spacies;
 	}		
 	std::string Analyzer::getInputLenguajeString() const
 	{
@@ -75,20 +75,26 @@ namespace mysql
 {
 	bool Analyzer::analyze()
 	{
-		bool flag = symbols::listing(*(octetos::toolkit::clientdb::mysql::Connector*)connector,symbolsTables);
+		bool flag = symbols::listing(*(octetos::toolkit::clientdb::mysql::Connector*)connector,spacies);
                 
-                for(auto table: symbolsTables) //reading attrubtes by table
+                for(auto const& [keySpace, AttSpace]  : spacies)
                 {
-                        for (auto const& [key, attribute] : *table)
-                        *outputMessages << "\tCreating basic simbols for " << table->name  << "." << std::endl;
-                        //simbolos basicos 
-                        if(!table->basicSymbols(*connector))
+                        for(apidb::symbols::Table* table : *AttSpace) //reading attrubtes by table
                         {
-                                //std::cerr<<"Faill on basicSymbols"<<std::endl;
-                                return false;
+                                for (auto const& [key, attribute] : *table)
+                                *outputMessages << "\tCreating basic simbols for " << table->name  << "." << std::endl;
+                                //simbolos basicos 
+                                if(!table->basicSymbols(*connector))
+                                {
+                                        //std::cerr<<"Faill on basicSymbols"<<std::endl;
+                                        return false;
+                                }
                         }
-                }			
-                for(auto table: symbolsTables) //reading attrubtes by table
+                }
+                
+                for(auto const& [keySpace, AttSpace]  : spacies)
+                {
+                for(auto table: *AttSpace) //reading attrubtes by table
                 {
                         //foreign key's
                         if(!table->fillKeyType(*connector,getListTable()))
@@ -97,13 +103,17 @@ namespace mysql
                                 return false;
                         }
                 }
-                for(auto table: symbolsTables) //reading attrubtes by table
+                }
+                for(auto const& [keySpace, AttSpace]  : spacies)
+                {
+                for(auto table: *AttSpace) //reading attrubtes by table
                 {
                         for (auto const& [key, attribute] : *table)
                         {
                                 //std::cout<<"\t"<<attribute->inType<<std::endl;
                                 attribute->outType = parse(attribute->inType);
                         }
+                }
                 }
                 
                 return flag;

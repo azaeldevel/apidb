@@ -41,14 +41,6 @@ namespace apidb
 {
         
                
-                       
-        
-    /*std::list<apidb::symbols::Symbol*>::iterator apidb::symbols::Table::search(const std::string& name)
-    {			
-        auto it = find(name.c_str());
-        return it;
-        
-    }*/
     const std::string& ConfigureProject::Table::getName() const
     {
         return name;        
@@ -146,7 +138,8 @@ namespace apidb
                         {
                                 for(int i = 0; i < comps.size() ; i++)
                                 {
-                                        str += "::" + comps[i];
+                                        if( i != 0) str += "." ;
+                                        str += comps[i];
                                         if(i == (comps.size()-2))
                                         {
                                                 break;

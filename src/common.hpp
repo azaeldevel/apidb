@@ -154,8 +154,8 @@ namespace apidb
                         Table();
                         ~Table();
 			bool basicSymbols(octetos::toolkit::clientdb::Connector& connect);
-                        bool fillKeyType(octetos::toolkit::clientdb::Connector& connect,Tables& tables);
-                        short getCountRefereces()const; 
+                        bool fillKeyType(octetos::toolkit::clientdb::Connector& connect, std::map<const char*,symbols::Tables*,symbols::cmp_str>& tables);
+                        short getCountRefereces() const; 
                         //std::list<Symbol*>::iterator search(const std::string&);
             
 		private:
@@ -171,18 +171,14 @@ namespace apidb
 			~Tables();	
                         Table* search(const std::string&); 
 			std::list<Table*>::iterator find(const std::string& tableName);
+                        std::string name;      
 			
 			short getMaxCountRef();
                         const std::string& getName();                        
-                private:
-                        std::string name;                        
+                private:                  
 		};
                 
-                struct Spacies  : public std::map<const char*,Tables*>
-                {
-                        
-                };
-                bool listing(octetos::toolkit::clientdb::mysql::Connector& connect, symbols::Tables& tables);
+                bool listing(octetos::toolkit::clientdb::mysql::Connector& connect, std::map<const char*,symbols::Tables*,symbols::cmp_str>& tables);
                 std::string getTableName(std::string fullname);
                 std::string getTableSpace(std::string fullname);
 	}

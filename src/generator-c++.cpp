@@ -747,10 +747,17 @@ namespace generators
 			file <<"namespace  controller" <<std::endl;
 			file <<"{" <<std::endl;
 		}
-                const symbols::Tables& tables = analyzer.getListTable();
-                for (apidb::symbols::Table* table : tables) 
+                std::map<const char*,symbols::Tables*,symbols::cmp_str>& spacies = analyzer.getListTable();
+                
+                for(auto const& [keySpace, AttSpace]  : spacies)
                 {
-                        createClassCPP(*table,file,table->name);       
+                        for(auto table: *AttSpace) //reading attrubtes by table
+                        {
+                                for (auto const& [key, attribute] : *table)
+                                {
+                                        createClassCPP(*table,file,table->name);       
+                                }
+                        }
                 }
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
@@ -1023,17 +1030,29 @@ namespace generators
 			file <<"namespace  controller" <<std::endl;
 			file <<"{" <<std::endl;
 		}
-                for (const apidb::symbols::Table* table : analyzer.getListTable()) 
+                std::map<const char*,symbols::Tables*,symbols::cmp_str> spacies = analyzer.getListTable();
+		for(auto const& [keySpace, AttSpace]  : spacies)
                 {
-			file << "\tclass " << table->name << ";"<<std::endl;
-		}
-		file<<std::endl;
-                for (const apidb::symbols::Table* table : analyzer.getListTable()) 
-                {
-                                //file <<"Declare Table " << table->name << std::endl;
-                createClassH(*table,file,table->name);       
+                        for(auto table: *AttSpace) //reading attrubtes by table
+                        {
+                                for (const apidb::symbols::Table* table : *AttSpace) 
+                                {
+                                        file << "\tclass " << table->name << ";"<<std::endl;
+                                }
+                        }
                 }
-
+		file<<std::endl;
+                for(auto const& [keySpace, AttSpace]  : spacies)
+                {
+                        for(auto table: *AttSpace) //reading attrubtes by table
+                        {
+                        for (const apidb::symbols::Table* table : *AttSpace) 
+                        {
+                                //file <<"Declare Table " << table->name << std::endl;
+                                createClassH(*table,file,table->name);       
+                        }
+                        }
+                }
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
 			file <<"}"<<std::endl;

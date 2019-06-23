@@ -36,7 +36,7 @@ namespace apidb
 		virtual std::string parse(const std::string& line) = 0;
 		virtual bool analyze() = 0;
                 
-		symbols::Tables& getListTable();                		
+		std::map<const char*,symbols::Tables*,symbols::cmp_str>& getListTable();                		
 		std::string getInputLenguajeString()const;		
 		const std::string& getNameProject();
 		const std::string& getDirectoryProject();				
@@ -46,8 +46,8 @@ namespace apidb
                 virtual ~Analyzer();
 		
     protected:
-		symbols::Tables symbolsTables;		
-                //symbols::Spacies spacies;
+		//symbols::Tables symbolsTables;		
+                std::map<const char*,symbols::Tables*,symbols::cmp_str> spacies;
 		octetos::toolkit::clientdb::Connector* connector;
 		std::ostream* outputMessages;//out stream
 		std::ostream* errorMessages;//out stream		

@@ -28,14 +28,21 @@ namespace apidb
         /**
         * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
         */
-	bool symbols::Table::fillKeyType(octetos::toolkit::clientdb::Connector& connect,Tables& tables)
+	bool symbols::Table::fillKeyType(octetos::toolkit::clientdb::Connector& connect,std::map<const char*,symbols::Tables*,symbols::cmp_str>& tables)
 	{
                 /**
                 * Lista las relaciones de llaves foraneas para la tabla actual
                 */
 		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME FROM information_schema.TABLE_CONSTRAINTS i,information_schema.KEY_COLUMN_USAGE k WHERE i.CONSTRAINT_NAME = k.CONSTRAINT_NAME  AND i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =k.TABLE_SCHEMA AND i.TABLE_NAME = "; 
                 fks += "'";
-		fks += name;
+                if(space.compare("") == 0)
+                {
+                        fks += "`" + space + "." + name + "`";
+                }
+                else
+                {
+                        fks += name;
+                }
 		fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
 		fks += ((octetos::toolkit::clientdb::Datconnect*)(connect.getDatconection()))->getDatabase();
 		fks += "'";
@@ -47,10 +54,20 @@ namespace apidb
 			MYSQL_ROW row;
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
-                                        //std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
-                                        Tables::iterator itTBReference = tables.find(row[1]);//buscar la tabla del campo que se refiere en el registro actual 'row[1]'
-                                        if( itTBReference != tables.end())
-                                        {//si se encontro la tabla
+                                //std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
+                                Tables::iterator itTBReference;
+                                bool flFinded = false;
+                                for(auto const& [keySpace, AttSpace]  : tables)
+                                {
+                                        itTBReference = (*AttSpace).find(row[1]);//buscar la tabla del campo que se refiere en el registro actual 'row[1]'
+                                        if(itTBReference != (*AttSpace).end()) 
+                                        {
+                                                break;
+                                                flFinded = true;
+                                        }
+                                }
+                                if(flFinded)
+                                {//si se encontro la tabla
                                                 Table* tbReference = *itTBReference;
                                                 //std::cout<<"Se encontro tabla '" << tbFinded->name << "'" << std::endl;
                                                 //std::cout<<"Buscando campo '" << row[0] << "'" << std::endl;
@@ -83,13 +100,13 @@ namespace apidb
                                                          strmsg = strmsg + row[2] + "' en la tabla '" + row[1] + "', es necesario para construir la referencia a dicho campo.";
                                                         throw BuildException(strmsg); 
                                                 }
-                                        }
-                                        else
-                                        {
-                                                std::string strmsg = "No se encontro el la tabla '";
-                                                strmsg = strmsg + row[1] + "'";
-                                                throw BuildException(strmsg);
-                                        }
+                                }
+                                else
+                                {
+                                        std::string strmsg = "No se encontro el la tabla '";
+                                        strmsg = strmsg + row[1] + "'";
+                                        throw BuildException(strmsg);
+                                }
 			}
 			delete dt; 
 			return true;	
@@ -102,7 +119,14 @@ namespace apidb
         bool symbols::Table::basicSymbols(octetos::toolkit::clientdb::Connector& connect)
         {
 		std::string str = "DESCRIBE ";
-		str += "`" + name + "`";
+                if(space.compare("") != 0)
+                {
+                        str += "`" + space + "." + name + "`";
+                }
+                else
+                {
+                        str += name;
+                }
                 octetos::toolkit::clientdb::Datresult* dt = connect.query(str.c_str());
 		if(dt != NULL) 
 		{
@@ -180,7 +204,7 @@ namespace apidb
         }
     
     
-	bool symbols::listing(octetos::toolkit::clientdb::mysql::Connector& connect, symbols::Tables& tables)
+	bool symbols::listing(octetos::toolkit::clientdb::mysql::Connector& connect, std::map<const char*,symbols::Tables*,symbols::cmp_str>& tables)
 	{
 		std::string db = connect.getDatconection()->getDatabase();
 		//std::cout<< "db:" << db <<std::endl;
@@ -193,27 +217,27 @@ namespace apidb
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
 				Table* prw = new Table();
-                                //std::cout << row[0] << std::endl;
-				prw->name = row[0];
+				prw->name = getTableName(row[0]);
+                                //prw->shortname = getTableName(row[0]);
                                 std::string upper = row[0];
                                 upper[0] = toupper(upper[0]);
                                 prw->upperName = upper;
-                                prw->space = getTableSpace(prw->name);
-                                tables.push_back(prw);
-                                /*if(spacies.at(prw->space.c_str()) == nullptr)
+                                prw->space = getTableSpace(row[0]);
+                                std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = tables.find(prw->space.c_str());                                
+                                if(it == tables.end())
                                 {
-                                        Tables* tables  = new Tables();
-                                        tables->push_back(prw);
-                                        spacies[prw->space] = tables;
+                                        Tables* newSpace  = new Tables();
+                                        newSpace->name = prw->space;
+                                        newSpace->push_back(prw);
+                                        std::pair<const char*, symbols::Tables*> newInser(prw->space.c_str(),newSpace);
+                                        tables.insert(newInser);
                                 }
                                 else
                                 {
-                                        Tables* tables  = spacies.at(prw->space.c_str());
-                                        tables->push_back(prw);
-                                }*/
-                                
-                                //std::cout << getTableSpace(prw->name) << "::"<< getTableName(prw->name) << std::endl;
-			}			
+                                        (*it).second->push_back(prw);
+                                }
+                                //std::cout <<  prw->space << "::" << prw->name << std::endl;
+			}
                         delete dt;//mysql_free_result((MYSQL_RES*)(dt->getResult()));
 			return true;
 		}
