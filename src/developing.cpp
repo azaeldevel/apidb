@@ -52,7 +52,7 @@ int main()
         apidb::ConfigureProject::Function dwShortName("shortname",apidb::ConfigureProject::Function::DOWNLOAD);
         apidb::ConfigureProject::Parameters params_ShortName;
         params_ShortName.push_back("name1");
-        params_ShortName.push_back("name2");
+        params_ShortName.push_back("name3");
         dwShortName.setHeader(&params_ShortName);
         tbP.insert(std::make_pair(dwShortName.getName().c_str(), &dwShortName));
         config.downloads.push_back(tbP);

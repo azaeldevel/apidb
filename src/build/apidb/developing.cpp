@@ -39,6 +39,7 @@ int main(int argc, char **argv)
 	else
 	{
 		std::cerr << "Fail "<< n1 << std::endl;
+		return EXIT_FAILURE;
 	}
     
     if(connector.commit())
@@ -48,44 +49,47 @@ int main(int argc, char **argv)
 	else
 	{
 		std::cerr << "Commit fail"<< std::endl;
+		return EXIT_FAILURE;
 	}
 	
-	/*if(person1.download_shortname(connector))
+	if(person1.download_shortname(connector))
     {
-        std::cout << ""<< person1.getN1() << " " << person1.getAp() << std::endl;
+        std::cout << ""<< person1.getName1() << " " << person1.getName3() << std::endl;
     }
     else
     {
         std::cout << "Fallo la descarga de person1" << std::endl;
+		return EXIT_FAILURE;
     }
     
-    static std::vector<sysapp::Person*>* lst = sysapp::Person::select(connector,"n1 like 'n1-%8'");
+    static std::vector<sysapp::Persons*>* lst = sysapp::Persons::select(connector,"name1 like 'n1-%8'");
     if(lst != NULL)
     {
 		for(auto p : *lst)
 		{
 		    if(p->download_shortname(connector))
 		    {
-		        std::cout << ""<< p->getN1() << " " << p->getAp() << std::endl;
+		        std::cout << ""<< p->getName1() << " " << p->getName3() << std::endl;
 		    }
 		}
-    }*/
+    }
     
-    /*sis::Persons* person2 = new sis::Persons();
+    sysapp::Persons* person2 = new sysapp::Persons();
     if(person2->select(connector,"n1-4182","ap-4182"))
     {
-		std::cout << "Select Random "<< person2->toString() << std::endl;
+		std::cout << "Select Random " << person2->getID() << "n1-4182" << "ap-4182" << std::endl;
 	}
 	else
 	{
 		std::cerr << "Fail Slected random "<< n1 << std::endl;
-	} */
+		return EXIT_FAILURE;
+	}
 	
 	//std::string db = ((toolkit::clientdb::DatconectionMySQL&)(connector.getDatconection())).getDatabase();
 	//std::cout<<db<<std::endl;
 	
 	connector.close();
 	
-	return 0;
+	return EXIT_SUCCESS;
 }
 

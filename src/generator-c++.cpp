@@ -727,9 +727,10 @@ namespace generators
 		writeSelectsCPP(table,ofile);
 		ofile << std::endl; 
     }
-	void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
+
+    void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
-		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  nameClass << "\";" << std::endl;
+		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  cl.fullname << "\";" << std::endl;
 		createClassMethodesCPP(cl,file);        
 		file<< std::endl<< std::endl;
     }
