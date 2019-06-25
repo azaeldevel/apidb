@@ -179,8 +179,8 @@ namespace apidb
 		};
                 
                 bool listing(octetos::toolkit::clientdb::mysql::Connector& connect, std::map<const char*,symbols::Tables*,symbols::cmp_str>& tables);
-                std::string getTableName(std::string fullname);
-                std::string getTableSpace(std::string fullname);
+                std::string getSpaceName(std::string fullname);
+                std::string getSpacePatch(std::string fullname);
 	}
     class ConfigureProject
     {

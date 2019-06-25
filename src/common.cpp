@@ -125,7 +125,7 @@ namespace apidb
     
         namespace symbols
 	{
-                std::string getTableSpace(std::string fullname)
+                std::string getSpacePatch(std::string fullname)
                 {
                         std::vector<std::string> comps;
                         std::string str;
@@ -149,7 +149,7 @@ namespace apidb
                         return str;
                 }
                 
-                std::string getTableName(std::string fullname)
+                std::string getSpaceName(std::string fullname)
                 {                        
                         std::vector<std::string> comps;
                         boost::split( comps, fullname, boost::is_any_of( "." ) );

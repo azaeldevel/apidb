@@ -1033,24 +1033,35 @@ namespace generators
                 std::map<const char*,symbols::Tables*,symbols::cmp_str> spacies = analyzer.getListTable();
 		for(auto const& [keySpace, AttSpace]  : spacies)
                 {
+                        if(strcmp(keySpace,"") != 0)
+                        {
+                                file << "\tnamespace " << AttSpace->name  << std::endl << "{" << std::endl;
+                        }
                         for(auto table: *AttSpace) //reading attrubtes by table
                         {
-                                for (const apidb::symbols::Table* table : *AttSpace) 
-                                {
-                                        file << "\tclass " << table->name << ";"<<std::endl;
-                                }
+                                file << "\tclass " << table->name << ";"<<std::endl;
+                        }
+                        if(strcmp(keySpace,"") != 0)
+                        {
+                                file << "\t}" << std::endl;
                         }
                 }
 		file<<std::endl;
+                
                 for(auto const& [keySpace, AttSpace]  : spacies)
                 {
-                        for(auto table: *AttSpace) //reading attrubtes by table
+                        if(strcmp(keySpace,"") != 0)
                         {
-                        for (const apidb::symbols::Table* table : *AttSpace) 
+                                file << "\tnamespace " << AttSpace->name  << std::endl << "{" << std::endl;
+                        }
+                        for(auto table: *AttSpace) //reading attrubtes by table
                         {
                                 //file <<"Declare Table " << table->name << std::endl;
                                 createClassH(*table,file,table->name);       
                         }
+                        if(strcmp(keySpace,"") != 0)
+                        {
+                                file << "\t}" << std::endl;
                         }
                 }
 		if(configureProject.mvc == apidb::MVC::NO)

@@ -217,12 +217,12 @@ namespace apidb
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
 				Table* prw = new Table();
-				prw->name = getTableName(row[0]);
+				prw->name = getSpaceName(row[0]);
                                 //prw->shortname = getTableName(row[0]);
                                 std::string upper = row[0];
                                 upper[0] = toupper(upper[0]);
                                 prw->upperName = upper;
-                                prw->space = getTableSpace(row[0]);
+                                prw->space = getSpacePatch(row[0]);
                                 std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = tables.find(prw->space.c_str());                                
                                 if(it == tables.end())
                                 {
@@ -239,6 +239,7 @@ namespace apidb
                                 //std::cout <<  prw->space << "::" << prw->name << std::endl;
 			}
                         delete dt;//mysql_free_result((MYSQL_RES*)(dt->getResult()));
+                        //std::cout << "Count : " << tables.size() << std::endl;
 			return true;
 		}
 		else
