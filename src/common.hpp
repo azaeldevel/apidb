@@ -150,6 +150,7 @@ namespace apidb
                         Key key;
                         std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
                         std::string space;
+                        std::string fullname;
                         
                         Table();
                         ~Table();
@@ -181,18 +182,19 @@ namespace apidb
                 bool listing(octetos::toolkit::clientdb::mysql::Connector& connect, std::map<const char*,symbols::Tables*,symbols::cmp_str>& tables);
                 std::string getSpaceName(std::string fullname);
                 std::string getSpacePatch(std::string fullname);
+                short getSpaceLevel(std::string fullname);
 	}
-    class ConfigureProject
-    {
-    private:
-        bool processNode(xmlTextReaderPtr);
-        bool getProjectNodes(xmlTextReaderPtr);
-        
-    public:        
-        class Parameters : public std::vector<const char*>
+        class ConfigureProject
         {
-            
-        };        
+        private:
+                bool processNode(xmlTextReaderPtr);
+                bool getProjectNodes(xmlTextReaderPtr);
+        
+        public:        
+                class Parameters : public std::vector<const char*>
+                {
+                
+                };        
         class Function
         {
         public:

@@ -223,6 +223,8 @@ namespace apidb
                                 upper[0] = toupper(upper[0]);
                                 prw->upperName = upper;
                                 prw->space = getSpacePatch(row[0]);
+                                prw->fullname = row[0];
+                                
                                 std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = tables.find(prw->space.c_str());                                
                                 if(it == tables.end())
                                 {

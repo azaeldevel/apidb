@@ -125,6 +125,24 @@ namespace apidb
     
         namespace symbols
 	{
+                short  getSpaceLevel(std::string fullname)
+                {
+                        short count = 0;
+                        std::vector<std::string> comps;
+                        std::string str;
+                        boost::split(comps, fullname, boost::is_any_of( "." ) );
+
+                        if(strcmp(fullname.c_str(),""))
+                        {
+                                return 0;
+                        }
+                        for(int i = 0; i <= comps.size() ; i++)
+                        {
+                                count++;
+                        }
+                        return count;
+                }
+                
                 std::string getSpacePatch(std::string fullname)
                 {
                         std::vector<std::string> comps;

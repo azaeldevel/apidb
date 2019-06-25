@@ -750,13 +750,27 @@ namespace generators
                 std::map<const char*,symbols::Tables*,symbols::cmp_str>& spacies = analyzer.getListTable();
                 
                 for(auto const& [keySpace, AttSpace]  : spacies)
-                {
+                {                        
+                        if(strcmp(keySpace,"") != 0)
+                        {
+                                short level = symbols::getSpaceLevel(keySpace);
+                                for(short i = 0; i < level ; i++) file << "\t";
+                                file << "namespace " << AttSpace->name  << std::endl;
+                                for(short i = 0; i < level ; i++) file << "\t";
+                                file << "{" << std::endl;
+                        }
                         for(auto table: *AttSpace) //reading attrubtes by table
                         {
-                                for (auto const& [key, attribute] : *table)
+                                //for (auto const& [key, attribute] : *table)
                                 {
                                         createClassCPP(*table,file,table->name);       
                                 }
+                        }
+                        if(strcmp(keySpace,"") != 0)
+                        {
+                                short level = symbols::getSpaceLevel(keySpace);
+                                for(short i = 0; i < level ; i++) file << "\t";
+                                file << "}" << std::endl;
                         }
                 }
 		if(configureProject.mvc == apidb::MVC::NO)
@@ -1004,16 +1018,21 @@ namespace generators
     {
 		//file <<"keyword"<<std::endl;
 		analyzer.getOutputMessage() <<"\tHeading class " << cl.name<<std::endl;
-                file <<"\tclass "<<nameClass<<std::endl;        
+                short level = symbols::getSpaceLevel(cl.fullname);
+                for(short i =0; i < level ; i++) file << "\t";
+                file <<"\tclass "<<nameClass<<std::endl;  
+                for(short i =0; i < level ; i++) file << "\t";      
                 file <<"\t{"<<std::endl;
                 //file <<"private"<<std::endl;
                 createClassPrivateH(file);
+                for(short i =0; i < level ; i++) file << "\t";
                 file << "\t\tstatic const std::string TABLE_NAME;" <<std::endl;
                 //file <<"atributes"<<std::endl;
                 createClassAttributesH(cl,file);
                 createClassPublicH(file);
                 //file <<"methodes"<<std::endl;
                 createClassMethodesH(cl,file);
+                for(short i =0; i < level ; i++) file << "\t";
                 file <<"\t};"<<std::endl;
     }
     void CPP::createSpaceH(std::ofstream& file)
@@ -1035,14 +1054,25 @@ namespace generators
                 {
                         if(strcmp(keySpace,"") != 0)
                         {
-                                file << "\tnamespace " << AttSpace->name  << std::endl << "{" << std::endl;
+                                short level = symbols::getSpaceLevel(keySpace);
+                                for(short i = 1; i < level ; i++) file << "\t";
+                                file << "\tnamespace " << AttSpace->name  << std::endl;
+                                for(short i = 1; i < level ; i++) file << "\t";
+                                file << "\t{" << std::endl;
                         }
                         for(auto table: *AttSpace) //reading attrubtes by table
                         {
+                                /*if(strcmp(keySpace,"") != 0)
+                                {
+                                        short level = symbols::getSpaceLevel(keySpace);
+                                        for(short i = 0; i < level ; i++) file << "\t";
+                                }*/
                                 file << "\tclass " << table->name << ";"<<std::endl;
                         }
                         if(strcmp(keySpace,"") != 0)
                         {
+                                short level = symbols::getSpaceLevel(keySpace);
+                                for(short i =1; i < level ; i++) file << "\t";
                                 file << "\t}" << std::endl;
                         }
                 }
@@ -1052,7 +1082,11 @@ namespace generators
                 {
                         if(strcmp(keySpace,"") != 0)
                         {
-                                file << "\tnamespace " << AttSpace->name  << std::endl << "{" << std::endl;
+                                short level = symbols::getSpaceLevel(keySpace);
+                                for(short i =0; i < level ; i++) file << "\t";
+                                file << "\tnamespace " << AttSpace->name  << std::endl;
+                                for(short i =0; i < level ; i++) file << "\t";
+                                file << "\t{" << std::endl;
                         }
                         for(auto table: *AttSpace) //reading attrubtes by table
                         {
@@ -1061,6 +1095,8 @@ namespace generators
                         }
                         if(strcmp(keySpace,"") != 0)
                         {
+                                short level =symbols::getSpaceLevel(keySpace);
+                                for(short i =0; i < level ; i++) file << "\t";
                                 file << "\t}" << std::endl;
                         }
                 }
