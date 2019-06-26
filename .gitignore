@@ -35,7 +35,6 @@
 /src/.hpp
 /src/.kdev4/
 /src/apidbgen
-
 /src/business1/
 /src/logo.ico
 /src/nmp.apidb
@@ -115,7 +114,6 @@ src/build/compile_commands.json
 src/build/nmp/*
 src/build/uncom
 src/build/writetar
-src/uncompress.cpp
 src/versionInfo.h
 src/writetar-2.cpp
 src/writetar.cpp
