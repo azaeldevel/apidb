@@ -608,7 +608,7 @@ namespace generators
                                         ofile <<"\t\t" << "return " << attr->name << "->getKey" << attr->symbolReferenced->upperName << "();" << std::endl;
                                 }
                                 ofile <<"\t}"<< std::endl;
-                        }                     
+                        }
                         
 			
 			//getString()		
@@ -625,11 +625,11 @@ namespace generators
                         {
                                 if(attr->outType.compare("std::string") == 0 || attr->outType.compare("const char*") == 0)
                                 {
-                                ofile << attr->name << ";";                    
+                                        ofile << attr->name << ";";                    
                                 }
                                 else
                                 {
-                                ofile <<"std::to_string(" << attr->name << ");";
+                                        ofile <<"std::to_string(" << attr->name << ");";
                                 }
                         }
                         ofile << std::endl;			
@@ -715,9 +715,9 @@ namespace generators
 			
 			ofile <<"\t\treturn connector.query(sqlString.c_str());"<<std::endl;
 			ofile << "\t}"<<std::endl;	
-        postUpdatePosition:;
-        
-        }
+                postUpdatePosition:;
+                
+                }
 		
 		writeKeyContructorCPP(table,ofile);
 		writeCopyContructorCPP(table,ofile);
@@ -727,7 +727,7 @@ namespace generators
 		writeSelectsCPP(table,ofile);
 		ofile << std::endl; 
     }
-
+        
     void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  cl.fullname << "\";" << std::endl;
