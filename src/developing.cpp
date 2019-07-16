@@ -56,15 +56,15 @@ int main()
         dwShortName.setHeader(&params_ShortName);
         tbP.insert(std::make_pair(dwShortName.getName().c_str(), &dwShortName));
         config.downloads.push_back(tbP);
-        //apidb::ConfigureProject::Table table1("table1");
-        //apidb::ConfigureProject::Function byPerson("byPerson",apidb::ConfigureProject::Function::SELECT);    
-        // apidb::ConfigureProject::Parameters params_byPerson;
-        //params_byPerson.push_back("dataSel");
-        //params_byPerson.push_back("person");
-        //byPerson.setHeader(&params_byPerson);
-        //table1.insert(std::make_pair(byPerson.getName().c_str(), &byPerson));
         config.selects.push_back(tbP);
-        //config.selects.push_back(table1);
+        apidb::ConfigureProject::Table tbUsers("Users");
+        apidb::ConfigureProject::Function byUsername("byUsername",apidb::ConfigureProject::Function::SELECT);    
+        apidb::ConfigureProject::Parameters params_byPerson;
+        params_byPerson.push_back("username");
+        params_byPerson.push_back("person");
+        byUsername.setHeader(&params_byPerson);
+        tbUsers.insert(std::make_pair(byUsername.getName().c_str(), &byUsername));
+        config.selects.push_back(tbUsers);
     
         apidb::Driver driver(config);	
 	if(!driver.driving())

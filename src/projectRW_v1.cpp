@@ -128,9 +128,11 @@ namespace apidb
                 xmlNodePtr downls_node = xmlNewChild(root_node, NULL, (const xmlChar *)"downloads", NULL);
                 for(Table table : downloads)
                 {
+                        xmlNodePtr downls_tb_node = xmlNewChild(downls_node, NULL, (const xmlChar *)"Table", NULL);
+                        xmlNewProp(downls_tb_node, BAD_CAST "name", BAD_CAST table.getName().c_str());
                         for(std::map<const char*, const Function*>::iterator  itfn = table.begin() ;  itfn !=table.end() ; itfn++)
                         {
-                                xmlNodePtr downls_fn_node = xmlNewChild(downls_node, NULL, (const xmlChar *)"Function", NULL); 
+                                xmlNodePtr downls_fn_node = xmlNewChild(downls_tb_node, NULL, (const xmlChar *)"Function", NULL); 
                                 xmlNewProp(downls_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
                                 const std::vector<const char*>& params = (const std::vector<const char*>&)(itfn->second->getParameters());
                                 for(auto itParams : params)
@@ -144,9 +146,11 @@ namespace apidb
                 xmlNodePtr selects_node = xmlNewChild(root_node, NULL, (const xmlChar *)"selects", NULL);
                 for(Table table : selects)
                 {
+                        xmlNodePtr selects_tb_node = xmlNewChild(selects_node, NULL, (const xmlChar *)"Table", NULL);
+                        xmlNewProp(selects_tb_node, BAD_CAST "name", BAD_CAST table.getName().c_str());
                         for(std::map<const char*, const Function*>::iterator  itfn = table.begin() ;  itfn !=table.end() ; itfn++)
                         {
-                                xmlNodePtr selects_fn_node = xmlNewChild(selects_node, NULL, (const xmlChar *)"Function", NULL); 
+                                xmlNodePtr selects_fn_node = xmlNewChild(selects_tb_node, NULL, (const xmlChar *)"Function", NULL); 
                                 xmlNewProp(selects_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
                                 const std::vector<const char*>& params = (const std::vector<const char*>&)(itfn->second->getParameters());
                                 for(auto itParams : params)
@@ -387,6 +391,78 @@ namespace apidb
         }
         
         conectordb = new octetos::toolkit::clientdb::mysql::Datconnect(host,port,database,user,password);
+        
+        
+        //
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);
+        std::string inL = (const char*)xmlTextReaderConstValue(reader);
+        if(inL.compare("MySQL") == 0)
+        {
+                inputLenguaje = InputLenguajes::MySQL;
+        }
+        else
+        {
+                std::string msg = "El Lenguaje de entrada '";
+                msg += inL;
+                msg += "' no tiene soporte.";
+                throw msg;
+        }
+        
+        //
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);        
+        std::string outL = (const char*)xmlTextReaderConstValue(reader);        
+        if(outL.compare("C++") == 0)
+        {
+                outputLenguaje = OutputLenguajes::CPP;
+        }
+        else
+        {
+                std::string msg = "El Lenguaje de salida '";
+                msg += outL;
+                msg += "' no tiene soporte.";
+                throw msg;
+        }
+        
+        
+        
+        //
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        
+        //
+        
+        //OutputLenguajes
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        
+        //Funtion
+        
+        
+        //
+        // std::cout << "Node : " << xmlTextReaderConstName(reader) << std::endl;
+        //Function* pFn = new Function();
+        //pFn->set
+        
+        //std::cout << "L : " << (const char*)xmlTextReaderConstValue(reader)  << std::endl;
         
         return true;
     }
