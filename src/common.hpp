@@ -195,63 +195,63 @@ namespace apidb
                 {
                 
                 };        
-        class Function
-        {
-        public:
-        	enum Skeleton
-        	{
-        		DOWNLOAD,
-        		SELECT,
-        		INSERT,
-        		UPDATE,
-        		COSTUM
-        	};
-                const std::string& getName() const;
-                Function(const std::string&,Skeleton skeleton);
-                Function();
-                Skeleton getSkeleton() const;
-                void setHeader(const Parameters*);
-                void setBody(const std::string&);
-                const Parameters& getParameters() const;
-            
-        private:
-                std::string name;
-                Skeleton skeleton;
-                const Parameters* header; 
-                std::string body;
-        };
-        class Table : public std::map<const char*, const Function*>
-        {
-        private:
-                std::string name;
-        public:
-                const std::string& getName() const;
-                Table(const std::string&);
-                Table();
-        };
+                class Function
+                {
+                public:
+                        enum Skeleton
+                        {
+                                DOWNLOAD,
+                                SELECT,
+                                INSERT,
+                                UPDATE,
+                                COSTUM
+                        };
+                        const std::string& getName() const;
+                        Function(const std::string&,Skeleton skeleton);
+                        Function();
+                        Skeleton getSkeleton() const;
+                        void setHeader(const Parameters*);
+                        void setBody(const std::string&);
+                        const Parameters& getParameters() const;
+                
+                private:
+                        std::string name;
+                        Skeleton skeleton;
+                        const Parameters* header; 
+                        std::string body;
+                };
+                class Table : public std::map<const char*, const Function*>
+                {
+                private:
+                        std::string name;
+                public:
+                        const std::string& getName() const;
+                        Table(const std::string&);
+                        Table();
+                };
         
-        std::string name; 
-        std::string directory;
-        octetos::toolkit::Version version;
-        octetos::toolkit::clientdb::mysql::Datconnect* conectordb;
-        InputLenguajes inputLenguaje;
-        OutputLenguajes outputLenguaje;
-        PackingLenguajes packing;
-        Compiled compiled;
-        MVC mvc;
-        std::vector<Table> downloads;
-        std::vector<Table> selects;
-		
-        ConfigureProject(std::string filename);
-        ConfigureProject(const ConfigureProject& configProy);
-        ConfigureProject();
-        bool saveConfig();
-        bool checkXML(xmlTextReaderPtr);
-		
-        const std::string& getName()const;
-        const std::string& getDirectory()const;
-        const octetos::toolkit::Version& getVersion()const;
-        const octetos::toolkit::clientdb::mysql::Datconnect& getConector()const;
+                std::string name; 
+                std::string directory;
+                octetos::toolkit::Version version;
+                octetos::toolkit::clientdb::mysql::Datconnect* conectordb;
+                InputLenguajes inputLenguaje;
+                OutputLenguajes outputLenguaje;
+                PackingLenguajes packing;
+                Compiled compiled;
+                MVC mvc;
+                std::vector<Table> downloads;
+                std::vector<Table> selects;
+                        
+                ConfigureProject(std::string filename);
+                ConfigureProject(const ConfigureProject& configProy);
+                ConfigureProject();
+                bool saveConfig();
+                bool checkXML(xmlTextReaderPtr);
+                        
+                const std::string& getName()const;
+                const std::string& getDirectory()const;
+                const octetos::toolkit::Version& getVersion()const;
+                const octetos::toolkit::clientdb::mysql::Datconnect& getConector()const;
     };
     
   

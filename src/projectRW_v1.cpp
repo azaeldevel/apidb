@@ -105,7 +105,24 @@ namespace apidb
                 {
                         return false;
                 }
-		
+                                
+                //
+                xmlNodePtr inL_node = xmlNewChild(root_node, NULL, (const xmlChar *)"inputLenguaje", NULL);
+                switch(conectordb->getServerType())
+                {
+                        case octetos::toolkit::clientdb::Datconnect::ServerType::MySQL:
+                                xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"MySQL");
+                                break;
+                }
+                
+                //
+                xmlNodePtr outL_node = xmlNewChild(root_node, NULL, (const xmlChar *)"outputLenguaje", NULL);
+                switch(outputLenguaje)
+                {
+                        case OutputLenguajes::CPP:
+                                xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"C++");
+                                break;
+                }
         
                 std::string dirProy = "";
 		if((directory.empty()) || (directory.compare(".") == 0))
