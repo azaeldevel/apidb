@@ -265,10 +265,10 @@ namespace generators
                 ofile << "\t{ " << std::endl;
                 ofile << "\t\tstd::string sqlString = \"SELECT ";
                 const apidb::ConfigureProject::Parameters& params = val->getParameters();
-                for(auto pr : params)
+                /*for(auto pr : params)
                 {
                         std::cout << "param : " << pr << std::endl;
-                }
+                }*/
                 {
                         apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
                         itParamEnd--;

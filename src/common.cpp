@@ -53,6 +53,14 @@ namespace apidb
         
     }
     
+        ConfigureProject::Parameters::~Parameters()
+        {
+                for(auto str : *this)
+                {
+                        delete str;
+                }
+                clear();
+        }
     const ConfigureProject::Parameters& ConfigureProject::Function::getParameters() const 
     {
         return *header;

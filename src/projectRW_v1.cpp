@@ -557,7 +557,11 @@ namespace apidb
                                 for(int i = 0 ; i < counParams; i++)
                                 {
                                         //std::cout << "\t\t\tParameter : " << (const char*)xmlTextReaderConstValue(reader) << std::endl;
-                                        pparams->push_back((const char*)xmlTextReaderConstValue(reader));
+                                        const char* strParam = (const char*)xmlTextReaderConstValue(reader);
+                                        int strl = strlen(strParam);
+                                        char* strnew = new char[strl + 1];
+                                        strcpy(strnew,strParam);
+                                        pparams->push_back(strnew);
                                         xmlTextReaderRead(reader);                
                                         xmlTextReaderRead(reader);              
                                         xmlTextReaderRead(reader);              

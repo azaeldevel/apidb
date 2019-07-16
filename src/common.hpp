@@ -193,7 +193,8 @@ namespace apidb
         public:        
                 class Parameters : public std::vector<const char*>
                 {
-                
+                public:
+                        ~Parameters();
                 };        
                 class Function
                 {
