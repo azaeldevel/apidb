@@ -24,7 +24,7 @@
 
 int main()
 {
-	octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
+	/*octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
 	octetos::toolkit::Version version;
 	version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
@@ -76,11 +76,11 @@ int main()
         {
 		std::cerr<<"Fail on create project."<<std::endl;
 		return EXIT_FAILURE;		
-	}	
+	}	*/
 	
-	/*
-        std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;
-	std::cout<<"Version previa: " << config.getVersion().toString()<<std::endl;
+	
+        //std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;
+	//std::cout<<"Version previa: " << config.getVersion().toString()<<std::endl;
 	apidb::ConfigureProject config2("apidb/apidb");
     	config2.directory = "nmp";
     	apidb::Driver driver2(config2);
@@ -96,7 +96,7 @@ int main()
 	}
 	std::cout<<"Configuracion posterior: " << config2.getConector().toString()<<std::endl;
 	std::cout<<"Version posterior: " << config2.getVersion().toString()<<std::endl;       
-	*/
+	
         
 	return EXIT_SUCCESS;	
 }

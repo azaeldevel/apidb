@@ -125,6 +125,24 @@ namespace apidb
                 }
                 
                 //
+                 xmlNodePtr pk_node = xmlNewChild(root_node, NULL, (const xmlChar *)"packing", NULL);
+                switch(packing)
+                {
+                        case PackingLenguajes::CMake:
+                                xmlNewChild(pk_node, NULL, (const xmlChar *)"name", (const xmlChar *)"CMake");
+                                break;
+                }
+                
+                //
+                 xmlNodePtr cmpl_node = xmlNewChild(root_node, NULL, (const xmlChar *)"compiled", NULL);
+                switch(compiled)
+                {
+                        case Compiled::STATIC:
+                                xmlNewChild(cmpl_node, NULL, (const xmlChar *)"name", (const xmlChar *)"STATIC");
+                                break;
+                }
+                
+                //
                 xmlNodePtr downls_node = xmlNewChild(root_node, NULL, (const xmlChar *)"downloads", NULL);
                 int countTbs = 0;
                 int counFuns;
@@ -460,7 +478,51 @@ namespace apidb
                 throw msg;
         }
         
+        //
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);        
+        std::string pk = (const char*)xmlTextReaderConstValue(reader);        
+        if(pk.compare("CMake") == 0)
+        {
+                packing = PackingLenguajes::CMake;
+        }
+        else
+        {
+                std::string msg = "El Lenguaje de empaquetado '";
+                msg += pk;
+                msg += "' no tiene soporte.";
+                throw msg;
+        }
         
+        //
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
+        name = xmlTextReaderConstName(reader);        
+        std::string cmpl = (const char*)xmlTextReaderConstValue(reader);        
+        if(cmpl.compare("STATIC") == 0)
+        {
+                compiled = Compiled::STATIC;
+        }
+        else
+        {
+                std::string msg = "El Lenguaje de empaquetado '";
+                msg += pk;
+                msg += "' no tiene soporte.";
+                throw msg;
+        }
         
         //
         xmlTextReaderRead(reader);
@@ -471,7 +533,7 @@ namespace apidb
         
         for(int i = 0; i < 2; i++)
         {
-                std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
+                //std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
                 //std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
                 int counTbs = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs"));
                 for(int i = 0; i < counTbs; i++)
@@ -479,22 +541,22 @@ namespace apidb
                         xmlTextReaderRead(reader);
                         xmlTextReaderRead(reader);        
                         Table* ptb = new Table((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name"));
-                        std::cout << "\tTable  : " <<(const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
+                        //std::cout << "\tTable  : " <<(const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
                         int counFuns = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countFuns"));
                         xmlTextReaderRead(reader);
                         xmlTextReaderRead(reader);  
                         for(int i = 0; i < counFuns; i++)
                         {
-                                std::cout << "\t\tFn : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
+                                //std::cout << "\t\tFn : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
                                 Function*  pfn = new Function((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name"));                                
                                 int counParams = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countParams"));
                                 xmlTextReaderRead(reader);
                                 xmlTextReaderRead(reader);
                                 xmlTextReaderRead(reader);
                                 Parameters* pparams = new Parameters();
-                                for(int i = 0 ; i < counParams; i++ )
+                                for(int i = 0 ; i < counParams; i++)
                                 {
-                                        std::cout << "\t\t\tParameter : " << (const char*)xmlTextReaderConstValue(reader) << std::endl;
+                                        //std::cout << "\t\t\tParameter : " << (const char*)xmlTextReaderConstValue(reader) << std::endl;
                                         pparams->push_back((const char*)xmlTextReaderConstValue(reader));
                                         xmlTextReaderRead(reader);                
                                         xmlTextReaderRead(reader);              

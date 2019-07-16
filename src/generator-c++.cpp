@@ -122,7 +122,7 @@ namespace generators
                         if(fl == table.end())
                         {
                             std::string strmsg = "No se encontro el campo '";
-                            strmsg = strmsg + param + "' en la tabla '" + table.name + "'";
+                            strmsg = strmsg + param + "' en la tabla '" + table.name + "'" + "File : generator-c++";
                             throw BuildException(strmsg);
                         }
                         if((*fl).second->outType.compare("std::string") == 0)
@@ -181,7 +181,7 @@ namespace generators
                             else
                             {
                                 std::string strmsg = "No se encontro el campo ";
-                                strmsg = strmsg + "'" + (*fl).second->name + "' en la tabla '" + table.name + "'";
+                                strmsg = strmsg + "'" + (*fl).second->name + "' en la tabla '" + table.name + "'" + "File : generator-c++";
                                 throw BuildException(strmsg);                                
                             }
                         }
@@ -250,7 +250,7 @@ namespace generators
         }
     }
 	void CPP::writeDownloadsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
-    {        
+        {        
         std::vector<apidb::ConfigureProject::Table> tbs = configureProject.downloads;
         for( auto tb: tbs)//std::vector<Table>
         {
@@ -265,17 +265,21 @@ namespace generators
                 ofile << "\t{ " << std::endl;
                 ofile << "\t\tstd::string sqlString = \"SELECT ";
                 const apidb::ConfigureProject::Parameters& params = val->getParameters();
+                for(auto pr : params)
                 {
-                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
-                    itParamEnd--;
-                    for(const char* param : params)
-                    {
-                        ofile << param; 
-                        if(param != *itParamEnd)
+                        std::cout << "param : " << pr << std::endl;
+                }
+                {
+                        apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
+                        itParamEnd--;
+                        for(const char* param : params)
                         {
-                            ofile << ",";
-                        }
-                    }                    
+                                ofile << param; 
+                                if(param != *itParamEnd)
+                                {
+                                        ofile << ",";
+                                }
+                        }                    
                     ofile << " FROM " << table.name << " WHERE " ;
                     for(auto k : table.key)
                     {                        
@@ -344,7 +348,7 @@ namespace generators
                             else
                             {
                                 std::string strmsg = "No se encontro el campo ";
-                                strmsg = strmsg + "'" + param + "' en la tabla '" + table.name + "'";
+                                strmsg = strmsg + "'" + param + "' en la tabla '" + table.name + "' File : generator-c++";
                                 throw BuildException(strmsg);
                             }
                         }
