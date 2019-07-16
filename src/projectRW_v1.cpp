@@ -123,7 +123,40 @@ namespace apidb
                                 xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"C++");
                                 break;
                 }
-        
+                
+                //
+                xmlNodePtr downls_node = xmlNewChild(root_node, NULL, (const xmlChar *)"downloads", NULL);
+                for(Table table : downloads)
+                {
+                        for(std::map<const char*, const Function*>::iterator  itfn = table.begin() ;  itfn !=table.end() ; itfn++)
+                        {
+                                xmlNodePtr downls_fn_node = xmlNewChild(downls_node, NULL, (const xmlChar *)"Function", NULL); 
+                                xmlNewProp(downls_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
+                                const std::vector<const char*>& params = (const std::vector<const char*>&)(itfn->second->getParameters());
+                                for(auto itParams : params)
+                                {
+                                        xmlNodePtr downls_fn_param_node = xmlNewChild(downls_fn_node, NULL, (const xmlChar *)"parameter", (const xmlChar *)(itParams));
+                                }
+                        }
+                }
+                
+                //
+                xmlNodePtr selects_node = xmlNewChild(root_node, NULL, (const xmlChar *)"selects", NULL);
+                for(Table table : selects)
+                {
+                        for(std::map<const char*, const Function*>::iterator  itfn = table.begin() ;  itfn !=table.end() ; itfn++)
+                        {
+                                xmlNodePtr selects_fn_node = xmlNewChild(selects_node, NULL, (const xmlChar *)"Function", NULL); 
+                                xmlNewProp(selects_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
+                                const std::vector<const char*>& params = (const std::vector<const char*>&)(itfn->second->getParameters());
+                                for(auto itParams : params)
+                                {
+                                        xmlNodePtr downls_fn_param_node = xmlNewChild(selects_fn_node, NULL, (const xmlChar *)"parameter", (const xmlChar *)(itParams));
+                                }
+                        }
+                }
+                
+                //
                 std::string dirProy = "";
 		if((directory.empty()) || (directory.compare(".") == 0))
 		{

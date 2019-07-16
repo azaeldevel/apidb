@@ -39,7 +39,6 @@
 
 namespace apidb
 {
-        
                
     const std::string& ConfigureProject::Table::getName() const
     {
