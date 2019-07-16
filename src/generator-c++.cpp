@@ -172,7 +172,7 @@ namespace generators
                             }
                             else if((*fl).second->outType.compare("int") == 0)
                             {
-                                ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + std::stoi(" << (*fl).second->name << ") + \"'\"";
+                                ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + std::to_string(" << (*fl).second->name << ") + \"'\"";
                             }
                             else if((*fl).second->outType.compare("std::string") == 0)
                             {
@@ -734,7 +734,7 @@ namespace generators
         
     void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
-		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  cl.fullname << "\";" << std::endl;
+		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \"`"<<  cl.fullname << "`\";" << std::endl;
 		createClassMethodesCPP(cl,file);        
 		file<< std::endl<< std::endl;
     }

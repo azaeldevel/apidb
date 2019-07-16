@@ -57,7 +57,7 @@ namespace apidb
         {
                 for(auto str : *this)
                 {
-                        delete str;
+                        //delete str;¿munmap_chunk(): invalid pointer?
                 }
                 clear();
         }
