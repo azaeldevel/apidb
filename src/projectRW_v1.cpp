@@ -126,39 +126,60 @@ namespace apidb
                 
                 //
                 xmlNodePtr downls_node = xmlNewChild(root_node, NULL, (const xmlChar *)"downloads", NULL);
+                int countTbs = 0;
+                int counFuns;
                 for(Table table : downloads)
                 {
+                        counFuns = 0;
+                        countTbs++;
                         xmlNodePtr downls_tb_node = xmlNewChild(downls_node, NULL, (const xmlChar *)"Table", NULL);
                         xmlNewProp(downls_tb_node, BAD_CAST "name", BAD_CAST table.getName().c_str());
+                        int countparams;
                         for(std::map<const char*, const Function*>::iterator  itfn = table.begin() ;  itfn !=table.end() ; itfn++)
                         {
+                                countparams = 0;
+                                counFuns++;
                                 xmlNodePtr downls_fn_node = xmlNewChild(downls_tb_node, NULL, (const xmlChar *)"Function", NULL); 
                                 xmlNewProp(downls_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
                                 const std::vector<const char*>& params = (const std::vector<const char*>&)(itfn->second->getParameters());
                                 for(auto itParams : params)
                                 {
+                                        countparams++;
                                         xmlNodePtr downls_fn_param_node = xmlNewChild(downls_fn_node, NULL, (const xmlChar *)"parameter", (const xmlChar *)(itParams));
                                 }
+                                xmlNewProp(downls_fn_node, BAD_CAST "countParams", BAD_CAST std::to_string(countparams).c_str());
                         }
+                        xmlNewProp(downls_tb_node, BAD_CAST "countFuns", BAD_CAST std::to_string(counFuns).c_str());
                 }
+                xmlNewProp(downls_node, BAD_CAST "countTbs", BAD_CAST std::to_string(countTbs).c_str());
                 
                 //
                 xmlNodePtr selects_node = xmlNewChild(root_node, NULL, (const xmlChar *)"selects", NULL);
+                countTbs = 0;
                 for(Table table : selects)
                 {
+                        counFuns = 0;
+                        countTbs++;
                         xmlNodePtr selects_tb_node = xmlNewChild(selects_node, NULL, (const xmlChar *)"Table", NULL);
                         xmlNewProp(selects_tb_node, BAD_CAST "name", BAD_CAST table.getName().c_str());
+                        int countparams;
                         for(std::map<const char*, const Function*>::iterator  itfn = table.begin() ;  itfn !=table.end() ; itfn++)
                         {
+                                countparams = 0;
+                                counFuns++;
                                 xmlNodePtr selects_fn_node = xmlNewChild(selects_tb_node, NULL, (const xmlChar *)"Function", NULL); 
                                 xmlNewProp(selects_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
                                 const std::vector<const char*>& params = (const std::vector<const char*>&)(itfn->second->getParameters());
                                 for(auto itParams : params)
                                 {
+                                        countparams++;
                                         xmlNodePtr downls_fn_param_node = xmlNewChild(selects_fn_node, NULL, (const xmlChar *)"parameter", (const xmlChar *)(itParams));
                                 }
+                                xmlNewProp(selects_fn_node, BAD_CAST "countParams", BAD_CAST std::to_string(countparams).c_str());
                         }
+                        xmlNewProp(selects_tb_node, BAD_CAST "countFuns", BAD_CAST std::to_string(counFuns).c_str());
                 }
+                xmlNewProp(selects_node, BAD_CAST "countTbs", BAD_CAST std::to_string(countTbs).c_str());
                 
                 //
                 std::string dirProy = "";
@@ -445,24 +466,59 @@ namespace apidb
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
-        
-        //
-        
-        //OutputLenguajes
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         
-        //Funtion
-        
-        
-        //
-        // std::cout << "Node : " << xmlTextReaderConstName(reader) << std::endl;
-        //Function* pFn = new Function();
-        //pFn->set
-        
-        //std::cout << "L : " << (const char*)xmlTextReaderConstValue(reader)  << std::endl;
+        for(int i = 0; i < 2; i++)
+        {
+                std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
+                //std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
+                int counTbs = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs"));
+                for(int i = 0; i < counTbs; i++)
+                {
+                        xmlTextReaderRead(reader);
+                        xmlTextReaderRead(reader);        
+                        Table* ptb = new Table((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name"));
+                        std::cout << "\tTable  : " <<(const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
+                        int counFuns = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countFuns"));
+                        xmlTextReaderRead(reader);
+                        xmlTextReaderRead(reader);  
+                        for(int i = 0; i < counFuns; i++)
+                        {
+                                std::cout << "\t\tFn : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
+                                Function*  pfn = new Function((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name"));                                
+                                int counParams = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countParams"));
+                                xmlTextReaderRead(reader);
+                                xmlTextReaderRead(reader);
+                                xmlTextReaderRead(reader);
+                                Parameters* pparams = new Parameters();
+                                for(int i = 0 ; i < counParams; i++ )
+                                {
+                                        std::cout << "\t\t\tParameter : " << (const char*)xmlTextReaderConstValue(reader) << std::endl;
+                                        pparams->push_back((const char*)xmlTextReaderConstValue(reader));
+                                        xmlTextReaderRead(reader);                
+                                        xmlTextReaderRead(reader);              
+                                        xmlTextReaderRead(reader);              
+                                        xmlTextReaderRead(reader);
+                                }
+                                pfn->setHeader(pparams);
+                                ptb->insert(std::make_pair(pfn->getName().c_str(), pfn));
+                                xmlTextReaderRead(reader);      
+                        }    
+                        if(i == 0)
+                        {
+                                downloads.push_back(*ptb);
+                        }
+                        else if(i == 1)
+                        {
+                                selects.push_back(*ptb);
+                        }
+                }
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+        }
         
         return true;
     }

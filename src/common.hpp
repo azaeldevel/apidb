@@ -208,6 +208,7 @@ namespace apidb
                         };
                         const std::string& getName() const;
                         Function(const std::string&,Skeleton skeleton);
+                        Function(const std::string&);
                         Function();
                         Skeleton getSkeleton() const;
                         void setHeader(const Parameters*);
@@ -239,8 +240,8 @@ namespace apidb
                 PackingLenguajes packing;
                 Compiled compiled;
                 MVC mvc;
-                std::vector<Table> downloads;
-                std::vector<Table> selects;
+                std::vector<Table> downloads;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
+                std::vector<Table> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
                         
                 ConfigureProject(std::string filename);
                 ConfigureProject(const ConfigureProject& configProy);

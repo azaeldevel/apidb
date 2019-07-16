@@ -74,6 +74,10 @@ namespace apidb
         this->name = name;
         this->skeleton = skeleton;
     }
+    ConfigureProject::Function::Function(const std::string& name)
+    {
+        this->name = name;
+    }
     ConfigureProject::Function::Function()
     {
         
