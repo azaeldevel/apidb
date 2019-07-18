@@ -42,6 +42,12 @@ namespace apidb
                 GtkWidget *inOutL;
                 GtkWidget *inPkL;
                 GtkWidget *inCmpl;
+                //Conexion
+                GtkWidget *inLoc;
+                GtkWidget *inPort;
+                GtkWidget *inDB;
+                GtkWidget *inUser;
+                GtkWidget *inPw;
                 //
                 static char *filename;
                 static octetos::apidb::ConfigureProject config;

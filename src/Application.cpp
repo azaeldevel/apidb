@@ -15,6 +15,12 @@ namespace apidb
                 gtk_combo_box_set_active((GtkComboBox*)inOutL,(gint)config.outputLenguaje);
                 gtk_combo_box_set_active((GtkComboBox*)inPkL,(gint)config.packing);
                 gtk_combo_box_set_active((GtkComboBox*)inCmpl,(gint)config.compiled);
+                
+                gtk_entry_set_text (GTK_ENTRY(inLoc),config.conectordb->getHost().c_str());
+                gtk_entry_set_text (GTK_ENTRY(inPort),std::to_string(config.conectordb->getPort()).c_str());
+                gtk_entry_set_text (GTK_ENTRY(inDB),config.conectordb->getDatabase().c_str());
+                gtk_entry_set_text (GTK_ENTRY(inUser),config.conectordb->getUser().c_str());
+                gtk_entry_set_text (GTK_ENTRY(inPw),config.conectordb->getPassword().c_str());
         }
         
         void Application::createWindow()
@@ -126,37 +132,38 @@ namespace apidb
         void Application::createNotebookConexion(GtkWidget *boxConex)
         {
                 GtkWidget *boxLoc = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                GtkWidget *lbLoc = gtk_label_new ("Hostname/IP:");
+                GtkWidget *lbLoc = gtk_label_new ("Host/IP:");
                 gtk_box_pack_start(GTK_BOX(boxLoc), lbLoc, FALSE, FALSE,0); 
-                GtkWidget *inLoc= gtk_entry_new();
+                inLoc= gtk_entry_new();
                 gtk_box_pack_start(GTK_BOX(boxLoc), inLoc, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxConex), boxLoc, FALSE, FALSE,0);
                 
                 GtkWidget *boxPort = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget *lbPort = gtk_label_new ("Puerto:");
                 gtk_box_pack_start(GTK_BOX(boxPort), lbPort, FALSE, FALSE,0); 
-                GtkWidget *inPort= gtk_entry_new();
+                inPort= gtk_entry_new();
                 gtk_box_pack_start(GTK_BOX(boxPort), inPort, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxConex), boxPort, FALSE, FALSE,0);
                 
                 GtkWidget *boxDB= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget *lbDB = gtk_label_new ("Base de Datos:");
                 gtk_box_pack_start(GTK_BOX(boxDB), lbDB, FALSE, FALSE,0); 
-                GtkWidget *inDB = gtk_entry_new();
+                inDB = gtk_entry_new();
                 gtk_box_pack_start(GTK_BOX(boxDB), inDB, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxConex), boxDB, FALSE, FALSE,0);
                 
                 GtkWidget *boxUser= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget *lbUser = gtk_label_new ("Usuario:");
                 gtk_box_pack_start(GTK_BOX(boxUser), lbUser, FALSE, FALSE,0); 
-                GtkWidget *inUser = gtk_entry_new();
+                inUser = gtk_entry_new();
                 gtk_box_pack_start(GTK_BOX(boxUser), inUser, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxConex), boxUser, FALSE, FALSE,0);
                 
                 GtkWidget *boxPw= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget *lbPw = gtk_label_new ("Contraseña:");
                 gtk_box_pack_start(GTK_BOX(boxPw), lbPw, FALSE, FALSE,0); 
-                GtkWidget *inPw = gtk_entry_new();
+                inPw = gtk_entry_new();
+                gtk_entry_set_visibility(GTK_ENTRY(inPw),FALSE);
                 gtk_box_pack_start(GTK_BOX(boxPw), inPw, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxConex), boxPw, FALSE, FALSE,0);
         }
@@ -182,22 +189,22 @@ namespace apidb
         void Application::createNotebook()
         {
                 GtkWidget * notebookMain = gtk_notebook_new();
-                gchar* strInfo = "Información";
+                gchar* strInfo = (gchar*)"Información";
                 GtkWidget *boxInfo = gtk_box_new (GTK_ORIENTATION_VERTICAL,6);
                 GtkWidget *lbInfo = gtk_label_new (strInfo);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxInfo,lbInfo);
                 createNotebookInfo(boxInfo);
-                gchar* strConex = "Conexión";
+                gchar* strConex = (gchar*)"Conexión";
                 GtkWidget *boxConex = gtk_box_new (GTK_ORIENTATION_VERTICAL,4);
                 GtkWidget * lbConex = gtk_label_new (strConex);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxConex,lbConex);
                 createNotebookConexion(boxConex);
-                gchar* strDowns = "Descargas";
+                gchar* strDowns = (gchar*)"Descargas";
                 boxDowns = gtk_box_new (GTK_ORIENTATION_VERTICAL,1);
                 GtkWidget * lbDowns = gtk_label_new (strDowns);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxDowns,lbDowns);
                 createNotebookDownloas();
-                gchar* strSels = "Selecciones";
+                gchar* strSels = (gchar*)"Selecciones";
                 GtkWidget *boxSels = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 GtkWidget * lbSels = gtk_label_new (strSels);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxSels,lbSels);
