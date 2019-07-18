@@ -10,6 +10,11 @@ namespace apidb
         void Application::loadConfig()
         {
                 gtk_entry_set_text (GTK_ENTRY(inName),config.getName().c_str());
+                gtk_entry_set_text (GTK_ENTRY(inVer),config.getVersion().toString().c_str());
+                gtk_combo_box_set_active((GtkComboBox*)inInL,(gint)config.inputLenguaje);
+                gtk_combo_box_set_active((GtkComboBox*)inOutL,(gint)config.outputLenguaje);
+                gtk_combo_box_set_active((GtkComboBox*)inPkL,(gint)config.packing);
+                gtk_combo_box_set_active((GtkComboBox*)inCmpl,(gint)config.compiled);
         }
         
         void Application::createWindow()
@@ -81,39 +86,39 @@ namespace apidb
                 GtkWidget *boxVer = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget * lbVer = gtk_label_new ("Version: ");
                 gtk_box_pack_start(GTK_BOX(boxVer), lbVer, FALSE, FALSE,0); 
-                GtkWidget *inVer = gtk_entry_new();
+                inVer = gtk_entry_new();
                 gtk_box_pack_start(GTK_BOX(boxVer), inVer, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxVer, FALSE, FALSE,0);
                 
                 GtkWidget *boxInL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget * lbInL = gtk_label_new ("Lenguaje de Entrada:");
                 gtk_box_pack_start(GTK_BOX(boxInL), lbInL, FALSE, FALSE,0); 
-                GtkWidget *inInL = gtk_combo_box_text_new();
-                gtk_combo_box_text_insert((GtkComboBoxText*)inInL,1,"mysql","MySQL");
+                inInL = gtk_combo_box_text_new();
+                gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,"mysql","MySQL");
                 gtk_box_pack_start(GTK_BOX(boxInL), inInL, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxInL, FALSE, FALSE,0);
                 
                 GtkWidget *boxOutL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget * lbOutL = gtk_label_new ("Lenguaje de Salida:   ");
                 gtk_box_pack_start(GTK_BOX(boxOutL), lbOutL, FALSE, FALSE,0); 
-                GtkWidget *inOutL = gtk_combo_box_text_new();
-                gtk_combo_box_text_insert((GtkComboBoxText*)inOutL,1,"c++","C++");
+                inOutL = gtk_combo_box_text_new();
+                gtk_combo_box_text_insert((GtkComboBoxText*)inOutL,OutputLenguajes::CPP,"c++","C++");
                 gtk_box_pack_start(GTK_BOX(boxOutL), inOutL, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxOutL, FALSE, FALSE,0);        
                 
                 GtkWidget *boxPkL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget * lbPkL = gtk_label_new ("Empaquetado:   ");
                 gtk_box_pack_start(GTK_BOX(boxPkL), lbPkL, FALSE, FALSE,0); 
-                GtkWidget *inPkL = gtk_combo_box_text_new();
-                gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,1,"cmake","CMake");
+                inPkL = gtk_combo_box_text_new();
+                gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,PackingLenguajes::CMake,"cmake","CMake");
                 gtk_box_pack_start(GTK_BOX(boxPkL), inPkL, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxPkL, FALSE, FALSE,0);  
                 
                 GtkWidget *boxCmpl = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget * lbCmpl = gtk_label_new ("Compilado:        ");
                 gtk_box_pack_start(GTK_BOX(boxCmpl), lbCmpl, FALSE, FALSE,0); 
-                GtkWidget *inCmpl = gtk_combo_box_text_new();
-                gtk_combo_box_text_insert((GtkComboBoxText*)inCmpl,1,"static","Estatico");
+                inCmpl = gtk_combo_box_text_new();
+                gtk_combo_box_text_insert((GtkComboBoxText*)inCmpl,Compiled::STATIC,"static","Estático");
                 gtk_box_pack_start(GTK_BOX(boxCmpl), inCmpl, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxCmpl, FALSE, FALSE,0);        
         }

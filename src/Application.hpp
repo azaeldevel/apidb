@@ -37,6 +37,11 @@ namespace apidb
                 std::vector<GtkWidget*> tables;
                 //seccion de Informacion
                 GtkWidget *inName;
+                GtkWidget *inVer;
+                GtkWidget *inInL;
+                GtkWidget *inOutL;
+                GtkWidget *inPkL;
+                GtkWidget *inCmpl;
                 //
                 static char *filename;
                 static octetos::apidb::ConfigureProject config;
