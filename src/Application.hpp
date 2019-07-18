@@ -27,13 +27,12 @@ namespace apidb
                 void createNotebook();
                 
                 static void toolbar_chooseDirectory (GtkWidget *widget, gpointer   data);
+                static void downloads_addTable (GtkWidget *widget, gpointer   data);
                 void loadConfig();
         private:
                 GtkWidget *window;
                 GtkWidget *vboxMain;
                 GtkWidget *toolbar;
-                GtkWidget *boxDowns;
-                GtkWidget *btAddTable;
                 std::vector<GtkWidget*> tables;
                 //seccion de Informacion
                 GtkWidget *inName;
@@ -43,12 +42,16 @@ namespace apidb
                 GtkWidget *inPkL;
                 GtkWidget *inCmpl;
                 //Conexion
+                GtkWidget *boxDowns;
+                GtkWidget *btAddTable;
                 GtkWidget *inLoc;
                 GtkWidget *inPort;
                 GtkWidget *inDB;
                 GtkWidget *inUser;
                 GtkWidget *inPw;
-                //
+                //Descargas
+                GtkWidget *cmbAddTable;
+                //                
                 static char *filename;
                 static octetos::apidb::ConfigureProject config;
                 static Application* app;

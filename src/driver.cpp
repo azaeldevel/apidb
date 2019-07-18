@@ -31,6 +31,10 @@ namespace octetos
 {
 namespace apidb
 {
+        const Analyzer&  Driver::getAnalyzer() const
+        {
+                return *analyzer;
+        }
         Driver::Driver(const ConfigureProject& config) : configureProject(config)
 	{		
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
@@ -72,7 +76,7 @@ namespace apidb
                         return false;
                 }
 
-		if(analyze())
+		if(analyze(true))
 		{
 			if(generate())
                         {                
@@ -141,10 +145,10 @@ namespace apidb
 		}
 	}
 	
-	bool Driver::analyze()
+	bool Driver::analyze(bool log)
 	{
-		analyzer->getOutputMessage() << "Analisis de codigo..." << std::endl;
-		analyzer->getOutputMessage() << "\tLenguaje de entrada: " << analyzer->getInputLenguajeString() << std::endl;
+		if(log)analyzer->getOutputMessage() << "Analisis de codigo..." << std::endl;
+		if(log)analyzer->getOutputMessage() << "\tLenguaje de entrada: " << analyzer->getInputLenguajeString() << std::endl;
 		
 		apidb::mysql::Analyzer* analyzer = NULL;
 		if(this->analyzer->getInputLenguaje() == apidb::InputLenguajes::MySQL)
@@ -157,7 +161,7 @@ namespace apidb
 			return false;
 		}
 		
-		if(analyzer->analyze()) //reading tables
+		if(analyzer->analyze(true)) //reading tables
                 {
                         
                 }  

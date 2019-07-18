@@ -477,6 +477,7 @@ namespace apidb
         if(outL.compare("C++") == 0)
         {
                 outputLenguaje = OutputLenguajes::CPP;
+                //std::cout << "LANG = C++" <<  std::endl;
         }
         else
         {

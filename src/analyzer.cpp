@@ -42,6 +42,10 @@ namespace apidb
 	OutputLenguajes Analyzer::getOutputLenguaje() const
 	{
 		return configureProject.outputLenguaje;
+	}
+	std::map<const char*,symbols::Tables*,symbols::cmp_str> Analyzer::copyListTable() const
+	{
+		return spacies;
 	}	
 	std::map<const char*,symbols::Tables*,symbols::cmp_str>& Analyzer::getListTable() 
 	{
@@ -74,7 +78,7 @@ namespace apidb
 	
 namespace mysql
 {
-	bool Analyzer::analyze()
+	bool Analyzer::analyze(bool log)
 	{
 		bool flag = symbols::listing(*(octetos::toolkit::clientdb::mysql::Connector*)connector,spacies);
                 
@@ -83,7 +87,7 @@ namespace mysql
                         for(apidb::symbols::Table* table : *AttSpace) //reading attrubtes by table
                         {
                                 for (auto const& [key, attribute] : *table)
-                                *outputMessages << "\tCreating basic simbols for " << table->name  << "." << std::endl;
+                                if(log)*outputMessages << "\tCreating basic simbols for " << table->name  << "." << std::endl;
                                 //simbolos basicos 
                                 if(!table->basicSymbols(*connector))
                                 {

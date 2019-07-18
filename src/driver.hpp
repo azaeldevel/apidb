@@ -32,11 +32,12 @@ namespace apidb
 	{
 	public:
 		OutputLenguajes getOutputLenguaje() const;
-		virtual bool analyze();
+		virtual bool analyze(bool log);
 		virtual bool generate();
 		bool driving();
                 Driver(const ConfigureProject&);
-		
+		const Analyzer& getAnalyzer() const;
+                
 	private:
 		octetos::toolkit::clientdb::Connector* connector;
 		apidb::Analyzer* analyzer;

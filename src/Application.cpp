@@ -1,5 +1,5 @@
 #include "Application.hpp"
-
+#include "driver.hpp"
 
 
 
@@ -7,6 +7,38 @@ namespace octetos
 {
 namespace apidb
 {
+
+        void Application::downloads_addTable (GtkWidget *widget, gpointer   data)
+        {
+                g_print ("Hello World\n");
+        }
+        
+        void Application::createNotebookDownloasAddTable()
+        {
+                GtkWidget* frame = gtk_frame_new("Tabla X");
+                gtk_box_pack_end(GTK_BOX(boxDowns), frame, FALSE, FALSE,0);
+        }
+        
+        void Application::createNotebookDownloas()
+        {
+                GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+                gtk_container_set_border_width (GTK_CONTAINER (scrolled_window), 10);                       
+                gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC);          
+                               
+                GtkWidget *ctrls = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);    
+                
+                btAddTable = gtk_button_new_with_label ("Agregar Descripción");
+                g_signal_connect(btAddTable, "clicked", G_CALLBACK (Application::downloads_addTable), NULL);                        
+                gtk_box_pack_start(GTK_BOX(ctrls), btAddTable, FALSE, FALSE,0); 
+                cmbAddTable = gtk_combo_box_text_new();
+                gtk_box_pack_start(GTK_BOX(ctrls), cmbAddTable, FALSE, FALSE,0);
+                
+                gtk_box_pack_start(GTK_BOX(boxDowns), ctrls, FALSE, FALSE,0);   
+                
+                gtk_box_pack_start(GTK_BOX(boxDowns), scrolled_window, FALSE, FALSE,0);
+                
+        }
+        
         void Application::loadConfig()
         {
                 gtk_entry_set_text (GTK_ENTRY(inName),config.getName().c_str());
@@ -21,6 +53,21 @@ namespace apidb
                 gtk_entry_set_text (GTK_ENTRY(inDB),config.conectordb->getDatabase().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inUser),config.conectordb->getUser().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inPw),config.conectordb->getPassword().c_str());
+                                
+                octetos::apidb::Driver driver(config);
+                if(driver.analyze(false))
+                {
+                        std::map<const char*,symbols::Tables*,symbols::cmp_str> lst = driver.getAnalyzer().copyListTable();
+                        int i = 0;
+                        for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = lst.begin(); it != lst.end(); it++)
+                        {
+                                for(std::list<symbols::Table*>::iterator itJ = (*it).second->begin(); itJ != (*it).second->end(); itJ++)
+                                {
+                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*itJ)->fullname.c_str(),(*itJ)->fullname.c_str());        
+                                        i++;
+                                }
+                        }
+                }
         }
         
         void Application::createWindow()
@@ -168,24 +215,6 @@ namespace apidb
                 gtk_box_pack_start(GTK_BOX(boxConex), boxPw, FALSE, FALSE,0);
         }
                 
-        static void activate_addTable (GtkWidget *widget, gpointer   data)
-        {
-                g_print ("Hello World\n");
-        }
-
-        void Application::createNotebookDownloasAddTable()
-        {
-                GtkWidget* frame = gtk_frame_new("Tabla X");
-                gtk_box_pack_end(GTK_BOX(boxDowns), frame, FALSE, FALSE,0);
-        }
-        
-        void Application::createNotebookDownloas()
-        {
-                btAddTable = gtk_button_new_with_label ("Agregar Descripción");
-                g_signal_connect(btAddTable, "clicked", G_CALLBACK (activate_addTable), NULL); 
-                gtk_box_pack_end(GTK_BOX(boxDowns), btAddTable, FALSE, FALSE,0);
-        }
-
         void Application::createNotebook()
         {
                 GtkWidget * notebookMain = gtk_notebook_new();

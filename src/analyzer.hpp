@@ -35,9 +35,10 @@ namespace apidb
 		virtual std::ostream& getOutputMessage();
 		virtual std::ostream& getErrorMessage();
 		virtual std::string parse(const std::string& line) = 0;
-		virtual bool analyze() = 0;
+		virtual bool analyze(bool log) = 0;
                 
-		std::map<const char*,symbols::Tables*,symbols::cmp_str>& getListTable();                		
+		std::map<const char*,symbols::Tables*,symbols::cmp_str>& getListTable(); 
+                std::map<const char*,symbols::Tables*,symbols::cmp_str> copyListTable()const;
 		std::string getInputLenguajeString()const;		
 		const std::string& getNameProject();
 		const std::string& getDirectoryProject();				
@@ -61,7 +62,7 @@ namespace apidb
         class Analyzer : public apidb::Analyzer
         {
         public:            
-            virtual bool analyze();
+            virtual bool analyze(bool log);
             /**
             * Parse desde una std::string
             **/
