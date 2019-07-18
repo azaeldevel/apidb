@@ -24,9 +24,10 @@
 void createWindow(GtkWidget* vboxMain,GtkWidget *window)
 {
         gtk_window_set_title (GTK_WINDOW (window), "APIDB");
-        gtk_window_set_default_size (GTK_WINDOW (window), 450, 600);
+        gtk_window_set_default_size (GTK_WINDOW (window), 450, 300);
         g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);  
-        gtk_container_set_border_width (GTK_CONTAINER (window), 10);        
+        gtk_container_set_border_width (GTK_CONTAINER (window), 10);   
+        gtk_window_set_resizable(GTK_WINDOW (window),FALSE);
         gtk_container_add (GTK_CONTAINER (window), vboxMain);        
 }
 void createToolbar(GtkWidget* vboxMain,GtkWidget* toolbar)
@@ -46,6 +47,7 @@ void createToolbar(GtkWidget* vboxMain,GtkWidget* toolbar)
         gtk_toolbar_insert(GTK_TOOLBAR(toolbar), exit, -1);
         gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar),GTK_ICON_SIZE_LARGE_TOOLBAR);
         gtk_box_pack_start(GTK_BOX(vboxMain), toolbar, FALSE, FALSE,0);          
+        
 }
 
 
@@ -98,6 +100,44 @@ void createNotebookInfo(GtkWidget *boxInfo)
         gtk_box_pack_start(GTK_BOX(boxInfo), boxCmpl, FALSE, FALSE,0);        
 }
 
+void createNotebookConexion(GtkWidget *boxConex)
+{
+        GtkWidget *boxLoc = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+        GtkWidget *lbLoc = gtk_label_new ("Hostname/IP:");
+        gtk_box_pack_start(GTK_BOX(boxLoc), lbLoc, FALSE, FALSE,0); 
+        GtkWidget *inLoc= gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(boxLoc), inLoc, FALSE, FALSE,0);   
+        gtk_box_pack_start(GTK_BOX(boxConex), boxLoc, FALSE, FALSE,0);
+        
+        GtkWidget *boxPort = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+        GtkWidget *lbPort = gtk_label_new ("Puerto:");
+        gtk_box_pack_start(GTK_BOX(boxPort), lbPort, FALSE, FALSE,0); 
+        GtkWidget *inPort= gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(boxPort), inPort, FALSE, FALSE,0);   
+        gtk_box_pack_start(GTK_BOX(boxConex), boxPort, FALSE, FALSE,0);
+        
+        GtkWidget *boxDB= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+        GtkWidget *lbDB = gtk_label_new ("Base de Datos:");
+        gtk_box_pack_start(GTK_BOX(boxDB), lbDB, FALSE, FALSE,0); 
+        GtkWidget *inDB = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(boxDB), inDB, FALSE, FALSE,0);   
+        gtk_box_pack_start(GTK_BOX(boxConex), boxDB, FALSE, FALSE,0);
+        
+        GtkWidget *boxUser= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+        GtkWidget *lbUser = gtk_label_new ("Usuario:");
+        gtk_box_pack_start(GTK_BOX(boxUser), lbUser, FALSE, FALSE,0); 
+        GtkWidget *inUser = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(boxUser), inUser, FALSE, FALSE,0);   
+        gtk_box_pack_start(GTK_BOX(boxConex), boxUser, FALSE, FALSE,0);
+        
+        GtkWidget *boxPw= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+        GtkWidget *lbPw = gtk_label_new ("Contraseña:");
+        gtk_box_pack_start(GTK_BOX(boxPw), lbPw, FALSE, FALSE,0); 
+        GtkWidget *inPw = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(boxPw), inPw, FALSE, FALSE,0);   
+        gtk_box_pack_start(GTK_BOX(boxConex), boxPw, FALSE, FALSE,0);
+}
+
 void createNotebook(GtkWidget* vboxMain)
 {
         GtkWidget * notebookMain = gtk_notebook_new();
@@ -107,9 +147,10 @@ void createNotebook(GtkWidget* vboxMain)
         gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxInfo,lbInfo);
         createNotebookInfo(boxInfo);
         gchar* strConex = "Conexión";
-        GtkWidget *boxConex = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
+        GtkWidget *boxConex = gtk_box_new (GTK_ORIENTATION_VERTICAL,4);
         GtkWidget * lbConex = gtk_label_new (strConex);
         gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxConex,lbConex);
+        createNotebookConexion(boxConex);
         gchar* strDowns = "Descargas";
         GtkWidget *boxDowns = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
         GtkWidget * lbDowns = gtk_label_new (strDowns);
@@ -130,7 +171,7 @@ int main (int   argc, char *argv[])
         createWindow(vboxMain,window);        
         
         GtkWidget * toolbar = gtk_toolbar_new();
-        createToolbar(vboxMain,toolbar);             
+        createToolbar(vboxMain,toolbar); 
         
         createNotebook(vboxMain);      
                 
