@@ -33,16 +33,16 @@
 #include "apidb.hpp"
 
 
-
+namespace octetos
+{
 namespace apidb
 {
-        
-        ConfigureProject::ConfigureProject(std::string filename)
-        {    
+        bool ConfigureProject::readConfig(std::string filename)
+        {
                 //variables no almacenas en el archivo de configuracion.
-                inputLenguaje = apidb::InputLenguajes::MySQL;
-                outputLenguaje = apidb::OutputLenguajes::CPP;
-                packing = PackingLenguajes::CMake;
+                //inputLenguaje = apidb::InputLenguajes::MySQL;
+                //outputLenguaje = apidb::OutputLenguajes::CPP;
+                //packing = PackingLenguajes::CMake;
                 
                 //leeer xml
                 xmlTextReaderPtr reader;
@@ -55,6 +55,7 @@ namespace apidb
                 if (tmp_apidbDir == NULL) 
                 {
                         fprintf(stderr, "Failed to build temp file.\n");
+                        return false;
                         //exitcode = 2;
                 }
                 tar_extract_all(tar_handle, tmp_filepath);
@@ -69,14 +70,21 @@ namespace apidb
                         if (!processNode(reader)) 
                         {
                                 fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
+                                return false;
                         }
                         xmlFreeTextReader(reader);
                 }
                 else 
                 {
                         fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
+                        return false;
                 }
+                
+                return true;
         }
+        /*ConfigureProject::ConfigureProject(std::string filename)
+        {    
+        }*/
     
 	bool ConfigureProject::saveConfig()
 	{
@@ -615,4 +623,5 @@ namespace apidb
         return true;
     }
     
+}
 }

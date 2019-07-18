@@ -1,5 +1,5 @@
-#ifndef __MCSCANNER_HPP__
-#define __MCSCANNER_HPP__ 1
+#ifndef OCTETPS_APIDB_SCANNER_HPP
+#define OCTETPS_APIDB_SCANNER_HPP
 
 #if ! defined(yyFlexLexerOnce)
 #include <FlexLexer.h>
@@ -8,6 +8,8 @@
 #include "parser.tab.hh"
 #include "location.hh"
 
+namespace octetos
+{
 namespace apidb
 {
 	namespace mysql
@@ -18,13 +20,13 @@ namespace apidb
 			Scanner(std::istream *in);
 			virtual ~Scanner();
 			using FlexLexer::yylex;
-			virtual int yylex( apidb::mysql::Parser::semantic_type * const lval, apidb::mysql::Parser::location_type *location);
+			virtual int yylex( octetos::apidb::mysql::Parser::semantic_type * const lval, octetos::apidb::mysql::Parser::location_type *location);
 
 		private:
-			apidb::mysql::Parser::semantic_type *yylval = nullptr;
+			octetos::apidb::mysql::Parser::semantic_type *yylval = nullptr;
 		};
 	}
 
-} /* end namespace MC */
-
-#endif /* END __MCSCANNER_HPP__ */
+} 
+}
+#endif

@@ -23,7 +23,8 @@
 #include <string>
 #include <iostream>
 
-
+namespace octetos
+{
 namespace apidb
 {
 	std::string getPakageName()
@@ -39,3 +40,4 @@ namespace apidb
 		return v;		
 	}
 } 
+}

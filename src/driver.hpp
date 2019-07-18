@@ -24,6 +24,8 @@
 #include "analyzer.hpp"
 #include "generator.hpp"
 
+namespace octetos
+{
 namespace apidb
 {
 	class Driver
@@ -41,6 +43,7 @@ namespace apidb
 		apidb::generators::Generator* generator;
 		const ConfigureProject& configureProject;
 	};
+}
 }
 
 #endif

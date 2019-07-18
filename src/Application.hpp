@@ -5,6 +5,9 @@
 #include <vector>
 
 
+#include "common.hpp"
+
+
 namespace octetos
 {
 namespace apidb
@@ -23,6 +26,7 @@ namespace apidb
                 void createNotebookDownloas();
                 void createNotebook(GtkWidget* vboxMain);
                 
+                static void toolbar_chooseDirectory (GtkWidget *widget, gpointer   data);
         private:
                 GtkWidget *window;
                 GtkWidget *vboxMain;
@@ -30,6 +34,9 @@ namespace apidb
                 GtkWidget *boxDowns;
                 GtkWidget *btAddTable;
                 std::vector<GtkWidget*> tables;
+                //
+                static char *filename;
+                //static apidb::ConfigureProject config;
         };
 }
 }

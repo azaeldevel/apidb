@@ -36,7 +36,8 @@
 
 
 #include "common.hpp"
-
+namespace octetos
+{
 namespace apidb
 {
                
@@ -309,4 +310,5 @@ namespace apidb
 			return last;
 		}		
 	}
+}
 }

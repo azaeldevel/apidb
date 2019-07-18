@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 	{
 		if(strcmp(argv[0],"-v") || strcmp(argv[0],"--version"))
 		{
-			std::cout<<"Version: " << apidb::getPakageVersion().toString()<<std::endl;
+			std::cout<<"Version: " << octetos::apidb::getPakageVersion().toString()<<std::endl;
 			return EXIT_SUCCESS;
 		}
 		else
@@ -65,8 +65,9 @@ int main(int argc, char *argv[])
 	if(fin) 
 	{
 		std::cout<<"Cargando '" << strProject << "' ..." <<std::endl;
-		apidb::ConfigureProject config(strProject);
-        	apidb::Driver driver(config);
+		octetos::apidb::ConfigureProject config;
+                config.readConfig(strProject);
+        	octetos::apidb::Driver driver(config);
 		if(!driver.driving())
 		{
 			std::cerr<<"Fallo la configuracion."<<std::endl;
@@ -132,14 +133,14 @@ int main(int argc, char *argv[])
 	octetos::toolkit::Version version;
         version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
-	apidb::ConfigureProject config;
+	octetos::apidb::ConfigureProject config;
     	config.name = name;
     	config.directory = dir;
     	config.conectordb = &mysqlConnector;
     	config.version = version;
-    	config.inputLenguaje = apidb::InputLenguajes::MySQL;
-    	config.outputLenguaje = apidb::OutputLenguajes::CPP;
-	apidb::Driver driver(config);
+    	config.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
+    	config.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;
+	octetos::apidb::Driver driver(config);
 	if(!driver.driving())
         {
                 std::cerr<<mysqlConnector.toString()<<" - is bat "<<std::endl;

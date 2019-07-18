@@ -28,7 +28,8 @@
 #include "analyzer.hpp"
 #include "generator.hpp"
 
-
+namespace octetos
+{
 namespace apidb
 {
 namespace generators
@@ -1117,5 +1118,6 @@ namespace generators
     }
     
     
+}
 }
 }

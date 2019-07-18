@@ -21,7 +21,8 @@
 #define APIDB_GENERATOR_HPP
 
 #include <fstream>
-
+namespace octetos
+{
  namespace apidb
 {
 	namespace generators
@@ -108,5 +109,6 @@
 		};	
 	}
 		
+}
 }
 #endif

@@ -2,10 +2,6 @@
 
 
 
-static void activate_addTable (GtkWidget *widget, gpointer   data)
-{
-        g_print ("Hello World\n");
-}
 
 namespace octetos
 {
@@ -20,11 +16,27 @@ namespace apidb
                 gtk_window_set_resizable(GTK_WINDOW (window),FALSE);
                 gtk_container_add (GTK_CONTAINER (window), vboxMain);        
         }
+        
+       char* Application::filename = NULL;
+        void Application::toolbar_chooseDirectory (GtkWidget *widget, gpointer   data)
+        {
+                GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN,GTK_RESPONSE_ACCEPT,NULL);   
+                if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+                {
+                        filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+                        //open_file (filename);
+                        //g_free (filename);
+                }
+
+                gtk_widget_destroy (dialog);
+        }
+        
         void Application::createToolbar(GtkWidget* vboxMain,GtkWidget* toolbar)
         {
                 gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
                 gtk_box_pack_start(GTK_BOX(vboxMain), toolbar, FALSE, FALSE,0);
                 GtkToolItem *open = gtk_tool_button_new_from_stock(GTK_STOCK_DIRECTORY);
+                g_signal_connect(G_OBJECT(open), "clicked", G_CALLBACK(Application::toolbar_chooseDirectory), NULL);
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), open, -1);
                 GtkToolItem *build = gtk_tool_button_new_from_stock(GTK_STOCK_EXECUTE);
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), build, -1);
@@ -36,8 +48,7 @@ namespace apidb
                 g_signal_connect(G_OBJECT(exit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), exit, -1);
                 gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar),GTK_ICON_SIZE_LARGE_TOOLBAR);
-                gtk_box_pack_start(GTK_BOX(vboxMain), toolbar, FALSE, FALSE,0);          
-                
+                gtk_box_pack_start(GTK_BOX(vboxMain), toolbar, FALSE, FALSE,0);                          
         }
 
 
@@ -127,16 +138,22 @@ namespace apidb
                 gtk_box_pack_start(GTK_BOX(boxPw), inPw, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxConex), boxPw, FALSE, FALSE,0);
         }
+                
+        static void activate_addTable (GtkWidget *widget, gpointer   data)
+        {
+                g_print ("Hello World\n");
+        }
 
         void Application::createNotebookDownloasAddTable()
         {
                 GtkWidget* frame = gtk_frame_new("Tabla X");
                 gtk_box_pack_end(GTK_BOX(boxDowns), frame, FALSE, FALSE,0);
         }
+        
         void Application::createNotebookDownloas()
         {
                 btAddTable = gtk_button_new_with_label ("Agregar Descripción");
-                g_signal_connect (btAddTable, "clicked", G_CALLBACK (activate_addTable), NULL); 
+                g_signal_connect(btAddTable, "clicked", G_CALLBACK (activate_addTable), NULL); 
                 gtk_box_pack_end(GTK_BOX(boxDowns), btAddTable, FALSE, FALSE,0);
         }
 

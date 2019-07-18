@@ -22,12 +22,13 @@
 #define APIDB_HPP
 
 #include "driver.hpp"
-
+namespace octetos
+{
 namespace apidb
 {
 	octetos::toolkit::Version getPakageVersion();
 	std::string getPakageName();	
 
 }
-
+}
 #endif

@@ -4,7 +4,8 @@
 #include <sstream> 
 
 #include "analyzer.hpp"
-
+namespace octetos
+{
 namespace apidb
 {	
 	
@@ -213,5 +214,6 @@ namespace mysql
 	{
 	   return(stream);
 	}
+}
 }
 }

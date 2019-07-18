@@ -25,7 +25,8 @@
 #include "scanner.hpp"
 #include "parser.tab.hh"
 
-
+namespace octetos
+{
 namespace apidb
 {    
 	class Analyzer
@@ -93,5 +94,6 @@ namespace apidb
             Scanner *scanner = nullptr;   
         };
     }
+}
 }
 #endif

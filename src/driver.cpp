@@ -27,7 +27,8 @@
 #include "apidb.hpp"
 #include "common.hpp"
 
-
+namespace octetos
+{
 namespace apidb
 {
         Driver::Driver(const ConfigureProject& config) : configureProject(config)
@@ -200,4 +201,5 @@ namespace apidb
 		}	
 	}*/
 } 
+}
 

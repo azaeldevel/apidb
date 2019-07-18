@@ -1,5 +1,7 @@
 #include "scanner.hpp"
 
+namespace octetos
+{
 namespace apidb
 {
 	namespace mysql
@@ -13,4 +15,5 @@ namespace apidb
 		   
 		}
 	}
+}
 }

@@ -23,6 +23,8 @@
 #include <iostream>
 #include <mysql/mysql.h>
 
+namespace octetos
+{
 namespace apidb
 {
         /**
@@ -255,4 +257,5 @@ namespace apidb
                 }
 		return false;	
 	}
+}
 }

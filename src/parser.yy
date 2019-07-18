@@ -2,20 +2,22 @@
 %require  "3.0"
 %debug 
 %defines 
-%define api.namespace {apidb::mysql}
+%define api.namespace {octetos::apidb::mysql}
 %define parser_class_name {Parser}
 
 %code requires
 {
-	namespace apidb 
-	{
-		namespace mysql
-		{
-			class Analyzer;
-			class Scanner;
-		}
-	}
-
+        namespace octetos
+        {
+                namespace apidb 
+                {
+                        namespace mysql
+                        {
+                                class Analyzer;
+                                class Scanner;
+                        }
+                }
+        }
 // The following definitions is missing when %locations isn't used
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -445,7 +447,7 @@ end : NEWLINE|END|';'
 
 
 void 
-apidb::mysql::Parser::error(const location_type &l, const std::string &err_message)
+octetos::apidb::mysql::Parser::error(const location_type &l, const std::string &err_message)
 {
 	driver.oneLine =  "";
 	std::cerr << "Error: " << err_message << " at " << l << "\n";

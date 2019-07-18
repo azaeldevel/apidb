@@ -30,6 +30,8 @@
 #include <iostream>
 #include <cstring>
 
+namespace octetos
+{
 namespace apidb
 {
 	/*enum InputLenguajes
@@ -244,11 +246,12 @@ namespace apidb
                 std::vector<Table> downloads;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
                 std::vector<Table> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
                         
-                ConfigureProject(std::string filename);
+                //ConfigureProject(std::string filename);
                 ConfigureProject(const ConfigureProject& configProy);
                 ConfigureProject();
                 bool saveConfig();
                 bool checkXML(xmlTextReaderPtr);
+                bool readConfig(std::string filename);
                         
                 const std::string& getName()const;
                 const std::string& getDirectory()const;
@@ -258,5 +261,5 @@ namespace apidb
     
   
 }
-
+}
 #endif
