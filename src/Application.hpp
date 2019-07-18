@@ -18,15 +18,16 @@ namespace apidb
                 void  init(int*   argc, char **argv[]);                
                 void create();
         private:
-                void createWindow(GtkWidget* vboxMain,GtkWidget *window);
-                void createToolbar(GtkWidget* vboxMain,GtkWidget* toolbar);
+                void createWindow();
+                void createToolbar();
                 void createNotebookInfo(GtkWidget *boxInfo);
                 void createNotebookConexion(GtkWidget *boxConex);
                 void createNotebookDownloasAddTable();
                 void createNotebookDownloas();
-                void createNotebook(GtkWidget* vboxMain);
+                void createNotebook();
                 
                 static void toolbar_chooseDirectory (GtkWidget *widget, gpointer   data);
+                void loadConfig();
         private:
                 GtkWidget *window;
                 GtkWidget *vboxMain;
@@ -34,9 +35,12 @@ namespace apidb
                 GtkWidget *boxDowns;
                 GtkWidget *btAddTable;
                 std::vector<GtkWidget*> tables;
+                //seccion de Informacion
+                GtkWidget *inName;
                 //
                 static char *filename;
-                //static apidb::ConfigureProject config;
+                static octetos::apidb::ConfigureProject config;
+                static Application* app;
         };
 }
 }

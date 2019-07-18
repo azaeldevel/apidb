@@ -7,7 +7,12 @@ namespace octetos
 {
 namespace apidb
 {
-        void Application::createWindow(GtkWidget* vboxMain,GtkWidget *window)
+        void Application::loadConfig()
+        {
+                gtk_entry_set_text (GTK_ENTRY(inName),config.getName().c_str());
+        }
+        
+        void Application::createWindow()
         {
                 gtk_window_set_title (GTK_WINDOW (window), "APIDB");
                 gtk_window_set_default_size (GTK_WINDOW (window), 450, 300);
@@ -16,22 +21,34 @@ namespace apidb
                 gtk_window_set_resizable(GTK_WINDOW (window),FALSE);
                 gtk_container_add (GTK_CONTAINER (window), vboxMain);        
         }
-        
+        Application* Application::app = NULL;
        char* Application::filename = NULL;
+       octetos::apidb::ConfigureProject Application::config;
         void Application::toolbar_chooseDirectory (GtkWidget *widget, gpointer   data)
         {
                 GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN,GTK_RESPONSE_ACCEPT,NULL);   
                 if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
                 {
                         filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-                        //open_file (filename);
-                        //g_free (filename);
+                        if(!config.readConfig(std::string(filename)))
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_ERROR,
+                                                                GTK_BUTTONS_CLOSE,
+                                                                "Fallo la lectura del archivo de proyecto",
+                                                                filename, g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_widget_destroy (dialog);
+                        }
+                        app->loadConfig();
+                        g_free (filename);
                 }
 
                 gtk_widget_destroy (dialog);
         }
         
-        void Application::createToolbar(GtkWidget* vboxMain,GtkWidget* toolbar)
+        void Application::createToolbar()
         {
                 gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
                 gtk_box_pack_start(GTK_BOX(vboxMain), toolbar, FALSE, FALSE,0);
@@ -57,7 +74,7 @@ namespace apidb
                 GtkWidget *boxName = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget * lbName = gtk_label_new ("Nombre:");
                 gtk_box_pack_start(GTK_BOX(boxName), lbName, FALSE, FALSE,0); 
-                GtkWidget *inName = gtk_entry_new();
+                inName = gtk_entry_new();
                 gtk_box_pack_start(GTK_BOX(boxName), inName, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxName, FALSE, FALSE,0);
                 
@@ -157,7 +174,7 @@ namespace apidb
                 gtk_box_pack_end(GTK_BOX(boxDowns), btAddTable, FALSE, FALSE,0);
         }
 
-        void Application::createNotebook(GtkWidget* vboxMain)
+        void Application::createNotebook()
         {
                 GtkWidget * notebookMain = gtk_notebook_new();
                 gchar* strInfo = "Información";
@@ -188,14 +205,22 @@ namespace apidb
                 
         void Application::create()
         {
+                if(app == NULL)
+                {
+                        app = this;
+                }
+                else
+                {
+                        throw "Solo se permite una instacia del programa.";
+                }
                 window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
                 vboxMain = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
-                createWindow(vboxMain,window);        
+                createWindow();        
                         
                 toolbar = gtk_toolbar_new();
-                createToolbar(vboxMain,toolbar); 
+                createToolbar(); 
                         
-                createNotebook(vboxMain);  
+                createNotebook();  
                 gtk_widget_show_all (window);      
                 gtk_main ();
         }
