@@ -60,7 +60,7 @@ namespace apidb
                 }
                 tar_extract_all(tar_handle, tmp_filepath);
                 tar_close(tar_handle);
-                std::cout << "Lellendo archivo." << std::endl;  
+                //std::cout << "Lellendo archivo." << std::endl;  
                 std::string xmlfile = tmp_apidbDir;
                 xmlfile += "/apidb/main.xml";
                 reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);

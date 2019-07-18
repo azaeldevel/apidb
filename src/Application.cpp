@@ -53,12 +53,15 @@ namespace apidb
                 gtk_entry_set_text (GTK_ENTRY(inDB),config.conectordb->getDatabase().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inUser),config.conectordb->getUser().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inPw),config.conectordb->getPassword().c_str());
-                                
+                
+                gtk_combo_box_text_remove_all((GtkComboBoxText*)cmbAddTable);
+                gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
+                gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
                 octetos::apidb::Driver driver(config);
                 if(driver.analyze(false))
                 {
                         std::map<const char*,symbols::Tables*,symbols::cmp_str> lst = driver.getAnalyzer().copyListTable();
-                        int i = 0;
+                        int i = 1;
                         for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = lst.begin(); it != lst.end(); it++)
                         {
                                 for(std::list<symbols::Table*>::iterator itJ = (*it).second->begin(); itJ != (*it).second->end(); itJ++)
@@ -88,6 +91,7 @@ namespace apidb
                 if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
                 {
                         filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+                        gtk_widget_destroy (dialog);
                         if(!config.readConfig(std::string(filename)))
                         {
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
@@ -98,12 +102,12 @@ namespace apidb
                                                                 filename, g_strerror (errno));
                                 gtk_dialog_run (GTK_DIALOG (msg));
                                 gtk_widget_destroy (dialog);
+                                return;
                         }
                         app->loadConfig();
                         g_free (filename);
-                }
-
-                gtk_widget_destroy (dialog);
+                        filename = NULL;
+                }               
         }
         
         void Application::createToolbar()
@@ -147,6 +151,8 @@ namespace apidb
                 GtkWidget * lbInL = gtk_label_new ("Lenguaje de Entrada:");
                 gtk_box_pack_start(GTK_BOX(boxInL), lbInL, FALSE, FALSE,0); 
                 inInL = gtk_combo_box_text_new();
+                gtk_combo_box_text_insert((GtkComboBoxText*)inInL,0,"selecione","Selecione..."); 
+                gtk_combo_box_set_active((GtkComboBox*)inInL,0);
                 gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,"mysql","MySQL");
                 gtk_box_pack_start(GTK_BOX(boxInL), inInL, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxInL, FALSE, FALSE,0);
@@ -155,6 +161,8 @@ namespace apidb
                 GtkWidget * lbOutL = gtk_label_new ("Lenguaje de Salida:   ");
                 gtk_box_pack_start(GTK_BOX(boxOutL), lbOutL, FALSE, FALSE,0); 
                 inOutL = gtk_combo_box_text_new();
+                gtk_combo_box_text_insert((GtkComboBoxText*)inOutL,0,"selecione","Selecione..."); 
+                gtk_combo_box_set_active((GtkComboBox*)inOutL,0);
                 gtk_combo_box_text_insert((GtkComboBoxText*)inOutL,OutputLenguajes::CPP,"c++","C++");
                 gtk_box_pack_start(GTK_BOX(boxOutL), inOutL, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxOutL, FALSE, FALSE,0);        
@@ -163,6 +171,8 @@ namespace apidb
                 GtkWidget * lbPkL = gtk_label_new ("Empaquetado:   ");
                 gtk_box_pack_start(GTK_BOX(boxPkL), lbPkL, FALSE, FALSE,0); 
                 inPkL = gtk_combo_box_text_new();
+                gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,0,"selecione","Selecione..."); 
+                gtk_combo_box_set_active((GtkComboBox*)inPkL,0);
                 gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,PackingLenguajes::CMake,"cmake","CMake");
                 gtk_box_pack_start(GTK_BOX(boxPkL), inPkL, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxPkL, FALSE, FALSE,0);  
@@ -171,6 +181,8 @@ namespace apidb
                 GtkWidget * lbCmpl = gtk_label_new ("Compilado:        ");
                 gtk_box_pack_start(GTK_BOX(boxCmpl), lbCmpl, FALSE, FALSE,0); 
                 inCmpl = gtk_combo_box_text_new();
+                gtk_combo_box_text_insert((GtkComboBoxText*)inCmpl,0,"selecione","Selecione..."); 
+                gtk_combo_box_set_active((GtkComboBox*)inCmpl,0);
                 gtk_combo_box_text_insert((GtkComboBoxText*)inCmpl,Compiled::STATIC,"static","Estático");
                 gtk_box_pack_start(GTK_BOX(boxCmpl), inCmpl, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxCmpl, FALSE, FALSE,0);        

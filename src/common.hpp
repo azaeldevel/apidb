@@ -44,11 +44,11 @@ namespace apidb
 	
         enum PackingLenguajes
         {
-                CMake
+                CMake = 1
         };
 	enum OutputLenguajes
 	{
-		C,
+		C = 1,
 		CPP,
 		//JAVA,
 		//CSHARP,
@@ -58,7 +58,7 @@ namespace apidb
 	
 	enum MVC
 	{
-		NO,
+		NO = 1,
 		//X,
 		GTK2,
 		GTK3
@@ -66,7 +66,7 @@ namespace apidb
 	};
         enum Compiled
         {
-                STATIC,
+                STATIC = 1,
                 SHARED
         };
         
