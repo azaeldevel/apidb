@@ -8,17 +8,32 @@ IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR)
   SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_QUIETLY TRUE)
 ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR)
 
-FIND_PATH(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR clientdb.hpp
-  /usr/local/include/octetos/toolkit/clientdb
-  /usr/include/octetos/toolkit/clientdb
-)
+IF(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot")
+	FIND_PATH(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR clientdb.hpp
+	  $ENV{HOME}/develop/toolkit/clientdb
+	)
+ELSEIF()
+	FIND_PATH(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR clientdb.hpp
+	  /usr/local/include/octetos/toolkit/clientdb
+	  /usr/include/octetos/toolkit/clientdb
+	)
+ENDIF()
 
-SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES octetos-toolkit-clientdb-myc++)
-FIND_LIBRARY(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY
-  NAMES ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES}
-  PATHS /usr/lib/octetos/toolkit/clientdb /usr/local/lib/octetos/toolkit/clientdb /usr/lib/x86_64-linux-gnu/octetos/toolkit/clientdb
-  PATH_SUFFIXES octetos-toolkit-clientdb-myc++
-)
+IF(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot")
+	SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES octetos-toolkit-clientdb-myc++)
+	FIND_LIBRARY(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY
+	  NAMES ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES}
+	  PATHS $ENV{HOME}/develop/toolkit/clientdb/build-myc++
+	  PATH_SUFFIXES octetos-toolkit-clientdb-myc++
+	)
+ELSEIF()
+	SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES octetos-toolkit-clientdb-myc++)
+	FIND_LIBRARY(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY
+	  NAMES ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES}
+	  PATHS /usr/lib/octetos/toolkit/clientdb /usr/local/lib/octetos/toolkit/clientdb /usr/lib/x86_64-linux-gnu/octetos/toolkit/clientdb
+	  PATH_SUFFIXES octetos-toolkit-clientdb-myc++
+	)
+ENDIF()
 
 IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY)
   SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND TRUE)

@@ -8,17 +8,32 @@ IF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)
   SET(OCTETOS_TOOLKIT_COMMON_CPP_FIND_QUIETLY TRUE)
 ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)
 
-FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR common.hpp
-  /usr/local/include/octetos/toolkit/common
-  /usr/include/octetos/toolkit/common
-)
+IF(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot")
+	FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR common.hpp
+	  $ENV{HOME}/develop/toolkit/common
+	)
+ELSEIF()
+	FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR common.hpp
+	  /usr/local/include/octetos/toolkit/common
+	  /usr/include/octetos/toolkit/common
+	)
+ENDIF()
 
-SET(OCTETOS_TOOLKIT_COMMON_CPP_NAMES octetos-toolkit-common-c++)
-FIND_LIBRARY(OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY
-  NAMES ${OCTETOS_TOOLKIT_COMMON_CPP_NAMES}
-  PATHS /usr/lib/octetos/toolkit/common /usr/local/lib/octetos/toolkit/common /usr/lib/x86_64-linux-gnu/octetos/toolkit/common
-  PATH_SUFFIXES octetos-toolkit-common-c++
-)
+IF(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot")
+	SET(OCTETOS_TOOLKIT_COMMON_CPP_NAMES octetos-toolkit-common-c++)
+	FIND_LIBRARY(OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY
+	  NAMES ${OCTETOS_TOOLKIT_COMMON_CPP_NAMES}
+	  PATHS $ENV{HOME}/develop/toolkit/common/build-c++
+	  PATH_SUFFIXES octetos-toolkit-common-c++
+	)
+ELSEIF()
+	SET(OCTETOS_TOOLKIT_COMMON_CPP_NAMES octetos-toolkit-common-c++)
+	FIND_LIBRARY(OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY
+	  NAMES ${OCTETOS_TOOLKIT_COMMON_CPP_NAMES}
+	  PATHS /usr/lib/octetos/toolkit/common /usr/local/lib/octetos/toolkit/common /usr/lib/x86_64-linux-gnu/octetos/toolkit/common
+	  PATH_SUFFIXES octetos-toolkit-common-c++
+	)
+ENDIF()
 
 IF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY)
   SET(OCTETOS_TOOLKIT_COMMON_CPP_FOUND TRUE)

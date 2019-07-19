@@ -34,6 +34,13 @@ namespace octetos
 {
 namespace apidb
 {
+
+        enum ErrorScope
+        {
+                PACKAGE,
+                Class_ConfigureProject,
+                Class_ConfigureProject_ReadFile,
+        };
 	/*enum InputLenguajes
 	{
 		MySQL_Server,
@@ -191,8 +198,13 @@ namespace apidb
         private:
                 bool processNode(xmlTextReaderPtr);
                 bool getProjectNodes(xmlTextReaderPtr);
-        
-        public:        
+                octetos::toolkit::Error* error;
+                
+        public:       
+                enum ErrorCodes
+                {
+                        ReadFile_TempUnpackFail,//No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.
+                };
                 class Parameters : public std::vector<const char*>
                 {
                 public:
