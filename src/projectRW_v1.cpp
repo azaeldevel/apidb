@@ -573,7 +573,7 @@ namespace apidb
         for(int i = 0; i < 2; i++)
         {
                 std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
-                std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
+                //std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
                 std::string node = (const char*)xmlTextReaderConstName(reader);
                 int counTbs = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs"));
                 for(int j = 0; j < counTbs; j++)
@@ -613,12 +613,15 @@ namespace apidb
                         }    
                         if(node.compare("downloads") == 0)
                         {
+                                std::cout << "\tAdded " << ptb->getName() << std::endl;
                                 downloads.push_back(*ptb);
                         }
                         else if(node.compare("selects") == 0)
                         {
+                                std::cout << "\tAdded " << ptb->getName() << std::endl;
                                 selects.push_back(*ptb);
                         }
+                        delete ptb;
                 }
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);

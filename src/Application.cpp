@@ -6,21 +6,252 @@
 namespace octetos
 {
 namespace apidb
-{
+{        
+        void on_changed(GtkWidget *widget, gpointer statusbar) {
+        
+                GtkTreeIter iter;
+                GtkTreeModel *model;
+                gchar *value;
+
+                if (gtk_tree_selection_get_selected(
+                GTK_TREE_SELECTION(widget), &model, &iter)) {
+
+                gtk_tree_model_get(model, &iter, 0, &value,  -1);
+                gtk_statusbar_push(GTK_STATUSBAR(statusbar),
+                        gtk_statusbar_get_context_id(GTK_STATUSBAR(statusbar), 
+                        value), value);
+                g_free(value);
+                }
+        }
+        
+        void TreeView::CreateFill(std::vector<ConfigureProject::Table>& list)
+        {         
+                treestore = gtk_tree_store_new(1,G_TYPE_STRING);                   
+                for(std::vector<apidb::ConfigureProject::Table>::iterator it =list.begin(); it != list.end(); it++ )
+                {
+                       gtk_tree_store_append(treestore, &toplevel, NULL);
+                        gtk_tree_store_set(treestore, &toplevel,0, it->getName().c_str(),-1);       
+                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::iterator itF = (*it).begin(); itF !=  (*it).end(); itF++)
+                        {
+                                //std::cout << "In View Funtion : " << (*itF).second->getName() << std::endl;
+                        }
+                }
+                
+                 model = GTK_TREE_MODEL(treestore);
+                gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
+                g_object_unref(model);  
+        }
+        
+        GtkWidget *TreeView::CreateView(std::vector<ConfigureProject::Table>& list) 
+        {    
+                GtkTreeViewColumn *col;
+                GtkCellRenderer *renderer;
+                view = gtk_tree_view_new();        
+
+                col = gtk_tree_view_column_new();
+                gtk_tree_view_column_set_title(col, "Tablas");
+                gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+                
+                renderer = gtk_cell_renderer_text_new();
+                gtk_tree_view_column_pack_start(col, renderer, TRUE);
+                gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
+
+                CreateFill(list);
+                
+                return view;                                
+        }
+        void TreeView::Tree(GtkWidget *box,std::vector<ConfigureProject::Table>& list)
+        {
+                GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+                gtk_container_set_border_width (GTK_CONTAINER (scrolled_window), 10);                       
+                gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC); 
+                gtk_widget_set_size_request(scrolled_window,200,300);
+                gtk_container_add (GTK_CONTAINER (box), scrolled_window);       
+                                
+                GtkTreeSelection *selection; 
+                GtkWidget *vbox;
+                GtkWidget *statusbar;
+                //GtkWidget *view;
+  
+                vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
+                gtk_container_add(GTK_CONTAINER(scrolled_window), vbox);
+                view = CreateView(list); 
+                selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+                gtk_box_pack_start(GTK_BOX(vbox), view, TRUE, TRUE, 1); 
+
+                statusbar = gtk_statusbar_new();
+                gtk_box_pack_start(GTK_BOX(vbox), statusbar, FALSE, TRUE, 1);
+
+                g_signal_connect(selection, "changed", G_CALLBACK(on_changed), statusbar);                
+        }
+        
+        void Application::createNotebookDownloasTree_CreateFill(Options option)
+        {         
+                std::vector<ConfigureProject::Table>* list;
+                switch(option)
+                {
+                        case Options::RUN_DOWNLOAD:
+                                list = &config.downloads;                                
+                                break;
+                        case Options::RUN_SELECT:
+                                list = &config.selects;                                
+                                break;
+                }
+                
+                switch(option)
+                {
+                        case Options::RUN_DOWNLOAD:
+                                downsTreestore = gtk_tree_store_new(1,G_TYPE_STRING);                   
+                                break;
+                        case Options::RUN_SELECT:
+                                selectsTreestore = gtk_tree_store_new(1,G_TYPE_STRING);                       
+                                break;
+                }
+                for(std::vector<apidb::ConfigureProject::Table>::iterator it =list->begin(); it != list->end(); it++ )
+                {
+                        switch(option)
+                        {
+                                case Options::RUN_DOWNLOAD:
+                                        gtk_tree_store_append(downsTreestore, &downsToplevel, NULL);
+                                        gtk_tree_store_set(downsTreestore, &downsToplevel,0, it->getName().c_str(),-1);              
+                                        break;
+                                case Options::RUN_SELECT:
+                                        gtk_tree_store_append(selectsTreestore, &selectsToplevel, NULL);
+                                        gtk_tree_store_set(selectsTreestore, &selectsToplevel,0, it->getName().c_str(),-1);                       
+                                        break;
+                        }
+                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::iterator itF = (*it).begin(); itF !=  (*it).end(); itF++)
+                        {
+                                std::cout << "In View Funtion : " << (*itF).second->getName() << std::endl;
+                        }
+                }
+                
+                switch(option)
+                {
+                        case Options::RUN_DOWNLOAD:
+                                downsModel = GTK_TREE_MODEL(downsTreestore);
+                                gtk_tree_view_set_model(GTK_TREE_VIEW(downsView), downsModel);
+                                g_object_unref(downsModel);               
+                                break;
+                        case Options::RUN_SELECT:
+                                selectsModel = GTK_TREE_MODEL(selectsTreestore);
+                                gtk_tree_view_set_model(GTK_TREE_VIEW(selectsView), selectsModel);
+                                g_object_unref(selectsModel);               
+                                break;
+                }
+        }
+        
+
+
+        GtkWidget *Application::createNotebookDownloasTree_CreateView(Options option) 
+        {    
+                GtkTreeViewColumn *col;
+                GtkCellRenderer *renderer;
+                //GtkWidget *view;
+                //GtkTreeModel *model;
+
+                switch(option)
+                {
+                        case Options::RUN_DOWNLOAD:
+                                downsView = gtk_tree_view_new();            
+                                break;
+                        case Options::RUN_SELECT:
+                                selectsView = gtk_tree_view_new();                               
+                                break;
+                }
+
+                col = gtk_tree_view_column_new();
+                gtk_tree_view_column_set_title(col, "Tablas");
+                switch(option)
+                {
+                        case Options::RUN_DOWNLOAD:
+                                gtk_tree_view_append_column(GTK_TREE_VIEW(downsView), col);
+                                break;
+                        case Options::RUN_SELECT:
+                                gtk_tree_view_append_column(GTK_TREE_VIEW(selectsView), col);
+                                break;
+                }
+
+                renderer = gtk_cell_renderer_text_new();
+                gtk_tree_view_column_pack_start(col, renderer, TRUE);
+                gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
+
+                createNotebookDownloasTree_CreateFill(option);
+                switch(option)
+                {
+                        case Options::RUN_DOWNLOAD:
+                                return downsView;
+                        case Options::RUN_SELECT:
+                                return selectsView;
+                }
+        }
+
+        void Application::createNotebookDownloasTree(Options option)
+        {
+                GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+                gtk_container_set_border_width (GTK_CONTAINER (scrolled_window), 10);                       
+                gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC); 
+                gtk_widget_set_size_request(scrolled_window,200,300);
+                switch(option)
+                {
+                        case Options::RUN_DOWNLOAD:
+                                gtk_container_add (GTK_CONTAINER (boxDowns), scrolled_window);                 
+                                break;
+                        case Options::RUN_SELECT:
+                                gtk_container_add (GTK_CONTAINER (boxSelects), scrolled_window);                                 
+                                break;
+                }
+                                
+                GtkTreeSelection *selection; 
+                GtkWidget *vbox;
+                GtkWidget *statusbar;
+                //GtkWidget *view;
+  
+                vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
+                gtk_container_add(GTK_CONTAINER(scrolled_window), vbox);
+
+                switch(option)
+                {
+                        case Options::RUN_DOWNLOAD:
+                                downsView = createNotebookDownloasTree_CreateView(option); 
+                                selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(downsView));
+                                gtk_box_pack_start(GTK_BOX(vbox), downsView, TRUE, TRUE, 1);               
+                                break;
+                        case Options::RUN_SELECT:
+                                selectsView = createNotebookDownloasTree_CreateView(option);
+                                selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(selectsView));
+                                gtk_box_pack_start(GTK_BOX(vbox), selectsView, TRUE, TRUE, 1);                                   
+                                break;
+                }
+
+                statusbar = gtk_statusbar_new();
+                gtk_box_pack_start(GTK_BOX(vbox), statusbar, FALSE, TRUE, 1);
+
+                g_signal_connect(selection, "changed", G_CALLBACK(on_changed), statusbar);                
+        }
+        
         void Application::createNotebookTablesSecc(GtkWidget *box,std::vector<ConfigureProject::Table>& list)
         {
-                //Downloads
-                std::cout << "Tamaño del download = " << config.downloads.size() << std::endl;
+                //std::cout << "Tamaño del download = " << config.downloads.size() << std::endl;
                 for(std::vector<apidb::ConfigureProject::Table>::iterator it =list.begin(); it != list.end(); it++ )
                 {
                         GtkWidget *frame = gtk_frame_new ((*it).getName().c_str());
                         gtk_frame_set_label_align (GTK_FRAME (frame), 1.0, 0.0);
                         gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_ETCHED_OUT);
                         gtk_widget_show (frame);
-                        std::cout << "In View Table : " << (*it).getName() << std::endl;
+                        //std::cout << "In View Table : " << (*it).getName() << std::endl;
                         gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE,0);
+                        GtkWidget *boxFunctions = gtk_box_new (GTK_ORIENTATION_VERTICAL,it->size()); 
+                        gtk_container_add (GTK_CONTAINER (frame), boxFunctions);
+                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::iterator itF = (*it).begin(); itF !=  (*it).end(); itF++)
+                        {
+                                std::cout << "In View Funtion : " << (*itF).second->getName() << std::endl;
+                                //GtkWidget * funtion = gtk_label_new((*itF).second->getName().c_str());
+                                //gtk_box_pack_start(GTK_BOX(boxFunctions), funtion, TRUE, TRUE,0);
+                        }
                 }                        
         }
+        
         void Application::createNotebookSelects()
         {
                 GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
@@ -36,8 +267,8 @@ namespace apidb
                 GtkWidget *btAddTable = gtk_button_new_with_label ("Agregar");
                 g_signal_connect(btAddTable, "clicked", G_CALLBACK (Application::downloads_addTable), NULL);                        
                 gtk_box_pack_start(GTK_BOX(boxNewTable), btAddTable, FALSE, FALSE,0); 
-                cmbAddTable = gtk_combo_box_text_new();
-                gtk_box_pack_start(GTK_BOX(boxNewTable), cmbAddTable, FALSE, FALSE,0);
+                //cmbAddTable = gtk_combo_box_text_new();
+                //gtk_box_pack_start(GTK_BOX(boxNewTable), cmbAddTable, FALSE, FALSE,0);
                                 
                 gtk_box_pack_end(GTK_BOX(boxSelectsTables), boxNewTable, FALSE, FALSE,0);                               
         }
@@ -72,8 +303,8 @@ namespace apidb
                 GtkWidget *btAddTable = gtk_button_new_with_label ("Agregar");
                 g_signal_connect(btAddTable, "clicked", G_CALLBACK (Application::downloads_addTable), NULL);                        
                 gtk_box_pack_start(GTK_BOX(boxNewTable), btAddTable, FALSE, FALSE,0); 
-                cmbAddTable = gtk_combo_box_text_new();
-                gtk_box_pack_start(GTK_BOX(boxNewTable), cmbAddTable, FALSE, FALSE,0);
+                //cmbAddTable = gtk_combo_box_text_new();
+                //gtk_box_pack_start(GTK_BOX(boxNewTable), cmbAddTable, FALSE, FALSE,0);
                                 
                 gtk_box_pack_end(GTK_BOX(boxDownsTables), boxNewTable, FALSE, FALSE,0);                               
         }
@@ -93,7 +324,7 @@ namespace apidb
                 gtk_entry_set_text (GTK_ENTRY(inUser),config.conectordb->getUser().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inPw),config.conectordb->getPassword().c_str());
                 
-                gtk_combo_box_text_remove_all((GtkComboBoxText*)cmbAddTable);
+                /*gtk_combo_box_text_remove_all((GtkComboBoxText*)cmbAddTable);
                 gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
                 gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
                 octetos::apidb::Driver driver(config);
@@ -109,11 +340,11 @@ namespace apidb
                                         i++;
                                 }
                         }
-                }
+                }*/
                 
-                createNotebookTablesSecc(boxDownsTables,config.downloads);
+                downsTree->CreateFill(config.downloads);
                 
-                createNotebookTablesSecc(boxSelectsTables,config.selects);
+                selectsTree->CreateFill(config.selects);
         }
         
         void Application::createWindow()
@@ -291,12 +522,15 @@ namespace apidb
                 boxDowns = gtk_box_new (GTK_ORIENTATION_VERTICAL,1);
                 GtkWidget * lbDowns = gtk_label_new (strDowns);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxDowns,lbDowns);
-                createNotebookDownloas();
+                downsTree =  new TreeView();
+                downsTree->Tree(boxDowns,config.downloads);
                 gchar* strSels = (gchar*)"Selecciones";
                 boxSelects = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 GtkWidget * lbSels = gtk_label_new (strSels);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxSelects,lbSels);
-                createNotebookSelects();
+                selectsTree =  new TreeView();
+                std::cout << "Tamaño : " << config.selects.size() << std::endl;
+                selectsTree->Tree(boxSelects,config.selects);
                 gtk_box_pack_start(GTK_BOX(vboxMain), notebookMain, FALSE, FALSE,0);
         }
         void  Application::init(int*   argc, char **argv[])
