@@ -7,6 +7,41 @@ namespace octetos
 {
 namespace apidb
 {
+        void Application::createNotebookTablesSecc(GtkWidget *box,std::vector<ConfigureProject::Table>& list)
+        {
+                //Downloads
+                std::cout << "Tamaño del download = " << config.downloads.size() << std::endl;
+                for(std::vector<apidb::ConfigureProject::Table>::iterator it =list.begin(); it != list.end(); it++ )
+                {
+                        GtkWidget *frame = gtk_frame_new ((*it).getName().c_str());
+                        gtk_frame_set_label_align (GTK_FRAME (frame), 1.0, 0.0);
+                        gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_ETCHED_OUT);
+                        gtk_widget_show (frame);
+                        std::cout << "In View Table : " << (*it).getName() << std::endl;
+                        gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE,0);
+                }                        
+        }
+        void Application::createNotebookSelects()
+        {
+                GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+                gtk_container_set_border_width (GTK_CONTAINER (scrolled_window), 10);                       
+                gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC); 
+                gtk_widget_set_size_request(scrolled_window,200,300);
+                gtk_container_add (GTK_CONTAINER (boxSelects), scrolled_window);
+                
+                boxSelectsTables = gtk_box_new (GTK_ORIENTATION_VERTICAL,5); 
+                gtk_container_add (GTK_CONTAINER (scrolled_window), boxSelectsTables);
+                
+                GtkWidget *boxNewTable = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget *btAddTable = gtk_button_new_with_label ("Agregar");
+                g_signal_connect(btAddTable, "clicked", G_CALLBACK (Application::downloads_addTable), NULL);                        
+                gtk_box_pack_start(GTK_BOX(boxNewTable), btAddTable, FALSE, FALSE,0); 
+                cmbAddTable = gtk_combo_box_text_new();
+                gtk_box_pack_start(GTK_BOX(boxNewTable), cmbAddTable, FALSE, FALSE,0);
+                                
+                gtk_box_pack_end(GTK_BOX(boxSelectsTables), boxNewTable, FALSE, FALSE,0);                               
+        }
+        
         Application::Application()
         {
                 boxDownsTables = NULL;
@@ -34,7 +69,7 @@ namespace apidb
                 gtk_container_add (GTK_CONTAINER (scrolled_window), boxDownsTables);
                 
                 GtkWidget *boxNewTable = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                btAddTable = gtk_button_new_with_label ("Agregar");
+                GtkWidget *btAddTable = gtk_button_new_with_label ("Agregar");
                 g_signal_connect(btAddTable, "clicked", G_CALLBACK (Application::downloads_addTable), NULL);                        
                 gtk_box_pack_start(GTK_BOX(boxNewTable), btAddTable, FALSE, FALSE,0); 
                 cmbAddTable = gtk_combo_box_text_new();
@@ -75,19 +110,10 @@ namespace apidb
                                 }
                         }
                 }
-                                
-                //Downloads
-                std::cout << "Tamaño del download = " << config.downloads.size() << std::endl;
-                for(std::vector<apidb::ConfigureProject::Table>::iterator it =config.downloads.begin(); it != config.downloads.end(); it++ )
-                {
-                        GtkWidget *frame = gtk_frame_new ((*it).getName().c_str());
-                        gtk_frame_set_label_align (GTK_FRAME (frame), 1.0, 0.0);
-                        gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_ETCHED_OUT);
-                        gtk_widget_show (frame);
-                        std::cout << "In View Table : " << (*it).getName() << std::endl;
-                        gtk_box_pack_start(GTK_BOX(boxDownsTables), frame, TRUE, TRUE,0);
-                }        
-                //gtk_widget_show_all (window);  
+                
+                createNotebookTablesSecc(boxDownsTables,config.downloads);
+                
+                createNotebookTablesSecc(boxSelectsTables,config.selects);
         }
         
         void Application::createWindow()
@@ -267,9 +293,10 @@ namespace apidb
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxDowns,lbDowns);
                 createNotebookDownloas();
                 gchar* strSels = (gchar*)"Selecciones";
-                GtkWidget *boxSels = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
+                boxSelects = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 GtkWidget * lbSels = gtk_label_new (strSels);
-                gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxSels,lbSels);
+                gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxSelects,lbSels);
+                createNotebookSelects();
                 gtk_box_pack_start(GTK_BOX(vboxMain), notebookMain, FALSE, FALSE,0);
         }
         void  Application::init(int*   argc, char **argv[])

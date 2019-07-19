@@ -202,8 +202,11 @@ namespace apidb
                 
         public:       
                 enum ErrorCodes
-                {
+                {                        
+                        unattendedError,
                         ReadFile_TempUnpackFail,//No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.
+                        Read_FileFailParseNode,
+                        ReadFile_OpenXMLFile
                 };
                 class Parameters : public std::vector<const char*>
                 {
@@ -264,6 +267,8 @@ namespace apidb
                 bool saveConfig();
                 bool checkXML(xmlTextReaderPtr);
                 bool readConfig(std::string filename);
+                bool isError();
+                toolkit::Error getError();
                         
                 const std::string& getName()const;
                 const std::string& getDirectory()const;

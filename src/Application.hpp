@@ -25,7 +25,9 @@ namespace apidb
                 void createNotebookConexion(GtkWidget *boxConex);
                 void createNotebookDownloasAddTable();
                 void createNotebookDownloas();
+                void createNotebookSelects();
                 void createNotebook();
+                void createNotebookTablesSecc(GtkWidget *box,std::vector<ConfigureProject::Table>& list);
                 
                 static void toolbar_chooseDirectory (GtkWidget *widget, gpointer   data);
                 static void downloads_addTable (GtkWidget *widget, gpointer   data);
@@ -44,7 +46,6 @@ namespace apidb
                 GtkWidget *inCmpl;
                 //Conexion
                 GtkWidget *boxDowns;
-                GtkWidget *btAddTable;
                 GtkWidget *boxDownsTables;
                 GtkWidget *inLoc;
                 GtkWidget *inPort;
@@ -53,7 +54,10 @@ namespace apidb
                 GtkWidget *inPw;
                 //Descargas
                 GtkWidget *cmbAddTable;
-                //                
+                // Selects                
+                GtkWidget *boxSelects;
+                GtkWidget *boxSelectsTables;
+                //
                 static char *filename;
                 static octetos::apidb::ConfigureProject config;
                 static Application* app;

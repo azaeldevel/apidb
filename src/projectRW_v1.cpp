@@ -37,12 +37,37 @@ namespace octetos
 {
 namespace apidb
 {
+        toolkit::Error ConfigureProject::getError()
+        {
+                if(error != NULL)
+                {
+                        toolkit::Error err = *error;
+                        delete error;
+                        error = NULL;
+                        return err;
+                }
+                else
+                {
+                        return toolkit::Error("",0);
+                }
+        }
+        bool ConfigureProject::isError()
+        {
+                if(error != NULL)
+                {
+                        return true;
+                }
+                else
+                {
+                        return false;
+                }
+        }
         bool ConfigureProject::readConfig(std::string filename)
         {
-                //variables no almacenas en el archivo de configuracion.
-                //inputLenguaje = apidb::InputLenguajes::MySQL;
-                //outputLenguaje = apidb::OutputLenguajes::CPP;
-                //packing = PackingLenguajes::CMake;
+                if(error != NULL)
+                {
+                        throw toolkit::Error("Hay un error pendiente de atender",ErrorCodes::unattendedError);
+                }
                 
                 //leeer xml
                 xmlTextReaderPtr reader;
@@ -54,7 +79,8 @@ namespace apidb
                 char * tmp_apidbDir  = mkdtemp(tmp_filepath);
                 if (tmp_apidbDir == NULL) 
                 {
-                        fprintf(stderr, "Failed to build temp file.\n");
+                        //fprintf(stderr, "Failed to build temp file.\n");
+                        if(error != NULL) error = new toolkit::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::ReadFile_TempUnpackFail);
                         return false;
                         //exitcode = 2;
                 }
@@ -69,14 +95,18 @@ namespace apidb
                         ret = xmlTextReaderRead(reader);               
                         if (!processNode(reader)) 
                         {
-                                fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
+                                //fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
+                                if(error != NULL)error = new toolkit::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode);
                                 return false;
                         }
                         xmlFreeTextReader(reader);
                 }
                 else 
                 {
-                        fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
+                        //fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
+                        std::string msg = "Fallo al abrir el archivo '";
+                        msg += msg + xmlfile + "'";
+                        if(error != NULL) error = new toolkit::Error(msg,ErrorCodes::ReadFile_OpenXMLFile);
                         return false;
                 }
                 
