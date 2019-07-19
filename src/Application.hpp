@@ -17,6 +17,7 @@ namespace apidb
         public:
                 void  init(int*   argc, char **argv[]);                
                 void create();
+                Application();
         private:
                 void createWindow();
                 void createToolbar();
@@ -44,6 +45,7 @@ namespace apidb
                 //Conexion
                 GtkWidget *boxDowns;
                 GtkWidget *btAddTable;
+                GtkWidget *boxDownsTables;
                 GtkWidget *inLoc;
                 GtkWidget *inPort;
                 GtkWidget *inDB;

@@ -116,9 +116,9 @@ namespace apidb
                                 
                 //
                 xmlNodePtr inL_node = xmlNewChild(root_node, NULL, (const xmlChar *)"inputLenguaje", NULL);
-                switch(conectordb->getServerType())
+                switch(inputLenguaje)
                 {
-                        case octetos::toolkit::clientdb::Datconnect::ServerType::MySQL:
+                        case InputLenguajes::MySQL:
                                 xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"MySQL");
                                 break;
                 }
@@ -542,15 +542,16 @@ namespace apidb
         
         for(int i = 0; i < 2; i++)
         {
-                //std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
-                //std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
+                std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
+                std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
+                std::string node = (const char*)xmlTextReaderConstName(reader);
                 int counTbs = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs"));
-                for(int i = 0; i < counTbs; i++)
+                for(int j = 0; j < counTbs; j++)
                 {
                         xmlTextReaderRead(reader);
                         xmlTextReaderRead(reader);        
+                        std::cout << "\tTable  : " <<(const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
                         Table* ptb = new Table((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name"));
-                        //std::cout << "\tTable  : " <<(const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
                         int counFuns = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countFuns"));
                         xmlTextReaderRead(reader);
                         xmlTextReaderRead(reader);  
@@ -580,11 +581,11 @@ namespace apidb
                                 ptb->insert(std::make_pair(pfn->getName().c_str(), pfn));
                                 xmlTextReaderRead(reader);      
                         }    
-                        if(i == 0)
+                        if(node.compare("downloads") == 0)
                         {
                                 downloads.push_back(*ptb);
                         }
-                        else if(i == 1)
+                        else if(node.compare("selects") == 0)
                         {
                                 selects.push_back(*ptb);
                         }
