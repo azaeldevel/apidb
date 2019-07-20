@@ -755,26 +755,25 @@ namespace generators
 		}
                 std::map<const char*,symbols::Tables*,symbols::cmp_str>& spacies = analyzer.getListTable();
                 
-                for(auto const& [keySpace, AttSpace]  : spacies)
-                {                        
-                        if(strcmp(keySpace,"") != 0)
+                //for(auto const& [keySpace, AttSpace]  : spacies)
+                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
+                {
+                        if(strcmp(it->first,"") != 0)
                         {
-                                short level = symbols::getSpaceLevel(keySpace);
+                                short level = symbols::getSpaceLevel(it->first);
                                 for(short i = 0; i < level ; i++) file << "\t";
-                                file << "namespace " << AttSpace->name  << std::endl;
+                                file << "namespace " << it->second->name  << std::endl;
                                 for(short i = 0; i < level ; i++) file << "\t";
                                 file << "{" << std::endl;
                         }
-                        for(auto table: *AttSpace) //reading attrubtes by table
+                        //for(auto table: *(it->second)) //reading attrubtes by table
+                        for(std::list<symbols::Table*>::iterator itT = it->second->begin(); itT != it->second->end(); itT++ )
                         {
-                                //for (auto const& [key, attribute] : *table)
-                                {
-                                        createClassCPP(*table,file,table->name);       
-                                }
+                                createClassCPP(**itT,file,(*itT)->name);
                         }
-                        if(strcmp(keySpace,"") != 0)
+                        if(strcmp(it->first,"") != 0)
                         {
-                                short level = symbols::getSpaceLevel(keySpace);
+                                short level = symbols::getSpaceLevel(it->first);
                                 for(short i = 0; i < level ; i++) file << "\t";
                                 file << "}" << std::endl;
                         }
@@ -789,22 +788,22 @@ namespace generators
 			file <<"}" <<std::endl;
 		}
     }
-    void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
-    {                
-        std::vector<apidb::ConfigureProject::Table> tbs = configureProject.downloads;
-        for( auto tb: tbs)//std::vector<Table>
-        {
-            //std::cout<<"Iterate on '" << tb.getName() << "'" << std::endl;
-            if(table.name.compare(tb.getName()) != 0) 
-            {          
-                continue;//buscar la configuracion de la tabla correspondiente
-            }            
-            for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
-            {
-                ofile << "\t\tbool download_" << key << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
-            }         
+        void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
+        {                
+                for(std::vector<apidb::ConfigureProject::Table>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
+                {
+                        //std::cout<<"Iterate on '" << tb.getName() << "'" << std::endl;
+                        if(table.name.compare(it->getName()) != 0) 
+                        {          
+                                continue;//buscar la configuracion de la tabla correspondiente
+                        }            
+                        //
+                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = it->begin(); itT != it->end(); itT++)
+                        {
+                                ofile << "\t\tbool download_" << itT->first << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
+                        }         
+                }
         }
-    }
 	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile)
         {
                 ofile << "\t\tstatic std::vector<" << table.name << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where);"<<std::endl;

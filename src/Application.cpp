@@ -8,20 +8,16 @@ namespace octetos
 namespace apidb
 {        
         void on_changed(GtkWidget *widget, gpointer statusbar)
-        {
-        
+        {        
                 GtkTreeIter iter;
                 GtkTreeModel *model;
                 gchar *value;
 
-                if (gtk_tree_selection_get_selected(
-                GTK_TREE_SELECTION(widget), &model, &iter)) {
-
-                gtk_tree_model_get(model, &iter, 0, &value,  -1);
-                gtk_statusbar_push(GTK_STATUSBAR(statusbar),
-                        gtk_statusbar_get_context_id(GTK_STATUSBAR(statusbar), 
-                        value), value);
-                g_free(value);
+                if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(widget), &model, &iter)) 
+                {
+                        gtk_tree_model_get(model, &iter, 0, &value,  -1);
+                        gtk_statusbar_push(GTK_STATUSBAR(statusbar),gtk_statusbar_get_context_id(GTK_STATUSBAR(statusbar), value), value);
+                        g_free(value);
                 }
         }
         
@@ -41,6 +37,7 @@ namespace apidb
                                 gtk_tree_store_append(treestore, &funtion, &toplevel);
                                 gtk_tree_store_set(treestore, &funtion,0, fnProto.c_str(), -1);   
                         }
+                        gtk_cell_renderer_combo_new ();
                 }
                 
                  model = GTK_TREE_MODEL(treestore);
@@ -52,6 +49,7 @@ namespace apidb
         {    
                 GtkTreeViewColumn *col;
                 GtkCellRenderer *renderer;
+                GtkCellRenderer *add;
                 view = gtk_tree_view_new();        
 
                 col = gtk_tree_view_column_new();
@@ -61,6 +59,10 @@ namespace apidb
                 renderer = gtk_cell_renderer_text_new();
                 gtk_tree_view_column_pack_start(col, renderer, TRUE);
                 gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
+                                
+                add = gtk_cell_renderer_combo_new ();
+                gtk_tree_view_column_pack_start(col, add, TRUE);
+                gtk_tree_view_column_add_attribute(col, add, "text", 0);
 
                 fill();
                 
@@ -87,10 +89,15 @@ namespace apidb
 
                 statusbar = gtk_statusbar_new();
                 gtk_box_pack_start(GTK_BOX(vbox), statusbar, FALSE, TRUE, 1);
-                GtkWidget * buttonAdd = gtk_button_new_with_label ("Agregar");
-                gtk_box_pack_start(GTK_BOX(statusbar), buttonAdd, FALSE, TRUE, 1);
-
-                g_signal_connect(selection, "changed", G_CALLBACK(on_changed), statusbar);                
+                g_signal_connect(selection, "changed", G_CALLBACK(on_changed), statusbar);  
+                
+                GtkWidget *pop = gtk_popover_new(statusbar);
+                GtkWidget *popvbox = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
+                gtk_container_add(GTK_CONTAINER(pop), popvbox);
+                GtkWidget * mn1 = gtk_button_new_with_label ("menu1");
+                gtk_box_pack_start(GTK_BOX(popvbox), mn1, TRUE, TRUE, 1);
+                GtkWidget * mn2 = gtk_button_new_with_label ("menu1");
+                gtk_box_pack_start(GTK_BOX(popvbox), mn2, TRUE, TRUE, 1);
         }
         
         
@@ -150,9 +157,11 @@ namespace apidb
                 gtk_window_set_resizable(GTK_WINDOW (window),FALSE);
                 gtk_container_add (GTK_CONTAINER (window), vboxMain);        
         }
+        
         Application* Application::app = NULL;
-       char* Application::filename = NULL;
-       octetos::apidb::ConfigureProject Application::config;
+        char* Application::filename = NULL;
+        octetos::apidb::ConfigureProject Application::config;
+        
         void Application::toolbar_chooseDirectory (GtkWidget *widget, gpointer   data)
         {
                 GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"_Cancel",GTK_RESPONSE_CANCEL,"_Open",GTK_RESPONSE_ACCEPT,NULL);   
@@ -195,6 +204,10 @@ namespace apidb
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), save, -1);
                 GtkToolItem *sep = gtk_separator_tool_item_new();
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), sep, -1); 
+                GtkToolItem *newTable = gtk_tool_button_new_from_stock(GTK_STOCK_NEW);
+                gtk_toolbar_insert(GTK_TOOLBAR(toolbar), newTable, -1);
+                GtkToolItem *sep2 = gtk_separator_tool_item_new();
+                gtk_toolbar_insert(GTK_TOOLBAR(toolbar), sep2, -1); 
                 GtkToolItem *exit = gtk_tool_button_new_from_stock(GTK_STOCK_CLOSE);
                 g_signal_connect(G_OBJECT(exit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), exit, -1);
@@ -317,6 +330,12 @@ namespace apidb
                 GtkWidget * lbDowns = gtk_label_new (strDowns);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxDowns,lbDowns);
                 downsTree =  new TreeView(boxDowns,config.downloads);
+                /*GtkWidget *testMenuButton = gtk_menu_button_new ();
+                gtk_container_add(GTK_CONTAINER(notebookMain), testMenuButton);
+                GtkWidget *testPopOver = gtk_popover_new (testMenuButton);
+                GtkWidget *testBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+                GtkWidget *testButton = gtk_button_new ();
+                gtk_box_pack_start(GTK_BOX(testBox), testButton, TRUE, TRUE, 5);*/
                 gchar* strSels = (gchar*)"Selecciones";
                 boxSelects = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 GtkWidget * lbSels = gtk_label_new (strSels);
