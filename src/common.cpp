@@ -279,9 +279,9 @@ namespace apidb
 		
 		Table::~Table()
 		{
-                        for (auto const& [key, symbol] : *this)
+                        for(std::map<const char*,Symbol*,cmp_str>::iterator it= begin();  it != end(); it++)
 			{
-				delete symbol;
+				delete it->second;
 			}	
 			clear();
 		}

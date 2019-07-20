@@ -28,8 +28,6 @@ namespace apidb
         void TreeView::fill()
         {         
                 treestore = gtk_tree_store_new(1,G_TYPE_STRING);
-                //gtk_tree_store_append(treestore, &toplevel, NULL);
-                //gtk_tree_store_set(treestore, &toplevel,0, "Tablas",-1);
                 for(std::vector<apidb::ConfigureProject::Table>::iterator it =list.begin(); it != list.end(); it++ )
                 {
                         gtk_tree_store_append(treestore, &toplevel, NULL);
@@ -39,6 +37,7 @@ namespace apidb
                                 std::string params = itF->second->listParams();
                                 std::string fnProto = itF->second->getName().c_str();
                                 fnProto += "(" + params + ")";
+                                //std::cout << fnProto << std::endl;
                                 gtk_tree_store_append(treestore, &funtion, &toplevel);
                                 gtk_tree_store_set(treestore, &funtion,0, fnProto.c_str(), -1);   
                         }
@@ -79,7 +78,6 @@ namespace apidb
                 GtkTreeSelection *selection; 
                 GtkWidget *vbox;
                 GtkWidget *statusbar;
-                //GtkWidget *view;
   
                 vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 gtk_container_add(GTK_CONTAINER(scrolled_window), vbox);
@@ -89,6 +87,8 @@ namespace apidb
 
                 statusbar = gtk_statusbar_new();
                 gtk_box_pack_start(GTK_BOX(vbox), statusbar, FALSE, TRUE, 1);
+                GtkWidget * buttonAdd = gtk_button_new_with_label ("Agregar");
+                gtk_box_pack_start(GTK_BOX(statusbar), buttonAdd, FALSE, TRUE, 1);
 
                 g_signal_connect(selection, "changed", G_CALLBACK(on_changed), statusbar);                
         }
@@ -155,7 +155,7 @@ namespace apidb
        octetos::apidb::ConfigureProject Application::config;
         void Application::toolbar_chooseDirectory (GtkWidget *widget, gpointer   data)
         {
-                GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OPEN,GTK_RESPONSE_ACCEPT,NULL);   
+                GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"_Cancel",GTK_RESPONSE_CANCEL,"_Open",GTK_RESPONSE_ACCEPT,NULL);   
                 if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
                 {
                         filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
@@ -195,7 +195,7 @@ namespace apidb
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), save, -1);
                 GtkToolItem *sep = gtk_separator_tool_item_new();
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), sep, -1); 
-                GtkToolItem *exit = gtk_tool_button_new_from_stock(GTK_STOCK_QUIT);
+                GtkToolItem *exit = gtk_tool_button_new_from_stock(GTK_STOCK_CLOSE);
                 g_signal_connect(G_OBJECT(exit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), exit, -1);
                 gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar),GTK_ICON_SIZE_LARGE_TOOLBAR);

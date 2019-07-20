@@ -273,7 +273,8 @@ namespace apidb
                 TAR *pTar;
                 std::string tarFilename= dirProy + ".tar";
                 tar_open(&pTar, (char*)tarFilename.c_str(), NULL, O_WRONLY | O_CREAT, 0644, TAR_IGNORE_MAGIC);
-                tar_append_tree(pTar, tmp_dirpath, "apidb");
+                std::string filenameProj = "apidb";
+                tar_append_tree(pTar, tmp_dirpath, (char*)filenameProj.c_str());
                 tar_append_eof(pTar);
                 tar_close(pTar);
                 //std::cout<< "Archivo comprimido" << std::endl;
