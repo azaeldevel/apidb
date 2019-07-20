@@ -806,53 +806,52 @@ namespace generators
         }
     }
 	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile)
-    {
-        ofile << "\t\tstatic std::vector<" << table.name << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where);"<<std::endl;
-        
-        std::vector<apidb::ConfigureProject::Table> tbs = configureProject.selects;
-        for( auto tb: tbs)//std::vector<Table>
         {
-            if(table.name.compare(tb.getName()) != 0) 
-            {
-                continue;//buscar la configuracion de la tabla correspondiente
-            }
-            for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
-            {
-                ofile << "\t\tstatic std::vector<" << table.name << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,";
+                ofile << "\t\tstatic std::vector<" << table.name << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where);"<<std::endl;
                 
-                const apidb::ConfigureProject::Parameters& params = val->getParameters();
+                for(std::vector<apidb::ConfigureProject::Table>::const_iterator it = configureProject.selects.begin(); it != configureProject.selects.end(); it++)
                 {
-                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
-                    itParamEnd--;
-                    for(const char* param : params)
-                    {
-                        auto fl = table.find(param);
-                        if(fl != table.end())
+                        if(table.name.compare(it->getName()) != 0) 
                         {
-                            if((*fl).second->outType.compare("std::string") == 0)
-                            {
-                                ofile << "const std::string& ";
-                            }
-                            else if((*fl).second->symbolReferenced != NULL)
-                            {
-                                ofile << "const " << (*fl).second->symbolReferenced->classParent->name << "& ";
-                            }
-                            else
-                            {
-                                ofile << (*fl).second->outType << " ";                            
-                            }
+                                continue;//buscar la configuracion de la tabla correspondiente
                         }
-                        ofile << param; 
-                        if(param != *itParamEnd)
+                        //for (auto const& [key, val] : *it)//class Table : public std::map<std::string,Function>
+                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = it->begin(); itT != it->end(); itT++)
                         {
-                            ofile << ",";
+                                ofile << "\t\tstatic std::vector<" << table.name << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,";
+                                
+                                const apidb::ConfigureProject::Parameters& params = itT->second->getParameters();
+                                {
+                                apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
+                                itParamEnd--;
+                                for(const char* param : params)
+                                {
+                                        auto fl = table.find(param);
+                                        if(fl != table.end())
+                                        {
+                                        if((*fl).second->outType.compare("std::string") == 0)
+                                        {
+                                                ofile << "const std::string& ";
+                                        }
+                                        else if((*fl).second->symbolReferenced != NULL)
+                                        {
+                                                ofile << "const " << (*fl).second->symbolReferenced->classParent->name << "& ";
+                                        }
+                                        else
+                                        {
+                                                ofile << (*fl).second->outType << " ";                            
+                                        }
+                                        }
+                                        ofile << param; 
+                                        if(param != *itParamEnd)
+                                        {
+                                        ofile << ",";
+                                        }
+                                }
+                                }
+                                ofile << ");"<<std::endl;                                
                         }
-                    }
                 }
-                ofile << ");"<<std::endl;
-                
-            }
-        }
     }
     /**
      * Genera las funciones insert solo con los datos marcados como requeridos en la DB.
@@ -934,56 +933,56 @@ namespace generators
 	void CPP::createClassMethodesH(const apidb::symbols::Table& table,std::ofstream& ofile)
         {
 		std::string insertMethode = "";
-                for (auto const& [key, attr] : table)
+                for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
                 {
 			//get
-			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
+			if((it->second->outType.compare("char") == 0) | (it->second->outType.compare("short") == 0) | (it->second->outType.compare("int") == 0) | (it->second->outType.compare("long") == 0) | (it->second->outType.compare("float") == 0) | (it->second->outType.compare("double") == 0))
 			{
-				if(attr->classReferenced == NULL)//si es foreing key
+				if(it->second->classReferenced == NULL)//si es foreing key
 				{
-					ofile <<"\t\t"<< attr->outType << " ";						
+					ofile <<"\t\t"<< it->second->outType << " ";						
 				}
 				else
 				{
-					ofile <<"\t\t"<< "const " << attr->classReferenced->name << "& ";
+					ofile <<"\t\t"<< "const " << it->second->classReferenced->name << "& ";
 				}
 			}
 			else
 			{
-				ofile <<"\t\t" << "const " << attr->outType <<"& ";
+				ofile <<"\t\t" << "const " << it->second->outType <<"& ";
 			}		
-			ofile << attr->get << " const;"<< std::endl;
+			ofile << it->second->get << " const;"<< std::endl;
 			
                         
                         //get key
-                         if(attr->isPrimaryKey() && !attr->isForeignKey())
+                         if(it->second->isPrimaryKey() && !it->second->isForeignKey())
                         {
-                                ofile <<"\t\t"<< attr->outType << " getKey" << attr->upperName << "() const;"<< std::endl;
+                                ofile <<"\t\t"<< it->second->outType << " getKey" << it->second->upperName << "() const;"<< std::endl;
                         }
-                        else if(attr->isForeignKey())
+                        else if(it->second->isForeignKey())
                         {
-                                ofile <<"\t\t"<< attr->outType << " getKey" << attr->upperName << "() const;"<< std::endl;
+                                ofile <<"\t\t"<< it->second->outType << " getKey" << it->second->upperName << "() const;"<< std::endl;
                         }
 			
 			//getString()			
-			ofile << "\t\tstd::string get" << attr->upperName << "String() const;"<< std::endl;		
+			ofile << "\t\tstd::string get" << it->second->upperName << "String() const;"<< std::endl;		
 			//update
-			ofile << "\t\tbool " << "update" << attr->upperName << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
-			if(attr->classReferenced != 0)
+			ofile << "\t\tbool " << "update" << it->second->upperName << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
+			if(it->second->classReferenced != 0)
                         {
-                                ofile << " const " << attr->classReferenced->name << "& " << attr->name;
+                                ofile << " const " << it->second->classReferenced->name << "& " << it->second->name;
                         }
-                        else if((attr->outType.compare("std::string") == 0))
+                        else if((it->second->outType.compare("std::string") == 0))
                         {
-                                ofile << "const std::string& " << attr->name;
+                                ofile << "const std::string& " << it->second->name;
                         }
-                        else if((attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0))
+                        else if((it->second->outType.compare("int") == 0) | (it->second->outType.compare("long") == 0))
 			{
-				ofile << attr->outType << " " << attr->name;						
+				ofile << it->second->outType << " " << it->second->name;						
 			}
 			else
 			{
-				ofile << attr->outType << " " << attr->name;
+				ofile << it->second->outType << " " << it->second->name;
 			}
 			ofile << ");"<< std::endl;            
                 }  
@@ -997,19 +996,18 @@ namespace generators
     }
     void CPP::createClassAttributesH(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
-        for (auto const& [key, attr] : table)
-        {
-			//ofile <<"["<<attr->outType<<"]"<<std::endl;
-            if(attr->classReferenced != NULL && (attr->outType.compare("int") == 0 || attr->outType.compare("std::string") == 0))
-            {
-                ofile << "\t\t" << attr->classReferenced->name << "* "<< attr->name<<";"<< std::endl;
-            }
-            else
-            {
-                //ofile <<"[3]"<<std::endl;
-                ofile << "\t\t" << attr->outType << " " << attr->name <<";"<< std::endl;
-            }
-        }
+                for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
+                {
+                        if(it->second->classReferenced != NULL && (it->second->outType.compare("int") == 0 || it->second->outType.compare("std::string") == 0))
+                        {
+                                ofile << "\t\t" << it->second->classReferenced->name << "* "<< it->second->name<<";"<< std::endl;
+                        }
+                        else
+                        {
+                                //ofile <<"[3]"<<std::endl;
+                                ofile << "\t\t" << it->second->outType << " " << it->second->name <<";"<< std::endl;
+                        }
+                }
     }
     void CPP::createClassPublicH(std::ofstream& file)
     {
@@ -1056,52 +1054,49 @@ namespace generators
 			file <<"{" <<std::endl;
 		}
                 std::map<const char*,symbols::Tables*,symbols::cmp_str> spacies = analyzer.getListTable();
-		for(auto const& [keySpace, AttSpace]  : spacies)
+		//for(auto const& [keySpace, AttSpace]  : spacies)
+                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
-                        if(strcmp(keySpace,"") != 0)
+                        if(strcmp(it->first,"") != 0)
                         {
-                                short level = symbols::getSpaceLevel(keySpace);
+                                short level = symbols::getSpaceLevel(it->first);
                                 for(short i = 1; i < level ; i++) file << "\t";
-                                file << "\tnamespace " << AttSpace->name  << std::endl;
+                                file << "\tnamespace " << it->second->name  << std::endl;
                                 for(short i = 1; i < level ; i++) file << "\t";
                                 file << "\t{" << std::endl;
                         }
-                        for(auto table: *AttSpace) //reading attrubtes by table
+                        //for(auto table: *(it->second)) //reading attrubtes by table
+                        for(std::list<symbols::Table*>::iterator itT = it->second->begin(); itT != it->second->end(); itT++)
                         {
-                                /*if(strcmp(keySpace,"") != 0)
-                                {
-                                        short level = symbols::getSpaceLevel(keySpace);
-                                        for(short i = 0; i < level ; i++) file << "\t";
-                                }*/
-                                file << "\tclass " << table->name << ";"<<std::endl;
+                                file << "\tclass " << (*itT)->name << ";"<<std::endl;
                         }
-                        if(strcmp(keySpace,"") != 0)
+                        if(strcmp(it->first,"") != 0)
                         {
-                                short level = symbols::getSpaceLevel(keySpace);
+                                short level = symbols::getSpaceLevel(it->first);
                                 for(short i =1; i < level ; i++) file << "\t";
                                 file << "\t}" << std::endl;
                         }
                 }
 		file<<std::endl;
                 
-                for(auto const& [keySpace, AttSpace]  : spacies)
+                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
-                        if(strcmp(keySpace,"") != 0)
+                        if(strcmp(it->first,"") != 0)
                         {
-                                short level = symbols::getSpaceLevel(keySpace);
+                                short level = symbols::getSpaceLevel(it->first);
                                 for(short i =0; i < level ; i++) file << "\t";
-                                file << "\tnamespace " << AttSpace->name  << std::endl;
+                                file << "\tnamespace " << it->second->name  << std::endl;
                                 for(short i =0; i < level ; i++) file << "\t";
                                 file << "\t{" << std::endl;
                         }
-                        for(auto table: *AttSpace) //reading attrubtes by table
+                        for(std::list< symbols::Table*>::iterator itT = it->second->begin(); itT != it->second->end(); itT++)
                         {
                                 //file <<"Declare Table " << table->name << std::endl;
-                                createClassH(*table,file,table->name);       
+                                createClassH(**itT,file,(*itT)->name);       
                         }
-                        if(strcmp(keySpace,"") != 0)
+                        if(strcmp(it->first,"") != 0)
                         {
-                                short level =symbols::getSpaceLevel(keySpace);
+                                short level =symbols::getSpaceLevel(it->first);
                                 for(short i =0; i < level ; i++) file << "\t";
                                 file << "\t}" << std::endl;
                         }
