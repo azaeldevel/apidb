@@ -552,108 +552,107 @@ namespace generators
 	}
 	void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
-                for (auto const& [key, attr] : table) //para cada atributo se crean las funciones de operacion get, set y update
+                
+                //for (auto const& [key, attr] : table) //para cada atributo se crean las funciones de operacion get, set y update
+                for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
                 {
                         //gets
-			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
+			if((it->second->outType.compare("char") == 0) | (it->second->outType.compare("short") == 0) | (it->second->outType.compare("int") == 0) | (it->second->outType.compare("long") == 0) | (it->second->outType.compare("float") == 0) | (it->second->outType.compare("double") == 0))
 			{
-				if(attr->classReferenced == NULL)//si es foreing key
+				if(it->second->classReferenced == NULL)//si es foreing key
 				{
-					ofile <<"\t"<< attr->outType << " ";						
+					ofile <<"\t"<< it->second->outType << " ";						
 				}
 				else
 				{
-					ofile <<"\t"<< "const " << attr->classReferenced->name << "& ";
+					ofile <<"\t"<< "const " << it->second->classReferenced->name << "& ";
 				}
 			}
 			else
 			{
-				ofile <<"\t" << "const " << attr->outType <<"& ";
+				ofile <<"\t" << "const " << it->second->outType <<"& ";
 			}
 				
-			ofile << table.name <<"::" << attr->get << " const"<< std::endl;
+			ofile << table.name <<"::" << it->second->get << " const"<< std::endl;
 			ofile << "\t{"<<std::endl;	
-			if((attr->outType.compare("char") == 0) | (attr->outType.compare("short") == 0) | (attr->outType.compare("int") == 0) | (attr->outType.compare("long") == 0) | (attr->outType.compare("float") == 0) | (attr->outType.compare("double") == 0))
+			if((it->second->outType.compare("char") == 0) | (it->second->outType.compare("short") == 0) | (it->second->outType.compare("int") == 0) | (it->second->outType.compare("long") == 0) | (it->second->outType.compare("float") == 0) | (it->second->outType.compare("double") == 0))
 			{
-				if(attr->classReferenced == NULL)//si es foreing key
+				if(it->second->classReferenced == NULL)//si es foreing key
 				{
-					ofile <<"\t\treturn "<< attr->name<<";"<< std::endl;						
+					ofile <<"\t\treturn "<< it->second->name<<";"<< std::endl;						
 				}
 				else
 				{
-					ofile <<"\t\treturn *"<< attr->name <<";"<< std::endl;
+					ofile <<"\t\treturn *"<< it->second->name <<";"<< std::endl;
 				}						
 			}
 			else
 			{
-				ofile <<"\t\treturn " << attr->name <<";"<< std::endl;
+				ofile <<"\t\treturn " << it->second->name <<";"<< std::endl;
 			}								
 			ofile << "\t}"<<std::endl;
 			
-                        
-                        
-                        
                         //gets foreing key                        
-                         if(attr->isPrimaryKey() && !attr->isForeignKey())
+                         if(it->second->isPrimaryKey() && !it->second->isForeignKey())
                         {
-                                ofile <<"\t"<< attr->outType << " " << table.name << "::getKey" << attr->upperName << "() const"<< std::endl;
+                                ofile <<"\t"<< it->second->outType << " " << table.name << "::getKey" << it->second->upperName << "() const"<< std::endl;
                                 ofile <<"\t{"<< std::endl;
-                                if(attr->outType.compare("int") == 0)
+                                if(it->second->outType.compare("int") == 0)
                                 {
-                                        ofile <<"\t\t" << "return " << attr->name << ";" << std::endl;
+                                        ofile <<"\t\t" << "return " << it->second->name << ";" << std::endl;
                                 }
                                 ofile <<"\t}"<< std::endl;
                         }
-                        else if(attr->isForeignKey())
+                        else if(it->second->isForeignKey())
                         {
-                                ofile <<"\t"<< attr->outType << " " << table.name << "::getKey" << attr->upperName << "() const"<< std::endl;
+                                ofile <<"\t"<< it->second->outType << " " << table.name << "::getKey" << it->second->upperName << "() const"<< std::endl;
                                 ofile <<"\t{"<< std::endl;
-                                if(attr->outType.compare("int") == 0)
+                                if(it->second->outType.compare("int") == 0)
                                 {
-                                        ofile <<"\t\t" << "return " << attr->name << "->getKey" << attr->symbolReferenced->upperName << "();" << std::endl;
+                                        ofile <<"\t\t" << "return " << it->second->name << "->getKey" << it->second->symbolReferenced->upperName << "();" << std::endl;
                                 }
                                 ofile <<"\t}"<< std::endl;
                         }
                         
 			
 			//getString()		
-			ofile << "\tstd::string "<< table.name <<"::get" << attr->upperName << "String() const "<< std::endl;
+			ofile << "\tstd::string "<< table.name <<"::get" << it->second->upperName << "String() const "<< std::endl;
 			ofile << "\t{"<< std::endl;
                         
                         ofile << "\t\treturn ";
             
-                        if(attr->classReferenced != NULL)
+                        if(it->second->classReferenced != NULL)
                         {
-                                ofile <<"get" << attr->upperName << "String();";   
+                                ofile <<"get" << it->second->upperName << "String();";   
                         }
                         else
                         {
-                                if(attr->outType.compare("std::string") == 0 || attr->outType.compare("const char*") == 0)
+                                if(it->second->outType.compare("std::string") == 0 || it->second->outType.compare("const char*") == 0)
                                 {
-                                        ofile << attr->name << ";";                    
+                                        ofile << it->second->name << ";";                    
                                 }
                                 else
                                 {
-                                        ofile <<"std::to_string(" << attr->name << ");";
+                                        ofile <<"std::to_string(" << it->second->name << ");";
                                 }
                         }
                         ofile << std::endl;			
 			ofile << "\t}"<< std::endl;
             
 			//updates
-                        if((*attr).isPrimaryKey()) goto postUpdatePosition; //si es una llave primary no se puede modificar
-			ofile << "\tbool " << table.name <<"::update" << attr->upperName << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
-			if((attr->outType.compare("std::string") == 0 || attr->outType.compare("int") == 0) && attr->classReferenced != NULL)
+                        if((*it->second).isPrimaryKey()) goto postUpdatePosition; //si es una llave primary no se puede modificar
+			ofile << "\tbool " << table.name <<"::update" << it->second->upperName << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
+			if((it->second->outType.compare("std::string") == 0 || it->second->outType.compare("int") == 0) && it->second->classReferenced != NULL)
                         {
-                                ofile << "const " << attr->classReferenced->name << "& " << attr->name;
+                                ofile << "const " << it->second->classReferenced->name << "& " << it->second->name;
                         }
-                        else if(attr->outType.compare("std::string") == 0)
+                        else if(it->second->outType.compare("std::string") == 0)
                         {
-                                ofile << "const " << attr->outType << "& " << attr->name;
+                                ofile << "const " << it->second->outType << "& " << it->second->name;
                         }
                         else
                         {
-                                ofile << attr->outType << " " << attr->name;
+                                ofile << it->second->outType << " " << it->second->name;
                         }
 			ofile <<")"<< std::endl;
 			ofile << "\t{"<<std::endl;
@@ -661,26 +660,26 @@ namespace generators
 			ofile << "\t\tsqlString = \"UPDATE \" + TABLE_NAME;"<<std::endl;
 			ofile << "\t\tsqlString = sqlString + \" SET " ;
             
-                        ofile << attr->name << " = " ;
-                         if( attr->outType.compare("int") == 0 && attr->symbolReferenced != NULL)
+                        ofile << it->second->name << " = " ;
+                         if( it->second->outType.compare("int") == 0 && it->second->symbolReferenced != NULL)
                          {
-                                ofile << "'\" +  std::to_string(" << attr->name  << ".getKey" << attr->symbolReferenced->upperName << "())+ \"'\";" << std::endl;                                    
+                                ofile << "'\" +  std::to_string(" << it->second->name  << ".getKey" << it->second->symbolReferenced->upperName << "())+ \"'\";" << std::endl;                                    
                          }
-                        else if( attr->outType.compare("int") == 0 && attr->symbolReferenced == NULL)
+                        else if( it->second->outType.compare("int") == 0 && it->second->symbolReferenced == NULL)
                         {
-                                ofile << "'\" +  std::to_string(" << attr->name  << ")+ \"'\";" << std::endl;                            
+                                ofile << "'\" +  std::to_string(" << it->second->name  << ")+ \"'\";" << std::endl;                            
                         }
-                        else if(attr->outType.compare("std::string") == 0 && attr->symbolReferenced != NULL)
+                        else if(it->second->outType.compare("std::string") == 0 && it->second->symbolReferenced != NULL)
                         {
-                                ofile << "'\" + " << attr->name << " + \"'\";" << std::endl;
+                                ofile << "'\" + " << it->second->name << " + \"'\";" << std::endl;
                         }
-                        else if(attr->outType.compare("std::string") == 0  && attr->symbolReferenced == NULL)
+                        else if(it->second->outType.compare("std::string") == 0  && it->second->symbolReferenced == NULL)
                         {
-                                ofile << "'\" + " << attr->name << " + \"'\";" << std::endl;
+                                ofile << "'\" + " << it->second->name << " + \"'\";" << std::endl;
                         }
                         else
                         {
-                                ofile << "\" + std::to_string(" << attr->name << ");" << std::endl;
+                                ofile << "\" + std::to_string(" << it->second->name << ");" << std::endl;
                         }
 			
 			ofile << "\t\tsqlString = sqlString + \" WHERE \" ";
