@@ -27,14 +27,20 @@ namespace apidb
         
         void TreeView::fill()
         {         
-                treestore = gtk_tree_store_new(1,G_TYPE_STRING);                   
+                treestore = gtk_tree_store_new(1,G_TYPE_STRING);
+                //gtk_tree_store_append(treestore, &toplevel, NULL);
+                //gtk_tree_store_set(treestore, &toplevel,0, "Tablas",-1);
                 for(std::vector<apidb::ConfigureProject::Table>::iterator it =list.begin(); it != list.end(); it++ )
                 {
-                       gtk_tree_store_append(treestore, &toplevel, NULL);
-                        gtk_tree_store_set(treestore, &toplevel,0, it->getName().c_str(),-1);       
+                        gtk_tree_store_append(treestore, &toplevel, NULL);
+                        gtk_tree_store_set(treestore, &toplevel,0, it->getName().c_str(), -1);   
                         for(std::map<const char*, const apidb::ConfigureProject::Function*>::iterator itF = (*it).begin(); itF !=  (*it).end(); itF++)
                         {
-                                //std::cout << "In View Funtion : " << (*itF).second->getName() << std::endl;
+                                std::string params = itF->second->listParams();
+                                std::string fnProto = itF->second->getName().c_str();
+                                fnProto += "(" + params + ")";
+                                gtk_tree_store_append(treestore, &funtion, &toplevel);
+                                gtk_tree_store_set(treestore, &funtion,0, fnProto.c_str(), -1);   
                         }
                 }
                 

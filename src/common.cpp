@@ -54,6 +54,24 @@ namespace apidb
         
     }
     
+        std::string ConfigureProject::Function::listParams()const
+        {
+                std::string str;
+                for(std::vector<const char*>::const_iterator it = header->begin(); it != header->end(); it ++)
+                {
+                        if(it == header->begin()) 
+                        {
+                                str = (*it);
+                        }
+                        else 
+                        {
+                                str += ",";
+                                str += (*it);
+                        }                        
+                }
+                
+                return str;
+        }
         ConfigureProject::Parameters::~Parameters()
         {
                 for(auto str : *this)

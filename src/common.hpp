@@ -232,6 +232,7 @@ namespace apidb
                         void setHeader(const Parameters*);
                         void setBody(const std::string&);
                         const Parameters& getParameters() const;
+                        std::string listParams()const;
                 
                 private:
                         std::string name;

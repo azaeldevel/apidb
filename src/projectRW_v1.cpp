@@ -572,7 +572,7 @@ namespace apidb
         
         for(int i = 0; i < 2; i++)
         {
-                std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
+                //std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
                 //std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
                 std::string node = (const char*)xmlTextReaderConstName(reader);
                 int counTbs = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs"));
@@ -580,7 +580,7 @@ namespace apidb
                 {
                         xmlTextReaderRead(reader);
                         xmlTextReaderRead(reader);        
-                        std::cout << "\tTable  : " <<(const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
+                        //std::cout << "\tTable  : " <<(const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
                         Table* ptb = new Table((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name"));
                         int counFuns = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countFuns"));
                         xmlTextReaderRead(reader);
@@ -613,12 +613,12 @@ namespace apidb
                         }    
                         if(node.compare("downloads") == 0)
                         {
-                                std::cout << "\tAdded " << ptb->getName() << std::endl;
+                                //std::cout << "\tAdded " << ptb->getName() << std::endl;
                                 downloads.push_back(*ptb);
                         }
                         else if(node.compare("selects") == 0)
                         {
-                                std::cout << "\tAdded " << ptb->getName() << std::endl;
+                                //std::cout << "\tAdded " << ptb->getName() << std::endl;
                                 selects.push_back(*ptb);
                         }
                         delete ptb;
