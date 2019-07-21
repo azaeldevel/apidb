@@ -33,8 +33,8 @@ namespace apidb
 	public:
 		OutputLenguajes getOutputLenguaje() const;
 		virtual bool analyze(bool log);
-		virtual bool generate();
-		bool driving();
+		virtual bool generate(bool log);
+		bool driving(bool log);
                 Driver(const ConfigureProject&);
 		const Analyzer& getAnalyzer() const;
                 ~Driver();

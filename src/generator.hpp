@@ -30,7 +30,7 @@ namespace octetos
 		class Generator
 		{
 		public:			
-			virtual bool generate() = 0;
+			virtual bool generate(bool log) = 0;
 			OutputLenguajes getOutputLenguaje() const;
 			std::string getOutputLenguajeString()const;
 			PackingLenguajes getPackingLenguaje() const;
@@ -46,7 +46,7 @@ namespace octetos
 		class CPP : public Generator
 		{
 		public:
-			virtual bool generate();
+			virtual bool generate(bool log);
 			CPP(apidb::Analyzer&,const ConfigureProject&);
 			const std::string& getHeaderName() const;
 			std::ofstream& getSourceOutput();
@@ -54,8 +54,8 @@ namespace octetos
 			virtual ~CPP();
 			
 		private:
-			void createSpaceH(std::ofstream& file);
-			void createClassH(const apidb::symbols::Table&,std::ofstream&,const std::string&);
+			void createSpaceH(std::ofstream& file,bool log);
+			void createClassH(const apidb::symbols::Table&,std::ofstream&,const std::string&,bool log);
 			void createClassPrivateH(std::ofstream&);
 			void createClassAttributesH(const apidb::symbols::Table&,std::ofstream&);
 			void createClassPublicH(std::ofstream&);
@@ -93,7 +93,7 @@ namespace octetos
 		class CMake : public Generator
 		{
 		public:			
-			virtual bool generate();
+			virtual bool generate(bool log);
 			virtual ~CMake();
 			CMake(apidb::Analyzer&,const ConfigureProject&);
 			

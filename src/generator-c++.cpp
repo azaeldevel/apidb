@@ -1016,10 +1016,10 @@ namespace generators
     {
         file << "\tprivate:" <<std::endl;
     }
-    void CPP::createClassH(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
+    void CPP::createClassH(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass,bool log)
     {
 		//file <<"keyword"<<std::endl;
-		analyzer.getOutputMessage() <<"\tHeading class " << cl.name<<std::endl;
+		if(log)analyzer.getOutputMessage() <<"\tHeading class " << cl.name<<std::endl;
                 short level = symbols::getSpaceLevel(cl.fullname);
                 for(short i =0; i < level ; i++) file << "\t";
                 file <<"\tclass "<<nameClass<<std::endl;  
@@ -1037,7 +1037,7 @@ namespace generators
                 for(short i =0; i < level ; i++) file << "\t";
                 file <<"\t};"<<std::endl;
     }
-    void CPP::createSpaceH(std::ofstream& file)
+    void CPP::createSpaceH(std::ofstream& file,bool log)
     {
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
@@ -1090,7 +1090,7 @@ namespace generators
                         for(std::list< symbols::Table*>::iterator itT = it->second->begin(); itT != it->second->end(); itT++)
                         {
                                 //file <<"Declare Table " << table->name << std::endl;
-                                createClassH(**itT,file,(*itT)->name);       
+                                createClassH(**itT,file,(*itT)->name,log);       
                         }
                         if(strcmp(it->first,"") != 0)
                         {

@@ -59,9 +59,13 @@ int main(int argc, char *argv[])
 		std::cout<<"Cargando '" << file << "' ..." <<std::endl;
 		octetos::apidb::ConfigureProject config;
                 config.directory = dir;
-                config.readConfig(file);
+                if(config.readConfig(file))
+                {
+			std::cerr<<"Fallo la lectura del archivo."<<std::endl;
+			return EXIT_FAILURE;                        
+                }
         	octetos::apidb::Driver driver(config);
-		if(!driver.driving())
+		if(!driver.driving(true))
 		{
 			std::cerr<<"Fallo la generacion."<<std::endl;
 			return EXIT_FAILURE;

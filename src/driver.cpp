@@ -72,7 +72,7 @@ namespace apidb
 		return generator->getOutputLenguaje();
 	}
 	
-	bool Driver::driving()
+	bool Driver::driving(bool log)
 	{
 		if(connector == NULL) 
                 {
@@ -80,9 +80,9 @@ namespace apidb
                         return false;
                 }
 
-		if(analyze(true))
+		if(analyze(log))
 		{
-			if(generate())
+			if(generate(log))
                         {                
                                 return true;
                         }
@@ -99,7 +99,7 @@ namespace apidb
 		return false;
 	}
 	
-	bool Driver::generate()
+	bool Driver::generate(bool log)
 	{				
 		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
 		{
@@ -124,17 +124,17 @@ namespace apidb
 			//std::cout<<"apidb::generators::CPP cpp(*analyzer);..."<<std::endl;
 			apidb::generators::CPP cpp(*analyzer,configureProject);
 			generator = &cpp;
-			flagCPP = cpp.generate();
+			flagCPP = cpp.generate(log);
 			
 			//std::cout<<"apidb::generators::CMake cmake(*analyzer);..."<<std::endl;
                         
 			apidb::generators::CMake cmake(*analyzer,configureProject);			
-			flagCMAKE = cmake.generate();
+			flagCMAKE = cmake.generate(log);
 			
 			///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
 			if(flagCPP && flagCMAKE)
 			{
-				analyzer->getOutputMessage() << "Generacion completada." <<std::endl;				
+				if(log)analyzer->getOutputMessage() << "Generacion completada." <<std::endl;				
 				return true;				
 			}
 			else

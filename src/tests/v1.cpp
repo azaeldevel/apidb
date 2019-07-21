@@ -9,7 +9,8 @@
 //static std::string  rootDir;
 
 /* Pointer to the file used by the tests. */
-static FILE* temp_file = NULL;
+//static FILE* temp_file = NULL;
+static const char* filenameAPIDB = "apidb/apidb";
 
 /* The suite initialization function.
  * Opens the temporary file used by the tests.
@@ -30,10 +31,9 @@ int clean_toolkit_common(void)
 }
 
 
-void testReadConfigFile()
-{
-        const char* filenameAPIDB = "apidb/apidb";
-        
+
+void testGeneration()
+{        
         FILE *file = fopen(filenameAPIDB, "r");
         if (file != NULL)
         {
@@ -41,11 +41,21 @@ void testReadConfigFile()
         }
         else
         {
-                CU_ASSERT(false);
+                CU_ASSERT(false);                
         }
     
         octetos::apidb::ConfigureProject config;        
-        CU_ASSERT(config.readConfig(filenameAPIDB));        
+        CU_ASSERT(config.readConfig(filenameAPIDB));  
+        config.directory = "doc/test/ret/";
+        octetos::apidb::Driver driver(config);
+        if(!driver.driving(false))
+        {
+                CU_ASSERT(false);
+        }
+        else
+        {
+                CU_ASSERT(true);
+        }
 }
 
 /*void testRQ0001001()
@@ -82,7 +92,7 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
-	if ((NULL == CU_add_test(pSuite, "Verificando la lectura de configuracion.", testReadConfigFile)))
+	if ((NULL == CU_add_test(pSuite, "Verificando la lectura de configuracion y generacion de proyecto.\n", testGeneration)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();

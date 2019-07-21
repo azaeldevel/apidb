@@ -54,7 +54,7 @@ namespace generators
 		
 	}
 	
-	bool CMake::generate()
+	bool CMake::generate(bool log)
 	{
 		std::string namefile = "CMakeLists.txt";
 		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
@@ -67,8 +67,8 @@ namespace generators
 		}
 			
 		//CMakeLists.txt
-		analyzer.getOutputMessage() << "Generando archivos de gestor de projecto... " << std::endl;
-		analyzer.getOutputMessage() << "\tTipo de Gestor: " << getPackingLenguajeString() << std::endl;
+		if(log)analyzer.getOutputMessage() << "Generando archivos de gestor de projecto... " << std::endl;
+		if(log)analyzer.getOutputMessage() << "\tTipo de Gestor: " << getPackingLenguajeString() << std::endl;
 		
 		cmakelists<<"CMAKE_MINIMUM_REQUIRED(VERSION ";
 		cmakelists<<"3";
@@ -130,7 +130,7 @@ namespace generators
                 cmakelists << configureProject.name <<".cpp )"<<std::endl;
 		cmakelists<<"TARGET_LINK_LIBRARIES("<< configureProject.name <<" ${MYSQL_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_LIBRARIES}  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} )"<<std::endl;
 		cmakelists.close();
-		analyzer.getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
+		if(log)analyzer.getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
 		
 		//std::cout<<"Creating cmake.modules..."<<std::endl;
 		//cmake.modules
@@ -447,10 +447,10 @@ namespace generators
 			writeResults[1].open(d.getDirectoryProject() + "/" + projectCPP);
 		}
 	}    
-	bool CPP::generate()
+	bool CPP::generate(bool log)
 	{
-		analyzer.getOutputMessage() << "Generando archivos de codigo fuente... " << std::endl;
-		analyzer.getOutputMessage() << "\tLenguaje resultado: " << getOutputLenguajeString() << std::endl;
+		if(log)analyzer.getOutputMessage() << "Generando archivos de codigo fuente... " << std::endl;
+		if(log)analyzer.getOutputMessage() << "\tLenguaje resultado: " << getOutputLenguajeString() << std::endl;
 		//includes in header file
 		std::string headers = "";
 		getHeaderOutput()<< "#include <string>" <<std::endl;
@@ -461,7 +461,7 @@ namespace generators
 		getHeaderOutput()<< "#include <clientdb-mysql.hpp>"<<std::endl<<std::endl;
 			
 		//writing code				
-		createSpaceH(getHeaderOutput());  
+		createSpaceH(getHeaderOutput(),log);  
 		createSpaceCPP(getSourceOutput()); 
           
         return true;    

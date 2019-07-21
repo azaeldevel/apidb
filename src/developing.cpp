@@ -67,7 +67,7 @@ int main()
         config.selects.push_back(tbUsers);
     
         octetos::apidb::Driver driver(config);	
-	if(!driver.driving())
+	if(!driver.driving(true))
 	{
 		std::cerr<<mysqlSource.toString()<<" - es incorrecta."<<std::endl;
                 return EXIT_FAILURE;
