@@ -31,6 +31,10 @@ namespace octetos
 {
 namespace apidb
 {
+        Driver::~Driver()
+        {
+                
+        }
         const Analyzer&  Driver::getAnalyzer() const
         {
                 return *analyzer;

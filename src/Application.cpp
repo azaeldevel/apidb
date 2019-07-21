@@ -1,12 +1,162 @@
 #include "Application.hpp"
-#include "driver.hpp"
 
+#include "apidb.hpp"
 
 
 namespace octetos
 {
 namespace apidb
-{        
+{      
+        void Application::on_newtable(GtkWidget *widget, gpointer data) 
+        {
+                if(strcmp(selectedTab, Application::titleDowns) == 0 && flagVisible && driver != NULL)
+                {    
+                        selectedTab = Application::titleDowns;
+                        CaptureTable cap(driver,app->window);
+                        cap.show();
+                        if(cap.getSelectTable() != NULL)
+                        {
+                                ConfigureProject::Table tb(cap.getSelectTable());
+                                config.downloads.push_back(tb);
+                                app->downsTree->fill();
+                        }
+                }
+                else if(strcmp(selectedTab, Application::titleSelects) == 0 && flagVisible && driver != NULL)
+                {
+                        CaptureTable cap(driver,app->window);
+                        cap.show();
+                        //std::cout << "\tTable " << cap.getSelectTable() << std::endl; 
+                        if(cap.getSelectTable() != NULL)
+                        {
+                                ConfigureProject::Table tb(cap.getSelectTable());
+                                config.selects.push_back(tb);
+                                app->selectsTree->fill();
+                        }
+                }            
+        }
+        const char* CaptureParameter::getSelectTable() const
+        {
+                return table;
+        }
+        void CaptureParameter::show()
+        {
+                gtk_widget_show_all(dialog);
+                gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+                if(response == GTK_RESPONSE_OK)
+                        table = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT(cmbAddTable));
+                else
+                        table = NULL;
+                gtk_widget_destroy(dialog);
+        }
+        CaptureParameter::CaptureParameter(const Driver* d,GtkWidget* widget) : driver(d)
+        {
+                dialog = gtk_dialog_new_with_buttons ("Captura de Tabla.", NULL, GTK_DIALOG_MODAL,  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);                
+                //g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_response),widget);
+                content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+                label = gtk_label_new ("Seleccione la tabla para Agregar");
+                gtk_container_add (GTK_CONTAINER (content_area), label);
+                cmbAddTable = gtk_combo_box_text_new ();
+                //gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
+                if(driver != NULL)
+                {
+                        /*std::map<const char*,symbols::Tables*,symbols::cmp_str> lst = driver->getAnalyzer().copyListTable();
+                        Table* table = lst.find();
+                        int i = 1;
+                        for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = lst.begin(); it != lst.end(); it++)
+                        {
+                                for(std::list<symbols::Table*>::iterator itJ = (*it).second->begin(); itJ != (*it).second->end(); itJ++)
+                                {
+                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*itJ)->fullname.c_str(),(*itJ)->fullname.c_str());        
+                                        i++;
+                                }
+                        }*/
+                }
+                gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
+                gtk_container_add (GTK_CONTAINER (content_area), cmbAddTable);
+        }  
+        void show_about(GtkWidget *widget, gpointer data) 
+        {
+                //GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("battery.png", NULL);
+                GtkWidget *dialog = gtk_about_dialog_new();
+                gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), getPakageName().c_str());
+                gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), getPakageVersion().toString().c_str()); 
+                //gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),"(c) Octetos");
+                //char  authors[1][30] = {"Azael Reyes"};
+                //gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG(dialog),(const gchar**)authors);
+                gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), "Hace sencillo crear una API para conectar a tu Base de Datos.");
+                gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/azaeldevel/apidb");
+                //gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), pixbuf);
+                //g_object_unref(pixbuf), pixbuf = NULL;
+                gtk_dialog_run(GTK_DIALOG (dialog));
+                gtk_widget_destroy(dialog);
+        }
+
+        const char* CaptureTable::getSelectTable() const
+        {
+                return table;
+        }
+        void CaptureTable::show()
+        {
+                gtk_widget_show_all(dialog);
+                gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+                if(response == GTK_RESPONSE_OK)
+                        table = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT(cmbAddTable));
+                else
+                        table = NULL;
+                gtk_widget_destroy(dialog);
+        }
+        CaptureTable::CaptureTable(const Driver* d,GtkWidget* widget) : driver(d)
+        {
+                dialog = gtk_dialog_new_with_buttons ("Captura de Tabla.", NULL, GTK_DIALOG_MODAL,  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);                
+                //g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_response),widget);
+                content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+                label = gtk_label_new ("Seleccione la tabla para Agregar");
+                gtk_container_add (GTK_CONTAINER (content_area), label);
+                cmbAddTable = gtk_combo_box_text_new ();
+                //gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
+                if(driver != NULL)
+                {
+                        std::map<const char*,symbols::Tables*,symbols::cmp_str> lst = driver->getAnalyzer().copyListTable();
+                        int i = 1;
+                        for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = lst.begin(); it != lst.end(); it++)
+                        {
+                                for(std::list<symbols::Table*>::iterator itJ = (*it).second->begin(); itJ != (*it).second->end(); itJ++)
+                                {
+                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*itJ)->fullname.c_str(),(*itJ)->fullname.c_str());        
+                                        i++;
+                                }
+                        }
+                }
+                gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
+                gtk_container_add (GTK_CONTAINER (content_area), cmbAddTable);
+        }
+        
+         const char*  Application::titleInfo = "Información";
+         const char*  Application::titleConex = "Conexión";
+         const char*  Application::titleDowns = "Descargas";
+         const char*  Application::titleSelects = "Selecciones";
+         bool Application::flagVisible = false;
+         Driver* Application::driver = NULL;
+         const char*  Application::selectedTab = NULL;
+        
+        void Application::active_tab (GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
+        {
+                if(strcmp(gtk_notebook_get_tab_label_text(notebook,page), Application::titleDowns) == 0 && flagVisible && driver != NULL)
+                {
+                        //std::cout << "Active " << gtk_notebook_get_tab_label_text(notebook,page) << std::endl;    
+                        selectedTab = Application::titleDowns;
+                }
+                else if(strcmp(gtk_notebook_get_tab_label_text(notebook,page), Application::titleSelects) == 0 && flagVisible && driver != NULL)
+                {
+                        //std::cout << "Active " << gtk_notebook_get_tab_label_text(notebook,page) << std::endl;           
+                        selectedTab = Application::titleSelects;
+                }
+                else
+                {
+                        selectedTab = NULL;
+                }
+        }
+        
         void on_changed(GtkWidget *widget, gpointer statusbar)
         {        
                 GtkTreeIter iter;
@@ -60,10 +210,6 @@ namespace apidb
                 gtk_tree_view_column_pack_start(col, renderer, TRUE);
                 gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
                                 
-                add = gtk_cell_renderer_combo_new ();
-                gtk_tree_view_column_pack_start(col, add, TRUE);
-                gtk_tree_view_column_add_attribute(col, add, "text", 0);
-
                 fill();
                 
                 return view;                                
@@ -124,25 +270,7 @@ namespace apidb
                 gtk_entry_set_text (GTK_ENTRY(inDB),config.conectordb->getDatabase().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inUser),config.conectordb->getUser().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inPw),config.conectordb->getPassword().c_str());
-                
-                /*gtk_combo_box_text_remove_all((GtkComboBoxText*)cmbAddTable);
-                gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
-                gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
-                octetos::apidb::Driver driver(config);
-                if(driver.analyze(false))
-                {
-                        std::map<const char*,symbols::Tables*,symbols::cmp_str> lst = driver.getAnalyzer().copyListTable();
-                        int i = 1;
-                        for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = lst.begin(); it != lst.end(); it++)
-                        {
-                                for(std::list<symbols::Table*>::iterator itJ = (*it).second->begin(); itJ != (*it).second->end(); itJ++)
-                                {
-                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*itJ)->fullname.c_str(),(*itJ)->fullname.c_str());        
-                                        i++;
-                                }
-                        }
-                }*/
-                
+                                
                 downsTree->fill();
                 
                 selectsTree->fill();
@@ -170,7 +298,7 @@ namespace apidb
                         filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
                         gtk_widget_destroy (dialog);
                         if(!config.readConfig(std::string(filename)))
-                        {
+                        {                 
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                 GTK_MESSAGE_ERROR,
@@ -180,6 +308,16 @@ namespace apidb
                                 gtk_dialog_run (GTK_DIALOG (msg));
                                 gtk_widget_destroy (dialog);
                                 return;
+                        } 
+                        if(driver != NULL) 
+                        {
+                                delete driver;
+                                driver = NULL;
+                        }
+                        driver = new Driver(config);
+                        if(driver->analyze(false))
+                        {
+                                        
                         }
                         app->loadConfig();
                         g_free (filename);
@@ -205,9 +343,13 @@ namespace apidb
                 GtkToolItem *sep = gtk_separator_tool_item_new();
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), sep, -1); 
                 GtkToolItem *newTable = gtk_tool_button_new_from_stock(GTK_STOCK_NEW);
+                g_signal_connect(G_OBJECT(newTable), "clicked", G_CALLBACK(on_newtable), NULL);
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), newTable, -1);
                 GtkToolItem *sep2 = gtk_separator_tool_item_new();
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), sep2, -1); 
+                GtkToolItem *about = gtk_tool_button_new_from_stock(GTK_STOCK_ABOUT);
+                gtk_toolbar_insert(GTK_TOOLBAR(toolbar), about, -1);
+                g_signal_connect(G_OBJECT(about), "clicked", G_CALLBACK(show_about), NULL);
                 GtkToolItem *exit = gtk_tool_button_new_from_stock(GTK_STOCK_CLOSE);
                 g_signal_connect(G_OBJECT(exit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), exit, -1);
@@ -315,30 +457,21 @@ namespace apidb
         void Application::createNotebook()
         {
                 GtkWidget * notebookMain = gtk_notebook_new();
-                gchar* strInfo = (gchar*)"Información";
+                g_signal_connect(G_OBJECT(notebookMain), "switch-page", G_CALLBACK(active_tab), window);
                 GtkWidget *boxInfo = gtk_box_new (GTK_ORIENTATION_VERTICAL,6);
-                GtkWidget *lbInfo = gtk_label_new (strInfo);
+                GtkWidget *lbInfo = gtk_label_new (titleInfo);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxInfo,lbInfo);
                 createNotebookInfo(boxInfo);
-                gchar* strConex = (gchar*)"Conexión";
                 GtkWidget *boxConex = gtk_box_new (GTK_ORIENTATION_VERTICAL,4);
-                GtkWidget * lbConex = gtk_label_new (strConex);
+                GtkWidget * lbConex = gtk_label_new (titleConex);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxConex,lbConex);
                 createNotebookConexion(boxConex);
-                gchar* strDowns = (gchar*)"Descargas";
                 boxDowns = gtk_box_new (GTK_ORIENTATION_VERTICAL,1);
-                GtkWidget * lbDowns = gtk_label_new (strDowns);
+                GtkWidget * lbDowns = gtk_label_new (titleDowns);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxDowns,lbDowns);
                 downsTree =  new TreeView(boxDowns,config.downloads);
-                /*GtkWidget *testMenuButton = gtk_menu_button_new ();
-                gtk_container_add(GTK_CONTAINER(notebookMain), testMenuButton);
-                GtkWidget *testPopOver = gtk_popover_new (testMenuButton);
-                GtkWidget *testBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-                GtkWidget *testButton = gtk_button_new ();
-                gtk_box_pack_start(GTK_BOX(testBox), testButton, TRUE, TRUE, 5);*/
-                gchar* strSels = (gchar*)"Selecciones";
                 boxSelects = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
-                GtkWidget * lbSels = gtk_label_new (strSels);
+                GtkWidget * lbSels = gtk_label_new (titleSelects);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxSelects,lbSels);
                 selectsTree =  new TreeView(boxSelects,config.selects);
                 gtk_box_pack_start(GTK_BOX(vboxMain), notebookMain, FALSE, FALSE,0);
@@ -366,7 +499,8 @@ namespace apidb
                 createToolbar(); 
                         
                 createNotebook();  
-                gtk_widget_show_all (window);      
+                gtk_widget_show_all (window);   
+                flagVisible = true;
                 gtk_main ();
         }
         

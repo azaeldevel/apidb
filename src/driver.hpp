@@ -37,6 +37,7 @@ namespace apidb
 		bool driving();
                 Driver(const ConfigureProject&);
 		const Analyzer& getAnalyzer() const;
+                ~Driver();
                 
 	private:
 		octetos::toolkit::clientdb::Connector* connector;
