@@ -28,147 +28,50 @@
 
 int main(int argc, char *argv[])
 {
-	if(argc > 1)
+        std::string file,dir;
+	if(argc > 0)
 	{
-		if(strcmp(argv[0],"-v") || strcmp(argv[0],"--version"))
+		if(strcmp(argv[1],"-v") ==0 || strcmp(argv[1],"--version") == 0)
 		{
 			std::cout<<"Version: " << octetos::apidb::getPakageVersion().toString()<<std::endl;
 			return EXIT_SUCCESS;
 		}
-		else
+		else if((strcmp(argv[1],"-p") ==0 || strcmp(argv[1],"--project-file") == 0) && (strcmp(argv[3],"-o") ==0 || strcmp(argv[3],"--out-file") == 0) )
+                {
+                        file = argv[2];
+                        dir = argv[4];
+                }
+                else
 		{
-			std::cout<<"Opción desconocida "<<std::endl;
+			std::cerr<<"Opciónes desconocida "<<std::endl;
 			return EXIT_FAILURE;
 		}
 	}
-
-	std::cout<<"Nombre de projecto:";
-	std::string name;
-	std::cin>>name;
-		
-	std::cout<<"Directorio de proyecto:";
-	std::string dir;
-	std::cin>>dir;
-	
-	
-	//verificar si exist un projecto en el directorio.
-	std::string strProject;	
-	if(dir.compare(".") == 0 | dir.empty())
-	{
-		strProject = "apidb";
-	}
 	else
-	{
-		strProject = dir + "/" +"apidb";
-	}
-	std::ifstream fin(strProject);
+        {
+                std::cerr<<"Deve indicar el archivo de prjecto y el directorio de generacion, use las opciones -p 'file' -o 'dir'."<<std::endl;
+                return EXIT_FAILURE;
+        }
+		
+	std::ifstream fin(file);
 	if(fin) 
 	{
-		std::cout<<"Cargando '" << strProject << "' ..." <<std::endl;
+		std::cout<<"Cargando '" << file << "' ..." <<std::endl;
 		octetos::apidb::ConfigureProject config;
-                config.readConfig(strProject);
+                config.directory = dir;
+                config.readConfig(file);
         	octetos::apidb::Driver driver(config);
 		if(!driver.driving())
 		{
-			std::cerr<<"Fallo la configuracion."<<std::endl;
+			std::cerr<<"Fallo la generacion."<<std::endl;
 			return EXIT_FAILURE;
 		}
 		else
 		{
-			std::cout<<"'"<<strProject<<"' cargado."<<std::endl;
+			std::cout<<"Proyecto generado en '"<<dir<<"' exitosamente."<<std::endl;
+                        return EXIT_SUCCESS;
 		}
-		return EXIT_SUCCESS;
 	}
 	
-	std::cout<<"Tipo de Servidor de DB:";
-	std::string db;
-	std::cin>>db;
-	std::regex dbOption("[M|m][Y|y][S|s][Q|q][L|l]");
-	if(!regex_match(db,dbOption))
-	{
-		std::cout<<"\tTipo de servidor desconocido."<<std::endl;
-	}
-	
-	
-	std::cout<<"Servidor:";
-	std::string server;
-	std::cin>>server;
-	std::regex serverOption("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}");
-	if(!regex_match(server,serverOption))
-	{
-		std::cout<<"\tServidor desconocido."<<std::endl;
-	}
-	
-	std::cout<<"Puerto de servidor:";
-	int puerto;
-	std::cin >> puerto;
-	
-	
-	std::cout<<"Nombre de Base de Datos:";
-	std::string dbName;
-	std::cin >> dbName;
-	
-	std::cout<<"Usuario:";
-	std::string dbUser;
-	std::cin >>  dbUser;
-	
-	std::cout<<"Conatraseña:";
-	std::string dbPW;
-	std::cin >>  dbPW;
-	
-	
-	octetos::toolkit::clientdb::mysql::Datconnect mysqlConnector(server,puerto,dbName,dbUser,dbPW); 
-	octetos::toolkit::clientdb::mysql::Connector connector;    
-        bool flagServer = connector.connect(&mysqlConnector);
-        if(flagServer)
-        {
-		std::cout<<"\tConexion a servidor completada."<<std::endl;
-		connector.close();
-	}
-	else
-	{
-		std::cout<<"\tFallo conexion a servidor."<<std::endl;
-	}
-	
-	octetos::toolkit::Version version;
-        version.setNumbers(0,1,0);
-        version.setStage(octetos::toolkit::Version::Stage::alpha);
-	octetos::apidb::ConfigureProject config;
-    	config.name = name;
-    	config.directory = dir;
-    	config.conectordb = &mysqlConnector;
-    	config.version = version;
-    	config.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
-    	config.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;
-	octetos::apidb::Driver driver(config);
-	if(!driver.driving())
-        {
-                std::cerr<<mysqlConnector.toString()<<" - is bat "<<std::endl;
-                return -1;
-        }  
-    
-repeatconfigCh:
-	std::cout<< "Archivo de configuracion(s/n):";
-	std::string configCh;
-	std::cin >> configCh;
-	if(configCh.compare("N") == 0 | configCh.compare("n") == 0)
-	{
-		;
-	}
-	else if(configCh.compare("S") == 0 | configCh.compare("s") == 0)
-	{
-		std::string fn = dir + "/apidb";
-		config.saveConfig();
-		std::cout<<"\tArchivo de configuracion:"<<fn<<std::endl;		
-	}
-	else if(configCh.compare("Q") == 0 | configCh.compare("q") == 0)
-	{
-		//solo continua con el programam para evitar el bucle		
-	}
-	else
-	{
-		std::cout<<"\tIndique S o N:"<<std::endl;
-	}
-    
 	return EXIT_SUCCESS;	
 }
