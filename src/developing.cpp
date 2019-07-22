@@ -55,8 +55,8 @@ int main()
         params_ShortName.push_back("name3");
         dwShortName.setHeader(&params_ShortName);
         tbP.insert(std::make_pair(dwShortName.getName().c_str(), &dwShortName));
-        config.downloads.push_back(tbP);
-        config.selects.push_back(tbP);
+        config.downloads.insert(std::make_pair(tbP.getName().c_str(),&tbP));
+        config.selects.insert(std::make_pair(tbP.getName().c_str(),&tbP));
         octetos::apidb::ConfigureProject::Table tbUsers("Users");
         octetos::apidb::ConfigureProject::Function byUsername("byUsername",octetos::apidb::ConfigureProject::Function::SELECT);    
         octetos::apidb::ConfigureProject::Parameters params_byPerson;
@@ -64,7 +64,7 @@ int main()
         params_byPerson.push_back("person");
         byUsername.setHeader(&params_byPerson);
         tbUsers.insert(std::make_pair(byUsername.getName().c_str(), &byUsername));
-        config.selects.push_back(tbUsers);
+        config.selects.insert(std::make_pair(tbP.getName().c_str(),&tbUsers));
     
         octetos::apidb::Driver driver(config);	
 	if(!driver.driving(true))

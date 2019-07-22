@@ -80,9 +80,9 @@ namespace apidb
                 }
                 clear();
         }
-    const ConfigureProject::Parameters& ConfigureProject::Function::getParameters() const 
+    const ConfigureProject::Parameters* ConfigureProject::Function::getParameters() const 
     {
-        return *header;
+        return header;
     }
     void ConfigureProject::Function::setHeader(const Parameters* header)
     {
@@ -96,19 +96,21 @@ namespace apidb
     {
         return name;
     }
-    ConfigureProject::Function::Function(const std::string& name,Skeleton skeleton)
-    {
-        this->name = name;
-        this->skeleton = skeleton;
-    }
-    ConfigureProject::Function::Function(const std::string& name)
-    {
-        this->name = name;
-    }
-    ConfigureProject::Function::Function()
-    {
-        
-    }
+        ConfigureProject::Function::Function(const std::string& name,Skeleton skeleton)
+        {
+                this->name = name;
+                this->skeleton = skeleton;
+                header = NULL;
+        }
+        ConfigureProject::Function::Function(const std::string& name)
+        {
+                this->name = name;
+                header = NULL;
+        }
+        ConfigureProject::Function::Function()
+        {
+                header = NULL;
+        }
             
 
 	

@@ -1,5 +1,8 @@
-#include "Application.hpp"
 
+#include <stdio.h>
+#include <string.h>
+
+#include "Application.hpp"
 #include "apidb.hpp"
 
 
@@ -7,72 +10,51 @@ namespace octetos
 {
 namespace apidb
 {      
-        void Application::on_newtable(GtkWidget *widget, gpointer data) 
+        Driver* Application::getDriver()
         {
-                if(strcmp(selectedTab, Application::titleDowns) == 0 && flagVisible && driver != NULL)
-                {    
-                        selectedTab = Application::titleDowns;
-                        CaptureTable cap(driver,app->window);
-                        cap.show();
-                        if(cap.getSelectTable() != NULL)
-                        {
-                                ConfigureProject::Table tb(cap.getSelectTable());
-                                config.downloads.push_back(tb);
-                                app->downsTree->fill();
-                        }
-                }
-                else if(strcmp(selectedTab, Application::titleSelects) == 0 && flagVisible && driver != NULL)
-                {
-                        CaptureTable cap(driver,app->window);
-                        cap.show();
-                        //std::cout << "\tTable " << cap.getSelectTable() << std::endl; 
-                        if(cap.getSelectTable() != NULL)
-                        {
-                                ConfigureProject::Table tb(cap.getSelectTable());
-                                config.selects.push_back(tb);
-                                app->selectsTree->fill();
-                        }
-                }            
+                return driver;
         }
-        const char* CaptureParameter::getSelectTable() const
+        std::string CaptureFuntion::getNameFunction() const
         {
-                return table;
+                return strNameFunction;
         }
-        void CaptureParameter::show()
+        void CaptureFuntion::show()
         {
                 gtk_widget_show_all(dialog);
                 gint response = gtk_dialog_run(GTK_DIALOG(dialog));
-                if(response == GTK_RESPONSE_OK)
-                        table = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT(cmbAddTable));
-                else
-                        table = NULL;
+                if(response == GTK_RESPONSE_OK) strNameFunction = gtk_entry_get_text( GTK_ENTRY(inAddFunc));
+                else strNameFunction == "";
                 gtk_widget_destroy(dialog);
         }
-        CaptureParameter::CaptureParameter(const Driver* d,GtkWidget* widget) : driver(d)
+        CaptureFuntion::CaptureFuntion(const Driver* d,GtkTreeIter* gtkIt,const char* table) : driver(d)
         {
-                dialog = gtk_dialog_new_with_buttons ("Captura de Tabla.", NULL, GTK_DIALOG_MODAL,  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);                
+                
+                dialog = gtk_dialog_new_with_buttons ("Captura de Funcion.", NULL, GTK_DIALOG_MODAL,  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);                
                 //g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_response),widget);
                 content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-                label = gtk_label_new ("Seleccione la tabla para Agregar");
+                label = gtk_label_new ("Seleccione la Funcion para Agregar");
                 gtk_container_add (GTK_CONTAINER (content_area), label);
-                cmbAddTable = gtk_combo_box_text_new ();
+                inAddFunc = gtk_entry_new ();
+                gtk_container_add (GTK_CONTAINER (content_area), inAddFunc);
                 //gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
                 if(driver != NULL)
                 {
-                        /*std::map<const char*,symbols::Tables*,symbols::cmp_str> lst = driver->getAnalyzer().copyListTable();
-                        Table* table = lst.find();
-                        int i = 1;
-                        for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = lst.begin(); it != lst.end(); it++)
+                        //std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator itTbalbe = std::find(driver->getAnalyzer().getListTableConst().begin(),driver->getAnalyzer().getListTableConst().end(),table);
+                        /*int i = 1;
+                        for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator it = driver->getAnalyzer().getListTableConst().begin(); it != driver->getAnalyzer().getListTableConst().end(); it++)
                         {
                                 for(std::list<symbols::Table*>::iterator itJ = (*it).second->begin(); itJ != (*it).second->end(); itJ++)
-                                {
-                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*itJ)->fullname.c_str(),(*itJ)->fullname.c_str());        
+                                {   
+                                        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::iterator itF = (*itJ)->begin(); itF  != (*itJ)->end(); itF++)
+                                        {
+                                                gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*itF).first,(*itF).first);     
+                                        }
                                         i++;
                                 }
                         }*/
                 }
-                gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
-                gtk_container_add (GTK_CONTAINER (content_area), cmbAddTable);
+                //gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
+                //gtk_container_add (GTK_CONTAINER (content_area), cmbAddTable);
         }  
         void show_about(GtkWidget *widget, gpointer data) 
         {
@@ -113,7 +95,7 @@ namespace apidb
                 label = gtk_label_new ("Seleccione la tabla para Agregar");
                 gtk_container_add (GTK_CONTAINER (content_area), label);
                 cmbAddTable = gtk_combo_box_text_new ();
-                //gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
+                gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
                 if(driver != NULL)
                 {
                         std::map<const char*,symbols::Tables*,symbols::cmp_str> lst = driver->getAnalyzer().copyListTable();
@@ -131,32 +113,8 @@ namespace apidb
                 gtk_container_add (GTK_CONTAINER (content_area), cmbAddTable);
         }
         
-         const char*  Application::titleInfo = "Información";
-         const char*  Application::titleConex = "Conexión";
-         const char*  Application::titleDowns = "Descargas";
-         const char*  Application::titleSelects = "Selecciones";
-         bool Application::flagVisible = false;
-         Driver* Application::driver = NULL;
-         const char*  Application::selectedTab = NULL;
         
-        void Application::active_tab (GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
-        {
-                if(strcmp(gtk_notebook_get_tab_label_text(notebook,page), Application::titleDowns) == 0 && flagVisible && driver != NULL)
-                {
-                        //std::cout << "Active " << gtk_notebook_get_tab_label_text(notebook,page) << std::endl;    
-                        selectedTab = Application::titleDowns;
-                }
-                else if(strcmp(gtk_notebook_get_tab_label_text(notebook,page), Application::titleSelects) == 0 && flagVisible && driver != NULL)
-                {
-                        //std::cout << "Active " << gtk_notebook_get_tab_label_text(notebook,page) << std::endl;           
-                        selectedTab = Application::titleSelects;
-                }
-                else
-                {
-                        selectedTab = NULL;
-                }
-        }
-        
+                
         void on_changed(GtkWidget *widget, gpointer statusbar)
         {        
                 GtkTreeIter iter;
@@ -171,23 +129,141 @@ namespace apidb
                 }
         }
         
+        
+        
+        const char* TreeView::getTableName(GtkTreeModel *model,GtkTreeIter* iter)
+        {
+                const char* path = gtk_tree_model_get_string_from_iter(model,iter);
+                char delim[] = ":";
+                char *ptr = strtok((char*)path, delim);
+                int count = 0;
+                while(ptr != NULL)
+                {
+                        if(count == 1)
+                        {
+                               break;
+                        }
+                        printf("'--%s'\n", ptr);
+                        ptr = strtok(NULL, delim);
+                        count++;
+                }
+                
+                int nodenumber = atoi(ptr);
+                std::map<const char*,ConfigureProject::Table*>::const_iterator it = Application::getConfigure().downloads.begin();
+                if(nodenumber <= Application::getConfigure().downloads.size())
+                {
+                        std::advance(it , nodenumber);
+                        std::cout << "Selected table : " << it->second->getName().c_str() << ", node :" << ptr << std::endl;
+                        return it->second->getName().c_str();
+                }
+                else
+                {
+                        //node de new function
+                        std::cout << "New funtion "<<std::endl;
+                        return NULL;
+                }
+        }
+        
+        char TreeView::checkTypeNode(GtkTreeModel *model,GtkTreeIter* iter)
+        {
+                const char* path = gtk_tree_model_get_string_from_iter(model,iter);
+                char delim[] = ":";
+                char *ptr = strtok((char*)path, delim);
+                int count = 0;
+                while(ptr != NULL)
+                {
+                        //printf("'%s'\n", ptr);
+                        ptr = strtok(NULL, delim);
+                        count++;
+                }
+                 if(count == 3)
+                 {
+                         return 'F';
+                }
+                else if(count == 2)
+                {
+                        return 'T';
+                }
+                else  if(count == 1)
+                {
+                        return 'R';
+                }
+                else
+                {
+                        return '?';
+                }
+                        
+        }
+        void TreeView::row_activated (GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data)
+        {    
+                GtkTreeModel *model;
+                GtkTreeIter iter;
+                TreeView* wgTree  = (TreeView*)user_data;
+                 
+                model = gtk_tree_view_get_model(view);
+
+                if (!gtk_tree_model_get_iter(model, &iter, path))
+                {
+                        std::cout << "No Agregado " << std::endl;
+                        actual = NULL;
+                        return; /* path describes a non-existing row - should not happen */
+                }
+                
+                const char* name = gtk_tree_model_get_string_from_iter(model,&iter);
+                std::cout << "Agregando " << name << std::endl;
+                switch(checkTypeNode(model,&iter))
+                {
+                        case 'T':
+                                printf("'%s'\n", "Es una tabla");
+                                break;
+                        case 'F':
+                                printf("'%s'\n", "Es una Funcion");
+                                CaptureFuntion cap(Application::getDriver(),&iter,getTableName(model,&iter));
+                                cap.show();
+                                std::string strFunction = cap.getNameFunction();
+                                const char* strTable = getTableName(model,&iter);
+                                ConfigureProject::Function* newF = new ConfigureProject::Function(strFunction);
+                                std::cout << "Bascando tabla '" << strTable << "'" << std::endl;
+                                std::map<const char*,ConfigureProject::Table*>::iterator itT = wgTree->list->find(strTable);
+                                if(itT != wgTree->list->end())
+                                {
+                                        std::cout << "tabla '" << strTable <<  "' encontrada."<< std::endl;
+                                        itT->second->insert(std::make_pair(strFunction.c_str(), newF));
+                                        wgTree->fill();
+                                }
+                                else
+                                {
+                                        std::cout << "No se encontro la tabla " << strTable << std::endl;
+                                }
+                                break;
+                }              
+        }
         void TreeView::fill()
         {         
                 treestore = gtk_tree_store_new(1,G_TYPE_STRING);
-                for(std::vector<apidb::ConfigureProject::Table>::iterator it =list.begin(); it != list.end(); it++ )
+                //std::cout << "Creating..." << std::endl;
+                gtk_tree_store_append(treestore, &toplevel, NULL);
+                gtk_tree_store_set(treestore, &toplevel,0, "Tablas", -1); 
+                for(std::map<const char*,ConfigureProject::Table*>::iterator it =list->begin(); it != list->end(); it++ )
                 {
-                        gtk_tree_store_append(treestore, &toplevel, NULL);
-                        gtk_tree_store_set(treestore, &toplevel,0, it->getName().c_str(), -1);   
-                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::iterator itF = (*it).begin(); itF !=  (*it).end(); itF++)
+                        //std::cout << "Table " << it->second->getName().c_str() << std::endl;
+                        gtk_tree_store_append(treestore, &table, &toplevel);
+                        gtk_tree_store_set(treestore, &table,0, it->second->getName().c_str(), -1);   
+                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::iterator itF = it->second->begin(); itF !=  it->second->end(); itF++)
                         {
-                                std::string params = itF->second->listParams();
+                                //std::cout << "Funcion " <<  itF->second->getName().c_str() << std::endl;
                                 std::string fnProto = itF->second->getName().c_str();
-                                fnProto += "(" + params + ")";
-                                //std::cout << fnProto << std::endl;
-                                gtk_tree_store_append(treestore, &funtion, &toplevel);
+                                if(itF->second->getParameters() != NULL)
+                                {
+                                        std::string params = itF->second->listParams();
+                                        fnProto += "(" + params + ")";
+                                }
+                                std::cout << fnProto << std::endl;
+                                gtk_tree_store_append(treestore, &funtion, &table);
                                 gtk_tree_store_set(treestore, &funtion,0, fnProto.c_str(), -1);   
                         }
-                        gtk_cell_renderer_combo_new ();
+                        gtk_tree_store_append(treestore, &funtion, &table);
+                        gtk_tree_store_set(treestore, &funtion,0, strNewFunct, -1);   
                 }
                 
                  model = GTK_TREE_MODEL(treestore);
@@ -200,8 +276,9 @@ namespace apidb
                 GtkTreeViewColumn *col;
                 GtkCellRenderer *renderer;
                 GtkCellRenderer *add;
-                view = gtk_tree_view_new();        
-
+                view = gtk_tree_view_new();    
+                g_signal_connect(G_OBJECT(view), "row-activated", G_CALLBACK(row_activated), this);
+                
                 col = gtk_tree_view_column_new();
                 gtk_tree_view_column_set_title(col, "Tablas");
                 gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
@@ -212,10 +289,11 @@ namespace apidb
                                 
                 fill();
                 
+                gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view),FALSE);
                 return view;                                
         }
         
-        TreeView::TreeView(GtkWidget *box,std::vector<ConfigureProject::Table>& l) : list(l)
+        TreeView::TreeView(GtkWidget *box,std::map<const char*,ConfigureProject::Table*>* l) : list(l)
         {
                 GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
                 gtk_container_set_border_width (GTK_CONTAINER (scrolled_window), 10);                       
@@ -246,10 +324,76 @@ namespace apidb
                 gtk_box_pack_start(GTK_BOX(popvbox), mn2, TRUE, TRUE, 1);
         }
         
+
         
+        
+        Application* Application::getApplication()
+        {
+                return app;
+        }
+        TreeView* Application::getDownloadTreeView()
+        {
+                return downsTree;
+        }
+        TreeView* Application::getSelectTreeView()
+        {
+                return selectsTree;
+        }
+        const ConfigureProject& Application::getConfigure()
+        {
+                return config;
+        }
+        void Application::on_newtable(GtkWidget *widget, gpointer data) 
+        {
+                if(strcmp(selectedTab, Application::titleDowns) == 0 && flagVisible && driver != NULL)
+                {    
+                        selectedTab = Application::titleDowns;
+                        CaptureTable cap(driver,app->window);
+                        cap.show();
+                        if(cap.getSelectTable() != NULL)
+                        {
+                                ConfigureProject::Table* ptb =  new ConfigureProject::Table(cap.getSelectTable());
+                                config.downloads.insert(std::make_pair(ptb->getName().c_str(),ptb));
+                                app->downsTree->fill();
+                        }
+                }
+                else if(strcmp(selectedTab, Application::titleSelects) == 0 && flagVisible && driver != NULL)
+                {
+                        CaptureTable cap(driver,app->window);
+                        cap.show();
+                        //std::cout << "\tTable " << cap.getSelectTable() << std::endl; 
+                        if(cap.getSelectTable() != NULL)
+                        {
+                                ConfigureProject::Table* ptb =  new ConfigureProject::Table(cap.getSelectTable());
+                                config.selects.insert(std::make_pair(ptb->getName().c_str(),ptb));
+                                app->selectsTree->fill();
+                        }
+                }            
+        }
+        void Application::active_tab (GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
+        {
+                if(strcmp(gtk_notebook_get_tab_label_text(notebook,page), Application::titleDowns) == 0 && flagVisible && driver != NULL)
+                {
+                        //std::cout << "Active " << gtk_notebook_get_tab_label_text(notebook,page) << std::endl;    
+                        selectedTab = Application::titleDowns;
+                }
+                else if(strcmp(gtk_notebook_get_tab_label_text(notebook,page), Application::titleSelects) == 0 && flagVisible && driver != NULL)
+                {
+                        //std::cout << "Active " << gtk_notebook_get_tab_label_text(notebook,page) << std::endl;           
+                        selectedTab = Application::titleSelects;
+                }
+                else
+                {
+                        selectedTab = NULL;
+                }
+        }
+        Application::~Application()
+        {
+                delete downsTree;
+                delete selectsTree;
+        }
         Application::Application()
         {
-                
         }
         void Application::downloads_addTable (GtkWidget *widget, gpointer   data)
         {
@@ -286,9 +430,6 @@ namespace apidb
                 gtk_container_add (GTK_CONTAINER (window), vboxMain);        
         }
         
-        Application* Application::app = NULL;
-        char* Application::filename = NULL;
-        octetos::apidb::ConfigureProject Application::config;
         
         void Application::toolbar_chooseDirectory (GtkWidget *widget, gpointer   data)
         {
@@ -469,11 +610,11 @@ namespace apidb
                 boxDowns = gtk_box_new (GTK_ORIENTATION_VERTICAL,1);
                 GtkWidget * lbDowns = gtk_label_new (titleDowns);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxDowns,lbDowns);
-                downsTree =  new TreeView(boxDowns,config.downloads);
+                downsTree =  new TreeView(boxDowns,&config.downloads);
                 boxSelects = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 GtkWidget * lbSels = gtk_label_new (titleSelects);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxSelects,lbSels);
-                selectsTree =  new TreeView(boxSelects,config.selects);
+                selectsTree =  new TreeView(boxSelects,&config.selects);
                 gtk_box_pack_start(GTK_BOX(vboxMain), notebookMain, FALSE, FALSE,0);
         }
         void  Application::init(int*   argc, char **argv[])
@@ -491,6 +632,7 @@ namespace apidb
                 {
                         throw "Solo se permite una instacia del programa.";
                 }
+                
                 window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
                 vboxMain = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 createWindow();        
@@ -503,6 +645,18 @@ namespace apidb
                 flagVisible = true;
                 gtk_main ();
         }
-        
+
+         const char*  Application::titleInfo = "Información";
+         const char*  Application::titleConex = "Conexión";
+         const char*  Application::titleDowns = "Descargas";
+         const char*  Application::titleSelects = "Selecciones";
+         bool Application::flagVisible = false;
+         Driver* Application::driver = NULL;
+         const char*  Application::selectedTab = NULL;
+        GtkTreeIter* TreeView::actual = NULL;
+        const char* TreeView::strNewFunct = "Agregar Funcion";
+        Application* Application::app = NULL;
+        char* Application::filename = NULL;
+        octetos::apidb::ConfigureProject Application::config;
 }
 }

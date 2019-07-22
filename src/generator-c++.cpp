@@ -101,23 +101,23 @@ namespace generators
         
         
         //select from config
-        std::vector<apidb::ConfigureProject::Table> tbs = configureProject.selects;
-        for( auto tb: tbs)//std::vector<Table>
+        //std::vector<apidb::ConfigureProject::Table> tbs = configureProject.selects;
+        for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT =  configureProject.selects.begin(); itT != configureProject.selects.end(); itT++)//std::vector<Table>
         {
-            if(table.name.compare(tb.getName()) != 0) 
+            if(table.name.compare(itT->second->getName()) != 0) 
             {
                 continue;//buscar la configuracion de la tabla correspondiente
             }
             
-            for (auto const& [key, val] : tb)//class Table : public std::map<std::string,Function>
+            for (auto const& [key, val] : *(itT->second))//class Table : public std::map<std::string,Function>
             {
                 ofile << "\tstd::vector<" << table.name<< "*>* " << table.name << "::select(octetos::toolkit::clientdb::mysql::Connector& connector,";
                 
-                const apidb::ConfigureProject::Parameters& params = val->getParameters();
+                const apidb::ConfigureProject::Parameters* params = val->getParameters();
                 {
-                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
+                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
                     itParamEnd--;
-                    for(const char* param : params)
+                    for(const char* param : *params)
                     {
                         auto fl = table.find(param);
                         if(fl == table.end())
@@ -160,9 +160,9 @@ namespace generators
                         }
                     }
                     ofile << " FROM " << table.name << " WHERE \";"<< std::endl;                    
-                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
+                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
                     --itParamEnd;
-                    for(const char* param : params)
+                    for(const char* param : *params)
                     {
                         auto fl = table.find(param);
                         if(fl != table.end())
@@ -252,124 +252,123 @@ namespace generators
     }
 	void CPP::writeDownloadsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
         {        
-        std::vector<apidb::ConfigureProject::Table> tbs = configureProject.downloads;
-        for( auto tb: tbs)//std::vector<Table>
-        {
-            if(table.name.compare(tb.getName()) != 0) 
-            {                
-                continue;//buscar la configuracion de la tabla correspondiente
-            }
-            
-            for (auto const& [key, val] : tb)//class Table : public std::map<const char*, const Function*>
-            {
-                ofile << "\tbool " << table.name << "::download_" << key << "(octetos::toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
-                ofile << "\t{ " << std::endl;
-                ofile << "\t\tstd::string sqlString = \"SELECT ";
-                const apidb::ConfigureProject::Parameters& params = val->getParameters();
-                /*for(auto pr : params)
+                
+                for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
                 {
-                        std::cout << "param : " << pr << std::endl;
-                }*/
-                {
-                        apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
-                        itParamEnd--;
-                        for(const char* param : params)
-                        {
-                                ofile << param; 
-                                if(param != *itParamEnd)
-                                {
-                                        ofile << ",";
-                                }
-                        }                    
-                    ofile << " FROM " << table.name << " WHERE " ;
-                    for(auto k : table.key)
-                    {                        
-                        if(k->outType.compare("std::string") == 0)
-                        {
-                            ofile << k->name << " = '\" + " << k->name << " + \"'\"";
+                        if(table.name.compare(itT->second->getName()) != 0) 
+                        {                
+                                continue;//buscar la configuracion de la tabla correspondiente
                         }
-                        else
+                        
+                        for (auto const& [key, val] : *(itT->second))//class Table : public std::map<const char*, const Function*>
                         {
-                            ofile << k->name << " = '\" + std::to_string(" << k->name << ") + \"'\"";
-                        }
-                        auto endK = table.key.end();
-                        endK--;
-                        if(*endK != k)
-                        {
-                            ofile << " \" and \" + ";
-                        }
-                    }
-                    ofile << ";" << std::endl;
-                    ofile << "\t\tif(connector.query(sqlString.c_str()))"  << std::endl;
-                    ofile << "\t\t{" << std::endl;
-                    ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
-                    ofile << "\t\t\tif (result == NULL)"  << std::endl;
-                    ofile << "\t\t\t{"  << std::endl;
-                    ofile << "\t\t\t\treturn false;"  << std::endl;
-                    ofile << "\t\t\t}"  << std::endl;
-                    //ofile << "\t\t\tint num_fields = mysql_num_fields(result);"<< std::endl;
-                    ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
-                    ofile << "\t\t\twhile ((row = mysql_fetch_row(result))) "<< std::endl;
-                    ofile << "\t\t\t{"<< std::endl;
-                    //ofile << "\t\t\t\tfor(int i = 0; i < num_fields; i++)"<< std::endl;
-                    ofile << "\t\t\t\t{"<< std::endl;
-                    itParamEnd = params.end();
-                    int countparam = 0;
-                    for(const char* param : params)
-                    {
-                        //ofile << param; 
-                        if(param != *itParamEnd)
-                        {
-                            //ofile << "\t\t\t\t\tthis->" << param << " = (row[i] ? row[i] : NULL);"<< std::endl;
-                            ofile << "\t\t\t\t\tthis->" << param << " = ";
-                            auto fl = table.find(param);
-                            if(fl != table.end())
-                            {
-                                if((*fl).second->classReferenced != NULL)
+                                ofile << "\tbool " << table.name << "::download_" << key << "(octetos::toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
+                                ofile << "\t{ " << std::endl;
+                                ofile << "\t\tstd::string sqlString = \"SELECT ";
+                                const apidb::ConfigureProject::Parameters* params = val->getParameters();
+                                /*for(auto pr : params)
                                 {
-                                    ofile << " new " << (*fl).second->classReferenced->name << "(row[" << countparam << "])" << ";" << std::endl ;
-                                }
-                                else if((*fl).second->outType.compare("int") == 0)
+                                        std::cout << "param : " << pr << std::endl;
+                                }*/
                                 {
-                                    ofile << " std::stoi(row[" << countparam << "] ? row[" << countparam << "] : 0)" << ";"<< std::endl ;
+                                        apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
+                                        itParamEnd--;
+                                        for(const char* param : *params)
+                                        {
+                                                ofile << param; 
+                                                if(param != *itParamEnd)
+                                                {
+                                                        ofile << ",";
+                                                }
+                                        }                    
+                                ofile << " FROM " << table.name << " WHERE " ;
+                                for(auto k : table.key)
+                                {                        
+                                        if(k->outType.compare("std::string") == 0)
+                                        {
+                                        ofile << k->name << " = '\" + " << k->name << " + \"'\"";
+                                        }
+                                        else
+                                        {
+                                        ofile << k->name << " = '\" + std::to_string(" << k->name << ") + \"'\"";
+                                        }
+                                        auto endK = table.key.end();
+                                        endK--;
+                                        if(*endK != k)
+                                        {
+                                        ofile << " \" and \" + ";
+                                        }
                                 }
-                                else if((*fl).second->outType.compare("long") == 0)
+                                ofile << ";" << std::endl;
+                                ofile << "\t\tif(connector.query(sqlString.c_str()))"  << std::endl;
+                                ofile << "\t\t{" << std::endl;
+                                ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
+                                ofile << "\t\t\tif (result == NULL)"  << std::endl;
+                                ofile << "\t\t\t{"  << std::endl;
+                                ofile << "\t\t\t\treturn false;"  << std::endl;
+                                ofile << "\t\t\t}"  << std::endl;
+                                //ofile << "\t\t\tint num_fields = mysql_num_fields(result);"<< std::endl;
+                                ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
+                                ofile << "\t\t\twhile ((row = mysql_fetch_row(result))) "<< std::endl;
+                                ofile << "\t\t\t{"<< std::endl;
+                                //ofile << "\t\t\t\tfor(int i = 0; i < num_fields; i++)"<< std::endl;
+                                ofile << "\t\t\t\t{"<< std::endl;
+                                itParamEnd = params->end();
+                                int countparam = 0;
+                                for(const char* param : *params)
                                 {
-                                    ofile << " std::stol(row[" << countparam << "] ? row[" << countparam << "] : 0)" << ";"<< std::endl ;
+                                        //ofile << param; 
+                                        if(param != *itParamEnd)
+                                        {
+                                        //ofile << "\t\t\t\t\tthis->" << param << " = (row[i] ? row[i] : NULL);"<< std::endl;
+                                        ofile << "\t\t\t\t\tthis->" << param << " = ";
+                                        auto fl = table.find(param);
+                                        if(fl != table.end())
+                                        {
+                                                if((*fl).second->classReferenced != NULL)
+                                                {
+                                                ofile << " new " << (*fl).second->classReferenced->name << "(row[" << countparam << "])" << ";" << std::endl ;
+                                                }
+                                                else if((*fl).second->outType.compare("int") == 0)
+                                                {
+                                                ofile << " std::stoi(row[" << countparam << "] ? row[" << countparam << "] : 0)" << ";"<< std::endl ;
+                                                }
+                                                else if((*fl).second->outType.compare("long") == 0)
+                                                {
+                                                ofile << " std::stol(row[" << countparam << "] ? row[" << countparam << "] : 0)" << ";"<< std::endl ;
+                                                }
+                                                else if((*fl).second->outType.compare("std::string") == 0 || (*fl).second->outType.compare("const char*") == 0)
+                                                {
+                                                ofile << " row[" << countparam << "] ? row[" << countparam << "] : \"NULL\"" << ";" << std::endl ;
+                                                }
+                                                else
+                                                {
+                                                ofile << " row[" << countparam << "] ? row[" << countparam << "] : \"NULL\"" << ";" << std::endl ;
+                                                }
+                                        }
+                                        else
+                                        {
+                                                std::string strmsg = "No se encontro el campo ";
+                                                strmsg = strmsg + "'" + param + "' en la tabla '" + table.name + "' File : generator-c++";
+                                                throw BuildException(strmsg);
+                                        }
+                                        }
+                                        countparam++;
                                 }
-                                else if((*fl).second->outType.compare("std::string") == 0 || (*fl).second->outType.compare("const char*") == 0)
-                                {
-                                    ofile << " row[" << countparam << "] ? row[" << countparam << "] : \"NULL\"" << ";" << std::endl ;
+                                //ofile << "\t\t\t;"<< std::endl;
+                                ofile << "\t\t\t\t}"<< std::endl;
+                                ofile << "\t\t\t}"<< std::endl;;
+                                ofile << "\t\t\tmysql_free_result(result);" << std::endl;
+                                ofile << "\t\t\treturn true;" << std::endl;
+                                ofile << "\t\t}" << std::endl;
+                                ofile << "\t\telse" << std::endl;
+                                ofile << "\t\t{" << std::endl;
+                                ofile << "\t\t\treturn false;" << std::endl;
+                                ofile << "\t\t}" << std::endl;
                                 }
-                                else
-                                {
-                                    ofile << " row[" << countparam << "] ? row[" << countparam << "] : \"NULL\"" << ";" << std::endl ;
-                                }
-                            }
-                            else
-                            {
-                                std::string strmsg = "No se encontro el campo ";
-                                strmsg = strmsg + "'" + param + "' en la tabla '" + table.name + "' File : generator-c++";
-                                throw BuildException(strmsg);
-                            }
-                        }
-                        countparam++;
-                    }
-                    //ofile << "\t\t\t;"<< std::endl;
-                    ofile << "\t\t\t\t}"<< std::endl;
-                    ofile << "\t\t\t}"<< std::endl;;
-                    ofile << "\t\t\tmysql_free_result(result);" << std::endl;
-                    ofile << "\t\t\treturn true;" << std::endl;
-                    ofile << "\t\t}" << std::endl;
-                    ofile << "\t\telse" << std::endl;
-                    ofile << "\t\t{" << std::endl;
-                    ofile << "\t\t\treturn false;" << std::endl;
-                    ofile << "\t\t}" << std::endl;
-                }
-                ofile << "\t} " << std::endl;
-            }         
-        }   
-        
+                                ofile << "\t} " << std::endl;
+                        }         
+                }        
     }
     void CPP::writeInsertCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{        
@@ -789,40 +788,38 @@ namespace generators
     }
         void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
         {                
-                for(std::vector<apidb::ConfigureProject::Table>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
+                for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
                 {
                         //std::cout<<"Iterate on '" << tb.getName() << "'" << std::endl;
-                        if(table.name.compare(it->getName()) != 0) 
+                        if(table.name.compare(it->second->getName()) != 0) 
                         {          
                                 continue;//buscar la configuracion de la tabla correspondiente
-                        }            
+                        }
                         //
-                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = it->begin(); itT != it->end(); itT++)
+                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itF = it->second->begin(); itF != it->second->end(); itF++)
                         {
-                                ofile << "\t\tbool download_" << itT->first << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
-                        }         
+                                ofile << "\t\tbool download_" << itF->first << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
+                        }
                 }
         }
 	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile)
         {
                 ofile << "\t\tstatic std::vector<" << table.name << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where);"<<std::endl;
                 
-                for(std::vector<apidb::ConfigureProject::Table>::const_iterator it = configureProject.selects.begin(); it != configureProject.selects.end(); it++)
+                for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.selects.begin(); it != configureProject.selects.end(); it++)
                 {
-                        if(table.name.compare(it->getName()) != 0) 
+                        if(table.name.compare(it->second->getName()) != 0) 
                         {
                                 continue;//buscar la configuracion de la tabla correspondiente
                         }
-                        //for (auto const& [key, val] : *it)//class Table : public std::map<std::string,Function>
-                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = it->begin(); itT != it->end(); itT++)
+                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = it->second->begin(); itT != it->second->end(); itT++)
                         {
                                 ofile << "\t\tstatic std::vector<" << table.name << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,";
                                 
-                                const apidb::ConfigureProject::Parameters& params = itT->second->getParameters();
-                                {
-                                apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params.end();
+                                const apidb::ConfigureProject::Parameters* params = itT->second->getParameters();                                
+                                apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
                                 itParamEnd--;
-                                for(const char* param : params)
+                                for(const char* param : *params)
                                 {
                                         auto fl = table.find(param);
                                         if(fl != table.end())
@@ -845,8 +842,7 @@ namespace generators
                                         {
                                         ofile << ",";
                                         }
-                                }
-                                }
+                                }                                
                                 ofile << ");"<<std::endl;                                
                         }
                 }

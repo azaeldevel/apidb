@@ -231,7 +231,7 @@ namespace apidb
                         Skeleton getSkeleton() const;
                         void setHeader(const Parameters*);
                         void setBody(const std::string&);
-                        const Parameters& getParameters() const;
+                        const Parameters* getParameters() const;
                         std::string listParams()const;
                 
                 private:
@@ -259,9 +259,9 @@ namespace apidb
                 PackingLenguajes packing;
                 Compiled compiled;
                 MVC mvc;
-                std::vector<Table> downloads;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
-                std::vector<Table> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
-                        
+                std::map<const char*,Table*> downloads;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
+                std::map<const char*,Table*> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
+                
                 //ConfigureProject(std::string filename);
                 ConfigureProject(const ConfigureProject& configProy);
                 ConfigureProject();

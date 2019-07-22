@@ -184,20 +184,20 @@ namespace apidb
                 xmlNodePtr downls_node = xmlNewChild(root_node, NULL, (const xmlChar *)"downloads", NULL);
                 int countTbs = 0;
                 int counFuns;
-                for(Table table : downloads)
+                for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT =  downloads.begin(); itT != downloads.end(); itT++)//std::vector<Table>
                 {
                         counFuns = 0;
                         countTbs++;
                         xmlNodePtr downls_tb_node = xmlNewChild(downls_node, NULL, (const xmlChar *)"Table", NULL);
-                        xmlNewProp(downls_tb_node, BAD_CAST "name", BAD_CAST table.getName().c_str());
+                        xmlNewProp(downls_tb_node, BAD_CAST "name", BAD_CAST itT->second-> getName().c_str());
                         int countparams;
-                        for(std::map<const char*, const Function*>::iterator  itfn = table.begin() ;  itfn !=table.end() ; itfn++)
+                        for(std::map<const char*, const Function*>::iterator  itfn = itT->second->begin() ;  itfn !=itT->second->end() ; itfn++)
                         {
                                 countparams = 0;
                                 counFuns++;
                                 xmlNodePtr downls_fn_node = xmlNewChild(downls_tb_node, NULL, (const xmlChar *)"Function", NULL); 
                                 xmlNewProp(downls_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
-                                const std::vector<const char*>& params = (const std::vector<const char*>&)(itfn->second->getParameters());
+                                const std::vector<const char*>& params = (const std::vector<const char*>&)*(itfn->second->getParameters());
                                 for(auto itParams : params)
                                 {
                                         countparams++;
@@ -212,20 +212,20 @@ namespace apidb
                 //
                 xmlNodePtr selects_node = xmlNewChild(root_node, NULL, (const xmlChar *)"selects", NULL);
                 countTbs = 0;
-                for(Table table : selects)
+                for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT =  selects.begin(); itT != selects.end(); itT++)//std::vector<Table>
                 {
                         counFuns = 0;
                         countTbs++;
                         xmlNodePtr selects_tb_node = xmlNewChild(selects_node, NULL, (const xmlChar *)"Table", NULL);
-                        xmlNewProp(selects_tb_node, BAD_CAST "name", BAD_CAST table.getName().c_str());
+                        xmlNewProp(selects_tb_node, BAD_CAST "name", BAD_CAST itT->second->getName().c_str());
                         int countparams;
-                        for(std::map<const char*, const Function*>::iterator  itfn = table.begin() ;  itfn !=table.end() ; itfn++)
+                        for(std::map<const char*, const Function*>::iterator  itfn = itT->second->begin() ;  itfn !=itT->second->end() ; itfn++)
                         {
                                 countparams = 0;
                                 counFuns++;
                                 xmlNodePtr selects_fn_node = xmlNewChild(selects_tb_node, NULL, (const xmlChar *)"Function", NULL); 
                                 xmlNewProp(selects_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
-                                const std::vector<const char*>& params = (const std::vector<const char*>&)(itfn->second->getParameters());
+                                const std::vector<const char*>& params = (const std::vector<const char*>&)*(itfn->second->getParameters());
                                 for(auto itParams : params)
                                 {
                                         countparams++;
@@ -611,18 +611,17 @@ namespace apidb
                                 pfn->setHeader(pparams);
                                 ptb->insert(std::make_pair(pfn->getName().c_str(), pfn));
                                 xmlTextReaderRead(reader);      
-                        }    
+                        }
                         if(node.compare("downloads") == 0)
                         {
                                 //std::cout << "\tAdded " << ptb->getName() << std::endl;
-                                downloads.push_back(*ptb);
+                                downloads.insert(std::make_pair(ptb->getName().c_str(),ptb));
                         }
                         else if(node.compare("selects") == 0)
                         {
                                 //std::cout << "\tAdded " << ptb->getName() << std::endl;
-                                selects.push_back(*ptb);
+                                selects.insert(std::make_pair(ptb->getName().c_str(),ptb));
                         }
-                        delete ptb;
                 }
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);

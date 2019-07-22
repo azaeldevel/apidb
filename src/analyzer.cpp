@@ -47,6 +47,10 @@ namespace apidb
 	{
 		return spacies;
 	}	
+	const std::map<const char*,symbols::Tables*,symbols::cmp_str>& Analyzer::getListTableConst() const
+	{
+		return spacies;
+	}
 	std::map<const char*,symbols::Tables*,symbols::cmp_str>& Analyzer::getListTable() 
 	{
 		return spacies;

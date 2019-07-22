@@ -38,6 +38,7 @@ namespace apidb
 		virtual bool analyze(bool log) = 0;
                 
 		std::map<const char*,symbols::Tables*,symbols::cmp_str>& getListTable(); 
+                const std::map<const char*,symbols::Tables*,symbols::cmp_str>& getListTableConst() const;
                 std::map<const char*,symbols::Tables*,symbols::cmp_str> copyListTable()const;
 		std::string getInputLenguajeString()const;		
 		const std::string& getNameProject();

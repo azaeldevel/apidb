@@ -13,26 +13,29 @@ namespace octetos
 {
 namespace apidb
 {
-        class CaptureParameter
+        class CaptureFuntion
         {
         public:
                 void show();
-                const char* getSelectTable()const;
-                CaptureParameter(const Driver*,GtkWidget* widget);
+                std::string getNameFunction()const;
+                CaptureFuntion(const Driver*,GtkTreeIter* gtkIt,const char* table);
+                
         private:
                 GtkWidget *dialog;
                 GtkWidget *content_area;
                 GtkWidget *label;
-                GtkWidget *cmbAddTable;
+                GtkWidget *inAddFunc;
                 const Driver* driver;
-                const char* table;
+                std::string strNameFunction;
         };
+        
         class CaptureTable
         {
         public:
                 void show();
                 const char* getSelectTable()const;
                 CaptureTable(const Driver*,GtkWidget* widget);
+                
         private:
                 GtkWidget *dialog;
                 GtkWidget *content_area;
@@ -49,12 +52,19 @@ namespace apidb
                 GtkTreeStore *treestore;
                 GtkTreeModel *model;
                 GtkWidget *view;
-                std::vector<ConfigureProject::Table>& list;
+                std::map<const char*,ConfigureProject::Table*>* list;
+                
+                static GtkTreeIter* actual;
+                static const char* strNewFunct;
+                
+                static void row_activated(GtkTreeView       *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data);
+                static char checkTypeNode(GtkTreeModel *model,GtkTreeIter* iter);
+                static const char* getTableName(GtkTreeModel *model,GtkTreeIter* iter);                
                 
         public:                
                 void fill();
                 GtkWidget* create();
-                TreeView(GtkWidget *,std::vector<ConfigureProject::Table>&);
+                TreeView(GtkWidget *,std::map<const char*,ConfigureProject::Table*>*);
         };
         
         class Application
@@ -63,6 +73,15 @@ namespace apidb
                 void  init(int*   argc, char **argv[]);                
                 void create();
                 Application();
+                ~Application();
+                static Driver* getDriver();
+                static const ConfigureProject& getConfigure();
+                
+                TreeView* getDownloadTreeView();
+                TreeView* getSelectTreeView();
+                
+                static Application* getApplication();
+                
         private:                
                 void createWindow();
                 void createToolbar();
