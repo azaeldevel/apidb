@@ -13,6 +13,23 @@ namespace octetos
 {
 namespace apidb
 {
+        
+        class CaptureParameter
+        {
+        public:
+                bool show();
+                const char* getSelectParam()const;
+                CaptureParameter(const Driver*,const char* table);
+                
+        private:
+                GtkWidget *dialog;
+                GtkWidget *content_area;
+                GtkWidget *label;
+                GtkWidget *cmbAddParameter;
+                const Driver* driver;
+                const char* strParameter;
+        };
+        
         class CaptureFuntion
         {
         public:

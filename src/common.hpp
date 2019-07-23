@@ -228,16 +228,17 @@ namespace apidb
                         Function(const std::string&,Skeleton skeleton);
                         Function(const std::string&);
                         Function();
+                        ~Function();
                         Skeleton getSkeleton() const;
-                        void setHeader(const Parameters*);
+                        void setHeader(Parameters*);
                         void setBody(const std::string&);
                         const Parameters* getParameters() const;
                         std::string listParams()const;
-                
+                        void addParam(const char* p);
                 private:
                         std::string name;
                         Skeleton skeleton;
-                        const Parameters* header; 
+                        Parameters* header; 
                         std::string body;
                 };
                 class Table : public std::map<const char*, const Function*>

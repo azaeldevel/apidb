@@ -84,18 +84,35 @@ namespace apidb
     {
         return header;
     }
-    void ConfigureProject::Function::setHeader(const Parameters* header)
-    {
-        this->header = header;
-    }
-    ConfigureProject::Function::Skeleton ConfigureProject::Function::getSkeleton() const
-    {
-    	return skeleton;
-    }
-    const std::string& ConfigureProject::Function::getName() const
-    {
-        return name;
-    }
+    
+    
+        void ConfigureProject::Function::addParam(const char* p)
+        {
+                if(header == NULL)
+                {
+                        header = new Parameters();                        
+                }
+                header->push_back(p);
+        }
+        ConfigureProject::Function::~Function()
+        {
+                if(header != NULL)
+                {
+                        delete header;
+                }
+        }
+        void ConfigureProject::Function::setHeader(Parameters* header)
+        {
+                this->header = header;
+        }
+        ConfigureProject::Function::Skeleton ConfigureProject::Function::getSkeleton() const
+        {
+                return skeleton;
+        }
+        const std::string& ConfigureProject::Function::getName() const
+        {
+                return name;
+        }
         ConfigureProject::Function::Function(const std::string& name,Skeleton skeleton)
         {
                 this->name = name;

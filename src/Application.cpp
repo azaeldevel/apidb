@@ -10,10 +10,64 @@ namespace octetos
 {
 namespace apidb
 {      
-        Driver* Application::getDriver()
+        
+        const char* CaptureParameter::getSelectParam() const
         {
-                return driver;
+                return strParameter;
         }
+        bool CaptureParameter::show()
+        {
+                gtk_widget_show_all(dialog);
+                gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+                if(response == GTK_RESPONSE_OK)
+                {
+                        strParameter = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT(cmbAddParameter));
+                        gtk_widget_destroy(dialog);
+                        return true;
+                }
+                else if(response == GTK_RESPONSE_CANCEL | response == GTK_RESPONSE_CLOSE)
+                {
+                        strParameter = NULL;
+                        gtk_widget_destroy(dialog);
+                        return false;
+                }
+        }
+        CaptureParameter::CaptureParameter(const Driver* d,const char* table) : driver(d)
+        {
+                dialog = gtk_dialog_new_with_buttons ("Captura de Tabla.", NULL, GTK_DIALOG_MODAL,  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);                
+                //g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_response),widget);
+                content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+                label = gtk_label_new ("Seleccione la tabla para Agregar");
+                gtk_container_add (GTK_CONTAINER (content_area), label);
+                cmbAddParameter = gtk_combo_box_text_new ();
+                gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddParameter,0,"selecione","Selecione..."); 
+                if(driver != NULL)
+                {
+                        int i = 1;
+                        std::cout << "Buscando '" << table  << "' tabla para seleccionar parametros." << std::endl;
+                        
+                        for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator it = driver->getAnalyzer().getListTableConst().begin(); it != driver->getAnalyzer().getListTableConst().end(); it++)
+                        {
+                                for(std::list<symbols::Table*>::iterator itT = (*it).second->begin(); itT != (*it).second->end(); itT++)
+                                {
+                                        if((*itT)->name.compare(table) == 0)
+                                        {
+                                                for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::iterator itP = (*itT)->begin(); itP != (*itT)->end(); itP++)
+                                                {
+                                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddParameter,i,itP->second->name.c_str(),itP->second->name.c_str());        
+                                                        i++;                                                
+                                                }
+                                        }
+                                }
+                        }
+                }
+                gtk_combo_box_set_active((GtkComboBox*)cmbAddParameter,0);
+                gtk_container_add (GTK_CONTAINER (content_area), cmbAddParameter);
+        }
+        
+        
+        
+        
         std::string CaptureFuntion::getNameFunction() const
         {
                 return strNameFunction;
@@ -56,6 +110,10 @@ namespace apidb
                 //gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
                 //gtk_container_add (GTK_CONTAINER (content_area), cmbAddTable);
         }  
+        
+        
+        
+        
         void show_about(GtkWidget *widget, gpointer data) 
         {
                 //GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("battery.png", NULL);
@@ -128,6 +186,9 @@ namespace apidb
                         g_free(value);
                 }
         }
+        
+        
+        
         
         
         
@@ -229,6 +290,17 @@ namespace apidb
                                 {
                                         std::cout << "tabla '" << strTable <<  "' encontrada."<< std::endl;
                                         itT->second->insert(std::make_pair(strFunction.c_str(), newF));
+                                        bool flag = false;
+                                        do
+                                        {
+                                                CaptureParameter capParams(Application::getDriver(),strTable);
+                                                flag = capParams.show();
+                                                if(flag)
+                                                {
+                                                        newF->addParam(capParams.getSelectParam());
+                                                }
+                                        }
+                                        while(flag);
                                         wgTree->fill();
                                 }
                                 else
@@ -327,6 +399,10 @@ namespace apidb
 
         
         
+        Driver* Application::getDriver()
+        {
+                return driver;
+        }
         Application* Application::getApplication()
         {
                 return app;
