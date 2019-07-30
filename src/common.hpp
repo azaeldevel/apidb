@@ -200,14 +200,7 @@ namespace apidb
                 bool getProjectNodes(xmlTextReaderPtr);
                 octetos::toolkit::Error* error;
                 
-        public:       
-                enum ErrorCodes
-                {                        
-                        unattendedError,
-                        ReadFile_TempUnpackFail,//No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.
-                        Read_FileFailParseNode,
-                        ReadFile_OpenXMLFile
-                };
+        public:      
                 class Parameters : public std::vector<const char*>
                 {
                 public:
@@ -262,6 +255,8 @@ namespace apidb
                 MVC mvc;
                 std::map<const char*,Table*> downloads;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
                 std::map<const char*,Table*> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
+                //
+                octetos::toolkit::Version projectVersion;
                 
                 //ConfigureProject(std::string filename);
                 ConfigureProject(const ConfigureProject& configProy);

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "../apidb.hpp"
+#include "../Errors.hpp"
 
 
 //static std::string  rootDir;
@@ -16,7 +17,7 @@ static const char* filenameAPIDB = "apidb/apidb";
  * Opens the temporary file used by the tests.
  * Returns zero on success, non-zero otherwise.
  */
-int init_toolkit_common(void)
+int init_apidb(void)
 {
         return 0;
 }
@@ -25,7 +26,7 @@ int init_toolkit_common(void)
  * Closes the temporary file used by the tests.
  * Returns zero on success, non-zero otherwise.
  */
-int clean_toolkit_common(void)
+int clean_apidb(void)
 {
         return 0;
 }
@@ -33,29 +34,23 @@ int clean_toolkit_common(void)
 
 
 void testGeneration()
-{        
-        FILE *file = fopen(filenameAPIDB, "r");
-        if (file != NULL)
-        {
-                fclose(file);
-        }
-        else
-        {
-                CU_ASSERT(false);                
-        }
-    
+{            
         octetos::apidb::ConfigureProject config;        
-        CU_ASSERT(config.readConfig(filenameAPIDB));  
+        /*if(config.readConfig(filenameAPIDB) == false)
+        {
+                std::cout << "Error  -> "<< octetos::apidb::getError().what() << std::endl;//std::cout << "Error  -> " << octetos::apidb::getError().what() << std::endl;
+                CU_ASSERT(false);
+                return;
+        }
         config.directory = "doc/test/ret/";
         octetos::apidb::Driver driver(config);
         if(!driver.driving(false))
         {
+                std::cout << "Error  -> "<< octetos::apidb::getError().what() << std::endl;//std::cout << "Error  -> " << octetos::apidb::getError().what() << std::endl;
                 CU_ASSERT(false);
-        }
-        else
-        {
-                CU_ASSERT(true);
-        }
+        }*/
+        
+        CU_ASSERT(true);
 }
 
 /*void testRQ0001001()
@@ -68,15 +63,6 @@ void testGeneration()
 
 int main(int argc, char *argv[])
 {
-        /*if(argc > 0)
-        {
-                rootDir = argv[1];
-        }
-        else
-        {
-                std::cerr << "Indique el directorio root.";
-                return EXIT_FAILURE;
-        }*/
 	CU_pSuite pSuite = NULL;
 	
 	/* initialize the CUnit test registry */
@@ -85,7 +71,7 @@ int main(int argc, char *argv[])
 	octetos::toolkit::Version ver = octetos::apidb::getPakageVersion();
         std::string pkName = octetos::apidb::getPakageName();
 	std::string classVersionString = std::string("Probando ") + pkName + " " + ver.toString();
-	pSuite = CU_add_suite(classVersionString.c_str(), init_toolkit_common, clean_toolkit_common);
+	pSuite = CU_add_suite(classVersionString.c_str(), init_apidb, clean_apidb);
 	if (NULL == pSuite) 
 	{
 		CU_cleanup_registry();
@@ -97,12 +83,6 @@ int main(int argc, char *argv[])
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
-	/*std::string classMessage = "Messages class.";
-	if ((NULL == CU_add_test(pSuite, classMessage.c_str(), testRQ0001001)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}*/
 	
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);

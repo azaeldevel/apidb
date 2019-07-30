@@ -117,4 +117,5 @@ src/build/writetar
 src/versionInfo.h
 src/writetar-2.cpp
 src/writetar.cpp
+src/build/mysql-reader-c++
 

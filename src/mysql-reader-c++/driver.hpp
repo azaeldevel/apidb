@@ -21,8 +21,8 @@
 #ifndef APIDB_DRIVER_HPP
 #define APIDB_DRIVER_HPP
 
-#include "analyzer.hpp"
-#include "generator.hpp"
+#include "../analyzer.hpp"
+#include "../generator.hpp"
 
 namespace octetos
 {
@@ -35,9 +35,9 @@ namespace apidb
 		virtual bool analyze(bool log);
 		virtual bool generate(bool log);
 		bool driving(bool log);
-                Driver(const ConfigureProject&);
+        Driver(const ConfigureProject&);
 		const Analyzer& getAnalyzer() const;
-                ~Driver();
+        ~Driver();
                 
 	private:
 		octetos::toolkit::clientdb::Connector* connector;

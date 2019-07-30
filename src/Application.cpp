@@ -397,7 +397,63 @@ namespace apidb
         }
         
 
-        
+        void Application::createHeader()
+        {       
+                headerbar = gtk_header_bar_new();
+                //gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (headerbar), TRUE);
+                gtk_header_bar_set_title (GTK_HEADER_BAR (headerbar), "APIDB");
+                gtk_header_bar_set_has_subtitle (GTK_HEADER_BAR (headerbar), FALSE);
+      
+                btOpen = gtk_button_new ();
+                icoOpen = g_themed_icon_new ("document-open");
+                imgOpen = gtk_image_new_from_gicon (icoOpen,GTK_ICON_SIZE_BUTTON);
+                g_object_unref (icoOpen);
+                gtk_container_add (GTK_CONTAINER (btOpen), imgOpen);
+                gtk_header_bar_pack_start (GTK_HEADER_BAR (headerbar), btOpen);
+                g_signal_connect(G_OBJECT(btOpen), "clicked", G_CALLBACK(Application::chooseDirectory), NULL);
+                
+                btNew = gtk_button_new ();
+                icoNew= g_themed_icon_new ("document-new");
+                imgNew = gtk_image_new_from_gicon (icoNew,GTK_ICON_SIZE_BUTTON);
+                g_object_unref (icoNew);
+                gtk_container_add (GTK_CONTAINER (btNew), imgNew);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btNew);
+                
+                sep1 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), sep1);
+                sep2 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), sep2);
+                
+                btBuild = gtk_button_new ();
+                icoBuild = g_themed_icon_new ("system-run");
+                imgBuild = gtk_image_new_from_gicon (icoBuild,GTK_ICON_SIZE_BUTTON);
+                g_object_unref (icoBuild);
+                gtk_container_add (GTK_CONTAINER (btBuild), imgBuild);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btBuild);
+                
+                btSave = gtk_button_new ();
+                icoSave= g_themed_icon_new ("document-save");
+                imgSave = gtk_image_new_from_gicon (icoSave,GTK_ICON_SIZE_BUTTON);
+                g_object_unref (icoSave);
+                gtk_container_add (GTK_CONTAINER (btSave), imgSave);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btSave);
+                              
+                
+                
+                
+                btQuit = gtk_button_new ();
+                icoQuit= g_themed_icon_new ("application-exit");
+                imgQuit = gtk_image_new_from_gicon (icoQuit,GTK_ICON_SIZE_BUTTON);
+                g_signal_connect(G_OBJECT(btQuit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
+                g_object_unref (icoQuit);
+                gtk_container_add (GTK_CONTAINER (btQuit), imgQuit);
+                gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btQuit);       
+                
+                gtk_window_set_titlebar (GTK_WINDOW (window), headerbar);
+                
+                gtk_container_add (GTK_CONTAINER (window), gtk_text_view_new ());
+                
+        }
         
         Driver* Application::getDriver()
         {
@@ -507,7 +563,7 @@ namespace apidb
         }
         
         
-        void Application::toolbar_chooseDirectory (GtkWidget *widget, gpointer   data)
+        void Application::chooseDirectory (GtkWidget *widget, gpointer   data)
         {
                 GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"_Cancel",GTK_RESPONSE_CANCEL,"_Open",GTK_RESPONSE_ACCEPT,NULL);   
                 if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
@@ -551,7 +607,7 @@ namespace apidb
                 gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
                 gtk_box_pack_start(GTK_BOX(vboxMain), toolbar, FALSE, FALSE,0);
                 GtkToolItem *open = gtk_tool_button_new_from_stock(GTK_STOCK_DIRECTORY);
-                g_signal_connect(G_OBJECT(open), "clicked", G_CALLBACK(Application::toolbar_chooseDirectory), NULL);
+                g_signal_connect(G_OBJECT(open), "clicked", G_CALLBACK(Application::chooseDirectory), NULL);
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), open, -1);
                 GtkToolItem *build = gtk_tool_button_new_from_stock(GTK_STOCK_EXECUTE);
                 gtk_toolbar_insert(GTK_TOOLBAR(toolbar), build, -1);
@@ -698,6 +754,7 @@ namespace apidb
                 gtk_init (argc, argv);
         }
                 
+                
         void Application::create()
         {
                 if(app == NULL)
@@ -712,10 +769,9 @@ namespace apidb
                 window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
                 vboxMain = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 createWindow();        
-                        
-                toolbar = gtk_toolbar_new();
-                createToolbar(); 
-                        
+                                
+                createHeader();
+                
                 createNotebook();  
                 gtk_widget_show_all (window);   
                 flagVisible = true;

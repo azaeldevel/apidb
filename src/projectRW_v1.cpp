@@ -31,37 +31,13 @@
 //local
 #include "common.hpp"
 #include "apidb.hpp"
+#include "Errors.hpp"
 
 
 namespace octetos
 {
 namespace apidb
 {
-        toolkit::Error ConfigureProject::getError()
-        {
-                if(error != NULL)
-                {
-                        toolkit::Error err = *error;
-                        delete error;
-                        error = NULL;
-                        return err;
-                }
-                else
-                {
-                        return toolkit::Error("",0);
-                }
-        }
-        bool ConfigureProject::isError()
-        {
-                if(error != NULL)
-                {
-                        return true;
-                }
-                else
-                {
-                        return false;
-                }
-        }
         bool ConfigureProject::readConfig(std::string filename)
         {
                 if(error != NULL)
@@ -69,25 +45,51 @@ namespace apidb
                         throw toolkit::Error("Hay un error pendiente de atender",ErrorCodes::unattendedError);
                 }
                 
-                //leeer xml
-                xmlTextReaderPtr reader;
-                int ret;                
-                //std::cout << "Descomprimiendo achivo." << std::endl;
-                TAR* tar_handle;
-                tar_open(&tar_handle, (char*) filename.c_str(), NULL,  O_RDONLY,  0644,  TAR_GNU);
+                FILE *apidbFilecheck = fopen(filename.c_str(), "r");
+                if (apidbFilecheck == NULL )
+                {
+                        std::string msg = "La direecion especificada '";
+                        msg += filename + "' no indica un archivo valido.";
+                        //writeError(new toolkit::Error(msg,ErrorCodes::ReadFile_InvlidPath));
+                        return false;
+                }
+                fclose(apidbFilecheck);
+                
                 char tmp_filepath[] =  "/tmp/dxmg-XXXXXX";
-                char * tmp_apidbDir  = mkdtemp(tmp_filepath);
+                char * tmp_apidbDir  = mkdtemp(tmp_filepath);       
+                //Descomomprimiendo archivo
+                
+                std::cout << "Descomprimiendo achivo." << std::endl;
+                TAR* tar_handle = NULL;
+                tar_open(&tar_handle, (char*) filename.c_str(), NULL,  O_RDONLY,  0644,  TAR_GNU);
                 if (tmp_apidbDir == NULL) 
                 {
                         //fprintf(stderr, "Failed to build temp file.\n");
-                        if(error != NULL) error = new toolkit::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::ReadFile_TempUnpackFail);
+                        if(error == NULL) error = new toolkit::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::ReadFile_TempUnpackFail);
                         return false;
                         //exitcode = 2;
                 }
-                tar_extract_all(tar_handle, tmp_filepath);
+                //std::cout << "tar_handle is " << tmp_apidbDir << std::endl;
+                //std::cout << "tmp_filepath "<< tmp_filepath  << std::endl;
+                if(tar_extract_all(tar_handle, tmp_apidbDir) != 0)
+                {
+                        if(error == NULL)error = new toolkit::Error("Fallo duraten las descompresion del archivo.",ErrorCodes::Read_UncomConfigFile);
+                        std::cout << "Fallo duraten las descompresion del archivo." << std::endl;
+                }
                 tar_close(tar_handle);
-                //std::cout << "Lellendo archivo." << std::endl;  
-                std::string xmlfile = tmp_apidbDir;
+                                
+                std::cout << "Leyendo version de proyecto." << std::endl;
+                std::string tmVerFileName = tmp_apidbDir;
+                tmVerFileName += "/apidb/version";
+                //projectVersion.fromFile(tmVerFileName);
+                std::cout << "Version: " << projectVersion.toString() <<std::endl;
+                std::cout << "Version de archivo leida." << std::endl;
+                
+                //leer xml
+                std::cout << "Leyendo XML." << std::endl;  
+                xmlTextReaderPtr reader;
+                int ret;                
+                std::string xmlfile = tmp_filepath;
                 xmlfile += "/apidb/main.xml";
                 reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);
                 if (reader != NULL) 
@@ -106,9 +108,10 @@ namespace apidb
                         //fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
                         std::string msg = "Fallo al abrir el archivo '";
                         msg += msg + xmlfile + "'";
-                        if(error != NULL) error = new toolkit::Error(msg,ErrorCodes::ReadFile_OpenXMLFile);
+                        if(error == NULL) error = new toolkit::Error(msg,ErrorCodes::ReadFile_OpenXMLFile);
                         return false;
                 }
+                                
                 
                 return true;
         }

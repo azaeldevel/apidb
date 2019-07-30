@@ -105,8 +105,9 @@ namespace apidb
                 void createNotebookInfo(GtkWidget *boxInfo);
                 void createNotebookConexion(GtkWidget *boxConex);
                 void createNotebook();
+                void createHeader();
                 
-                static void toolbar_chooseDirectory (GtkWidget *widget, gpointer   data);
+                static void chooseDirectory (GtkWidget *widget, gpointer   data);
                 static void downloads_addTable (GtkWidget *widget, gpointer   data);
                 void loadConfig();                
                 static void active_tab (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer user_data);
@@ -116,6 +117,29 @@ namespace apidb
                 GtkWidget *window;
                 GtkWidget *vboxMain;
                 GtkWidget *toolbar;
+                GtkWidget *headerbar;
+                GtkWidget  *btOpen;
+                GIcon  *icoOpen;
+                GtkWidget  *imgOpen;
+                GtkWidget  *btNew;
+                GIcon  *icoNew;
+                GtkWidget  *imgNew;
+                GtkWidget  *boxHeader;
+                GtkWidget  *btBuild;
+                GtkWidget *sep1;
+                GIcon  *icoBuild;
+                GtkWidget  *imgBuild;
+                GtkWidget  *btSave;
+                GIcon  *icoSave;
+                GtkWidget  *imgSave;
+                GtkWidget *sep2;
+                GtkWidget  *btClose;
+                GIcon  *icoClose;
+                GtkWidget  *imgClose;
+                GtkWidget  *btQuit;
+                GIcon  *icoQuit;
+                GtkWidget  *imgQuit;
+                
                 std::vector<GtkWidget*> tables;
                 //seccion de Informacion
                 static const char* titleInfo;
