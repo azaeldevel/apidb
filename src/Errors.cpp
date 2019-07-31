@@ -24,7 +24,7 @@ namespace octetos
 {
 namespace apidb
 {
-        toolkit::Error* error = NULL;
+        /*toolkit::Error* error = NULL;
 
         toolkit::Error getError()
         {
@@ -42,15 +42,15 @@ namespace apidb
                 if(error != NULL)return true;
                 return false;
         }
-        bool writeError(toolkit::Error& e)
+        bool writeError(toolkit::Error* e)
         {
                 
                 if(error != NULL)
                 {
                         return false;
                 }
-                error = &e;
+                error = e;
                 return true;
-        }
+        }*/
 } 
 }

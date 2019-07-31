@@ -40,9 +40,9 @@ namespace apidb
 {
         bool ConfigureProject::readConfig(std::string filename)
         {
-                if(error != NULL)
+                if(toolkit::Error::checkError())
                 {
-                        throw toolkit::Error("Hay un error pendiente de atender",ErrorCodes::unattendedError);
+                        throw toolkit::Error("Hay un error pendiente de atender",ErrorCodes::NOTADDRESSED);
                 }
                 std::cout << "Step 1. file " << filename << std::endl;
                 FILE *apidbFilecheck = fopen(filename.c_str(), "r");
@@ -50,7 +50,7 @@ namespace apidb
                 {
                         std::string msg = "La direecion especificada '";
                         msg += filename + "' no indica un archivo valido.";
-                        //writeError(new toolkit::Error(msg,ErrorCodes::ReadFile_InvlidPath));
+                        toolkit::Error::writeError(new toolkit::Error(msg.c_str(),ErrorCodes::READFILE_INVALIDPATH));
                         return false;
                 }
                 fclose(apidbFilecheck);
@@ -65,7 +65,7 @@ namespace apidb
                 if (tmp_apidbDir == NULL) 
                 {
                         //fprintf(stderr, "Failed to build temp file.\n");
-                        if(error == NULL) error = new toolkit::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::ReadFile_TempUnpackFail);
+                        toolkit::Error::writeError(new toolkit::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::READFILE_TEMPUNPACKFAIL));
                         return false;
                         //exitcode = 2;
                 }
@@ -73,7 +73,7 @@ namespace apidb
                 //std::cout << "tmp_filepath "<< tmp_filepath  << std::endl;
                 if(tar_extract_all(tar_handle, tmp_apidbDir) != 0)
                 {
-                        if(error == NULL)error = new toolkit::Error("Fallo duraten las descompresion del archivo.",ErrorCodes::Read_UncomConfigFile);
+                        toolkit::Error::writeError( new toolkit::Error("Fallo duraten las descompresion del archivo.",ErrorCodes::Read_UncomConfigFile));
                         std::cout << "Fallo duraten las descompresion del archivo." << std::endl;
                 }
                 tar_close(tar_handle);
@@ -81,23 +81,27 @@ namespace apidb
                 std::string tmVerFileName = tmp_apidbDir;
                 tmVerFileName += "/apidb/version";
                 //tmVerFileName="apidb/apidbcopy/version";
-                /*std::cout << "Leyendo version de proyecto. from " << tmVerFileName << std::endl;                
+                std::cout << "Leyendo version de proyecto. from " << tmVerFileName << std::endl;                
                 FILE *apidbFilecheck2 = fopen(tmVerFileName.c_str(), "r");
                 if (apidbFilecheck2 == NULL )
                 {
                         std::string msg = "La direecion especificada '";
                         msg += tmVerFileName + "' no indica un archivo valido.";
-                        //writeError(new toolkit::Error(msg,ErrorCodes::ReadFile_InvlidPath));
-                        std::cout << "No esta el archivo." << tmVerFileName <<std::endl;
+                        toolkit::Error::writeError(new toolkit::Error(msg.c_str(),ErrorCodes::READFILE_INVALIDPATHVER,__FILE__,__LINE__));
                         return false;
                 }
                 fclose(apidbFilecheck2);
-                if(projectVersion.fromFile(tmVerFileName)) std::cout << "Version: " << projectVersion.toString() <<std::endl;
+                if(projectVersion.fromFile(tmVerFileName)) 
+                {
+                        std::cout << "Version: " << projectVersion.toString() <<std::endl;
+                }
                 else 
                 {
-                        std::cout << "Fallo la lectura de la version de proyecto." <<std::endl;
+                        //std::cout << "Fallo la lectura de la version de proyecto." <<std::endl;                        
+                        std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.";
+                        toolkit::Error::writeError(new toolkit::Error(msg.c_str(),ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
                         return false;
-                }*/
+                }
                 
                 //leer xml
                 std::cout << "Leyendo XML." << std::endl;  
@@ -112,7 +116,7 @@ namespace apidb
                         if (!processNode(reader)) 
                         {
                                 //fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
-                                if(error != NULL)error = new toolkit::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode);
+                                 toolkit::Error::writeError( new toolkit::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode));
                                 return false;
                         }
                         xmlFreeTextReader(reader);
@@ -122,7 +126,7 @@ namespace apidb
                         //fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
                         std::string msg = "Fallo al abrir el archivo '";
                         msg += msg + xmlfile + "'";
-                        if(error == NULL) error = new toolkit::Error(msg,ErrorCodes::ReadFile_OpenXMLFile);
+                         toolkit::Error::writeError( new toolkit::Error(msg.c_str(),ErrorCodes::READFILE_OPENXMLFILE));
                         return false;
                 }
                                 
@@ -487,7 +491,8 @@ namespace apidb
         
         conectordb = new octetos::toolkit::clientdb::mysql::Datconnect(host,port,database,user,password);
         
-        
+        if(projectVersion >= verlast)//la lectura es compatible con versiones anteriores del projecto
+        {
         //
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
@@ -645,7 +650,7 @@ namespace apidb
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
         }
-        
+        }
         return true;
     }
 

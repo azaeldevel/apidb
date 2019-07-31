@@ -154,7 +154,6 @@ namespace apidb
         ConfigureProject::ConfigureProject()
         {
                 conectordb = NULL;
-                error = NULL;
         }
     
     ConfigureProject::ConfigureProject(const ConfigureProject& configProy)
@@ -168,9 +167,7 @@ namespace apidb
                 this->mvc = configProy.mvc;
                 this->downloads = configProy.downloads;
                 this->selects = configProy.selects;
-                this->packing = configProy.packing;
-                
-                error = NULL;
+                this->packing = configProy.packing;                
     }
     
     

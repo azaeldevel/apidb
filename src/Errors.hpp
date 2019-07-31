@@ -32,21 +32,23 @@ namespace octetos
 {
 namespace apidb
 {
-        extern toolkit::Error* error;
+        //extern toolkit::Error* error;
         enum ErrorCodes
         {                        
-                unattendedError,
-                ReadFile_TempUnpackFail,//No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.
+                NOTADDRESSED,
+                READFILE_TEMPUNPACKFAIL,//No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.
                 Read_FileFailParseNode,
                 Read_UncomConfigFile,
-                ReadFile_OpenXMLFile,
-                ReadFile_OpenVerFile,
-                ReadFile_InvlidPath//La direecion especificada  del archivo especificada no es valida
+                READFILE_OPENXMLFILE,
+                READFILE_OPENDVERFILE,
+                READFILE_INVALIDPATHVER,
+                READFILE_FAILPARSERVER,
+                READFILE_INVALIDPATH//La direecion especificada  del archivo especificada no es valida
         };
         
-        toolkit::Error getError();
+        /*toolkit::Error getError();
         bool checkError();
-        bool writeError(toolkit::Error* e);
+        bool writeError(toolkit::Error* e);*/
 }
 }
 #endif

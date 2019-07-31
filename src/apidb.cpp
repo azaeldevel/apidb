@@ -39,5 +39,7 @@ namespace apidb
                 v.setBuild(std::stoul(VERSION_BUILD));
 		return v;		
 	}
+	const octetos::toolkit::Version ver10(1,0);
+        const octetos::toolkit::Version& verlast = ver10;
 } 
 }

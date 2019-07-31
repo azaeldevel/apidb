@@ -28,7 +28,8 @@ namespace apidb
 {
 	octetos::toolkit::Version getPakageVersion();
 	std::string getPakageName();	
-
+        extern const octetos::toolkit::Version ver10;
+        extern const octetos::toolkit::Version& verlast;
 }
 }
 #endif

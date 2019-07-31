@@ -198,7 +198,6 @@ namespace apidb
         private:
                 bool processNode(xmlTextReaderPtr);
                 bool getProjectNodes(xmlTextReaderPtr);
-                octetos::toolkit::Error* error;
                 
         public:      
                 class Parameters : public std::vector<const char*>
