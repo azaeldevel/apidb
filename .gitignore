@@ -118,4 +118,16 @@ src/versionInfo.h
 src/writetar-2.cpp
 src/writetar.cpp
 src/build/mysql-reader-c++
+src/build/apidb-build
+src/build/apidb-gtk3
+src/build/apidb-gui
+src/build/apidb/apidb (1)/
+src/build/doc/fgjt
+src/build/doc/test/
+src/build/testing-v1
+src/mysql-reader-c++/.gitignore
+src/mysql-reader-c++/.travis.yml
+src/mysql-reader-c++/Makefile
+src/mysql-reader-c++/README.md
+src/mysql-reader-c++/main.cpp
 
