@@ -40,17 +40,18 @@ namespace apidb
 {
         bool ConfigureProject::readConfig(std::string filename)
         {
-                if(toolkit::Error::checkError())
+                if(toolkit::Error::check())
                 {
                         throw toolkit::Error("Hay un error pendiente de atender",ErrorCodes::NOTADDRESSED);
                 }
+                
                 std::cout << "Step 1. file " << filename << std::endl;
                 FILE *apidbFilecheck = fopen(filename.c_str(), "r");
                 if (apidbFilecheck == NULL )
                 {
                         std::string msg = "La direecion especificada '";
                         msg += filename + "' no indica un archivo valido.";
-                        toolkit::Error::writeError(new toolkit::Error(msg.c_str(),ErrorCodes::READFILE_INVALIDPATH));
+                        toolkit::Error::write(toolkit::Error(msg.c_str(),ErrorCodes::READFILE_INVALIDPATH));
                         return false;
                 }
                 fclose(apidbFilecheck);
@@ -65,7 +66,7 @@ namespace apidb
                 if (tmp_apidbDir == NULL) 
                 {
                         //fprintf(stderr, "Failed to build temp file.\n");
-                        toolkit::Error::writeError(new toolkit::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::READFILE_TEMPUNPACKFAIL));
+                        toolkit::Error::write(toolkit::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::READFILE_TEMPUNPACKFAIL));
                         return false;
                         //exitcode = 2;
                 }
@@ -73,7 +74,7 @@ namespace apidb
                 //std::cout << "tmp_filepath "<< tmp_filepath  << std::endl;
                 if(tar_extract_all(tar_handle, tmp_apidbDir) != 0)
                 {
-                        toolkit::Error::writeError( new toolkit::Error("Fallo duraten las descompresion del archivo.",ErrorCodes::Read_UncomConfigFile));
+                        toolkit::Error::write( toolkit::Error("Fallo duraten las descompresion del archivo.",ErrorCodes::Read_UncomConfigFile));
                         std::cout << "Fallo duraten las descompresion del archivo." << std::endl;
                 }
                 tar_close(tar_handle);
@@ -87,7 +88,7 @@ namespace apidb
                 {
                         std::string msg = "La direecion especificada '";
                         msg += tmVerFileName + "' no indica un archivo valido.";
-                        toolkit::Error::writeError(new toolkit::Error(msg.c_str(),ErrorCodes::READFILE_INVALIDPATHVER,__FILE__,__LINE__));
+                        toolkit::Error::write(toolkit::Error(msg.c_str(),ErrorCodes::READFILE_INVALIDPATHVER,__FILE__,__LINE__));
                         return false;
                 }
                 fclose(apidbFilecheck2);
@@ -99,7 +100,7 @@ namespace apidb
                 {
                         //std::cout << "Fallo la lectura de la version de proyecto." <<std::endl;                        
                         std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.";
-                        toolkit::Error::writeError(new toolkit::Error(msg.c_str(),ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
+                        toolkit::Error::write(toolkit::Error(msg.c_str(),ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
                         return false;
                 }
                 
@@ -116,7 +117,7 @@ namespace apidb
                         if (!processNode(reader)) 
                         {
                                 //fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
-                                 toolkit::Error::writeError( new toolkit::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode));
+                                 toolkit::Error::write( toolkit::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode));
                                 return false;
                         }
                         xmlFreeTextReader(reader);
@@ -126,7 +127,7 @@ namespace apidb
                         //fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
                         std::string msg = "Fallo al abrir el archivo '";
                         msg += msg + xmlfile + "'";
-                         toolkit::Error::writeError( new toolkit::Error(msg.c_str(),ErrorCodes::READFILE_OPENXMLFILE));
+                         toolkit::Error::write( toolkit::Error(msg.c_str(),ErrorCodes::READFILE_OPENXMLFILE));
                         return false;
                 }
                                 
