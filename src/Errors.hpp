@@ -35,8 +35,7 @@ namespace apidb
         //extern toolkit::Error* error;
         enum ErrorCodes
         {                        
-                NOTADDRESSED,
-                READFILE_TEMPUNPACKFAIL,//No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.
+                READFILE_TEMPUNPACKFAIL = toolkit::Error::Codes::ROOFCODE,//No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.
                 Read_FileFailParseNode,
                 Read_UncomConfigFile,
                 READFILE_OPENXMLFILE,

@@ -42,7 +42,7 @@ namespace apidb
         {
                 if(toolkit::Error::check())
                 {
-                        throw toolkit::Error("Hay un error pendiente de atender",ErrorCodes::NOTADDRESSED);
+                        throw toolkit::Error("Hay un error pendiente de atender",toolkit::Error::Codes::ERROR_NOTADDRESSED);
                 }
                 
                 std::cout << "Step 1. file " << filename << std::endl;

@@ -29,5 +29,3 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	7.- make
 	8.- cpack --config CPackConfig.cmake
 	9.- sudo ./apidb-*-Linux.sh --prefix=/usr
-
-3

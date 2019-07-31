@@ -7,12 +7,6 @@
 #include "../Errors.hpp"
 
 
-//static std::string  rootDir;
-
-/* Pointer to the file used by the tests. */
-//static FILE* temp_file = NULL;
-static const char* filenameAPIDB = "apidb/apidb";
-
 /* The suite initialization function.
  * Opens the temporary file used by the tests.
  * Returns zero on success, non-zero otherwise.
@@ -35,8 +29,13 @@ int clean_apidb(void)
 
 void testGeneration()
 {            
+        /*std::cout <<  "READFILE_TEMPUNPACKFAIL " << octetos::apidb::ErrorCodes::READFILE_TEMPUNPACKFAIL << std::endl;
+        std::cout <<  "Read_FileFailParseNode " << octetos::apidb::ErrorCodes::Read_FileFailParseNode << std::endl;
+        std::cout <<  "Read_UncomConfigFile " << octetos::apidb::ErrorCodes::Read_UncomConfigFile << std::endl;
+        std::cout <<  "READFILE_INVALIDPATH " << octetos::apidb::ErrorCodes::READFILE_INVALIDPATH << std::endl;*/
+        const char* filenameAPIDB = "apidb/apidb";
         octetos::apidb::ConfigureProject config;        
-        if(config.readConfig(filenameAPIDB) == false)
+        if(!config.readConfig(filenameAPIDB))
         {
                 if(octetos::toolkit::Error::check())
                 {
