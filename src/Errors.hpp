@@ -26,13 +26,13 @@
 #include <string.h>
 
 
-#include <common.hpp>
+#include <toolkit/common/common.hpp>
 
 namespace octetos
 {
 namespace apidb
 {
-        extern octetos::toolkit::Error* error;
+        extern toolkit::Error* error;
         enum ErrorCodes
         {                        
                 unattendedError,
@@ -44,9 +44,9 @@ namespace apidb
                 ReadFile_InvlidPath//La direecion especificada  del archivo especificada no es valida
         };
         
-        octetos::toolkit::Error getError();
+        toolkit::Error getError();
         bool checkError();
-        bool writeError(octetos::toolkit::Error* e);
+        bool writeError(toolkit::Error* e);
 }
 }
 #endif

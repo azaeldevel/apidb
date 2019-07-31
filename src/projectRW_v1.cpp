@@ -44,7 +44,7 @@ namespace apidb
                 {
                         throw toolkit::Error("Hay un error pendiente de atender",ErrorCodes::unattendedError);
                 }
-                
+                std::cout << "Step 1. file " << filename << std::endl;
                 FILE *apidbFilecheck = fopen(filename.c_str(), "r");
                 if (apidbFilecheck == NULL )
                 {
@@ -54,7 +54,7 @@ namespace apidb
                         return false;
                 }
                 fclose(apidbFilecheck);
-                
+                std::cout << "Step 2." << std::endl;
                 char tmp_filepath[] =  "/tmp/dxmg-XXXXXX";
                 char * tmp_apidbDir  = mkdtemp(tmp_filepath);       
                 //Descomomprimiendo archivo
@@ -78,12 +78,26 @@ namespace apidb
                 }
                 tar_close(tar_handle);
                                 
-                std::cout << "Leyendo version de proyecto." << std::endl;
                 std::string tmVerFileName = tmp_apidbDir;
                 tmVerFileName += "/apidb/version";
-                //projectVersion.fromFile(tmVerFileName);
-                std::cout << "Version: " << projectVersion.toString() <<std::endl;
-                std::cout << "Version de archivo leida." << std::endl;
+                //tmVerFileName="apidb/apidbcopy/version";
+                /*std::cout << "Leyendo version de proyecto. from " << tmVerFileName << std::endl;                
+                FILE *apidbFilecheck2 = fopen(tmVerFileName.c_str(), "r");
+                if (apidbFilecheck2 == NULL )
+                {
+                        std::string msg = "La direecion especificada '";
+                        msg += tmVerFileName + "' no indica un archivo valido.";
+                        //writeError(new toolkit::Error(msg,ErrorCodes::ReadFile_InvlidPath));
+                        std::cout << "No esta el archivo." << tmVerFileName <<std::endl;
+                        return false;
+                }
+                fclose(apidbFilecheck2);
+                if(projectVersion.fromFile(tmVerFileName)) std::cout << "Version: " << projectVersion.toString() <<std::endl;
+                else 
+                {
+                        std::cout << "Fallo la lectura de la version de proyecto." <<std::endl;
+                        return false;
+                }*/
                 
                 //leer xml
                 std::cout << "Leyendo XML." << std::endl;  
@@ -576,7 +590,7 @@ namespace apidb
         
         for(int i = 0; i < 2; i++)
         {
-                //std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
+                std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
                 //std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
                 std::string node = (const char*)xmlTextReaderConstName(reader);
                 int counTbs = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs"));

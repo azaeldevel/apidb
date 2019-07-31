@@ -36,9 +36,9 @@ int clean_apidb(void)
 void testGeneration()
 {            
         octetos::apidb::ConfigureProject config;        
-        /*if(config.readConfig(filenameAPIDB) == false)
+        if(config.readConfig(filenameAPIDB) == false)
         {
-                std::cout << "Error  -> "<< octetos::apidb::getError().what() << std::endl;//std::cout << "Error  -> " << octetos::apidb::getError().what() << std::endl;
+                //std::cout << "Error  -> "<< octetos::apidb::getError().what() << std::endl;//std::cout << "Error  -> " << octetos::apidb::getError().what() << std::endl;
                 CU_ASSERT(false);
                 return;
         }
@@ -46,9 +46,9 @@ void testGeneration()
         octetos::apidb::Driver driver(config);
         if(!driver.driving(false))
         {
-                std::cout << "Error  -> "<< octetos::apidb::getError().what() << std::endl;//std::cout << "Error  -> " << octetos::apidb::getError().what() << std::endl;
+                //std::cout << "Error  -> "<< octetos::apidb::getError().what() << std::endl;//std::cout << "Error  -> " << octetos::apidb::getError().what() << std::endl;
                 CU_ASSERT(false);
-        }*/
+        }
         
         CU_ASSERT(true);
 }

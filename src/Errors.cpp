@@ -18,22 +18,17 @@
  *  author: Azael Reyes
  * */
 
-#include "driver.hpp"
-#include "versionInfo.h"
-#include <string>
-#include <iostream>
-
 #include "Errors.hpp"
 
 namespace octetos
 {
 namespace apidb
 {
-        octetos::toolkit::Error* error = NULL;
+        toolkit::Error* error = NULL;
 
-        octetos::toolkit::Error getError()
+        toolkit::Error getError()
         {
-                octetos::toolkit::Error e(*error);
+                toolkit::Error e(*error);
                 if(error != NULL)
                 {
                         delete error;
@@ -47,7 +42,7 @@ namespace apidb
                 if(error != NULL)return true;
                 return false;
         }
-        bool writeError(octetos::toolkit::Error& e)
+        bool writeError(toolkit::Error& e)
         {
                 
                 if(error != NULL)

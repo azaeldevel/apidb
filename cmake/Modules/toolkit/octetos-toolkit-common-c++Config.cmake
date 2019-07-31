@@ -9,13 +9,13 @@ IF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)
 ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)
 
 IF(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot")
-	FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR common.hpp
-	  $ENV{HOME}/develop/toolkit/common
+	FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR toolkit/common/common.hpp
+	  $ENV{HOME}/develop
 	)
 ELSEIF()
-	FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR common.hpp
-	  /usr/local/include/octetos/toolkit/common
-	  /usr/include/octetos/toolkit/common
+	FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR toolkit/common/common.hpp
+	  /usr/local/include/octetos
+	  /usr/include/octetos
 	)
 ENDIF()
 

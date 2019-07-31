@@ -14,6 +14,8 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	- Boost 1.67
 	- Bison 3.2
 	- Flex 2.6
+	- GTK 3 library
+	- Tar library
 
 -------------
 - Instalación
@@ -28,4 +30,4 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	8.- cpack --config CPackConfig.cmake
 	9.- sudo ./apidb-*-Linux.sh --prefix=/usr
 
-
+3

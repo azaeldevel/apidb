@@ -49,9 +49,9 @@ namespace apidb
         class CaptureTable
         {
         public:
-                void show();
+                bool show();
                 const char* getSelectTable()const;
-                CaptureTable(const Driver*,GtkWidget* widget);
+                CaptureTable(const Driver*);
                 
         private:
                 GtkWidget *dialog;
@@ -101,7 +101,7 @@ namespace apidb
                 
         private:                
                 void createWindow();
-                void createToolbar();
+                //void createToolbar();
                 void createNotebookInfo(GtkWidget *boxInfo);
                 void createNotebookConexion(GtkWidget *boxConex);
                 void createNotebook();
@@ -110,8 +110,8 @@ namespace apidb
                 static void chooseDirectory (GtkWidget *widget, gpointer   data);
                 static void downloads_addTable (GtkWidget *widget, gpointer   data);
                 void loadConfig();                
-                static void active_tab (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer user_data);
-                static void on_newtable(GtkWidget *widget, gpointer data);
+                //static void active_tab (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer user_data);
+                //static void on_newtable(GtkWidget *widget, gpointer data);
                 
         private:
                 GtkWidget *window;
