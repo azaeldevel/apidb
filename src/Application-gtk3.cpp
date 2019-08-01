@@ -181,7 +181,7 @@ namespace apidb
         
         
                 
-        void on_changed(GtkWidget *widget, gpointer statusbar)
+       /* void on_changed(GtkWidget *widget, gpointer statusbar)
         {        
                 GtkTreeIter iter;
                 GtkTreeModel *model;
@@ -193,7 +193,7 @@ namespace apidb
                         gtk_statusbar_push(GTK_STATUSBAR(statusbar),gtk_statusbar_get_context_id(GTK_STATUSBAR(statusbar), value), value);
                         g_free(value);
                 }
-        }
+        }*/
         
         
         
@@ -371,7 +371,7 @@ namespace apidb
         {    
                 GtkTreeViewColumn *col;
                 GtkCellRenderer *renderer;
-                GtkCellRenderer *add;
+                //GtkCellRenderer *add;
                 view = gtk_tree_view_new();    
                 g_signal_connect(G_OBJECT(view), "row-activated", G_CALLBACK(row_activated), this);
                 
@@ -399,7 +399,7 @@ namespace apidb
                                 
                 GtkTreeSelection *selection; 
                 GtkWidget *vbox;
-                GtkWidget *statusbar;
+                //GtkWidget *statusbar;
   
                 vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 gtk_container_add(GTK_CONTAINER(scrolled_window), vbox);
@@ -407,17 +407,17 @@ namespace apidb
                 selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
                 gtk_box_pack_start(GTK_BOX(vbox), view, TRUE, TRUE, 1); 
 
-                statusbar = gtk_statusbar_new();
+               /* statusbar = gtk_statusbar_new();
                 gtk_box_pack_start(GTK_BOX(vbox), statusbar, FALSE, TRUE, 1);
-                g_signal_connect(selection, "changed", G_CALLBACK(on_changed), statusbar);  
+                g_signal_connect(selection, "changed", G_CALLBACK(on_changed), statusbar); */ 
                 
-                GtkWidget *pop = gtk_popover_new(statusbar);
+                /*GtkWidget *pop = gtk_popover_new(statusbar);
                 GtkWidget *popvbox = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 gtk_container_add(GTK_CONTAINER(pop), popvbox);
                 GtkWidget * mn1 = gtk_button_new_with_label ("menu1");
                 gtk_box_pack_start(GTK_BOX(popvbox), mn1, TRUE, TRUE, 1);
                 GtkWidget * mn2 = gtk_button_new_with_label ("menu1");
-                gtk_box_pack_start(GTK_BOX(popvbox), mn2, TRUE, TRUE, 1);
+                gtk_box_pack_start(GTK_BOX(popvbox), mn2, TRUE, TRUE, 1);*/
         }
         
 

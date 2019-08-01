@@ -51,7 +51,7 @@ namespace apidb
                 {
                         std::string msg = "La direecion especificada '";
                         msg += filename + "' no indica un archivo valido.";
-                        toolkit::Error::write(toolkit::Error(msg.c_str(),ErrorCodes::READFILE_INVALIDPATH));
+                        toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_INVALIDPATH));
                         return false;
                 }
                 fclose(apidbFilecheck);
@@ -88,7 +88,7 @@ namespace apidb
                 {
                         std::string msg = "La direecion especificada '";
                         msg += tmVerFileName + "' no indica un archivo valido.";
-                        toolkit::Error::write(toolkit::Error(msg.c_str(),ErrorCodes::READFILE_INVALIDPATHVER,__FILE__,__LINE__));
+                        toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_INVALIDPATHVER,__FILE__,__LINE__));
                         return false;
                 }
                 fclose(apidbFilecheck2);
@@ -97,10 +97,9 @@ namespace apidb
                         std::cout << "Version: " << projectVersion.toString() <<std::endl;
                 }
                 else 
-                {
-                        //std::cout << "Fallo la lectura de la version de proyecto." <<std::endl;                        
+                {              
                         std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.";
-                        toolkit::Error::write(toolkit::Error(msg.c_str(),ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
+                        toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
                         return false;
                 }
                 
@@ -127,7 +126,7 @@ namespace apidb
                         //fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
                         std::string msg = "Fallo al abrir el archivo '";
                         msg += msg + xmlfile + "'";
-                         toolkit::Error::write( toolkit::Error(msg.c_str(),ErrorCodes::READFILE_OPENXMLFILE));
+                         toolkit::Error::write( toolkit::Error(msg,ErrorCodes::READFILE_OPENXMLFILE));
                         return false;
                 }
                                 
