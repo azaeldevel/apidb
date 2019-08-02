@@ -69,7 +69,7 @@ namespace apidb
 		
 	OutputLenguajes Driver::getOutputLenguaje() const
 	{
-		return generator->getOutputLenguaje();
+		return configureProject.outputLenguaje;
 	}
 	
 	bool Driver::driving(bool log)
@@ -155,6 +155,7 @@ namespace apidb
 		if(log)analyzer->getOutputMessage() << "\tLenguaje de entrada: " << analyzer->getInputLenguajeString() << std::endl;
 		
 		apidb::mysql::Analyzer* analyzer = NULL;
+		//std::cout<<"Step 1."<<std::endl;
 		if(this->analyzer->getInputLenguaje() == apidb::InputLenguajes::MySQL)
 		{
 			analyzer = (apidb::mysql::Analyzer*)(this->analyzer);
@@ -164,8 +165,8 @@ namespace apidb
                         std::cout << "El lenguaje '" << this->analyzer->getInputLenguajeString() << "' no tiene soporte aun." << std::endl;
 			return false;
 		}
-		
-		if(analyzer->analyze(true)) //reading tables
+		//std::cout<<"Step 2."<<std::endl;
+		if(analyzer->analyze(log)) //reading tables
                 {
                         
                 }  

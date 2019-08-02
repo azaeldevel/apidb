@@ -55,8 +55,7 @@ namespace apidb
         };
 	enum OutputLenguajes
 	{
-		C = 1,
-		CPP,
+		CPP=1,
 		//JAVA,
 		//CSHARP,
 		//PERL,
