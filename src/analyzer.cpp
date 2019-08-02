@@ -55,16 +55,6 @@ namespace apidb
 	{
 		return spacies;
 	}		
-	std::string Analyzer::getInputLenguajeString() const
-	{
-		switch(configureProject.inputLenguaje)
-		{
-			case InputLenguajes::MySQL:
-				return "Servidor MySQL";
-			default:
-				return "Unknow";
-		}
-	}	
 	const std::string& Analyzer::getNameProject()
 	{
 		return configureProject.name;
@@ -90,8 +80,8 @@ namespace mysql
                 {
                         for(apidb::symbols::Table* table : *AttSpace) //reading attrubtes by table
                         {
-                                for (auto const& [key, attribute] : *table)
-                                if(log)*outputMessages << "\tCreating basic simbols for " << table->name  << "." << std::endl;
+                                //for (auto const& [key, attribute] : *table)
+                                if(log)  *outputMessages << "\tCreating basic simbols for " << table->name  << "." << std::endl;
                                 //simbolos basicos 
                                 if(!table->basicSymbols(*connector))
                                 {
@@ -113,6 +103,7 @@ namespace mysql
                         }
                 }
                 }
+                //std::cout<<"Step 3."<<std::endl;
                 for(auto const& [keySpace, AttSpace]  : spacies)
                 {
                 for(auto table: *AttSpace) //reading attrubtes by table
@@ -124,7 +115,7 @@ namespace mysql
                         }
                 }
                 }
-                
+                //std::cout<<"Step 4."<<std::endl;
                 return flag;
 	}
 	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn) : apidb::Analyzer(config,conn)

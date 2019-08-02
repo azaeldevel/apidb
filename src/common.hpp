@@ -48,7 +48,8 @@ namespace apidb
 		//PostgresSQL
 	};*/
         typedef octetos::toolkit::clientdb::Datconnect::ServerType InputLenguajes;
-	
+	std::string getInputLenguajeString(InputLenguajes);	
+        
         enum PackingLenguajes
         {
                 CMake = 1

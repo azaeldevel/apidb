@@ -82,7 +82,7 @@ namespace apidb
                 std::string tmVerFileName = tmp_apidbDir;
                 tmVerFileName += "/apidb/version";
                 //tmVerFileName="apidb/apidbcopy/version";
-                std::cout << "Leyendo version de proyecto. from " << tmVerFileName << std::endl;                
+                /*std::cout << "Leyendo version de proyecto. from " << tmVerFileName << std::endl;                
                 FILE *apidbFilecheck2 = fopen(tmVerFileName.c_str(), "r");
                 if (apidbFilecheck2 == NULL )
                 {
@@ -101,7 +101,7 @@ namespace apidb
                         std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.";
                         toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
                         return false;
-                }
+                }*/
                 
                 //leer xml
                 std::cout << "Leyendo XML." << std::endl;  
@@ -491,7 +491,7 @@ namespace apidb
         
         conectordb = new octetos::toolkit::clientdb::mysql::Datconnect(host,port,database,user,password);
         
-        if(projectVersion >= verlast)//la lectura es compatible con versiones anteriores del projecto
+        //if(projectVersion >= verlast)//la lectura es compatible con versiones anteriores del projecto
         {
         //
         xmlTextReaderRead(reader);
@@ -595,7 +595,7 @@ namespace apidb
         
         for(int i = 0; i < 2; i++)
         {
-                std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
+                //std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
                 //std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
                 std::string node = (const char*)xmlTextReaderConstName(reader);
                 int counTbs = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs"));

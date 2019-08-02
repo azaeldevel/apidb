@@ -152,9 +152,9 @@ namespace apidb
 	bool Driver::analyze(bool log)
 	{
 		if(log)analyzer->getOutputMessage() << "Analisis de codigo..." << std::endl;
-		if(log)analyzer->getOutputMessage() << "\tLenguaje de entrada: " << analyzer->getInputLenguajeString() << std::endl;
+		if(log)analyzer->getOutputMessage() << "\tLenguaje de entrada: " << getInputLenguajeString(configureProject.inputLenguaje) << std::endl;
 		
-		apidb::mysql::Analyzer* analyzer = NULL;
+		/*apidb::mysql::Analyzer* analyzer = NULL;
 		//std::cout<<"Step 1."<<std::endl;
 		if(this->analyzer->getInputLenguaje() == apidb::InputLenguajes::MySQL)
 		{
@@ -162,9 +162,9 @@ namespace apidb
 		}
 		else
 		{
-                        std::cout << "El lenguaje '" << this->analyzer->getInputLenguajeString() << "' no tiene soporte aun." << std::endl;
+                        std::cout << "El lenguaje '" << getInputLenguajeString(configureProject.inputLenguaje) << "' no tiene soporte aun." << std::endl;
 			return false;
-		}
+		}*/
 		//std::cout<<"Step 2."<<std::endl;
 		if(analyzer->analyze(log)) //reading tables
                 {

@@ -41,6 +41,18 @@ namespace octetos
 namespace apidb
 {
                
+        	
+	std::string getInputLenguajeString(InputLenguajes inputLenguaje )
+	{
+		switch(inputLenguaje)
+		{
+			case InputLenguajes::MySQL:
+				return "Servidor MySQL";
+			default:
+				return "Unknow";
+		}
+	}
+	
     const std::string& ConfigureProject::Table::getName() const
     {
         return name;        

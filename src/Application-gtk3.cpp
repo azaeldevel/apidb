@@ -46,7 +46,7 @@ namespace apidb
                 if(driver != NULL)
                 {
                         int i = 1;
-                        std::cout << "Buscando '" << table  << "' tabla para seleccionar parametros." << std::endl;
+                        //std::cout << "Buscando '" << table  << "' tabla para seleccionar parametros." << std::endl;
                         
                         for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator it = driver->getAnalyzer().getListTableConst().begin(); it != driver->getAnalyzer().getListTableConst().end(); it++)
                         {
@@ -222,7 +222,7 @@ namespace apidb
                 if(nodenumber <= list->size())
                 {
                         std::advance(it , nodenumber);
-                        std::cout << "Selected table : " << it->second->getName().c_str() << ", node :" << ptr << std::endl;
+                        //std::cout << "Selected table : " << it->second->getName().c_str() << ", node :" << ptr << std::endl;
                         return it->second->getName().c_str();
                 }
                 else
@@ -273,18 +273,17 @@ namespace apidb
 
                 if (!gtk_tree_model_get_iter(model, &iter, path))
                 {
-                        std::cout << "No Agregado " << std::endl;
+                        //std::cout << "No Agregado " << std::endl;
                         actual = NULL;
                         return; /* path describes a non-existing row - should not happen */
                 }
                 
                 const char* name = gtk_tree_model_get_string_from_iter(model,&iter);
-                std::cout << "Agregando " << name << std::endl;
+                //std::cout << "Agregando " << name << std::endl;
                 switch(checkTypeNode(model,&iter))
                 {
                         case 'R':
                                 {
-                                        printf("'%s'\n", "Es una tabla");
                                         CaptureTable capT(Application::getApplication()->getDriver());
                                         if(capT.show())
                                         {
@@ -301,11 +300,11 @@ namespace apidb
                                         std::string strFunction = cap.getNameFunction();
                                         const char* strTable = getTableName(model,&iter,wgTree->list);
                                         ConfigureProject::Function* newF = new ConfigureProject::Function(strFunction);
-                                        std::cout << "Bascando tabla '" << strTable << "'" << std::endl;
+                                        //std::cout << "Bascando tabla '" << strTable << "'" << std::endl;
                                         std::map<const char*,ConfigureProject::Table*>::iterator itT = wgTree->list->find(strTable);
                                         if(itT != wgTree->list->end())
                                         {
-                                                std::cout << "tabla '" << strTable <<  "' encontrada."<< std::endl;
+                                                //std::cout << "tabla '" << strTable <<  "' encontrada."<< std::endl;
                                                 itT->second->insert(std::make_pair(strFunction.c_str(), newF));
                                                 bool flag = false;
                                                 do
@@ -353,7 +352,7 @@ namespace apidb
                                         std::string params = itF->second->listParams();
                                         fnProto += "(" + params + ")";
                                 }
-                                std::cout << fnProto << std::endl;
+                                //std::cout << fnProto << std::endl;
                                 gtk_tree_store_append(treestore, &funtion, &table);
                                 gtk_tree_store_set(treestore, &funtion,0, fnProto.c_str(), -1);   
                         }
@@ -616,8 +615,8 @@ namespace apidb
                         //std::cout << "driver = new Driver(config);" << std::endl;
                         driver = new Driver(config);
                         //std::cout << "if(driver->analyze(false))" << std::endl;
-                        std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
-                        if(driver->analyze(true))
+                        //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
+                        if(driver->analyze(false))
                         {
                                         
                         }
