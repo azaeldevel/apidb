@@ -45,7 +45,7 @@ namespace apidb
                         throw toolkit::Error("Hay un error pendiente de atender",toolkit::Error::Codes::ERROR_NOTADDRESSED);
                 }
                 
-                std::cout << "Step 1. file " << filename << std::endl;
+                //std::cout << "Step 1. file " << filename << std::endl;
                 FILE *apidbFilecheck = fopen(filename.c_str(), "r");
                 if (apidbFilecheck == NULL )
                 {
@@ -55,12 +55,12 @@ namespace apidb
                         return false;
                 }
                 fclose(apidbFilecheck);
-                std::cout << "Step 2." << std::endl;
+                //std::cout << "Step 2." << std::endl;
                 char tmp_filepath[] =  "/tmp/dxmg-XXXXXX";
                 char * tmp_apidbDir  = mkdtemp(tmp_filepath);       
                 //Descomomprimiendo archivo
                 
-                std::cout << "Descomprimiendo achivo." << std::endl;
+                //std::cout << "Descomprimiendo achivo." << std::endl;
                 TAR* tar_handle = NULL;
                 tar_open(&tar_handle, (char*) filename.c_str(), NULL,  O_RDONLY,  0644,  TAR_GNU);
                 if (tmp_apidbDir == NULL) 
@@ -104,7 +104,7 @@ namespace apidb
                 }*/
                 
                 //leer xml
-                std::cout << "Leyendo XML." << std::endl;  
+                //std::cout << "Leyendo XML." << std::endl;  
                 xmlTextReaderPtr reader;
                 int ret;                
                 std::string xmlfile = tmp_filepath;

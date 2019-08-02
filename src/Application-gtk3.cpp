@@ -25,7 +25,7 @@ namespace apidb
                         gtk_widget_destroy(dialog);
                         return true;
                 }
-                else if(response == GTK_RESPONSE_CANCEL | response == GTK_RESPONSE_CLOSE)
+                else
                 {
                         strParameter = NULL;
                         gtk_widget_destroy(dialog);
@@ -150,6 +150,7 @@ namespace apidb
                 else
                 {
                         table = NULL;
+                        gtk_widget_destroy(dialog);
                         return false;
                 } 
         }
@@ -212,7 +213,7 @@ namespace apidb
                         {
                                break;
                         }
-                        printf("'--%s'\n", ptr);
+                        //printf("'--%s'\n", ptr);
                         ptr = strtok(NULL, delim);
                         count++;
                 }
