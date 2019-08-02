@@ -22,6 +22,7 @@
 #define APIDB_ANALYZER_HPP
 
 #include "common.hpp"
+#include "ConfigureProject.hpp"
 #include "scanner.hpp"
 #include "parser.tab.hh"
 

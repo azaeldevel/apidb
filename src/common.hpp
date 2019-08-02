@@ -57,6 +57,7 @@ namespace apidb
 	enum OutputLenguajes
 	{
 		CPP=1,
+                C
 		//JAVA,
 		//CSHARP,
 		//PERL,
@@ -193,84 +194,6 @@ namespace apidb
                 std::string getSpacePatch(std::string fullname);
                 short getSpaceLevel(std::string fullname);
 	}
-        class ConfigureProject
-        {
-        private:
-                bool processNode(xmlTextReaderPtr);
-                bool getProjectNodes(xmlTextReaderPtr);
-                
-        public:      
-                class Parameters : public std::vector<const char*>
-                {
-                public:
-                        ~Parameters();
-                };        
-                class Function
-                {
-                public:
-                        enum Skeleton
-                        {
-                                DOWNLOAD,
-                                SELECT,
-                                INSERT,
-                                UPDATE,
-                                COSTUM
-                        };
-                        const std::string& getName() const;
-                        Function(const std::string&,Skeleton skeleton);
-                        Function(const std::string&);
-                        Function();
-                        ~Function();
-                        Skeleton getSkeleton() const;
-                        void setHeader(Parameters*);
-                        void setBody(const std::string&);
-                        const Parameters* getParameters() const;
-                        std::string listParams()const;
-                        void addParam(const char* p);
-                private:
-                        std::string name;
-                        Skeleton skeleton;
-                        Parameters* header; 
-                        std::string body;
-                };
-                class Table : public std::map<const char*, const Function*>
-                {
-                private:
-                        std::string name;
-                public:
-                        const std::string& getName() const;
-                        Table(const std::string&);
-                        Table();
-                };
-        
-                std::string name; 
-                std::string directory;
-                octetos::toolkit::Version version;
-                octetos::toolkit::clientdb::mysql::Datconnect* conectordb;
-                InputLenguajes inputLenguaje;
-                OutputLenguajes outputLenguaje;
-                PackingLenguajes packing;
-                Compiled compiled;
-                MVC mvc;
-                std::map<const char*,Table*> downloads;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
-                std::map<const char*,Table*> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
-                //
-                octetos::toolkit::Version projectVersion;
-                
-                //ConfigureProject(std::string filename);
-                ConfigureProject(const ConfigureProject& configProy);
-                ConfigureProject();
-                bool saveConfig();
-                bool checkXML(xmlTextReaderPtr);
-                bool readConfig(std::string filename);
-                bool isError();
-                toolkit::Error getError();
-                        
-                const std::string& getName()const;
-                const std::string& getDirectory()const;
-                const octetos::toolkit::Version& getVersion()const;
-                const octetos::toolkit::clientdb::mysql::Datconnect& getConector()const;
-    };
     
   
 }

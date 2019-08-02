@@ -21,11 +21,6 @@
 #ifndef APIDB_ERRORS_HPP
 #define APIDB_ERRORS_HPP
 
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-
-
 #include <toolkit/common/common.hpp>
 
 namespace octetos
