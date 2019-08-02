@@ -42,7 +42,11 @@ namespace apidb
                 READFILE_OPENDVERFILE,
                 READFILE_INVALIDPATHVER,
                 READFILE_FAILPARSERVER,
-                READFILE_INVALIDPATH//La direecion especificada  del archivo especificada no es valida
+                READFILE_INVALIDPATH,//La direecion especificada  del archivo especificada no es valida
+                CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,
+                CONFIGUREPROJECT_PARSE_XML,
+                
+                APPLICATION_GTK3_ROWACTIVE_NOTFOUND_TABLE
         };
         
         /*toolkit::Error getError();

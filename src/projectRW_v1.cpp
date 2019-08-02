@@ -82,7 +82,7 @@ namespace apidb
                 std::string tmVerFileName = tmp_apidbDir;
                 tmVerFileName += "/apidb/version";
                 //tmVerFileName="apidb/apidbcopy/version";
-                /*std::cout << "Leyendo version de proyecto. from " << tmVerFileName << std::endl;                
+                std::cout << "Leyendo version de proyecto. from " << tmVerFileName << std::endl;                
                 FILE *apidbFilecheck2 = fopen(tmVerFileName.c_str(), "r");
                 if (apidbFilecheck2 == NULL )
                 {
@@ -101,7 +101,7 @@ namespace apidb
                         std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.";
                         toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
                         return false;
-                }*/
+                }
                 
                 //leer xml
                 //std::cout << "Leyendo XML." << std::endl;  
@@ -302,11 +302,12 @@ namespace apidb
                 
                 if(rename(tarFilename.c_str(),dirProy.c_str()) != 0)
                 {
-                        std::cout << "Fallo al mover el archivo de proyecto." << std::endl;
+                        std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
+                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,__FILE__,__LINE__));
                         return false;
                 }
                 
-                std::cout<< "Escritura de proyecto completada." << std::endl;
+                //std::cout<< "Escritura de proyecto completada." << std::endl;
 		return true;
 	}
 
@@ -340,7 +341,9 @@ namespace apidb
         }
         else
         {
-            return true;
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         name = xmlTextReaderConstName(reader);
         short major = 0;
@@ -348,6 +351,12 @@ namespace apidb
         {  
             major = atoi((const char*)xmlTextReaderConstValue(reader));
         }        
+        else
+        {
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
+        }
 
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
@@ -359,13 +368,21 @@ namespace apidb
         }
         else
         {
-            return true;
-        }  
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
+        }
         name = xmlTextReaderConstName(reader);
         short minor = 0;
         if(strcmp((const char*)name,"#text") == 0)
         {
             minor = atoi((const char*)xmlTextReaderConstValue(reader));
+        }
+        else
+        {
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         
         xmlTextReaderRead(reader);
@@ -380,13 +397,21 @@ namespace apidb
         }
         else
         {
-            return true;
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         name = xmlTextReaderConstName(reader);
         short patch = 0;
         if(strcmp((const char*)name,"#text") == 0)
         {
             patch = atoi((const char*)xmlTextReaderConstValue(reader));
+        }
+        else
+        {
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         
         this->version.setNumbers(major,minor,patch);
@@ -404,13 +429,21 @@ namespace apidb
         }
         else
         {
-            return true;
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         name = xmlTextReaderConstName(reader);
         std::string host = "";
         if(strcmp((const char*)name,"#text") == 0)
         {
             host = (const char*)xmlTextReaderConstValue(reader);
+        }
+        else
+        {
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         
         xmlTextReaderRead(reader);
@@ -423,13 +456,21 @@ namespace apidb
         }
         else
         {
-            return true;
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         name = xmlTextReaderConstName(reader);
         int port = 0;
         if(strcmp((const char*)name,"#text") == 0)
         {
             port = atoi((const char*)xmlTextReaderConstValue(reader));
+        }
+        else
+        {
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         
         xmlTextReaderRead(reader);
@@ -442,13 +483,21 @@ namespace apidb
         }
         else
         {
-            return true;
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         name = xmlTextReaderConstName(reader);
         std::string database = "";
         if(strcmp((const char*)name,"#text") == 0)
         {
             database = (const char*)xmlTextReaderConstValue(reader);
+        }
+        else
+        {
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         
         xmlTextReaderRead(reader);
@@ -461,13 +510,21 @@ namespace apidb
         }
         else
         {
-            return true;
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         name = xmlTextReaderConstName(reader);
         std::string user = "";
         if(strcmp((const char*)name,"#text") == 0)
         {
             user = (const char*)xmlTextReaderConstValue(reader);
+        }
+        else
+        {
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         
         xmlTextReaderRead(reader);
@@ -480,13 +537,21 @@ namespace apidb
         }
         else
         {
-            return true;
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         name = xmlTextReaderConstName(reader);
         std::string password = "";
         if(strcmp((const char*)name,"#text") == 0)
         {
             password = (const char*)xmlTextReaderConstValue(reader);
+        }
+        else
+        {
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         
         conectordb = new octetos::toolkit::clientdb::mysql::Datconnect(host,port,database,user,password);
@@ -510,10 +575,9 @@ namespace apidb
         }
         else
         {
-                std::string msg = "El Lenguaje de entrada '";
-                msg += inL;
-                msg += "' no tiene soporte.";
-                throw msg;
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         
         //
@@ -534,10 +598,9 @@ namespace apidb
         }
         else
         {
-                std::string msg = "El Lenguaje de salida '";
-                msg += outL;
-                msg += "' no tiene soporte.";
-                throw msg;
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         
         //
@@ -557,10 +620,9 @@ namespace apidb
         }
         else
         {
-                std::string msg = "El Lenguaje de empaquetado '";
-                msg += pk;
-                msg += "' no tiene soporte.";
-                throw msg;
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         
         //
@@ -580,10 +642,9 @@ namespace apidb
         }
         else
         {
-                std::string msg = "El Lenguaje de empaquetado '";
-                msg += pk;
-                msg += "' no tiene soporte.";
-                throw msg;
+                std::string msgstr = "Fallo durante el parseo XML.";
+                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                return false;
         }
         
         //
@@ -651,34 +712,38 @@ namespace apidb
                 xmlTextReaderRead(reader);
         }
         }
-        return true;
-    }
-
-
-    bool ConfigureProject::processNode(xmlTextReaderPtr reader) 
-    {
-        const xmlChar *name = xmlTextReaderConstName(reader);
-
-        if(xmlTextReaderNodeType(reader) == 1) //es d apertura?
-        {        	
-            if(checkXML(reader))
-            {
-                //std::cout<<(const char*)name<<std::endl;
-                getProjectNodes(reader);
-            }
-            else
-            {
-            	std::cerr << "El XML no cumple con el formato requerido(el roden de los nodos es importante)" << std::endl;
-            	return false;
-            }
-        }
-        else if( xmlTextReaderNodeType(reader) == 15) //es d cerradura?
-        {
-            //stack.pop_front();
-        }
         
         return true;
     }
+
+
+        bool ConfigureProject::processNode(xmlTextReaderPtr reader) 
+        {
+                //const xmlChar *name = xmlTextReaderConstName(reader);
+
+                if(xmlTextReaderNodeType(reader) == 1) //es d apertura?
+                {        	
+                        if(!getProjectNodes(reader))
+                        {
+                                if(toolkit::Error::check())
+                                {
+                                        return false;
+                                }
+                                else
+                                {
+                                        std::string msgstr = "Fallo durante el parseo XML.";
+                                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                                        return false;
+                                }
+                        }
+                }
+                else if( xmlTextReaderNodeType(reader) == 15) //es d cerradura?
+                {
+                //stack.pop_front();
+                }
+        
+                return true;
+        }
     
 }
 }

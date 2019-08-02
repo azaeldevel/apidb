@@ -4,6 +4,7 @@
 
 #include "Application-gtk3.hpp"
 #include "apidb.hpp"
+#include "Errors.hpp"
 
 
 namespace octetos
@@ -46,8 +47,7 @@ namespace apidb
                 if(driver != NULL)
                 {
                         int i = 1;
-                        //std::cout << "Buscando '" << table  << "' tabla para seleccionar parametros." << std::endl;
-                        
+                        //std::cout << "Buscando '" << table  << "' tabla para seleccionar parametros." << std::endl;                        
                         for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator it = driver->getAnalyzer().getListTableConst().begin(); it != driver->getAnalyzer().getListTableConst().end(); it++)
                         {
                                 for(std::list<symbols::Table*>::iterator itT = (*it).second->begin(); itT != (*it).second->end(); itT++)
@@ -79,12 +79,11 @@ namespace apidb
                 gtk_widget_show_all(dialog);
                 gint response = gtk_dialog_run(GTK_DIALOG(dialog));
                 if(response == GTK_RESPONSE_OK) strNameFunction = gtk_entry_get_text( GTK_ENTRY(inAddFunc));
-                else strNameFunction == "";
+                else strNameFunction = "";
                 gtk_widget_destroy(dialog);
         }
         CaptureFuntion::CaptureFuntion(const Driver* d,GtkTreeIter* gtkIt,const char* table) : driver(d)
         {
-                
                 dialog = gtk_dialog_new_with_buttons ("Captura de Funcion.", NULL, GTK_DIALOG_MODAL,  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);                
                 //g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_response),widget);
                 content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
@@ -92,25 +91,6 @@ namespace apidb
                 gtk_container_add (GTK_CONTAINER (content_area), label);
                 inAddFunc = gtk_entry_new ();
                 gtk_container_add (GTK_CONTAINER (content_area), inAddFunc);
-                //gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
-                if(driver != NULL)
-                {
-                        //std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator itTbalbe = std::find(driver->getAnalyzer().getListTableConst().begin(),driver->getAnalyzer().getListTableConst().end(),table);
-                        /*int i = 1;
-                        for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator it = driver->getAnalyzer().getListTableConst().begin(); it != driver->getAnalyzer().getListTableConst().end(); it++)
-                        {
-                                for(std::list<symbols::Table*>::iterator itJ = (*it).second->begin(); itJ != (*it).second->end(); itJ++)
-                                {   
-                                        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::iterator itF = (*itJ)->begin(); itF  != (*itJ)->end(); itF++)
-                                        {
-                                                gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*itF).first,(*itF).first);     
-                                        }
-                                        i++;
-                                }
-                        }*/
-                }
-                //gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
-                //gtk_container_add (GTK_CONTAINER (content_area), cmbAddTable);
         }  
         
         
@@ -229,7 +209,7 @@ namespace apidb
                 else
                 {
                         //node de new function
-                        std::cout << "New funtion "<<std::endl;
+                        //std::cout << "New funtion "<<std::endl;
                         return NULL;
                 }
         }
@@ -326,8 +306,11 @@ namespace apidb
                                         }
                                         else
                                         {
-                                                std::cout << "No se encontro la tabla " << strTable << std::endl;
-                                                std::cout << "Tabla size:" <<  wgTree->list->size() << std::endl;
+                                                //std::cout << "No se encontro la tabla " << strTable << std::endl;
+                                                //std::cout << "Tabla size:" <<  wgTree->list->size() << std::endl;
+                                                std::string msgstr = "Fallo interno, no se encontro la tabla busca ";
+                                                msgstr = msgstr + strTable + "'";
+                                                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::APPLICATION_GTK3_ROWACTIVE_NOTFOUND_TABLE,__FILE__,__LINE__));
                                         }
                                 }
                                 break;
@@ -608,11 +591,20 @@ namespace apidb
                         //std::cout << "if(!config.readConfig(std::string(filename)))" << std::endl;
                         if(!config.readConfig(std::string(filename)))
                         {                 
+                                std::string msgstr = "";
+                                if(toolkit::Error::check())
+                                {
+                                        msgstr = toolkit::Error::get().what();
+                                }
+                                else
+                                {
+                                        msgstr ="Fallo la lectura del archivo de proyecto";
+                                }
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                 GTK_MESSAGE_ERROR,
                                                                 GTK_BUTTONS_CLOSE,
-                                                                "Fallo la lectura del archivo de proyecto",
+                                                                msgstr.c_str(),
                                                                 filename, g_strerror (errno));
                                 gtk_dialog_run (GTK_DIALOG (msg));
                                 gtk_widget_destroy (dialog);
@@ -629,9 +621,24 @@ namespace apidb
                         driver = new Driver(config);
                         //std::cout << "if(driver->analyze(false))" << std::endl;
                         //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
-                        if(driver->analyze(false))
+                        if(!driver->analyze(false))
                         {
-                                        
+                                std::string msgstr = "";
+                                if(toolkit::Error::check())
+                                {
+                                        msgstr = toolkit::Error::get().what();
+                                }
+                                else
+                                {
+                                        msgstr ="Fallo durante la fase de analisis.";
+                                }
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_ERROR,
+                                                                GTK_BUTTONS_CLOSE,
+                                                                msgstr.c_str(),
+                                                                filename, g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));
                         }
                         //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
                         app->loadConfig();
