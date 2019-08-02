@@ -200,7 +200,7 @@ namespace apidb
         
         
         
-        const char* TreeView::getTableName(GtkTreeModel *model,GtkTreeIter* iter)
+        const char* TreeView::getTableName(GtkTreeModel *model,GtkTreeIter* iter,std::map<const char*,ConfigureProject::Table*>* list)
         {
                 const char* path = gtk_tree_model_get_string_from_iter(model,iter);
                 char delim[] = ":";
@@ -218,8 +218,8 @@ namespace apidb
                 }
                 
                 int nodenumber = atoi(ptr);
-                std::map<const char*,ConfigureProject::Table*>::const_iterator it = Application::getConfigure().downloads.begin();
-                if(nodenumber <= Application::getConfigure().downloads.size())
+                std::map<const char*,ConfigureProject::Table*>::const_iterator it = list->begin();
+                if(nodenumber <= list->size())
                 {
                         std::advance(it , nodenumber);
                         std::cout << "Selected table : " << it->second->getName().c_str() << ", node :" << ptr << std::endl;
@@ -282,7 +282,7 @@ namespace apidb
                 std::cout << "Agregando " << name << std::endl;
                 switch(checkTypeNode(model,&iter))
                 {
-                        case 'T':
+                        case 'R':
                                 {
                                         printf("'%s'\n", "Es una tabla");
                                         CaptureTable capT(Application::getApplication()->getDriver());
@@ -294,13 +294,12 @@ namespace apidb
                                         }
                                 }
                                 break;
-                        case 'F':
+                        case 'T':
                                 {
-                                        printf("'%s'\n", "Es una Funcion");
-                                        CaptureFuntion cap(Application::getDriver(),&iter,getTableName(model,&iter));
+                                        CaptureFuntion cap(Application::getDriver(),&iter,getTableName(model,&iter,wgTree->list));
                                         cap.show();
                                         std::string strFunction = cap.getNameFunction();
-                                        const char* strTable = getTableName(model,&iter);
+                                        const char* strTable = getTableName(model,&iter,wgTree->list);
                                         ConfigureProject::Function* newF = new ConfigureProject::Function(strFunction);
                                         std::cout << "Bascando tabla '" << strTable << "'" << std::endl;
                                         std::map<const char*,ConfigureProject::Table*>::iterator itT = wgTree->list->find(strTable);
@@ -594,6 +593,7 @@ namespace apidb
                 {
                         filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
                         gtk_widget_destroy (dialog);
+                        //std::cout << "if(!config.readConfig(std::string(filename)))" << std::endl;
                         if(!config.readConfig(std::string(filename)))
                         {                 
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
@@ -606,17 +606,24 @@ namespace apidb
                                 gtk_widget_destroy (dialog);
                                 return;
                         } 
+                        //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
                         if(driver != NULL) 
                         {
                                 delete driver;
                                 driver = NULL;
                         }
+                        //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
+                        //std::cout << "driver = new Driver(config);" << std::endl;
                         driver = new Driver(config);
-                        if(driver->analyze(false))
+                        //std::cout << "if(driver->analyze(false))" << std::endl;
+                        std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
+                        if(driver->analyze(true))
                         {
                                         
                         }
+                        //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
                         app->loadConfig();
+                        //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
                         g_free (filename);
                         filename = NULL;
                 }
