@@ -138,7 +138,11 @@ namespace apidb
                 GtkWidget  *imgClose;
                 GtkWidget  *btQuit;
                 GIcon  *icoQuit;
+                GtkWidget *sep3;
                 GtkWidget  *imgQuit;
+                GtkWidget  *btAbout;
+                GIcon  *icoAbout;
+                GtkWidget  *imgAbout;
                 
                 std::vector<GtkWidget*> tables;
                 //seccion de Informacion

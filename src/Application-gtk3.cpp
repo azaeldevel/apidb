@@ -125,7 +125,7 @@ namespace apidb
                 //gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),"(c) Octetos");
                 //char  authors[1][30] = {"Azael Reyes"};
                 //gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG(dialog),(const gchar**)authors);
-                gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), "Hace sencillo crear una API para conectar a tu Base de Datos.");
+                gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), "Hace sencillo crear una API para conectar tu Base de Datos.");
                 gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/azaeldevel/apidb");
                 //gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), pixbuf);
                 //g_object_unref(pixbuf), pixbuf = NULL;
@@ -470,6 +470,18 @@ namespace apidb
                 g_object_unref (icoQuit);
                 gtk_container_add (GTK_CONTAINER (btQuit), imgQuit);
                 gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btQuit);       
+                
+                sep3 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+                gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), sep3);
+                
+                btAbout = gtk_button_new ();
+                icoAbout= g_themed_icon_new ("help-about");
+                imgAbout = gtk_image_new_from_gicon (icoAbout,GTK_ICON_SIZE_BUTTON);
+                g_signal_connect(G_OBJECT(btAbout), "clicked", G_CALLBACK(show_about), NULL);
+                g_object_unref (icoAbout);
+                gtk_container_add (GTK_CONTAINER (btAbout), imgAbout);
+                gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btAbout);  
+                
                 
                 gtk_window_set_titlebar (GTK_WINDOW (window), headerbar);
                 
