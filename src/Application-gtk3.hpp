@@ -13,6 +13,8 @@ namespace octetos
 {
 namespace apidb
 {
+        class Application;
+        
         
         class CaptureParameter
         {
@@ -70,8 +72,9 @@ namespace apidb
                 GtkTreeModel *model;
                 GtkWidget *view;
                 std::map<const char*,ConfigureProject::Table*>* list;
+                Application* app;
                 
-                static GtkTreeIter* actual;
+                //static GtkTreeIter* actual;
                 static const char* strNewFunct;
                 
                 static void row_activated(GtkTreeView       *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data);
@@ -81,7 +84,8 @@ namespace apidb
         public:                
                 void fill();
                 GtkWidget* create();
-                TreeView(GtkWidget *,std::map<const char*,ConfigureProject::Table*>*);
+                TreeView(GtkWidget *,std::map<const char*,ConfigureProject::Table*>*,Application*);
+                Application* getApplication()const;
         };
         
         class Application
@@ -91,13 +95,13 @@ namespace apidb
                 void create();
                 Application();
                 ~Application();
-                static Driver* getDriver();
-                static const ConfigureProject& getConfigure();
+                Driver* getDriver();
+                ConfigureProject* getConfigure()const;
                 
                 TreeView* getDownloadTreeView();
                 TreeView* getSelectTreeView();
                 
-                static Application* getApplication();
+                //Application* getApplication();
                 
         private:                
                 void createWindow();
@@ -109,7 +113,8 @@ namespace apidb
                 
                 static void chooseDirectory (GtkWidget *widget, gpointer   data);
                 static void downloads_addTable (GtkWidget *widget, gpointer   data);
-                void loadConfig();                
+                void loadConfig();       
+                static void  document_close(GtkWidget *widget, gpointer data);
                 //static void active_tab (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer user_data);
                 //static void on_newtable(GtkWidget *widget, gpointer data);
                 
@@ -118,6 +123,7 @@ namespace apidb
                 GtkWidget *vboxMain;
                 GtkWidget *toolbar;
                 GtkWidget *headerbar;
+                GtkWidget * notebookMain;
                 GtkWidget  *btOpen;
                 GIcon  *icoOpen;
                 GtkWidget  *imgOpen;
@@ -143,6 +149,10 @@ namespace apidb
                 GtkWidget  *btAbout;
                 GIcon  *icoAbout;
                 GtkWidget  *imgAbout;
+                GtkWidget *sep4;
+                GtkWidget  *imgCloseDoc;
+                GtkWidget  *btCloseDoc;
+                GIcon  *icoCloseDoc;
                 
                 std::vector<GtkWidget*> tables;
                 //seccion de Informacion
@@ -170,12 +180,15 @@ namespace apidb
                 TreeView* selectsTree;
                 //
                 static char *filename;
-                static ConfigureProject config;
-                static Driver* driver;
-                static Application* app;
-                static bool flagVisible;
-                static const char* selectedTab;
+                ConfigureProject* config;
+                Driver* driver;
+                //static Application* app;
+                bool flagVisible;
+                //static const char* selectedTab;
+                static std::string nameApp;
                 //
+                bool isSaved;
+                void setSaved(bool);
         };
 }
 }

@@ -180,7 +180,10 @@ namespace apidb
         
         
         
-        
+        Application* TreeView::getApplication()const
+        {
+                return app;
+        }
         const char* TreeView::getTableName(GtkTreeModel *model,GtkTreeIter* iter,std::map<const char*,ConfigureProject::Table*>* list)
         {
                 const char* path = gtk_tree_model_get_string_from_iter(model,iter);
@@ -255,7 +258,7 @@ namespace apidb
                 if (!gtk_tree_model_get_iter(model, &iter, path))
                 {
                         //std::cout << "No Agregado " << std::endl;
-                        actual = NULL;
+                        //actual = NULL;
                         return; /* path describes a non-existing row - should not happen */
                 }
                 
@@ -265,7 +268,7 @@ namespace apidb
                 {
                         case 'R':
                                 {
-                                        CaptureTable capT(Application::getApplication()->getDriver());
+                                        CaptureTable capT(wgTree->getApplication()->getDriver());
                                         if(capT.show())
                                         {
                                                 ConfigureProject::Table* ptb =  new ConfigureProject::Table(capT.getSelectTable());
@@ -276,7 +279,7 @@ namespace apidb
                                 break;
                         case 'T':
                                 {
-                                        CaptureFuntion cap(Application::getDriver(),&iter,getTableName(model,&iter,wgTree->list));
+                                        CaptureFuntion cap(wgTree->getApplication()->getDriver(),&iter,getTableName(model,&iter,wgTree->list));
                                         cap.show();
                                         std::string strFunction = cap.getNameFunction();
                                         const char* strTable = getTableName(model,&iter,wgTree->list);
@@ -290,7 +293,7 @@ namespace apidb
                                                 bool flag = false;
                                                 do
                                                 {
-                                                        CaptureParameter capParams(Application::getDriver(),strTable);
+                                                        CaptureParameter capParams(wgTree->getApplication()->getDriver(),strTable);
                                                         flag = capParams.show();
                                                         if(flag)
                                                         {
@@ -371,7 +374,7 @@ namespace apidb
                 return view;                                
         }
         
-        TreeView::TreeView(GtkWidget *box,std::map<const char*,ConfigureProject::Table*>* l) : list(l)
+        TreeView::TreeView(GtkWidget *box,std::map<const char*,ConfigureProject::Table*>* l,Application* a) : list(l), app(a)
         {
                 GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
                 gtk_container_set_border_width (GTK_CONTAINER (scrolled_window), 10);                       
@@ -403,11 +406,47 @@ namespace apidb
         }
         
 
+        void Application::document_close(GtkWidget *widget, gpointer data) 
+        {
+                Application* app = (Application*)data;
+                if(app->isSaved)
+                {                        
+                        if(app->notebookMain != NULL)
+                        {
+                                gtk_widget_destroy(app->notebookMain);
+                                app->notebookMain = NULL;
+                        }
+                        if(app->downsTree != NULL)
+                        {
+                                delete (app->downsTree);
+                                app->downsTree = NULL;
+                        }
+                        if(app->selectsTree != NULL)
+                        {
+                                delete (app->selectsTree);
+                                app->selectsTree = NULL;
+                        }
+                }
+        }
+        void Application::setSaved(bool saved)
+        {
+                if(isSaved == saved) return;// si ya se asigno el valor no hay que repetir la operacion
+                
+                isSaved = saved;
+                if(isSaved)
+                {
+                        gtk_header_bar_set_title (GTK_HEADER_BAR (headerbar), nameApp.c_str());
+                }
+                else
+                {
+                        gtk_header_bar_set_title (GTK_HEADER_BAR (headerbar), (nameApp + "*").c_str());
+                }
+        }
         void Application::createHeader()
         {       
                 headerbar = gtk_header_bar_new();
                 //gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (headerbar), TRUE);
-                gtk_header_bar_set_title (GTK_HEADER_BAR (headerbar), "APIDB");
+                gtk_header_bar_set_title (GTK_HEADER_BAR (headerbar), nameApp.c_str());
                 gtk_header_bar_set_has_subtitle (GTK_HEADER_BAR (headerbar), FALSE);
       
                 btOpen = gtk_button_new ();
@@ -416,7 +455,7 @@ namespace apidb
                 g_object_unref (icoOpen);
                 gtk_container_add (GTK_CONTAINER (btOpen), imgOpen);
                 gtk_header_bar_pack_start (GTK_HEADER_BAR (headerbar), btOpen);
-                g_signal_connect(G_OBJECT(btOpen), "clicked", G_CALLBACK(Application::chooseDirectory), NULL);
+                g_signal_connect(G_OBJECT(btOpen), "clicked", G_CALLBACK(Application::chooseDirectory), this);
                 
                 btNew = gtk_button_new ();
                 icoNew= g_themed_icon_new ("document-new");
@@ -466,6 +505,17 @@ namespace apidb
                 gtk_container_add (GTK_CONTAINER (btAbout), imgAbout);
                 gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btAbout);  
                 
+                sep4 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+                gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), sep4);
+                
+                btCloseDoc = gtk_button_new ();
+                icoCloseDoc= g_themed_icon_new ("document-close");
+                imgCloseDoc = gtk_image_new_from_gicon (icoCloseDoc ,GTK_ICON_SIZE_BUTTON);
+                g_signal_connect(G_OBJECT(btCloseDoc), "clicked", G_CALLBACK(document_close), this);
+                g_object_unref (icoCloseDoc);
+                gtk_container_add (GTK_CONTAINER (btCloseDoc), imgCloseDoc);
+                gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btCloseDoc); 
+                
                 
                 gtk_window_set_titlebar (GTK_WINDOW (window), headerbar);
                 
@@ -477,10 +527,10 @@ namespace apidb
         {
                 return driver;
         }
-        Application* Application::getApplication()
+        /*Application* Application::getApplication()
         {
                 return app;
-        }
+        }*/
         TreeView* Application::getDownloadTreeView()
         {
                 return downsTree;
@@ -489,7 +539,7 @@ namespace apidb
         {
                 return selectsTree;
         }
-        const ConfigureProject& Application::getConfigure()
+        ConfigureProject* Application::getConfigure()const
         {
                 return config;
         }
@@ -541,9 +591,11 @@ namespace apidb
         {
                 delete downsTree;
                 delete selectsTree;
+                delete config;
         }
         Application::Application()
         {
+                
         }
        /* void Application::downloads_addTable (GtkWidget *widget, gpointer   data)
         {
@@ -552,27 +604,29 @@ namespace apidb
                         
         void Application::loadConfig()
         {
-                gtk_entry_set_text (GTK_ENTRY(inName),config.getName().c_str());
-                gtk_entry_set_text (GTK_ENTRY(inVer),config.getVersion().toString().c_str());
-                gtk_combo_box_set_active((GtkComboBox*)inInL,(gint)config.inputLenguaje);
-                gtk_combo_box_set_active((GtkComboBox*)inOutL,(gint)config.outputLenguaje);
-                gtk_combo_box_set_active((GtkComboBox*)inPkL,(gint)config.packing);
-                gtk_combo_box_set_active((GtkComboBox*)inCmpl,(gint)config.compiled);
+                gtk_entry_set_text (GTK_ENTRY(inName),config->getName().c_str());
+                gtk_entry_set_text (GTK_ENTRY(inVer),config->getVersion().toString().c_str());
+                gtk_combo_box_set_active((GtkComboBox*)inInL,(gint)config->inputLenguaje);
+                gtk_combo_box_set_active((GtkComboBox*)inOutL,(gint)config->outputLenguaje);
+                gtk_combo_box_set_active((GtkComboBox*)inPkL,(gint)config->packing);
+                gtk_combo_box_set_active((GtkComboBox*)inCmpl,(gint)config->compiled);
                 
-                gtk_entry_set_text (GTK_ENTRY(inLoc),config.conectordb->getHost().c_str());
-                gtk_entry_set_text (GTK_ENTRY(inPort),std::to_string(config.conectordb->getPort()).c_str());
-                gtk_entry_set_text (GTK_ENTRY(inDB),config.conectordb->getDatabase().c_str());
-                gtk_entry_set_text (GTK_ENTRY(inUser),config.conectordb->getUser().c_str());
-                gtk_entry_set_text (GTK_ENTRY(inPw),config.conectordb->getPassword().c_str());
+                gtk_entry_set_text (GTK_ENTRY(inLoc),config->conectordb->getHost().c_str());
+                gtk_entry_set_text (GTK_ENTRY(inPort),std::to_string(config->conectordb->getPort()).c_str());
+                gtk_entry_set_text (GTK_ENTRY(inDB),config->conectordb->getDatabase().c_str());
+                gtk_entry_set_text (GTK_ENTRY(inUser),config->conectordb->getUser().c_str());
+                gtk_entry_set_text (GTK_ENTRY(inPw),config->conectordb->getPassword().c_str());
                                 
                 downsTree->fill();
                 
                 selectsTree->fill();
+                
+                setSaved(true);
         }
         
         void Application::createWindow()
         {
-                gtk_window_set_title (GTK_WINDOW (window), "APIDB");
+                gtk_window_set_title (GTK_WINDOW (window), nameApp.c_str());
                 gtk_window_set_default_size (GTK_WINDOW (window), 450, 300);
                 g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);  
                 gtk_container_set_border_width (GTK_CONTAINER (window), 10);   
@@ -583,13 +637,24 @@ namespace apidb
         
         void Application::chooseDirectory (GtkWidget *widget, gpointer   data)
         {
+                Application* app = (Application*)data;
+                
                 GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"_Cancel",GTK_RESPONSE_CANCEL,"_Open",GTK_RESPONSE_ACCEPT,NULL);   
                 if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
                 {
                         filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
                         gtk_widget_destroy (dialog);
                         //std::cout << "if(!config.readConfig(std::string(filename)))" << std::endl;
-                        if(!config.readConfig(std::string(filename)))
+                        if(app->config ==  NULL)
+                        {
+                                app->config = new ConfigureProject();
+                        }
+                        else
+                        {
+                                delete app->config;
+                                app->config = new ConfigureProject();
+                        }
+                        if(!app->config->readConfig(std::string(filename)))
                         {                 
                                 std::string msgstr = "";
                                 if(toolkit::Error::check())
@@ -611,17 +676,17 @@ namespace apidb
                                 return;
                         } 
                         //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
-                        if(driver != NULL) 
+                        if(app->driver != NULL) 
                         {
-                                delete driver;
-                                driver = NULL;
+                                delete app->driver;
+                                app->driver = NULL;
                         }
                         //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
                         //std::cout << "driver = new Driver(config);" << std::endl;
-                        driver = new Driver(config);
+                        app->driver = new Driver(*(app->config));
                         //std::cout << "if(driver->analyze(false))" << std::endl;
                         //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
-                        if(!driver->analyze(false))
+                        if(!app->driver->analyze(false))
                         {
                                 std::string msgstr = "";
                                 if(toolkit::Error::check())
@@ -640,8 +705,11 @@ namespace apidb
                                                                 filename, g_strerror (errno));
                                 gtk_dialog_run (GTK_DIALOG (msg));
                         }
+                        
+                        app->createNotebook();                
                         //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
                         app->loadConfig();
+                        gtk_widget_show_all (app->window); 
                         //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
                         g_free (filename);
                         filename = NULL;
@@ -779,7 +847,7 @@ namespace apidb
                 
         void Application::createNotebook()
         {
-                GtkWidget * notebookMain = gtk_notebook_new();
+                notebookMain = gtk_notebook_new();
                 //g_signal_connect(G_OBJECT(notebookMain), "switch-page", G_CALLBACK(active_tab), window);
                 GtkWidget *boxInfo = gtk_box_new (GTK_ORIENTATION_VERTICAL,6);
                 GtkWidget *lbInfo = gtk_label_new (titleInfo);
@@ -792,11 +860,11 @@ namespace apidb
                 GtkWidget * lbDowns = gtk_label_new (titleDowns);
                 boxDowns = gtk_box_new (GTK_ORIENTATION_VERTICAL,1);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxDowns,lbDowns);
-                downsTree =  new TreeView(boxDowns,&config.downloads);
+                downsTree =  new TreeView(boxDowns,&(config->downloads),this);
                 GtkWidget * lbSels = gtk_label_new (titleSelects);
                 boxSelects = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxSelects,lbSels);
-                selectsTree =  new TreeView(boxSelects,&config.selects);
+                selectsTree =  new TreeView(boxSelects,&(config->selects),this);
                 gtk_box_pack_start(GTK_BOX(vboxMain), notebookMain, FALSE, FALSE,0);
         }
         void  Application::init(int*   argc, char **argv[])
@@ -807,14 +875,14 @@ namespace apidb
                 
         void Application::create()
         {
-                if(app == NULL)
+                /*if(app == NULL)
                 {
                         app = this;
                 }
                 else
                 {
                         throw "Solo se permite una instacia del programa.";
-                }
+                }*/
                 
                 window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
                 vboxMain = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
@@ -822,7 +890,8 @@ namespace apidb
                                 
                 createHeader();
                 
-                createNotebook();  
+                //createNotebook();  
+                
                 gtk_widget_show_all (window);   
                 flagVisible = true;
                 gtk_main ();
@@ -832,13 +901,14 @@ namespace apidb
          const char*  Application::titleConex = "Conexión";
          const char*  Application::titleDowns = "Descargas";
          const char*  Application::titleSelects = "Selecciones";
-         bool Application::flagVisible = false;
-         Driver* Application::driver = NULL;
-         const char*  Application::selectedTab = NULL;
-        GtkTreeIter* TreeView::actual = NULL;
+         //bool Application::flagVisible = false;
+         //Driver* Application::driver = NULL;
+         //const char*  Application::selectedTab = NULL;
+        //GtkTreeIter* TreeView::actual = NULL;
         const char* TreeView::strNewFunct = "Agregar Funcion";
-        Application* Application::app = NULL;
+        //Application* Application::app = NULL;
         char* Application::filename = NULL;
-        octetos::apidb::ConfigureProject Application::config;
+        //octetos::apidb::ConfigureProject Application::config;
+        std::string Application::nameApp = "APIDB";
 }
 }
