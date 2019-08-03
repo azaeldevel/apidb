@@ -36,8 +36,8 @@ namespace apidb
 		virtual bool generate(bool log);
 		bool driving(bool log);
         Driver(const ConfigureProject&);
-		const Analyzer& getAnalyzer() const;
-        ~Driver();
+        const Analyzer& getAnalyzer() const;
+        virtual ~Driver();
                 
 	private:
 		octetos::toolkit::clientdb::Connector* connector;

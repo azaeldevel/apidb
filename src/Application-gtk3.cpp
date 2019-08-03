@@ -95,23 +95,6 @@ namespace apidb
         
         
         
-        
-        void show_about(GtkWidget *widget, gpointer data) 
-        {
-                //GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("battery.png", NULL);
-                GtkWidget *dialog = gtk_about_dialog_new();
-                gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), getPakageName().c_str());
-                gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), getPakageVersion().toString().c_str()); 
-                //gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),"(c) Octetos");
-                //char  authors[1][30] = {"Azael Reyes"};
-                //gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG(dialog),(const gchar**)authors);
-                gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), "Hace sencillo crear una API para conectar tu Base de Datos.");
-                gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/azaeldevel/apidb");
-                //gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), pixbuf);
-                //g_object_unref(pixbuf), pixbuf = NULL;
-                gtk_dialog_run(GTK_DIALOG (dialog));
-                gtk_widget_destroy(dialog);
-        }
 
         const char* CaptureTable::getSelectTable() const
         {
@@ -175,6 +158,7 @@ namespace apidb
                         g_free(value);
                 }
         }*/
+        
         
         
         
@@ -406,6 +390,133 @@ namespace apidb
         }
         
 
+        void Application::build(GtkWidget *widget, gpointer data) 
+        {
+                Application* app = (Application*)data;
+                
+                if(app->config == NULL)
+                {
+                        if(app->isOpen)
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_ERROR,
+                                                                GTK_BUTTONS_CLOSE,
+                                                                "Cree o abre un proyecto",
+                                                                "Al construir el proyecto", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));
+                                return;
+                        }
+                        else
+                        {
+                                std::string msgstr = "";
+                                if(toolkit::Error::check())
+                                {
+                                                msgstr = toolkit::Error::get().what();
+                                }
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        msgstr.c_str(),
+                                                                        msgstr.c_str(), g_strerror (errno));
+                                        gtk_dialog_run (GTK_DIALOG (msg));   
+                                        return;
+                        }
+                        std::string msgstr = "Algo anda mal, no hay configuracion de proyecto.";
+                        GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        msgstr.c_str(),
+                                                                        msgstr.c_str(), g_strerror (errno));
+                                        gtk_dialog_run (GTK_DIALOG (msg));   
+                                        return;
+                }
+                
+                if(app->driver != NULL) 
+                {
+                        delete (app->driver);
+                        app->driver = NULL;
+                }
+                app->driver = new Driver(*(app->config));
+                 if(!app->driver->driving(true))
+                {
+                        std::string msgstr = "";
+                        if(toolkit::Error::check())
+                        {
+                                        msgstr = toolkit::Error::get().what();
+                        }
+                        else
+                        {
+                                        msgstr ="Fallo durante la construccion.";
+                        }
+                        GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_ERROR,
+                                                                GTK_BUTTONS_CLOSE,
+                                                                msgstr.c_str(),
+                                                                msgstr.c_str(), g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));
+                                return;
+                }
+        }
+        void Application::document_save(GtkWidget *widget, gpointer data) 
+        {
+                Application* app = (Application*)data;
+                
+                if(app->config != NULL)
+                {
+                        if(!app->isOpen)
+                        {//no esta abierto el proyecto.
+                                
+                                return;
+                        }
+                        
+                        //causo desconocida para este error
+                        return;
+                }
+                
+                
+                
+                app->isOpen = true;
+                app->setSaved(true);
+        }
+        void Application::document_new(GtkWidget *widget, gpointer data) 
+        {
+                Application* app = (Application*)data;
+                if(app->isOpen)
+                {
+                        if(!app->isSaved)//solicitar confirmacion de Gaurdar/Cerrar proyecto.
+                        {
+                                
+                                //ahora simplemete no realiza la operacion
+                                return;
+                        }
+                }
+                
+                app->config = new ConfigureProject();
+                app->createNotebook();
+                app->isOpen = true;
+                app->setSaved(false);
+                gtk_widget_show_all (app->window); 
+        }
+        void Application::show_about(GtkWidget *widget, gpointer data) 
+        {
+                //GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("battery.png", NULL);
+                GtkWidget *dialog = gtk_about_dialog_new();
+                gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), getPakageName().c_str());
+                gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), getPakageVersion().toString().c_str()); 
+                //gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),"(c) Octetos");
+                //char  authors[1][30] = {"Azael Reyes"};
+                //gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG(dialog),(const gchar**)authors);
+                gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), "Hace sencillo crear una API para conectar tu Base de Datos.");
+                gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/azaeldevel/apidb");
+                //gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), pixbuf);
+                //g_object_unref(pixbuf), pixbuf = NULL;
+                gtk_dialog_run(GTK_DIALOG (dialog));
+                gtk_widget_destroy(dialog);
+        }
         void Application::document_close(GtkWidget *widget, gpointer data) 
         {
                 Application* app = (Application*)data;
@@ -426,20 +537,22 @@ namespace apidb
                                 delete (app->selectsTree);
                                 app->selectsTree = NULL;
                         }
-                }
+                }                
+                app->isOpen = false;
+                app->isSaved = false;
         }
         void Application::setSaved(bool saved)
         {
-                if(isSaved == saved) return;// si ya se asigno el valor no hay que repetir la operacion
-                
                 isSaved = saved;
                 if(isSaved)
                 {
                         gtk_header_bar_set_title (GTK_HEADER_BAR (headerbar), nameApp.c_str());
+                        gtk_window_set_title (GTK_WINDOW (window), nameApp.c_str());
                 }
                 else
                 {
                         gtk_header_bar_set_title (GTK_HEADER_BAR (headerbar), (nameApp + "*").c_str());
+                        gtk_window_set_title (GTK_WINDOW (window),(nameApp + "*").c_str());
                 }
         }
         void Application::createHeader()
@@ -455,7 +568,7 @@ namespace apidb
                 g_object_unref (icoOpen);
                 gtk_container_add (GTK_CONTAINER (btOpen), imgOpen);
                 gtk_header_bar_pack_start (GTK_HEADER_BAR (headerbar), btOpen);
-                g_signal_connect(G_OBJECT(btOpen), "clicked", G_CALLBACK(Application::chooseDirectory), this);
+                g_signal_connect(G_OBJECT(btOpen), "clicked", G_CALLBACK(Application::document_open), this);
                 
                 btNew = gtk_button_new ();
                 icoNew= g_themed_icon_new ("document-new");
@@ -463,6 +576,7 @@ namespace apidb
                 g_object_unref (icoNew);
                 gtk_container_add (GTK_CONTAINER (btNew), imgNew);
                 gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btNew);
+                g_signal_connect(G_OBJECT(btNew), "clicked", G_CALLBACK(Application::document_new), this);
                 
                 sep1 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
                 gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), sep1);
@@ -475,6 +589,7 @@ namespace apidb
                 g_object_unref (icoBuild);
                 gtk_container_add (GTK_CONTAINER (btBuild), imgBuild);
                 gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btBuild);
+                g_signal_connect(G_OBJECT(btBuild), "clicked", G_CALLBACK(Application::build), this);
                 
                 btSave = gtk_button_new ();
                 icoSave= g_themed_icon_new ("document-save");
@@ -482,6 +597,7 @@ namespace apidb
                 g_object_unref (icoSave);
                 gtk_container_add (GTK_CONTAINER (btSave), imgSave);
                 gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btSave);
+                g_signal_connect(G_OBJECT(btSave), "clicked", G_CALLBACK(Application::document_save), this);
                               
                 
                 
@@ -589,19 +705,29 @@ namespace apidb
         }*/
         Application::~Application()
         {
-                delete downsTree;
-                delete selectsTree;
-                delete config;
+                if(downsTree != NULL)
+                {
+                        delete downsTree;
+                        downsTree = NULL;
+                }
+                if(selectsTree != NULL)
+                {
+                        delete selectsTree;
+                        selectsTree = NULL;
+                }
+                if(config != NULL)
+                {
+                        delete config;
+                        config = NULL;
+                }
         }
         Application::Application()
         {
-                
-        }
-       /* void Application::downloads_addTable (GtkWidget *widget, gpointer   data)
-        {
-                g_print ("Hello World\n");
-        }*/
-                        
+                isSaved = false;
+                isOpen = false;
+                config = NULL;
+                driver = NULL;
+        }    
         void Application::loadConfig()
         {
                 gtk_entry_set_text (GTK_ENTRY(inName),config->getName().c_str());
@@ -621,9 +747,7 @@ namespace apidb
                 
                 selectsTree->fill();
                 
-                setSaved(true);
         }
-        
         void Application::createWindow()
         {
                 gtk_window_set_title (GTK_WINDOW (window), nameApp.c_str());
@@ -632,10 +756,8 @@ namespace apidb
                 gtk_container_set_border_width (GTK_CONTAINER (window), 10);   
                 gtk_window_set_resizable(GTK_WINDOW (window),FALSE);
                 gtk_container_add (GTK_CONTAINER (window), vboxMain);        
-        }
-        
-        
-        void Application::chooseDirectory (GtkWidget *widget, gpointer   data)
+        }   
+        void Application::document_open (GtkWidget *widget, gpointer   data)
         {
                 Application* app = (Application*)data;
                 
@@ -645,15 +767,19 @@ namespace apidb
                         filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
                         gtk_widget_destroy (dialog);
                         //std::cout << "if(!config.readConfig(std::string(filename)))" << std::endl;
+                        
+                        //std::cout << "Step 1 "<< std::endl;
                         if(app->config ==  NULL)
                         {
                                 app->config = new ConfigureProject();
                         }
                         else
                         {
-                                delete app->config;
+                                delete (app->config);
                                 app->config = new ConfigureProject();
                         }
+                        
+                        //std::cout << "Step 2" << std::endl;
                         if(!app->config->readConfig(std::string(filename)))
                         {                 
                                 std::string msgstr = "";
@@ -675,40 +801,12 @@ namespace apidb
                                 gtk_widget_destroy (dialog);
                                 return;
                         } 
-                        //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
-                        if(app->driver != NULL) 
-                        {
-                                delete app->driver;
-                                app->driver = NULL;
-                        }
-                        //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
-                        //std::cout << "driver = new Driver(config);" << std::endl;
-                        app->driver = new Driver(*(app->config));
-                        //std::cout << "if(driver->analyze(false))" << std::endl;
-                        //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
-                        if(!app->driver->analyze(false))
-                        {
-                                std::string msgstr = "";
-                                if(toolkit::Error::check())
-                                {
-                                        msgstr = toolkit::Error::get().what();
-                                }
-                                else
-                                {
-                                        msgstr ="Fallo durante la fase de analisis.";
-                                }
-                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                GTK_MESSAGE_ERROR,
-                                                                GTK_BUTTONS_CLOSE,
-                                                                msgstr.c_str(),
-                                                                filename, g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
-                        }
-                        
+                        app->originFilename = filename;
                         app->createNotebook();                
                         //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
                         app->loadConfig();
+                        app->setSaved(true);
+                        app->isOpen = true;
                         gtk_widget_show_all (app->window); 
                         //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
                         g_free (filename);
@@ -845,8 +943,14 @@ namespace apidb
                 gtk_box_pack_start(GTK_BOX(boxConex), boxPw, FALSE, FALSE,0);
         }
                 
-        void Application::createNotebook()
-        {
+        bool Application::createNotebook()
+        {                
+                if(config == NULL)
+                {
+                        std::string msg = "Deve cargar del proyecto. '";
+                        toolkit::Error::write(toolkit::Error(msg,ErrorCodes::APPLICATION_GTK3_CONFIGPROJECT_NULL));
+                }
+                
                 notebookMain = gtk_notebook_new();
                 //g_signal_connect(G_OBJECT(notebookMain), "switch-page", G_CALLBACK(active_tab), window);
                 GtkWidget *boxInfo = gtk_box_new (GTK_ORIENTATION_VERTICAL,6);

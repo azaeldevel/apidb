@@ -108,13 +108,17 @@ namespace apidb
                 //void createToolbar();
                 void createNotebookInfo(GtkWidget *boxInfo);
                 void createNotebookConexion(GtkWidget *boxConex);
-                void createNotebook();
+                bool createNotebook();
                 void createHeader();
                 
-                static void chooseDirectory (GtkWidget *widget, gpointer   data);
                 static void downloads_addTable (GtkWidget *widget, gpointer   data);
                 void loadConfig();       
+                static void document_open (GtkWidget *widget, gpointer   data);
                 static void  document_close(GtkWidget *widget, gpointer data);
+                static void document_new(GtkWidget *widget, gpointer data);
+                static void document_save(GtkWidget *widget, gpointer data);
+                static void build(GtkWidget *widget, gpointer data);
+                static void show_about(GtkWidget *widget, gpointer data) ;
                 //static void active_tab (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer user_data);
                 //static void on_newtable(GtkWidget *widget, gpointer data);
                 
@@ -188,6 +192,8 @@ namespace apidb
                 static std::string nameApp;
                 //
                 bool isSaved;
+                bool isOpen;
+                std::string originFilename;
                 void setSaved(bool);
         };
 }
