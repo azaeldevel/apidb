@@ -23,8 +23,6 @@
 
 #include "common.hpp"
 #include "ConfigureProject.hpp"
-#include "scanner.hpp"
-#include "parser.tab.hh"
 
 namespace octetos
 {
@@ -57,46 +55,6 @@ namespace apidb
 		std::ostream* errorMessages;//out stream		
 		const ConfigureProject& configureProject;
 	};
-
-
-    namespace mysql
-    {
-        class Analyzer : public apidb::Analyzer
-        {
-        public:            
-            virtual bool analyze(bool log);
-            /**
-            * Parse desde una std::string
-            **/
-            virtual std::string parse(const std::string& line);
-            /** 
-            * parse - parse from a file
-            * @param filename - valid string with input file
-            */
-            void parse(const char * const filename);
-            /** 
-            * parse - parse from a c++ input stream
-            * @param is - std::istream&, valid input stream
-            */
-            void parse(std::istream &iss);
-            
-            //Analyzer();
-            Analyzer(const ConfigureProject&,octetos::toolkit::clientdb::Connector*);		
-            virtual ~Analyzer();         
-            
-            void message(const std::string&);		
-            std::ostream& print(std::ostream &stream);
-            
-            //Don't use, is temporal: usada por parse para retorna sui resultado
-            std::string oneLine;
-            
-            
-        private:
-            void parse_helper(std::istream &stream);
-            Parser  *parser  = nullptr;
-            Scanner *scanner = nullptr;   
-        };
-    }
 }
 }
 #endif

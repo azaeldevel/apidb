@@ -70,7 +70,7 @@ SET(LIBREADER "NULL")
 SET(LIBPARTIAL1 ${PROJECT_NAME}-partial1)
 ADD_SUBDIRECTORY(mysql-reader-c++)
 
-SET(SOURCES_BUILDING apidb.cpp common-mysql.cpp analyzer.cpp generator.cpp generator-c++.cpp common.cpp  Errors.cpp ConfigureProject.cpp ConfigureProjectRead_v1.cpp)
+SET(SOURCES_BUILDING apidb.cpp common-mysql.cpp analyzer.cpp generator.cpp generator-c++.cpp common.cpp  Errors.cpp ConfigureProject.cpp ConfigureProjectRead_v1.cpp driver.cpp)
 SET(LIBRARIES  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARY} ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${TAR_LIBRARIES} ${GTK3_LIBRARIES} ${CUNIT_LIBRARY})
 
 #ADD_LIBRARY(${PROJECT_NAME}-partial1 STATIC ${SOURCES_BUILDING})
