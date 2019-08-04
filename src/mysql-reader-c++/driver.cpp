@@ -33,7 +33,17 @@ namespace apidb
 {
         Driver::~Driver()
         {
-                
+                if(analyzer != NULL)
+                {
+                        delete analyzer;
+                        analyzer = NULL;
+                }
+                if(connector != NULL)
+                {
+                        connector->close();
+                        delete connector;
+                        connector = NULL;
+                }
         }
         const Analyzer&  Driver::getAnalyzer() const
         {
