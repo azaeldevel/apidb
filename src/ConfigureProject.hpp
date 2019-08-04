@@ -93,7 +93,7 @@ namespace apidb
                 //ConfigureProject(std::string filename);
                 //ConfigureProject(const ConfigureProject& configProy);
                 ConfigureProject();
-                bool saveConfig();
+                bool saveConfig(const std::string& filename = "");
                 bool checkXML(xmlTextReaderPtr);
                 bool readConfig(std::string filename);
                 bool isError();

@@ -166,7 +166,7 @@ namespace apidb
                         this->packing = configProy.packing;                
         }*/
 
-	bool ConfigureProject::saveConfig()
+	bool ConfigureProject::saveConfig(const std::string& filename)
 	{
 		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
 		xmlNodePtr root_node = xmlNewNode(NULL, (const xmlChar *)"project");
@@ -329,11 +329,23 @@ namespace apidb
                 tar_close(pTar);
                 //std::cout<< "Archivo comprimido" << std::endl;
                 
-                if(rename(tarFilename.c_str(),dirProy.c_str()) != 0)
+                if(filename.size()>0)
                 {
-                        std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
-                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,__FILE__,__LINE__));
-                        return false;
+                        if(rename(tarFilename.c_str(),filename.c_str()) != 0)
+                        {
+                                std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
+                                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,__FILE__,__LINE__));
+                                return false;
+                        }                        
+                }
+                else
+                {
+                        if(rename(tarFilename.c_str(),dirProy.c_str()) != 0)
+                        {
+                                std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
+                                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,__FILE__,__LINE__));
+                                return false;
+                        }
                 }
                 
                 //std::cout<< "Escritura de proyecto completada." << std::endl;

@@ -117,6 +117,17 @@ namespace apidb
                 static void  document_close(GtkWidget *widget, gpointer data);
                 static void document_new(GtkWidget *widget, gpointer data);
                 static void document_save(GtkWidget *widget, gpointer data);
+                static gboolean inName_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
+                static gboolean inVer_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
+                static void inInL_changed (GtkComboBox *widget, gpointer     user_data);
+                static void inOutL_changed (GtkComboBox *widget, gpointer     user_data);
+                static void inPkL_changed (GtkComboBox *widget, gpointer     user_data);
+                static void inCmpl_changed (GtkComboBox *widget, gpointer     user_data);
+                static gboolean inLoc_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
+                static gboolean inPort_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
+                static gboolean inDB_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
+                static gboolean inUser_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
+                static gboolean inPw_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
                 static void build(GtkWidget *widget, gpointer data);
                 static void show_about(GtkWidget *widget, gpointer data) ;
                 //static void active_tab (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer user_data);
