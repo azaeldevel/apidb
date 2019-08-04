@@ -109,11 +109,12 @@ namespace generators
                 continue;//buscar la configuracion de la tabla correspondiente
             }
             
-            for (auto const& [key, val] : *(itT->second))//class Table : public std::map<std::string,Function>
+            //for (auto const& [key, val] : *(itT->second))//class Table : public std::map<std::string,Function>
+            for(ConfigureProject::Table::iterator itCfTb = itT->second->begin(); itCfTb != itT->second->end(); itCfTb++)
             {
                 ofile << "\tstd::vector<" << table.name<< "*>* " << table.name << "::select(octetos::toolkit::clientdb::mysql::Connector& connector,";
                 
-                const apidb::ConfigureProject::Parameters* params = val->getParameters();
+                const apidb::ConfigureProject::Parameters* params = itCfTb->second->getParameters();
                 {
                     apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
                     itParamEnd--;
@@ -260,12 +261,13 @@ namespace generators
                                 continue;//buscar la configuracion de la tabla correspondiente
                         }
                         
-                        for (auto const& [key, val] : *(itT->second))//class Table : public std::map<const char*, const Function*>
+                        //for (auto const& [key, val] : *(itT->second))//class Table : public std::map<const char*, const Function*>
+                        for(ConfigureProject::Table::iterator itCfTb = itT->second->begin(); itCfTb != itT->second->end(); itCfTb++)
                         {
-                                ofile << "\tbool " << table.name << "::download_" << key << "(octetos::toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
+                                ofile << "\tbool " << table.name << "::download_" << itCfTb->first << "(octetos::toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
                                 ofile << "\t{ " << std::endl;
                                 ofile << "\t\tstd::string sqlString = \"SELECT ";
-                                const apidb::ConfigureProject::Parameters* params = val->getParameters();
+                                const apidb::ConfigureProject::Parameters* params = itCfTb->second->getParameters();
                                 /*for(auto pr : params)
                                 {
                                         std::cout << "param : " << pr << std::endl;
@@ -489,10 +491,11 @@ namespace generators
 	{
 		//constructor de copias 
 		ofile << "\t" << table.name << "::" << table.name <<"(const " << table.name <<"& obj)"<<std::endl;
-		ofile << "\t{"<<std::endl;
-                for (auto const& [key, attr] : table)
+		ofile << "\t{"<<std::endl;                
+                //for (auto const& [key, attr] : table)
+                for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
 		{
-			ofile << "\t\tthis->"<< attr->name << " = obj." << attr->name<<";"<<std::endl;
+			ofile << "\t\tthis->"<< it->second->name << " = obj." << it->second->name<<";"<<std::endl;
 		}
 		ofile << "\t}"<<std::endl;
 	}

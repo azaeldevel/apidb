@@ -74,7 +74,6 @@ namespace apidb
                 std::map<const char*,ConfigureProject::Table*>* list;
                 Application* app;
                 
-                //static GtkTreeIter* actual;
                 static const char* strNewFunct;
                 
                 static void row_activated(GtkTreeView       *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data);
@@ -100,12 +99,9 @@ namespace apidb
                 
                 TreeView* getDownloadTreeView();
                 TreeView* getSelectTreeView();
-                
-                //Application* getApplication();
-                
+                                
         private:                
                 void createWindow();
-                //void createToolbar();
                 void createNotebookInfo(GtkWidget *boxInfo);
                 void createNotebookConexion(GtkWidget *boxConex);
                 bool createNotebook();
@@ -207,9 +203,6 @@ namespace apidb
                 static char *filename;
                 ConfigureProject* config;
                 Driver* driver;
-                //static Application* app;
-                bool flagVisible;
-                //static const char* selectedTab;
                 static std::string nameApp;
                 //
                 bool isSaved;

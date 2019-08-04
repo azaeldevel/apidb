@@ -59,10 +59,11 @@ namespace apidb
                                 //std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
                                 Tables::iterator itTBReference;
                                 bool flFinded = false;
-                                for(auto const& [keySpace, AttSpace]  : tables)
+                                //for(auto const& [keySpace, AttSpace]  : tables)
+                                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator itS = tables.begin(); itS != tables.end(); itS++)
                                 {
-                                        itTBReference = (*AttSpace).find(row[1]);//buscar la tabla del campo que se refiere en el registro actual 'row[1]'
-                                        if(itTBReference != (*AttSpace).end()) 
+                                        itTBReference = itS->second->find(row[1]);//buscar la tabla del campo que se refiere en el registro actual 'row[1]'
+                                        if(itTBReference != itS->second->end()) 
                                         {
                                                 break;
                                                 flFinded = true;
