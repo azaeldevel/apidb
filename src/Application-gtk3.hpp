@@ -131,8 +131,8 @@ namespace apidb
                 static gboolean inPw_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
                 static void build(GtkWidget *widget, gpointer data);
                 static void show_about(GtkWidget *widget, gpointer data) ;
-                //static void active_tab (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer user_data);
-                //static void on_newtable(GtkWidget *widget, gpointer data);
+                static gboolean conex_lostfocus (GtkWidget *widget, GdkEvent  *event,  gpointer   user_data);
+                static void conex_switchPage (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer     user_data);
                 
         private:
                 GtkWidget *window;
@@ -184,11 +184,17 @@ namespace apidb
                 GtkWidget *inCmpl;
                 //Conexion
                 static const char* titleConex;
+                bool conexEdited;
                 GtkWidget *inLoc;
+                bool locEdited;
                 GtkWidget *inPort;
+                bool portEdited;
                 GtkWidget *inDB;
+                bool dbEdited;
                 GtkWidget *inUser;
+                bool userEdited;
                 GtkWidget *inPw;
+                bool pwEdited;
                 //Descargas
                 static const char* titleDowns;
                 GtkWidget *boxDowns;

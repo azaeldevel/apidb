@@ -127,7 +127,17 @@ namespace apidb
             
 
 	
-	
+	bool ConfigureProject::testConexion()
+        {
+                bool ret = false;
+                if(inputLenguaje == apidb::InputLenguajes::MySQL)
+                {
+                       octetos::toolkit::clientdb::mysql::Connector  connector;
+                       ret = connector.connect(conectordb);
+                       connector.close();
+                }
+                return ret;
+        }
         const octetos::toolkit::clientdb::mysql::Datconnect& ConfigureProject::getConector() const
         {
                 return *conectordb;    
@@ -145,8 +155,6 @@ namespace apidb
         {
                 return directory;    
         }
-        
-
         ConfigureProject::ConfigureProject()
         {
                 conectordb = NULL;

@@ -526,7 +526,25 @@ namespace apidb
                 
                 if(app->originFilename.size() > 0) //si fue cargado simplemete usa el mismo archivo
                 {
-                        app->config->saveConfig(app->originFilename);
+                        if(app->config->saveConfig(app->originFilename))
+                        {
+                                std::string msgstr;
+                                if(toolkit::Error::check())
+                                {
+                                        msgstr = toolkit::Error::get().what();
+                                }
+                                else
+                                {
+                                        msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
+                                }
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_ERROR,
+                                                                GTK_BUTTONS_CLOSE,
+                                                                msgstr.c_str(),
+                                                                "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));
+                        }
                         app->isOpen = true;
                         app->setSaved(true);
                         return;
@@ -788,6 +806,12 @@ namespace apidb
                 isOpen = false;
                 config = NULL;
                 driver = NULL;
+                conexEdited = false;
+                locEdited = false;
+                portEdited = false;
+                dbEdited = false;
+                userEdited = false;
+                pwEdited = false;
         }    
         void Application::loadConfig()
         {
@@ -862,6 +886,32 @@ namespace apidb
                                 gtk_widget_destroy (dialog);
                                 return;
                         } 
+                        if(app->driver != NULL) 
+                        {
+                                delete (app->driver);
+                                app->driver = NULL;
+                        }
+                        app->driver = new Driver(*(app->config));
+                        if(!app->driver->analyze(false))
+                        {
+                                std::string msgstr = "";
+                                if(toolkit::Error::check())
+                                {
+                                        msgstr = toolkit::Error::get().what();
+                                }
+                                else
+                                {
+                                        msgstr ="Fallo la lectura del archivo de proyecto";
+                                }
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_ERROR,
+                                                                GTK_BUTTONS_CLOSE,
+                                                                msgstr.c_str(),
+                                                                filename, g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_widget_destroy (dialog);                                
+                        }
                         app->originFilename = filename;
                         app->createNotebook();                
                         //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
@@ -917,9 +967,18 @@ namespace apidb
                         {
                                 std::string verstr = gtk_entry_get_text((GtkEntry *)widget);
                                 toolkit::Version version;
-                                version.fromString(verstr);
-                                app->config->version = version;
-                                std::cout << "Version: " << version.toString() << std::endl;
+                                if(version.getFixedExternalParser())
+                                {
+                                        version.fromString(verstr);
+                                        app->config->version = version;
+                                        //td::cout << "Version: " << version.toString() << std::endl;
+                                }
+                                else
+                                {
+                                        version.setNumbers(1,0,0);
+                                        app->config->version = version;
+                                        gtk_entry_set_text((GtkEntry *)widget,version.toString().c_str());
+                                }
                                 if(app->isSaved)app->setSaved(false);
                         }
                         else if(!app->isOpen)
@@ -1131,9 +1190,11 @@ namespace apidb
                                                 gtk_dialog_run (GTK_DIALOG (msg));                                                
                                         }
                                 }
-                                app->config->conectordb->setHost(gtk_entry_get_text((GtkEntry *)widget));
+                                std::string h = gtk_entry_get_text(GTK_ENTRY(widget));
+                                app->config->conectordb->setHost(h);
                                 //std::cout << "Loc: " << app->config->conectordb->getHost() << std::endl;
                                 if(app->isSaved)app->setSaved(false);
+                                app->locEdited = true;
                         }
                         else if(!app->isOpen)
                         {
@@ -1177,6 +1238,7 @@ namespace apidb
                                 }
                                 app->config->conectordb->setPort((unsigned int)atoi(gtk_entry_get_text((GtkEntry *)widget)));
                                 if(app->isSaved)app->setSaved(false);
+                                app->portEdited = true;
                         }
                         else if(!app->isOpen)
                         {
@@ -1220,6 +1282,7 @@ namespace apidb
                                 }
                                 app->config->conectordb->setDatabase(gtk_entry_get_text((GtkEntry *)widget));
                                 if(app->isSaved)app->setSaved(false);
+                                app->dbEdited = true;
                         }
                         else if(!app->isOpen)
                         {
@@ -1263,6 +1326,7 @@ namespace apidb
                                 }
                                 app->config->conectordb->setUser(gtk_entry_get_text((GtkEntry *)widget));
                                 if(app->isSaved)app->setSaved(false);
+                                app->userEdited = true;
                         }
                         else if(!app->isOpen)
                         {
@@ -1306,6 +1370,7 @@ namespace apidb
                                 }
                                 app->config->conectordb->setPassword(gtk_entry_get_text((GtkEntry *)widget));
                                 if(app->isSaved)app->setSaved(false);
+                                app->pwEdited = true;
                         }
                         else if(!app->isOpen)
                         {
@@ -1365,7 +1430,77 @@ namespace apidb
                 gtk_box_pack_start(GTK_BOX(boxConex), boxPw, FALSE, FALSE,0);
                 g_signal_connect(G_OBJECT(inPw), "key-press-event", G_CALLBACK(inPw_keypress), this);
         }
+
+        void Application::conex_switchPage (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer     user_data)
+        {
+                static int newPage=-1;
+                static int prePage = -1;
+                Application* app = (Application*) user_data;
                 
+                if(newPage > -1) prePage = newPage;                
+                newPage = page_num;
+                
+                if(prePage == 1 and newPage != 1) //si estaba en la pagina de conexion
+                {
+                        //std::cout << "Switch from " << prePage << " to " << page_num << std::endl;
+                        if(app->locEdited || app->portEdited || app->dbEdited || app->userEdited || app->pwEdited)
+                        {
+                                app->conexEdited = true;
+                                if(!app->isSaved) app->setSaved(false);
+                                try
+                                {
+                                if(!app->config->testConexion())
+                                {                                        
+                                        GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Fallo la conexion a la Base de datos revise sus parametros de conexion.",
+                                                                        "Error", g_strerror (errno));
+                                        gtk_dialog_run (GTK_DIALOG (msg));
+                                }
+                                }
+                                catch(octetos::toolkit::clientdb::SQLException e)
+                                {
+                                        GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        e.what(),
+                                                                        "Error detectado", g_strerror (errno));
+                                        gtk_dialog_run (GTK_DIALOG (msg));
+                                }
+                                 if(app->driver == NULL)
+                                 {
+                                        app->driver = new Driver(*(app->config));
+                                }
+                                else
+                                {
+                                        delete (app->driver);
+                                        app->driver = new Driver(*(app->config));
+                                }
+                                if(!app->driver->analyze(false))
+                                {
+                                        std::string msgstr = "";
+                                        if(toolkit::Error::check())
+                                        {
+                                                msgstr = toolkit::Error::get().what();
+                                        }
+                                        else
+                                        {
+                                                msgstr ="Fallo la lectura del archivo de proyecto";
+                                        }
+                                        GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        msgstr.c_str(),
+                                                                        filename, g_strerror (errno));
+                                        gtk_dialog_run (GTK_DIALOG (msg));     
+                                }
+                        }
+                }
+        }
         bool Application::createNotebook()
         {                
                 if(config == NULL)
@@ -1383,6 +1518,7 @@ namespace apidb
                 GtkWidget *boxConex = gtk_box_new (GTK_ORIENTATION_VERTICAL,4);
                 GtkWidget * lbConex = gtk_label_new (titleConex);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxConex,lbConex);
+                g_signal_connect(GTK_NOTEBOOK (notebookMain), "switch-page", G_CALLBACK(conex_switchPage), this);
                 createNotebookConexion(boxConex);
                 GtkWidget * lbDowns = gtk_label_new (titleDowns);
                 boxDowns = gtk_box_new (GTK_ORIENTATION_VERTICAL,1);

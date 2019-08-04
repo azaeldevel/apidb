@@ -98,6 +98,7 @@ namespace apidb
                 bool readConfig(std::string filename);
                 bool isError();
                 toolkit::Error getError();
+                bool testConexion();
                         
                 const std::string& getName()const;
                 const std::string& getDirectory()const;
