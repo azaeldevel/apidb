@@ -463,6 +463,51 @@ namespace apidb
                                 return;
                 }
         }
+        void Application::document_saveas(GtkWidget *widget, gpointer data) 
+        {
+                Application* app = (Application*)data;
+                
+                if(app->config == NULL)
+                {
+                        if(!app->isOpen)
+                        {//no esta abierto el proyecto.
+                                
+                                return;
+                        }
+                        
+                        //causo desconocida para este error
+                        return;
+                }
+                               
+                GtkWidget *dialog;
+                GtkFileChooser *chooser;
+                GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
+                gint res;
+
+                dialog = gtk_file_chooser_dialog_new ("Save File",
+                                                NULL,
+                                                action,
+                                                "_Cancel",
+                                                GTK_RESPONSE_CANCEL,
+                                                "_Save",
+                                                GTK_RESPONSE_ACCEPT,
+                                                NULL);
+                chooser = GTK_FILE_CHOOSER (dialog);
+                gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
+               gtk_file_chooser_set_current_name (chooser,(app->config->name + ".apidb").c_str());
+                res = gtk_dialog_run (GTK_DIALOG (dialog));
+                if (res == GTK_RESPONSE_ACCEPT)
+                {
+                        char *filename;
+
+                        filename = gtk_file_chooser_get_filename (chooser);
+                        app->config->saveConfig(filename);
+                        app->isOpen = true;
+                        app->setSaved(true);
+                        g_free (filename);
+                }
+                gtk_widget_destroy (dialog);                
+        }
         void Application::document_save(GtkWidget *widget, gpointer data) 
         {
                 Application* app = (Application*)data;
@@ -479,39 +524,15 @@ namespace apidb
                         return;
                 }
                 
-                GtkWidget *dialog;
-                GtkFileChooser *chooser;
-                GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
-                gint res;
-
-                dialog = gtk_file_chooser_dialog_new ("Save File",
-                                                NULL,
-                                                action,
-                                                "_Cancel",
-                                                GTK_RESPONSE_CANCEL,
-                                                "_Save",
-                                                GTK_RESPONSE_ACCEPT,
-                                                NULL);
-                chooser = GTK_FILE_CHOOSER (dialog);
-
-                gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
-
-                if (app->isSaved)  gtk_file_chooser_set_current_name (chooser, "Untitled document.apdb");
-                else gtk_file_chooser_set_filename (chooser, (app->config->name + ".apdb").c_str());
-
-                res = gtk_dialog_run (GTK_DIALOG (dialog));
-                if (res == GTK_RESPONSE_ACCEPT)
+                if(app->originFilename.size() > 0) //si fue cargado simplemete usa el mismo archivo
                 {
-                        char *filename;
-
-                        filename = gtk_file_chooser_get_filename (chooser);
-                        app->config->saveConfig(filename);
+                        app->config->saveConfig(app->originFilename);
                         app->isOpen = true;
                         app->setSaved(true);
-                        g_free (filename);
+                        return;
                 }
-
-                gtk_widget_destroy (dialog);                
+                
+               document_saveas(widget,data);             
         }
         void Application::document_new(GtkWidget *widget, gpointer data) 
         {
@@ -530,6 +551,7 @@ namespace apidb
                 app->createNotebook();
                 app->isOpen = true;
                 app->setSaved(false);
+                app->originFilename = "";
                 gtk_widget_show_all (app->window); 
         }
         void Application::show_about(GtkWidget *widget, gpointer data) 
@@ -571,6 +593,7 @@ namespace apidb
                 }                
                 app->isOpen = false;
                 app->isSaved = false;
+                app->originFilename = "";
         }
         void Application::setSaved(bool saved)
         {
@@ -630,6 +653,13 @@ namespace apidb
                 gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btSave);
                 g_signal_connect(G_OBJECT(btSave), "clicked", G_CALLBACK(Application::document_save), this);
                               
+                btSaveAs = gtk_button_new ();
+                icoSaveAs= g_themed_icon_new ("document-save-as");
+                imgSaveAs = gtk_image_new_from_gicon (icoSaveAs,GTK_ICON_SIZE_BUTTON);
+                g_object_unref (icoSaveAs);
+                gtk_container_add (GTK_CONTAINER (btSaveAs), imgSaveAs);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btSaveAs);
+                g_signal_connect(G_OBJECT(btSaveAs), "clicked", G_CALLBACK(Application::document_saveas), this);
                 
                 
                 
@@ -911,7 +941,7 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter | event->keyval == GDK_KEY_ISO_Enter )
+                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
                 {                        
                         if(app->config != NULL)
                         {
@@ -1080,7 +1110,7 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter | event->keyval == GDK_KEY_ISO_Enter )
+                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
                 {                        
                         if(app->config != NULL)
                         {
@@ -1124,7 +1154,7 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter | event->keyval == GDK_KEY_ISO_Enter )
+                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return )
                 {                        
                         if(app->config != NULL)
                         {
@@ -1167,7 +1197,7 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter | event->keyval == GDK_KEY_ISO_Enter )
+                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return )
                 {                        
                         if(app->config != NULL)
                         {
@@ -1210,7 +1240,7 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter | event->keyval == GDK_KEY_ISO_Enter )
+                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
                 {                        
                         if(app->config != NULL)
                         {
@@ -1253,7 +1283,7 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter | event->keyval == GDK_KEY_ISO_Enter )
+                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
                 {                        
                         if(app->config != NULL)
                         {

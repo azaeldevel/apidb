@@ -117,6 +117,7 @@ namespace apidb
                 static void  document_close(GtkWidget *widget, gpointer data);
                 static void document_new(GtkWidget *widget, gpointer data);
                 static void document_save(GtkWidget *widget, gpointer data);
+                static void document_saveas(GtkWidget *widget, gpointer data);
                 static gboolean inName_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
                 static gboolean inVer_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
                 static void inInL_changed (GtkComboBox *widget, gpointer     user_data);
@@ -168,6 +169,9 @@ namespace apidb
                 GtkWidget  *imgCloseDoc;
                 GtkWidget  *btCloseDoc;
                 GIcon  *icoCloseDoc;
+                GtkWidget  *btSaveAs;
+                GIcon  *icoSaveAs;
+                GtkWidget  *imgSaveAs;
                 
                 std::vector<GtkWidget*> tables;
                 //seccion de Informacion
