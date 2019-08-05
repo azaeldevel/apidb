@@ -497,9 +497,8 @@ namespace apidb
                 {
                         //std::cout << "Se encontro build directory." << std::endl;
                         xmlTextReaderRead(reader);
-                        std::string bd;
-                        bd = (const char*)xmlTextReaderConstValue(reader);
-                        //std::cout << "Se encontro build directory : " << bd << std::endl;
+                        builDirectory = (const char*)xmlTextReaderConstValue(reader);
+                        //std::cout << "Se encontro build directory : " << builDirectory << std::endl;
                 }
                 else
                 {

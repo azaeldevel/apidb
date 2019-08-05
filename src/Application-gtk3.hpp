@@ -125,6 +125,7 @@ namespace apidb
                 static gboolean inDB_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
                 static gboolean inUser_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
                 static gboolean inPw_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
+                static void buildDirectory_fileset (GtkFileChooserButton *widget,gpointer user_data);
                 static void build(GtkWidget *widget, gpointer data);
                 static void show_about(GtkWidget *widget, gpointer data) ;
                 static gboolean conex_lostfocus (GtkWidget *widget, GdkEvent  *event,  gpointer   user_data);
@@ -177,7 +178,10 @@ namespace apidb
                 GtkWidget *inInL;
                 GtkWidget *inOutL;
                 GtkWidget *inPkL;
-                GtkWidget *inCmpl;
+                GtkWidget *inCmpl;                
+                GtkWidget *inFileChooserBuildDirectory;
+                GtkWidget *dlgBuildDirectory;
+                GtkFileChooser *chooser_BuilDirectory;
                 //Conexion
                 static const char* titleConex;
                 bool conexEdited;

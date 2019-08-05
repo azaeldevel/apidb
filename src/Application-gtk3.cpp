@@ -466,7 +466,6 @@ namespace apidb
                                                 GTK_RESPONSE_ACCEPT,
                                                 NULL);
                 chooser = GTK_FILE_CHOOSER (dialog);
-                gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
                gtk_file_chooser_set_current_name (chooser,(app->config->name + ".apidb").c_str());
                 res = gtk_dialog_run (GTK_DIALOG (dialog));
                 if (res == GTK_RESPONSE_ACCEPT)
@@ -781,6 +780,8 @@ namespace apidb
                 gtk_combo_box_set_active((GtkComboBox*)inOutL,(gint)config->outputLenguaje);
                 gtk_combo_box_set_active((GtkComboBox*)inPkL,(gint)config->packing);
                 gtk_combo_box_set_active((GtkComboBox*)inCmpl,(gint)config->compiled);
+                gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
+                //std::cout << "Buildd dir loaded" << config->builDirectory << std::endl;
                 
                 gtk_entry_set_text (GTK_ENTRY(inLoc),config->conectordb->getHost().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inPort),std::to_string(config->conectordb->getPort()).c_str());
@@ -1050,6 +1051,16 @@ namespace apidb
                         return;
                 }
         }
+        void Application::buildDirectory_fileset (GtkFileChooserButton *widget,gpointer user_data)
+        {
+                Application* app = (Application*) user_data;
+                
+                char *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (app->inFileChooserBuildDirectory));
+                app->config->builDirectory = filename;
+                //std::cout << "File set = " << filename << std::endl;
+                app->setSaved(false);
+                g_free (filename); 
+        }
         void Application::createNotebookInfo(GtkWidget *boxInfo)
         {
                 GtkWidget *boxName = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
@@ -1112,6 +1123,17 @@ namespace apidb
                 gtk_box_pack_start(GTK_BOX(boxCmpl), inCmpl, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxCmpl, FALSE, FALSE,0);        
                 g_signal_connect(G_OBJECT(inCmpl), "changed", G_CALLBACK(inCmpl_changed), this);
+                              
+                        
+                GtkWidget *boxinFileChooserBuildDirectory = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget * lbinFileChooserBuildDirectory = gtk_label_new ("Directory de Contrucción:");
+                gtk_box_pack_start(GTK_BOX(boxinFileChooserBuildDirectory), lbinFileChooserBuildDirectory, FALSE, FALSE,0); 
+                inFileChooserBuildDirectory = gtk_file_chooser_button_new ("Seleccionar Directorio.",GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+                //gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
+                gtk_box_pack_start(GTK_BOX(boxinFileChooserBuildDirectory), inFileChooserBuildDirectory, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxInfo), boxinFileChooserBuildDirectory, FALSE, FALSE,0);
+                gtk_widget_set_events(inFileChooserBuildDirectory,GDK_KEY_PRESS_MASK);
+                g_signal_connect(G_OBJECT(inFileChooserBuildDirectory), "file-set", G_CALLBACK(buildDirectory_fileset), this);
         }
         gboolean Application::inLoc_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)
         {

@@ -236,6 +236,7 @@ namespace apidb
                 
                 //
                 xmlNewChild(root_node, NULL, (const xmlChar *)"buildDirectory", (const xmlChar *)builDirectory.c_str());
+                //std::cout << "Buildd dir " << builDirectory << std::endl;
                 //
                 xmlNodePtr downls_node = xmlNewChild(root_node, NULL, (const xmlChar *)"downloads", NULL);
                 int countTbs = 0;
