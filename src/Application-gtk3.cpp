@@ -487,19 +487,51 @@ namespace apidb
                 
                 if(app->config == NULL)
                 {
-                        if(!app->isOpen)
-                        {//no esta abierto el proyecto.
-                                
+                        if(!app->isOpen || !app->isSaved)
+                        {//no esta abierto el proyecto.                                
+                                std::string msgstr;
+                                if(toolkit::Error::check())
+                                {
+                                        msgstr = toolkit::Error::get().what();
+                                }
+                                else
+                                {
+                                        msgstr = "No hay documento abierto o pendiente de guardar";
+                                }
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_ERROR,
+                                                                GTK_BUTTONS_CLOSE,
+                                                                msgstr.c_str(),
+                                                                "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));
                                 return;
                         }
                         
-                        //causo desconocida para este error
+                                                       
+                        std::string msgstr;
+                        if(toolkit::Error::check())
+                        {
+                                        msgstr = toolkit::Error::get().what();
+                        }
+                        else
+                        {
+                                        msgstr = "Algo anda mal, no hay configuracionde proyecto cargada";
+                        }
+                        GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_ERROR,
+                                                                GTK_BUTTONS_CLOSE,
+                                                                msgstr.c_str(),
+                                                                "Error", g_strerror (errno));
+                        gtk_dialog_run (GTK_DIALOG (msg));
                         return;
                 }
                 
                 if(app->originFilename.size() > 0) //si fue cargado simplemete usa el mismo archivo
                 {
-                        if(app->config->saveConfig(app->originFilename))
+                        std::cout << "Guardando en '" << app->originFilename << "'" << std::endl;
+                        if(!app->config->saveConfig(app->originFilename))
                         {
                                 std::string msgstr;
                                 if(toolkit::Error::check())
@@ -517,11 +549,14 @@ namespace apidb
                                                                 msgstr.c_str(),
                                                                 "Error", g_strerror (errno));
                                 gtk_dialog_run (GTK_DIALOG (msg));
+                                return;
                         }
                         app->isOpen = true;
                         app->setSaved(true);
                         return;
                 }
+                
+                std::cout << "Llamando a Gaurdar como" << std::endl;
                 
                document_saveas(widget,data);             
         }
@@ -873,24 +908,25 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter | event->keyval == GDK_KEY_ISO_Enter )
+                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
                 {                        
                         if(app->config != NULL)
                         {
                                 std::string verstr = gtk_entry_get_text((GtkEntry *)widget);
                                 toolkit::Version version;
-                                if(version.getFixedExternalParser())
-                                {
-                                        version.fromString(verstr);
-                                        app->config->version = version;
-                                        //td::cout << "Version: " << version.toString() << std::endl;
+                                if(!version.fromString(verstr))
+                                {                                       
+                                        GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "La cedena espcifica no comple con los criterios necesario para ser una cadena de Version.",
+                                                                        "Error", g_strerror (errno));
+                                        gtk_dialog_run (GTK_DIALOG (msg));
+                                        return true; 
                                 }
-                                else
-                                {
-                                        version.setNumbers(1,0,0);
-                                        app->config->version = version;
-                                        gtk_entry_set_text((GtkEntry *)widget,version.toString().c_str());
-                                }
+                                app->config->version = version;
+                                //std::cout << "Version: " << version.toString() << std::endl;
                                 if(app->isSaved)app->setSaved(false);
                         }
                         else if(!app->isOpen)

@@ -29,7 +29,7 @@ int main()
 	version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
         
-	octetos::apidb::ConfigureProject config;
+	/*octetos::apidb::ConfigureProject config;
         config.name = "sysapp";
         config.directory = "apidb";
         config.conectordb = &mysqlSource;
@@ -42,12 +42,10 @@ int main()
         //config.keyMode = apidb::KeyModel::BY_MODEL_DB;
         octetos::apidb::ConfigureProject::Table tbP("Persons");
         octetos::apidb::ConfigureProject::Function dwFullName("fullname",octetos::apidb::ConfigureProject::Function::DOWNLOAD);
-        octetos::apidb::ConfigureProject::Parameters params_FullName;
-        params_FullName.push_back("name1");
-        params_FullName.push_back("name2");
-        params_FullName.push_back("name3");
-        params_FullName.push_back("name4");
-        dwFullName.setHeader(&params_FullName);
+        dwFullName.addParam("name1");
+        dwFullName.addParam("name2");
+        dwFullName.addParam("name3");
+        dwFullName.addParam("name4");
         tbP.insert(std::make_pair(dwFullName.getName().c_str(), &dwFullName));
         octetos::apidb::ConfigureProject::Function dwShortName("shortname",octetos::apidb::ConfigureProject::Function::DOWNLOAD);
         octetos::apidb::ConfigureProject::Parameters params_ShortName;
@@ -76,7 +74,7 @@ int main()
         {
 		std::cerr<<"Fail on create project."<<std::endl;
 		return EXIT_FAILURE;		
-	}
+	}*/
 	
 	
         //std::cout<<"Configuracion previa: " << config.getConector().toString()<<std::endl;

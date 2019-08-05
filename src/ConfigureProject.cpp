@@ -71,11 +71,6 @@ namespace apidb
         }
         ConfigureProject::Parameters::~Parameters()
         {
-                for(auto str : *this)
-                {
-                        //delete str;¿munmap_chunk(): invalid pointer?
-                }
-                clear();
         }
         const ConfigureProject::Parameters* ConfigureProject::Function::getParameters() const 
         {
@@ -97,10 +92,10 @@ namespace apidb
                         delete header;
                 }
         }
-        void ConfigureProject::Function::setHeader(Parameters* header)
+        /*void ConfigureProject::Function::setHeader(Parameters* header)
         {
                 this->header = header;
-        }
+        }*/
         ConfigureProject::Function::Skeleton ConfigureProject::Function::getSkeleton() const
         {
                 return skeleton;

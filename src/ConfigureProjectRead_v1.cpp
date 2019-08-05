@@ -42,7 +42,7 @@ namespace apidb
         {
                 if(toolkit::Error::check())
                 {
-                        throw toolkit::Error("Hay un error pendiente de atender",toolkit::Error::Codes::ERROR_NOTADDRESSED);
+                        throw toolkit::Error("Hay un error pendiente de atender",toolkit::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
                 }
                 
                 //std::cout << "Step 1. file " << filename << std::endl;
@@ -51,7 +51,7 @@ namespace apidb
                 {
                         std::string msg = "La direecion especificada '";
                         msg += filename + "' no indica un archivo valido.";
-                        toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_INVALIDPATH));
+                        toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_INVALIDPATH,__FILE__,__LINE__));
                         return false;
                 }
                 fclose(apidbFilecheck);
@@ -66,14 +66,14 @@ namespace apidb
                 if (tmp_apidbDir == NULL) 
                 {
                         //fprintf(stderr, "Failed to build temp file.\n");
-                        toolkit::Error::write(toolkit::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::READFILE_TEMPUNPACKFAIL));
+                        toolkit::Error::write(toolkit::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::READFILE_TEMPUNPACKFAIL,__FILE__,__LINE__));
                         return false;
                 }
                 //std::cout << "tar_handle is " << tmp_apidbDir << std::endl;
                 //std::cout << "tmp_filepath "<< tmp_filepath  << std::endl;
                 if(tar_extract_all(tar_handle, tmp_apidbDir) != 0)
                 {
-                        toolkit::Error::write( toolkit::Error("Fallo duraten las descompresion del archivo.",ErrorCodes::Read_UncomConfigFile));
+                        toolkit::Error::write( toolkit::Error("Fallo duraten las descompresion del archivo.",ErrorCodes::Read_UncomConfigFile,__FILE__,__LINE__));
                         //std::cout << "Fallo duraten las descompresion del archivo." << std::endl;
                 }
                 tar_close(tar_handle);
@@ -91,16 +91,12 @@ namespace apidb
                         return false;
                 }
                 fclose(apidbFilecheck2);
-                /*if(projectVersion.fromFile(tmVerFileName)) 
-                {
-                        std::cout << "Version: " << projectVersion.toString() <<std::endl;
-                }
-                else 
+                if(!projectVersion.fromFile(tmVerFileName)) 
                 {              
                         std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.";
                         toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
                         return false;
-                }*/
+                }
                 
                 //leer xml
                 //std::cout << "Leyendo XML." << std::endl;  
@@ -115,7 +111,7 @@ namespace apidb
                         if (!processNode(reader)) 
                         {
                                 //fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
-                                 toolkit::Error::write( toolkit::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode));
+                                 toolkit::Error::write( toolkit::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode,__FILE__,__LINE__));
                                 return false;
                         }
                         xmlFreeTextReader(reader);
@@ -125,7 +121,7 @@ namespace apidb
                         //fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
                         std::string msg = "Fallo al abrir el archivo '";
                         msg += msg + xmlfile + "'";
-                         toolkit::Error::write( toolkit::Error(msg,ErrorCodes::READFILE_OPENXMLFILE));
+                         toolkit::Error::write( toolkit::Error(msg,ErrorCodes::READFILE_OPENXMLFILE,__FILE__,__LINE__));
                         return false;
                 }
                                 
@@ -214,9 +210,7 @@ namespace apidb
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        name = xmlTextReaderConstName(reader);
+        name = xmlTextReaderConstName(reader);    
         if(strcmp((const char*)name,"patch") == 0)
         {
             xmlTextReaderRead(reader);
@@ -239,10 +233,12 @@ namespace apidb
                 toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                 return false;
         }
-        
+        //std::cout << "Numbers readed : " << major << "." << minor << "." << patch << std::endl;
         this->version.setNumbers(major,minor,patch);
        // this->version.setStage(toolkit::Version::Stage::alpha);
         
+        xmlTextReaderRead(reader);
+        xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
@@ -503,7 +499,7 @@ namespace apidb
                                 xmlTextReaderRead(reader);
                                 xmlTextReaderRead(reader);
                                 xmlTextReaderRead(reader);
-                                Parameters* pparams = new Parameters();
+                                //Parameters* pparams = new Parameters();
                                 for(int i = 0 ; i < counParams; i++)
                                 {
                                         //std::cout << "\t\t\tParameter : " << (const char*)xmlTextReaderConstValue(reader) << std::endl;
@@ -511,13 +507,14 @@ namespace apidb
                                         int strl = strlen(strParam);
                                         char* strnew = new char[strl + 1];
                                         strcpy(strnew,strParam);
-                                        pparams->push_back(strnew);
+                                        //pparams->push_back(strnew);
+                                        pfn->addParam(strnew);
                                         xmlTextReaderRead(reader);                
                                         xmlTextReaderRead(reader);              
                                         xmlTextReaderRead(reader);              
                                         xmlTextReaderRead(reader);
                                 }
-                                pfn->setHeader(pparams);
+                                //pfn->setHeader(pparams);
                                 ptb->insert(std::make_pair(pfn->getName().c_str(), pfn));
                                 xmlTextReaderRead(reader);      
                         }

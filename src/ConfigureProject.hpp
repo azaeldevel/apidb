@@ -55,7 +55,7 @@ namespace apidb
                         Function();
                         ~Function();
                         Skeleton getSkeleton() const;
-                        void setHeader(Parameters*);
+                        //void setHeader(Parameters*);
                         void setBody(const std::string&);
                         const Parameters* getParameters() const;
                         std::string listParams()const;
