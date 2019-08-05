@@ -40,6 +40,7 @@ namespace apidb
                 READFILE_INVALIDPATH,//La direecion especificada  del archivo especificada no es valida
                 CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,
                 CONFIGUREPROJECT_PARSE_XML,
+                CONFIGUREPROJECT_NOCOMPATIBLE_PROJECT,
                 
                 APPLICATION_GTK3_ROWACTIVE_NOTFOUND_TABLE,
                 APPLICATION_GTK3_CONFIGPROJECT_NULL

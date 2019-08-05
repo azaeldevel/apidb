@@ -378,7 +378,7 @@ namespace apidb
         
         conectordb = new octetos::toolkit::clientdb::mysql::Datconnect(host,port,database,user,password);
         
-        //if(projectVersion >= verlast)//la lectura es compatible con versiones anteriores del projecto
+        if(projectVersion >= ver110)//la lectura es compatible con versiones anteriores del projecto
         {
         //
         xmlTextReaderRead(reader);
