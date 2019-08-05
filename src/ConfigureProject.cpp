@@ -242,7 +242,7 @@ namespace apidb
                         counFuns = 0;
                         countTbs++;
                         xmlNodePtr downls_tb_node = xmlNewChild(downls_node, NULL, (const xmlChar *)"Table", NULL);
-                        xmlNewProp(downls_tb_node, BAD_CAST "name", BAD_CAST itT->second-> getName().c_str());
+                        xmlNewProp(downls_tb_node, BAD_CAST "name", BAD_CAST itT->second->getName().c_str());
                         int countparams;
                         for(std::map<const char*, const Function*>::iterator  itfn = itT->second->begin() ;  itfn !=itT->second->end() ; itfn++)
                         {
@@ -259,6 +259,10 @@ namespace apidb
                                 xmlNewProp(downls_fn_node, BAD_CAST "countParams", BAD_CAST std::to_string(countparams).c_str());
                         }
                         xmlNewProp(downls_tb_node, BAD_CAST "countFuns", BAD_CAST std::to_string(counFuns).c_str());
+                }
+                if(countTbs == 0)
+                {
+                       xmlNewChild(downls_node, NULL, (const xmlChar *)"Table", NULL);
                 }
                 xmlNewProp(downls_node, BAD_CAST "countTbs", BAD_CAST std::to_string(countTbs).c_str());
                 
@@ -287,6 +291,10 @@ namespace apidb
                                 xmlNewProp(selects_fn_node, BAD_CAST "countParams", BAD_CAST std::to_string(countparams).c_str());
                         }
                         xmlNewProp(selects_tb_node, BAD_CAST "countFuns", BAD_CAST std::to_string(counFuns).c_str());
+                }
+                if(countTbs == 0)
+                {
+                        xmlNewChild(selects_node, NULL, (const xmlChar *)"Table", NULL);
                 }
                 xmlNewProp(selects_node, BAD_CAST "countTbs", BAD_CAST std::to_string(countTbs).c_str());
                 

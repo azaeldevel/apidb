@@ -29,6 +29,7 @@ std::string random_string( size_t length )
 }
 
 static std::string filename;
+static std::string filename_nlst;
 
 /* The suite initialization function.
  * Opens the temporary file used by the tests.
@@ -37,6 +38,7 @@ static std::string filename;
 int init_apidb(void)
 {
         filename = random_string(10);
+        filename_nlst = random_string(10);
         return 0;
 }
 
@@ -47,7 +49,36 @@ int init_apidb(void)
 int clean_apidb(void)
 {
         remove(filename.c_str());
+        remove(filename_nlst.c_str());
         return 0;
+}
+
+void testCreateProject_nlst()
+{
+	octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
+	octetos::toolkit::Version version;
+	version.setNumbers(0,1,0);
+        version.setStage(octetos::toolkit::Version::Stage::alpha);
+        
+	octetos::apidb::ConfigureProject config;
+        config.name = "sysapp";
+        config.directory = "apidb";
+        config.conectordb = &mysqlSource;
+        config.version = version;
+        config.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
+        config.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
+        config.packing = octetos::apidb::PackingLenguajes::CMake;
+        config.compiled = octetos::apidb::Compiled::STATIC;
+	config.mvc = octetos::apidb::MVC::NO;
+    
+        if(config.saveConfig(filename_nlst))
+        {
+                CU_ASSERT(true);
+        }
+        else
+        {
+                CU_ASSERT(false);
+        }
 }
 
 
@@ -99,6 +130,30 @@ void testCreateProject()
         }
 }
 
+void testBuild_nlst()
+{
+        octetos::apidb::ConfigureProject config;        
+        if(!config.readConfig(filename_nlst))
+        {
+                if(octetos::toolkit::Error::check())
+                {
+                        std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+                }
+                CU_ASSERT(false);
+                return;
+        }
+        octetos::apidb::Driver driver(config);
+        if(!driver.driving(false))
+        {
+                if(octetos::toolkit::Error::check())
+                {
+                        std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+                }
+                CU_ASSERT(false);
+        }
+        
+        CU_ASSERT(true);
+}
 
 void testBuild()
 {
@@ -154,6 +209,18 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
+	
+	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.\n", testCreateProject_nlst)))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
+	
+	if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.\n", testBuild_nlst)))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
 	
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);

@@ -530,7 +530,7 @@ namespace apidb
                 
                 if(app->originFilename.size() > 0) //si fue cargado simplemete usa el mismo archivo
                 {
-                        std::cout << "Guardando en '" << app->originFilename << "'" << std::endl;
+                        //std::cout << "Guardando en '" << app->originFilename << "'" << std::endl;
                         if(!app->config->saveConfig(app->originFilename))
                         {
                                 std::string msgstr;
