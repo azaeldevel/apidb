@@ -390,102 +390,125 @@ namespace apidb
                 }
                 
                 conectordb = new octetos::toolkit::clientdb::mysql::Datconnect(host,port,database,user,password);
-        }
+                }
         
-        if(projectVersion >= ver110)//la lectura es compatible con versiones anteriores del projecto
-        {
-        //
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        name = xmlTextReaderConstName(reader);
-        std::string inL = (const char*)xmlTextReaderConstValue(reader);
-        if(inL.compare("MySQL") == 0)
-        {
-                inputLenguaje = InputLenguajes::MySQL;
-        }
-        else
-        {
-                std::string msgstr = "Fallo durante el parseo XML.";
-                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                return false;
-        }
+                /******************************************************************************************
+                * Version 1.1.0
+                * 
+                * *//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                if(projectVersion >= ver110)//la lectura es compatible con versiones anteriores del projecto
+                {
+                //
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                name = xmlTextReaderConstName(reader);
+                std::string inL = (const char*)xmlTextReaderConstValue(reader);
+                if(inL.compare("MySQL") == 0)
+                {
+                        inputLenguaje = InputLenguajes::MySQL;
+                }
+                else
+                {
+                        std::string msgstr = "Fallo durante el parseo XML.";
+                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                        return false;
+                }
+                
+                //
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                name = xmlTextReaderConstName(reader);        
+                std::string outL = (const char*)xmlTextReaderConstValue(reader);        
+                if(outL.compare("C++") == 0)
+                {
+                        outputLenguaje = OutputLenguajes::CPP;
+                        //std::cout << "LANG = C++" <<  std::endl;
+                }
+                else
+                {
+                        std::string msgstr = "Fallo durante el parseo XML.";
+                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                        return false;
+                }
+                
+                //
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                name = xmlTextReaderConstName(reader);        
+                std::string pk = (const char*)xmlTextReaderConstValue(reader);        
+                if(pk.compare("CMake") == 0)
+                {
+                        packing = PackingLenguajes::CMake;
+                }
+                else
+                {
+                        std::string msgstr = "Fallo durante el parseo XML.";
+                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                        return false;
+                }
+                
+                //
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                name = xmlTextReaderConstName(reader);        
+                std::string cmpl = (const char*)xmlTextReaderConstValue(reader);        
+                if(cmpl.compare("STATIC") == 0)
+                {
+                        compiled = Compiled::STATIC;
+                }
+                else
+                {
+                        std::string msgstr = "Fallo durante el parseo XML.";
+                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                        return false;
+                }
+        
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                name = xmlTextReaderConstName(reader);
+                if(strcmp((const char*)name,"buildDirectory") == 0)
+                {
+                        //std::cout << "Se encontro build directory." << std::endl;
+                        xmlTextReaderRead(reader);
+                        std::string bd;
+                        bd = (const char*)xmlTextReaderConstValue(reader);
+                        //std::cout << "Se encontro build directory : " << bd << std::endl;
+                }
+                else
+                {
+                        std::string msgstr = "Fallo durante el parseo XML.";
+                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                        return false;
+                }
         
         //
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        name = xmlTextReaderConstName(reader);        
-        std::string outL = (const char*)xmlTextReaderConstValue(reader);        
-        if(outL.compare("C++") == 0)
-        {
-                outputLenguaje = OutputLenguajes::CPP;
-                //std::cout << "LANG = C++" <<  std::endl;
-        }
-        else
-        {
-                std::string msgstr = "Fallo durante el parseo XML.";
-                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                return false;
-        }
-        
-        //
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        name = xmlTextReaderConstName(reader);        
-        std::string pk = (const char*)xmlTextReaderConstValue(reader);        
-        if(pk.compare("CMake") == 0)
-        {
-                packing = PackingLenguajes::CMake;
-        }
-        else
-        {
-                std::string msgstr = "Fallo durante el parseo XML.";
-                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                return false;
-        }
-        
-        //
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
-        name = xmlTextReaderConstName(reader);        
-        std::string cmpl = (const char*)xmlTextReaderConstValue(reader);        
-        if(cmpl.compare("STATIC") == 0)
-        {
-                compiled = Compiled::STATIC;
-        }
-        else
-        {
-                std::string msgstr = "Fallo durante el parseo XML.";
-                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                return false;
-        }
-        
-        //
-        xmlTextReaderRead(reader);
-        xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
