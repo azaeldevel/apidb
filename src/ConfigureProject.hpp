@@ -77,7 +77,7 @@ namespace apidb
                 };
         
                 std::string name; 
-                std::string directory;
+                std::string builDirectory;
                 octetos::toolkit::Version version;
                 octetos::toolkit::clientdb::mysql::Datconnect* conectordb;
                 InputLenguajes inputLenguaje;
@@ -101,7 +101,7 @@ namespace apidb
                 bool testConexion();
                         
                 const std::string& getName()const;
-                const std::string& getDirectory()const;
+                //const std::string& getDirectory()const;
                 const octetos::toolkit::Version& getVersion()const;
                 const octetos::toolkit::clientdb::mysql::Datconnect& getConector()const;
     };

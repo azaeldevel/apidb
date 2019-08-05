@@ -146,13 +146,14 @@ namespace apidb
                 return name;
                 
         }
-        const std::string& ConfigureProject::getDirectory()const
+        /*const std::string& ConfigureProject::getDirectory()const
         {
                 return directory;    
-        }
+        }*/
         ConfigureProject::ConfigureProject()
         {
                 conectordb = NULL;
+                mvc = octetos::apidb::MVC::NO;
         }
     
         /*ConfigureProject::ConfigureProject(const ConfigureProject& configProy)
@@ -299,7 +300,7 @@ namespace apidb
                 xmlNewProp(selects_node, BAD_CAST "countTbs", BAD_CAST std::to_string(countTbs).c_str());
                 
                 //
-                std::string dirProy = "";
+                /*std::string dirProy = "";
 		if((directory.empty()) || (directory.compare(".") == 0))
 		{
 			dirProy = "apidb";
@@ -307,7 +308,7 @@ namespace apidb
 		else
                 {
                         dirProy = directory + "/apidb";
-                }
+                }*/
                 
                 char tmp_dirpath[] =  "/tmp/apidb-XXXXXX";
                 char * tmp_apidbDir  = mkdtemp(tmp_dirpath);
@@ -332,7 +333,7 @@ namespace apidb
                 //comprimiendo archivo
                 //std::cout<< "Comprimiendo projecto." << std::endl;
                 TAR *pTar;
-                std::string tarFilename= dirProy + ".tar";
+                std::string tarFilename= "apidb.tar";
                 tar_open(&pTar, (char*)tarFilename.c_str(), NULL, O_WRONLY | O_CREAT, 0644, TAR_IGNORE_MAGIC);
                 std::string filenameProj = "apidb";
                 tar_append_tree(pTar, tmp_dirpath, (char*)filenameProj.c_str());
@@ -351,10 +352,10 @@ namespace apidb
                 }
                 else
                 {
-                        if(rename(tarFilename.c_str(),dirProy.c_str()) != 0)
+                        //if(rename(tarFilename.c_str(),"apidb") != 0)
                         {
-                                std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
-                                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,__FILE__,__LINE__));
+                                std::string msgstr = "Especifique el nombre completo del archivo.";
+                                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_NOFULL_PATCH_PROJECT,__FILE__,__LINE__));
                                 return false;
                         }
                 }

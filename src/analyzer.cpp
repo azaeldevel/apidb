@@ -59,10 +59,10 @@ namespace apidb
 	{
 		return configureProject.name;
 	}		
-	const std::string& Analyzer::getDirectoryProject()
+	/*const std::string& Analyzer::getDirectoryProject()
 	{
 		return configureProject.directory;
-	}	
+	}*/	
 	InputLenguajes Analyzer::getInputLenguaje()const
 	{
 		return configureProject.inputLenguaje;

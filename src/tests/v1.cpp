@@ -62,7 +62,7 @@ void testCreateProject_nlst()
         
 	octetos::apidb::ConfigureProject config;
         config.name = "sysapp";
-        config.directory = "apidb";
+        config.builDirectory = "apidb";
         config.conectordb = &mysqlSource;
         config.version = version;
         config.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
@@ -91,7 +91,7 @@ void testCreateProject()
         
 	octetos::apidb::ConfigureProject config;
         config.name = "sysapp";
-        config.directory = "apidb";
+        config.builDirectory = "apidb";
         config.conectordb = &mysqlSource;
         config.version = version;
         config.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;

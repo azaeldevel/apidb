@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 			std::cout<<"Version: " << octetos::apidb::getPakageVersion().toString()<<std::endl;
 			return EXIT_SUCCESS;
 		}
-		else if((strcmp(argv[1],"-p") ==0 || strcmp(argv[1],"--project-file") == 0) && (strcmp(argv[3],"-o") ==0 || strcmp(argv[3],"--out-file") == 0) )
+		else if((strcmp(argv[1],"-p") ==0 || strcmp(argv[1],"--project-file") == 0) && (strcmp(argv[3],"-o") ==0 || strcmp(argv[3],"--out-build") == 0) )
                 {
                         file = argv[2];
                         dir = argv[4];
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	{
 		std::cout<<"Cargando '" << file << "' ..." <<std::endl;
 		octetos::apidb::ConfigureProject config;
-                config.directory = dir;
+                config.builDirectory = dir;
                 if(config.readConfig(file))
                 {
 			std::cerr<<"Fallo la lectura del archivo."<<std::endl;

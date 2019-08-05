@@ -112,13 +112,13 @@ namespace apidb
 	
 	bool Driver::generate(bool log)
 	{				
-		if((analyzer->getDirectoryProject().empty()) | (analyzer->getDirectoryProject().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
 			
 		}
 		else
 		{
-			std::string direct = analyzer->getDirectoryProject();
+			std::string direct = configureProject.builDirectory;
 			std::ifstream ifile(direct);
 			if (!ifile) 
 			{

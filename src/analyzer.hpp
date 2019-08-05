@@ -41,7 +41,7 @@ namespace apidb
                 std::map<const char*,symbols::Tables*,symbols::cmp_str> copyListTable()const;
 			
 		const std::string& getNameProject();
-		const std::string& getDirectoryProject();				
+		//const std::string& getDirectoryProject();				
 		InputLenguajes getInputLenguaje() const;
 		OutputLenguajes getOutputLenguaje() const;
 		Analyzer(const ConfigureProject&, octetos::toolkit::clientdb::Connector*);

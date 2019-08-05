@@ -57,13 +57,13 @@ namespace generators
 	bool CMake::generate(bool log)
 	{
 		std::string namefile = "CMakeLists.txt";
-		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
 			cmakelists.open(namefile);
 		}
 		else
 		{
-			cmakelists.open(analyzer.getDirectoryProject() + "/" + namefile);
+			cmakelists.open(configureProject.builDirectory+ "/" + namefile);
 		}
 			
 		//CMakeLists.txt
@@ -134,7 +134,7 @@ namespace generators
 		
 		//std::cout<<"Creating cmake.modules..."<<std::endl;
 		//cmake.modules
-		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
 			std::ifstream ifile("cmake.modules");
 			if (!ifile) 
@@ -144,7 +144,7 @@ namespace generators
 		}
 		else
 		{
-			std::string direct = analyzer.getDirectoryProject() + "/cmake.modules";
+			std::string direct = configureProject.builDirectory + "/cmake.modules";
 			std::ifstream ifile(direct);
 			if (!ifile) 
 			{
@@ -157,21 +157,23 @@ namespace generators
 	
 		//std::cout<<"Creating toolkit-commonConfig.cmake..."<<std::endl;
 		namefile = "octeos-toolkit-common-c++Config.cmake";
-		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
-			toolkitcommonconifg.open(namefile);
+                        std::string file = "cmake.modules/";
+                        file += namefile;
+			toolkitcommonconifg.open(file);
 		}
 		else
 		{
-			toolkitcommonconifg.open(analyzer.getDirectoryProject() + "/cmake.modules/" + namefile);
+			toolkitcommonconifg.open(configureProject.builDirectory + "/cmake.modules/" + namefile);
 		}
 		toolkitcommonconifg<<"IF(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)"<<std::endl;
 		  toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_FIND_QUIETLY TRUE)"<<std::endl;
 		toolkitcommonconifg<<"ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)"<<std::endl;
 
-		toolkitcommonconifg<<"FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR common.hpp"<<std::endl;
-		  toolkitcommonconifg<<"/usr/local/include/octetos/toolkit/common"<<std::endl;
-		  toolkitcommonconifg<<"/usr/include/octetos/toolkit/common"<<std::endl;
+		toolkitcommonconifg<<"FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR toolkit/common/common.hpp"<<std::endl;
+		  toolkitcommonconifg<<"/usr/local/include/octetos"<<std::endl;
+		  toolkitcommonconifg<<"/usr/include/octetos"<<std::endl;
 		toolkitcommonconifg<<")"<<std::endl;
 
 		toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_NAMES octetos-toolkit-common-c++)"<<std::endl;
@@ -210,13 +212,15 @@ namespace generators
                 {
 		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
 		namefile = "octetos-toolkit-clientdb-myc++Config.cmake";
-		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
-			toolkitclientdbConfig.open(namefile);
+                        std::string file = "cmake.modules/";
+                        file += namefile;
+			toolkitclientdbConfig.open(file);
 		}
 		else
 		{
-			toolkitclientdbConfig.open(analyzer.getDirectoryProject() + "/cmake.modules/" + namefile);
+			toolkitclientdbConfig.open(configureProject.builDirectory + "/cmake.modules/" + namefile);
 		}	
 		
 		toolkitclientdbConfig<<"IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR)"<<std::endl;
@@ -267,13 +271,15 @@ namespace generators
                 }
 		//std::cout<<"Creating MySQLConfig.cmake..."<<std::endl;
 		namefile = "MySQLConfig.cmake";
-		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
-			toolkitcommonconifg.open(namefile);
+                        std::string file = "cmake.modules/";
+                        file += namefile;
+			toolkitcommonconifg.open(file);
 		}
 		else
 		{
-			toolkitcommonconifg.open(analyzer.getDirectoryProject() + "/cmake.modules/" + namefile);
+			toolkitcommonconifg.open(configureProject.builDirectory + "/cmake.modules/" + namefile);
 		}
 		
 		toolkitcommonconifg<<"IF (MYSQL_INCLUDE_DIR)"<<std::endl;
@@ -320,13 +326,13 @@ namespace generators
 
 		//std::cout<<"Creating config.h.in..."<<std::endl;
 		namefile = "config.h.in";
-		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
 			config.open(namefile);
 		}
 		else
 		{
-			config.open(analyzer.getDirectoryProject() + "/" + namefile);
+			config.open(configureProject.builDirectory+ "/" + namefile);
 		}
 		config<<"#define VERSION_MAJOR @apidb_VERSION_MAJOR@"<<std::endl;
 		config<<"#define VERSION_MINOR @apidb_VERSION_MINOR@"<<std::endl;
@@ -348,26 +354,26 @@ namespace generators
                 {
                         preexits = false;
                 }
-		if((analyzer.getDirectoryProject().empty()) | (analyzer.getDirectoryProject().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
-			if(preexits) developing.open(namefile);
+			if(!preexits) developing.open(namefile);
 		}
 		else
 		{
-			if(preexits) developing.open(analyzer.getDirectoryProject() + "/" + namefile);
+			if(!preexits) developing.open(configureProject.builDirectory + "/" + namefile);
 		}
-        if(preexits)
-        {
-            developing<<"#include \"" << configureProject.name << ".hpp\""<<std::endl;
-            developing<<std::endl;
-            developing<<"#include <iostream>"<<std::endl;
-            developing<<"#include <list>"<<std::endl;
-            developing<<std::endl;
-            developing<<"int main()"<<std::endl;
-            developing<<"{"<<std::endl;
-            developing<<"return 0;"<<std::endl;
-            developing<<"}"<<std::endl;
-        }
+                if(!preexits)
+                {
+                developing<<"#include \"" << configureProject.name << ".hpp\""<<std::endl;
+                developing<<std::endl;
+                developing<<"#include <iostream>"<<std::endl;
+                developing<<"#include <list>"<<std::endl;
+                developing<<std::endl;
+                developing<<"int main()"<<std::endl;
+                developing<<"{"<<std::endl;
+                developing<<"return 0;"<<std::endl;
+                developing<<"}"<<std::endl;
+                }
 		//analyzer->getOutputMessage()<<"\tArchivo de develping phase: " << namefile <<std::endl;
 		//std::cout<<"return..."<<std::endl;
 		return true;
@@ -432,7 +438,7 @@ namespace generators
                 
 		//outputLenguaje = d.getOutputLenguaje();
 		writeResults = new std::ofstream[2];
-		if((d.getDirectoryProject().empty()) | (d.getDirectoryProject().compare(".") == 0)) 
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0)) 
 		{
 			projectH = d.getNameProject() + ".hpp";
 			writeResults[0].open(projectH);
@@ -443,8 +449,8 @@ namespace generators
 		{
 			projectH = d.getNameProject() + ".hpp";
 			projectCPP = d.getNameProject() + ".cpp";
-			writeResults[0].open(d.getDirectoryProject() + "/" + projectH);
-			writeResults[1].open(d.getDirectoryProject() + "/" + projectCPP);
+			writeResults[0].open(configureProject.builDirectory + "/" + projectH);
+			writeResults[1].open(configureProject.builDirectory + "/" + projectCPP);
 		}
 	}    
 	bool CPP::generate(bool log)
