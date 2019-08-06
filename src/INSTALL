@@ -18,17 +18,20 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	- Tar library
 
 En tiempo de construcion
-	-Inkscape  solo como herramienta para generar el ico
+	-Inkscape  solo como herramienta para generar el icono
 
 -------------
 - Instalación
 -------------
-	1.- Descargar el código fuente desde 'https://github.com/azaelrmartz/toolkit.git'
-	2.- Descomprimir si es necesario
-	3.- cd toolkit/clientdb // entrar en el directorio
-	4.- mkdir build //crear directorio de construcción
-	5.- cd build  //entrar en el directorio de construcción
-	6.- cmake ..
-	7.- make
-	8.- cpack --config CPackConfig.cmake (como administrador)
-	9.- ./apidb-*-Linux.sh --prefix=/usr (como administrador)
+	Toolkit Common para C++
+	Este componete tien instrucciones completas en su archivo INSTALL, puede descargarlo desde 'https://github.com/azaeldevel/toolkit.git' en el subdirectorio common.
+	Toolkit Client DB
+	Este componete tien instrucciones completas en su archivo INSTALL, puede descargarlo desde 'https://github.com/azaelrmartz/toolkit.git'  en el subdirectorio clientdb.
+
+	Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
+	1.- unzip apidb-master.zip //Descomprimir archivo
+	2.- cd apidb-master/src/build // entrar en el directorio
+	3.- cmake ..
+	4.- make
+	5.- sudo cpack --config CPackConfig.cmake
+	6.- sudo ./apidb-*-Linux.sh --prefix=/usr

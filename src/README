@@ -1,47 +1,14 @@
-* Requisitos
-
-  - GCC >= 7.1
-  - CMake >= 3.0
-  - Bison
-  - Flex
-  - MySQL C API
-  - Toolkit		https://github.com/azaelrmartz/toolkit.git
-  - LibXml2
-  - Boost
 
 * Compilacion
 
-Compilar e installar es muy secillo si se conoce cmake, unavez instaladas las dependecias mencionas anteriormente
-simpleme ejecute el comando de contrucion.
-$ cmake .
-....
-...
-...
-$ make
-
-y en este momento tendra compilado el codigo fuente.
-puede agregar -prefix=/directory para indicar un directorio de instalacion.
-
+Vea el archivo INSTALL para informacion especifica
 
 
 * Generador proyecto
 
-La manara mas rapida es usando el comando apidbgen con la siguiente salida en pantalla
-Nombre de projecto:test10
-Directorio de projecto:testdir10
-Tipo de Servidor de DB:mysql
-Servidor:192.168.0.101
-Puerto de servidor:3306
-Nombre de Base de Datos:mydbtest
-Usuario:develop
-Conatraseña:123456
-Generando atributos para...
-Generando codigo...
+Existe tres forma de hacerlo
+	1- Creando un proyecto desde la interface grafica, esta es la opcion recomendad por su servidor. (youtube.com/video)
+	2- Utilizando la API de APIDB.
+	3- Llamando al programa apidb (en line de comando), sin embargo, este componete ya es obsoleto.
 
-La actual versión solo es capáz de generar código a partir de una base de datos MySQL y como resultado genera código C++ por lo que estos parámetros están implícitos.
-
-test10 es el nombre del proyecto y tambien será el nombre del namespace para el api generado, el nombre de archivo y otros identificadores internos así que procure utilizar solo letras y numero.
-
-testdir10 el directorio en donde se generará los archivos.
-
-Los restantes parametros son los correspondientes a la base de datos, la cual como antes mencionamos deven ser los paramatros para la conexion al servidor MySQL.
+Adicionalmente para la etapa final de generacionde archivos fuente puede usar(en linea de comando) apidb-build, puede ser muy util para actualizar su proyecto
