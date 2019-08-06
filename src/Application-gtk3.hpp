@@ -130,6 +130,7 @@ namespace apidb
                 static void show_about(GtkWidget *widget, gpointer data) ;
                 static gboolean conex_lostfocus (GtkWidget *widget, GdkEvent  *event,  gpointer   user_data);
                 static void conex_switchPage (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer     user_data);
+                static void application_destroy (GtkWidget *object, gpointer   user_data);
                 
         private:
                 GtkWidget *window;

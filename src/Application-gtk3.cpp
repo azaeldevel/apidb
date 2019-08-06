@@ -763,6 +763,8 @@ namespace apidb
         {
                 isSaved = false;
                 isOpen = false;
+                downsTree = NULL;
+                selectsTree = NULL;
                 config = NULL;
                 driver = NULL;
                 conexEdited = false;
@@ -794,11 +796,15 @@ namespace apidb
                 selectsTree->fill();
                 
         }
+        void Application::application_destroy (GtkWidget *object, gpointer   user_data)
+        {
+                
+        }
         void Application::createWindow()
         {
                 gtk_window_set_title (GTK_WINDOW (window), nameApp.c_str());
                 gtk_window_set_default_size (GTK_WINDOW (window), 450, 300);
-                g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);  
+                g_signal_connect (window, "destroy", G_CALLBACK (application_destroy), this);  
                 gtk_container_set_border_width (GTK_CONTAINER (window), 10);   
                 gtk_window_set_resizable(GTK_WINDOW (window),FALSE);
                 gtk_container_add (GTK_CONTAINER (window), vboxMain);        
