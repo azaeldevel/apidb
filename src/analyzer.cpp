@@ -35,6 +35,14 @@ namespace apidb
 	}
 	Analyzer::~Analyzer()
 	{
+                if(outputMessages != NULL)
+                {
+                        outputMessages = NULL;                        
+                }
+                if(errorMessages != NULL)
+                {
+                        errorMessages = NULL;                        
+                }
 	}
 	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn) : configureProject(config), connector(conn)
 	{

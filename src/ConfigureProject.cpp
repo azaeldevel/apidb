@@ -153,6 +153,7 @@ namespace apidb
         ConfigureProject::ConfigureProject()
         {
                 conectordb = NULL;
+                mvc = MVC::NO;
         }
     
         /*ConfigureProject::ConfigureProject(const ConfigureProject& configProy)

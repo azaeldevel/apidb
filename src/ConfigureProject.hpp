@@ -129,6 +129,10 @@ namespace apidb
                  * */
                 Compiled compiled;
                 /**
+                 * \deprecated Sera eliminanada por competo en el siguiente incremento major.
+                 * */
+                MVC mvc;
+                /**
                  * \brief Lista las tablas para las que se generara funciones de descarga
                  * */
                 std::map<const char*,Table*> downloads;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente

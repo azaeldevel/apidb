@@ -69,7 +69,7 @@ void testCreateProject_nlst()
         config.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
         config.packing = octetos::apidb::PackingLenguajes::CMake;
         config.compiled = octetos::apidb::Compiled::STATIC;
-    
+        
         if(config.saveConfig(filename_nlst))
         {
                 CU_ASSERT(true);
@@ -135,7 +135,8 @@ void testCreateProject()
 
 void testBuild_nlst()
 {
-        octetos::apidb::ConfigureProject config;        
+        octetos::apidb::ConfigureProject config;     
+        config.mvc =octetos::apidb::MVC::GTK3;
         if(!config.readConfig(filename_nlst))
         {
                 if(octetos::toolkit::Error::check())
