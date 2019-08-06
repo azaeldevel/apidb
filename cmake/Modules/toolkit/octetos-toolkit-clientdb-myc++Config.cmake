@@ -12,7 +12,7 @@ IF(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot")
 	FIND_PATH(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR clientdb.hpp
 	  $ENV{HOME}/develop/toolkit/clientdb
 	)
-ELSEIF()
+ELSEIF(NOT (${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot"))
 	FIND_PATH(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR clientdb.hpp
 	  /usr/local/include/octetos/toolkit/clientdb
 	  /usr/include/octetos/toolkit/clientdb
@@ -26,7 +26,7 @@ IF(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot")
 	  PATHS $ENV{HOME}/develop/toolkit/clientdb/build-myc++
 	  PATH_SUFFIXES octetos-toolkit-clientdb-myc++
 	)
-ELSEIF()
+ELSEIF(NOT (${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot"))
 	SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES octetos-toolkit-clientdb-myc++)
 	FIND_LIBRARY(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY
 	  NAMES ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES}

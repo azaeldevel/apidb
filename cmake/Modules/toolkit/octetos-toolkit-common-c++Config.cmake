@@ -12,7 +12,7 @@ IF(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot")
 	FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR toolkit/common/common.hpp
 	  $ENV{HOME}/develop
 	)
-ELSEIF()
+ELSEIF(NOT(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot"))
 	FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR toolkit/common/common.hpp
 	  /usr/local/include/octetos
 	  /usr/include/octetos
@@ -26,11 +26,11 @@ IF(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot")
 	  PATHS $ENV{HOME}/develop/toolkit/common/build-c++
 	  PATH_SUFFIXES octetos-toolkit-common-c++
 	)
-ELSEIF()
+ELSEIF(NOT (${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot"))
 	SET(OCTETOS_TOOLKIT_COMMON_CPP_NAMES octetos-toolkit-common-c++)
 	FIND_LIBRARY(OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY
 	  NAMES ${OCTETOS_TOOLKIT_COMMON_CPP_NAMES}
-	  PATHS /usr/lib/octetos/toolkit/common /usr/local/lib/octetos/toolkit/common /usr/lib/x86_64-linux-gnu/octetos/toolkit/common
+	  PATHS /lib /usr/lib/octetos/toolkit/common /usr/local/lib/octetos/toolkit/common /usr/lib/x86_64-linux-gnu/octetos/toolkit/common
 	  PATH_SUFFIXES octetos-toolkit-common-c++
 	)
 ENDIF()

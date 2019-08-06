@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Herramineta de manipulacion de Base de Datos
+Encoding=UTF-8
+Name=APIDB
+Comment=Hace sencillo crear una API para acceder a tu Base de Datos, generando metodo para Insert, Delte, Update e incluse Select.
+Icon=/usr/share/icons/apidb.png
+Exec=/bin/apidb-gtk3
+Terminal=false
+Categories=MySQL,C++;
