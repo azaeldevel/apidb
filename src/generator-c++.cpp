@@ -742,18 +742,9 @@ namespace generators
     }
     void CPP::createSpaceCPP(std::ofstream& file)
     {
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"namespace "<< analyzer.getNameProject() << std::endl;
-			file <<"{"<<std::endl;
-		}
-		else 
-		{
-			file <<"namespace "<< analyzer.getNameProject() << std::endl;
-			file <<"{" <<std::endl;
-			file <<"namespace  controller" <<std::endl;
-			file <<"{" <<std::endl;
-		}
+                file <<"namespace "<< analyzer.getNameProject() << std::endl;
+                file <<"{"<<std::endl;
+		
                 std::map<const char*,symbols::Tables*,symbols::cmp_str>& spacies = analyzer.getListTable();
                 
                 //for(auto const& [keySpace, AttSpace]  : spacies)
@@ -779,15 +770,7 @@ namespace generators
                                 file << "}" << std::endl;
                         }
                 }
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"}"<<std::endl;
-		}
-		else 
-		{
-			file <<"}" <<std::endl;
-			file <<"}" <<std::endl;
-		}
+                file <<"}"<<std::endl;
     }
         void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
         {                
@@ -1038,18 +1021,8 @@ namespace generators
     }
     void CPP::createSpaceH(std::ofstream& file,bool log)
     {
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
-			file <<"{"<<std::endl;
-		}
-		else if(configureProject.mvc != apidb::MVC::NO)
-		{
-			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
-			file <<"{" <<std::endl;
-			file <<"namespace  controller" <<std::endl;
-			file <<"{" <<std::endl;
-		}
+                file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+                file <<"{"<<std::endl;
                 std::map<const char*,symbols::Tables*,symbols::cmp_str> spacies = analyzer.getListTable();
 		//for(auto const& [keySpace, AttSpace]  : spacies)
                 for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
@@ -1098,15 +1071,7 @@ namespace generators
                                 file << "\t}" << std::endl;
                         }
                 }
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"}"<<std::endl;
-		}
-		else  if(configureProject.mvc != apidb::MVC::NO)
-		{
-			file <<"}" <<std::endl;
-			file <<"}" <<std::endl;
-		}
+                file <<"}"<<std::endl;
     }
     
     

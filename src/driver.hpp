@@ -28,21 +28,35 @@ namespace octetos
 {
 namespace apidb
 {
+        /**
+         * \brief Responsable manejar todos el proceso desde el analisis hasta la generacion de los archivos fuentes
+         * */
 	class Driver
 	{
 	public:
 		OutputLenguajes getOutputLenguaje() const;
+                /**
+                 * \brief Lee el servidor
+                 * */
 		virtual bool analyze(bool log);
+                /**
+                 * \brief Genera los archivos de codigo
+                 **/
 		virtual bool generate(bool log);
+                /**
+                 * \brief Se puede considar como una llamada a 'analyze' seguida de una llamda a 'generate'
+                 * */
 		bool driving(bool log);
-        Driver(const ConfigureProject&);
-        const Analyzer& getAnalyzer() const;
-        virtual ~Driver();
+                /**
+                 * \brief Unico contructor 
+                 * */
+                Driver(const ConfigureProject&);
+                const Analyzer& getAnalyzer() const;
+                virtual ~Driver();
                 
 	private:
-		octetos::toolkit::clientdb::Connector* connector;
-		apidb::Analyzer* analyzer;
-		apidb::generators::Generator* generator;
+		octetos::toolkit::clientdb::Connector* connector;		
+                apidb::Analyzer* analyzer;
 		const ConfigureProject& configureProject;
 	};
 }

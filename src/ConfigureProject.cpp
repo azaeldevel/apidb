@@ -133,7 +133,7 @@ namespace apidb
                 }
                 return ret;
         }
-        const octetos::toolkit::clientdb::mysql::Datconnect& ConfigureProject::getConector() const
+        const octetos::toolkit::clientdb::Datconnect& ConfigureProject::getConector() const
         {
                 return *conectordb;    
         }
@@ -153,7 +153,6 @@ namespace apidb
         ConfigureProject::ConfigureProject()
         {
                 conectordb = NULL;
-                mvc = octetos::apidb::MVC::NO;
         }
     
         /*ConfigureProject::ConfigureProject(const ConfigureProject& configProy)

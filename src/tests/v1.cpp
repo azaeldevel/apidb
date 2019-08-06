@@ -30,6 +30,7 @@ std::string random_string( size_t length )
 
 static std::string filename;
 static std::string filename_nlst;
+static octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
 
 /* The suite initialization function.
  * Opens the temporary file used by the tests.
@@ -55,7 +56,6 @@ int clean_apidb(void)
 
 void testCreateProject_nlst()
 {
-	octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
 	octetos::toolkit::Version version;
 	version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
@@ -69,7 +69,6 @@ void testCreateProject_nlst()
         config.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
         config.packing = octetos::apidb::PackingLenguajes::CMake;
         config.compiled = octetos::apidb::Compiled::STATIC;
-	config.mvc = octetos::apidb::MVC::NO;
     
         if(config.saveConfig(filename_nlst))
         {
@@ -81,10 +80,16 @@ void testCreateProject_nlst()
         }
 }
 
+void testConecction()
+{
+        octetos::apidb::ConfigureProject config;
+        config.conectordb = &mysqlSource;
+        config.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
+        CU_ASSERT(config.testConexion());
+}
 
 void testCreateProject()
 {
-	octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
 	octetos::toolkit::Version version;
 	version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
@@ -98,8 +103,6 @@ void testCreateProject()
         config.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
         config.packing = octetos::apidb::PackingLenguajes::CMake;
         config.compiled = octetos::apidb::Compiled::STATIC;
-	config.mvc = octetos::apidb::MVC::NO;
-        //config.keyMode = apidb::KeyModel::BY_MODEL_DB;
         octetos::apidb::ConfigureProject::Table tbP("Persons");
         octetos::apidb::ConfigureProject::Function dwFullName("fullname",octetos::apidb::ConfigureProject::Function::DOWNLOAD);
         dwFullName.addParam("name1");
@@ -192,6 +195,12 @@ int main(int argc, char *argv[])
 	std::string classVersionString = std::string("Probando ") + pkName + " " + ver.toString();
 	pSuite = CU_add_suite(classVersionString.c_str(), init_apidb, clean_apidb);
 	if (NULL == pSuite) 
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
+	
+	if ((NULL == CU_add_test(pSuite, "Verificando la conectividad del componente.\n", testConecction)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();

@@ -55,7 +55,6 @@ namespace apidb
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
 			connector = new octetos::toolkit::clientdb::mysql::Connector();
-			analyzer = new mysql::Analyzer(configureProject,connector);		
 			try
 			{
 				bool flag = connector->connect(config.conectordb);
@@ -69,12 +68,12 @@ namespace apidb
 			}
 			catch(octetos::toolkit::clientdb::SQLException ex)
 			{				
-				analyzer->getErrorMessage() <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
+				//analyzer->getErrorMessage() <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
 			}
 		}
 		else
 		{
-			analyzer->getErrorMessage() <<"Lenguaje de entrada desconocido."<<std::endl;
+			//analyzer->getErrorMessage() <<"Lenguaje de entrada desconocido."<<std::endl;
 		}	
 	}
 		
@@ -111,7 +110,7 @@ namespace apidb
 	}
 	
 	bool Driver::generate(bool log)
-	{				
+	{		
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
 			
@@ -128,55 +127,54 @@ namespace apidb
 			}			
 		}
 		
+		
+                bool flagCPP,flagCMAKE;
 		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
-			bool flagCPP,flagCMAKE;
 			
 			//std::cout<<"apidb::generators::CPP cpp(*analyzer);..."<<std::endl;
 			apidb::generators::CPP cpp(*analyzer,configureProject);
-			generator = &cpp;
-			flagCPP = cpp.generate(log);
-			
-			//std::cout<<"apidb::generators::CMake cmake(*analyzer);..."<<std::endl;
-                        
-			apidb::generators::CMake cmake(*analyzer,configureProject);			
-			flagCMAKE = cmake.generate(log);
-			
-			///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
-			if(flagCPP && flagCMAKE)
-			{
-				if(log)analyzer->getOutputMessage() << "Generacion completada." <<std::endl;				
-				return true;				
-			}
-			else
-			{
-				analyzer->getOutputMessage() << "Fallo."<<std::endl;
-				return false;
-			}
+			flagCPP = cpp.generate(log);			
+			//std::cout<<"apidb::generators::CMake cmake(*analyzer);..."<<std::endl;                        
 		}
 		else
 		{
 			return false;
 		}
+		
+                if(configureProject.packing == PackingLenguajes::CMake)
+                {
+			apidb::generators::CMake cmake(*analyzer,configureProject);			
+			flagCMAKE = cmake.generate(log);
+                }
+                else
+                {
+                        return false;
+                }
+			
+                ///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
+                if(flagCPP && flagCMAKE)
+                {
+                        if(log)analyzer->getOutputMessage() << "Generacion completada." <<std::endl;				
+                        return true;				
+                }
+                else
+                {
+                        analyzer->getOutputMessage() << "Fallo."<<std::endl;
+                        return false;
+                }
 	}
 	
 	bool Driver::analyze(bool log)
 	{
+                if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
+                {
+			analyzer = new mysql::Analyzer(configureProject,connector);		
+                }
+                
 		if(log)analyzer->getOutputMessage() << "Analisis de codigo..." << std::endl;
 		if(log)analyzer->getOutputMessage() << "\tLenguaje de entrada: " << getInputLenguajeString(configureProject.inputLenguaje) << std::endl;
 		
-		/*apidb::mysql::Analyzer* analyzer = NULL;
-		//std::cout<<"Step 1."<<std::endl;
-		if(this->analyzer->getInputLenguaje() == apidb::InputLenguajes::MySQL)
-		{
-			analyzer = (apidb::mysql::Analyzer*)(this->analyzer);
-		}
-		else
-		{
-                        std::cout << "El lenguaje '" << getInputLenguajeString(configureProject.inputLenguaje) << "' no tiene soporte aun." << std::endl;
-			return false;
-		}*/
-		//std::cout<<"Step 2."<<std::endl;
 		if(analyzer->analyze(log)) //reading tables
                 {
                         
@@ -187,39 +185,8 @@ namespace apidb
                         return false;
                 }
           
-        return true;
+                return true;
 	}
-		
-	/*Driver::Driver(const std::string& name,const std::string& directory,const toolkit::clientdb::Datconection& datconection,InputLenguajes inputLenguaje, OutputLenguajes outputLenguaje,toolkit::Version version)
-	{		
-		this->inputLenguaje = inputLenguaje;
-		this->outputLenguaje = outputLenguaje;
-		if(this->inputLenguaje == apidb::InputLenguajes::MySQL_Server)
-		{
-			this->datconection = new toolkit::clientdb::DatconectionMySQL((toolkit::clientdb::DatconectionMySQL&)datconection);
-			connector = new toolkit::clientdb::Connector();
-			analyzer = new mysql::Analyzer(inputLenguaje,outputLenguaje);		
-			try
-			{
-				bool flag = connector->connect(datconection);
-				if(flag)
-				{
-					analyzer->setPramsProject(name,directory);
-					this->name = name;
-					this->directory = directory;
-					this->version = version;
-				}
-			}
-			catch(toolkit::clientdb::SQLException ex)
-			{
-				analyzer->getErrorMessage() <<"Fallo la conexion el servidor de datos el cual respondio; "<<std::endl;
-			}
-		}
-		else
-		{
-			analyzer->getErrorMessage() <<"Lenguaje de entrada desconocido."<<std::endl;
-		}	
-	}*/
 } 
 }
 

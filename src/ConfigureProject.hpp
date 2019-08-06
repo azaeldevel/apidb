@@ -93,6 +93,9 @@ namespace apidb
                         Table();
                 };
         
+        private:
+                
+        public:
                 /**
                  * \brief El nombre del proyecto.
                  */
@@ -108,7 +111,7 @@ namespace apidb
                 /**
                  * \brief Información de conexión a la base de datos
                  * */
-                octetos::toolkit::clientdb::mysql::Datconnect* conectordb;
+                octetos::toolkit::clientdb::Datconnect* conectordb;
                 /**
                  * \brief Identifica el tipo del Servidor de base de datos
                  * */
@@ -125,7 +128,6 @@ namespace apidb
                  * \biref Edentifica el tipo de libreria que generara(statica o dinamica).
                  * */
                 Compiled compiled;
-                MVC mvc;
                 /**
                  * \brief Lista las tablas para las que se generara funciones de descarga
                  * */
@@ -136,13 +138,11 @@ namespace apidb
                 std::map<const char*,Table*> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
 
                 
-                //ConfigureProject(std::string filename);
-                //ConfigureProject(const ConfigureProject& configProy);
                 ConfigureProject();
                 /**
                  * \brief Guarda el proyecto en el archivo especificado
                  * */
-                bool saveConfig(const std::string& filename = "");
+                bool saveConfig(const std::string& filename);
                 /**
                  * \brief Lee el proyecto desde el archivo especificado
                  * */
@@ -154,7 +154,7 @@ namespace apidb
                         
                 const std::string& getName()const;
                 const octetos::toolkit::Version& getVersion()const;
-                const octetos::toolkit::clientdb::mysql::Datconnect& getConector()const;
+                const octetos::toolkit::clientdb::Datconnect& getConector()const;
     };
 }
 }
