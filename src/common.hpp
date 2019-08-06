@@ -25,7 +25,7 @@
 #include <list>
 #include <vector>
 #include <map>
-#include <clientdb-mysql.hpp>
+#include <toolkit/clientdb/clientdb-mysql.hpp>
 #include <libxml/xmlreader.h>
 #include <iostream>
 #include <cstring>

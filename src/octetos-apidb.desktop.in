@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=APIDB
+GenericName=API Database
+Type=Application
+Encoding=UTF-8
+Comment=Hace sencillo crear una API para acceder a tu Base de Datos, generando metodo para Insert, Delte, Update e incluse Select.
+Icon=@DDM_DESKTOP_DIR@apidb.png
+Exec=/bin/apidb-gtk3
+Terminal=false
+Categories=Development;

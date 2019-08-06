@@ -7,15 +7,12 @@ SET(DDM_DESKTOP_DIR "/usr/share/applications/")
 SET(DDM_PIXMAPS_DIR "/usr/share/icons/")
 #SET(VERSIONSTR ${${PROJECT_NAME}_VERSION_MAJOR}"."${${PROJECT_NAME}_VERSION_MINOR}"."${${PROJECT_NAME}_VERSION_PATCH})
 
-EXECUTE_PROCESS(COMMAND date +"%Y%m%d%H%M%S" OUTPUT_VARIABLE apidb_VERSION_BUILD)
+EXECUTE_PROCESS(COMMAND date +"%Y%m%d%H%M%S" OUTPUT_VARIABLE ${PROJECT_NAME}_VERSION_BUILD)
 SET(${PROJECT_NAME}_VERSION_STAGE "snapshot")
 SET(${PROJECT_NAME}_VERSION_NAME "leopard")
 CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/versionInfo.h.in" "${PROJECT_SOURCE_DIR}/versionInfo.h")
 CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/octetos-apidb.desktop.in" "${CMAKE_CURRENT_BINARY_DIR}/octetos-apidb.desktop")
 
-FIND_PACKAGE(BISON REQUIRED)
-
-FIND_PACKAGE(FLEX REQUIRED)
 
 FIND_PACKAGE(MySQL REQUIRED PATHS ${PROJECT_SOURCE_DIR}/../cmake/Modules/)
 IF(MySQL_FOUND)
@@ -100,7 +97,7 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}-gtk3 ${LIBRARIES} ${LIBREADER} )
 
 
 
-execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb.png" --export-width 64)
+execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb.png" --export-width 256)
 
 #add_custom_target(apidb_png ALL DEPENDS apidb.png)
 

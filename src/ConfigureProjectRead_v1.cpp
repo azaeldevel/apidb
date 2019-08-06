@@ -128,16 +128,7 @@ namespace apidb
                 
                 return true;
         }
-        /*ConfigureProject::ConfigureProject(std::string filename)
-        {    
-        }*/
-    
-
-	bool ConfigureProject::checkXML(xmlTextReaderPtr reader)
-	{                
-                return true;
-	}
-	
+       
         bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
         {         
                 if(projectVersion < ver100)

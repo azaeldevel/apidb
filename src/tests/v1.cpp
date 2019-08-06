@@ -168,7 +168,7 @@ void testBuild()
                 return;
         }
         octetos::apidb::Driver driver(config);
-        if(!driver.driving(false))
+       if(!driver.driving(false))
         {
                 if(octetos::toolkit::Error::check())
                 {
