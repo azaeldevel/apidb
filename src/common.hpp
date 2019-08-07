@@ -92,7 +92,7 @@ namespace apidb
         /**
          * \brief Clase de manejo de errores.
          **/
-	class BuildException : public std::exception
+	class BuildException : public toolkit::Error
 	{
 	public:
 		virtual ~BuildException() throw();
@@ -100,7 +100,7 @@ namespace apidb
 		BuildException(const std::string &description) throw();
         //Exception()throw();
 	private:
-		std::string description;
+		//std::string description;
 	};
     
         /**

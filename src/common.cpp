@@ -48,11 +48,10 @@ namespace apidb
 	}
 	const char* BuildException::what() const throw()
 	{
-		return description.c_str();
+		return toolkit::Error::what();
 	}
-        BuildException::BuildException(const std::string &description) throw() 
+        BuildException::BuildException(const std::string &description) throw() : toolkit::Error(description,toolkit::Error::ERROR_UNKNOW)
         {
-		this->description = description;
 	}
                
         	
