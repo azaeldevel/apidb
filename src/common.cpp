@@ -90,6 +90,9 @@ namespace apidb
     
         namespace symbols
 	{
+                /**
+                 * \private
+                 * */
                 short  getSpaceLevel(std::string fullname)
                 {
                         short count = 0;
@@ -108,6 +111,9 @@ namespace apidb
                         return count;
                 }
                 
+                /**
+                 * \private
+                 * */
                 std::string getSpacePatch(std::string fullname)
                 {
                         std::vector<std::string> comps;
@@ -132,6 +138,9 @@ namespace apidb
                         return str;
                 }
                 
+                /**
+                 * \private
+                 * */
                 std::string getSpaceName(std::string fullname)
                 {                        
                         std::vector<std::string> comps;
@@ -183,7 +192,11 @@ namespace apidb
                 }
 		int Symbol::counter = 0;	
 		
-		short Tables::getMaxCountRef()
+                Space::Space(const std::string name)
+                {
+                        this->name = name;
+                }
+		short Space::getMaxCountRef()
 		{
 			std::list<Table*>::iterator actual = begin();
 			std::list<Table*>::iterator last = end();
@@ -223,13 +236,13 @@ namespace apidb
 		
 		
 		            
-               /* const std::string& Tables::getName()
+               const std::string& Space::getName()const
                 {
                         return name;
-                }*/
+                }
 		
 		
-		Tables::~Tables()
+		Space::~Space()
 		{
 			for (Table* table : *this)
 			{
@@ -238,7 +251,7 @@ namespace apidb
 			clear();
 		}
 		
-		Table* Tables::search(const std::string& tableName)
+		Table* Space::search(const std::string& tableName)
 		{
 			std::list<Table*>::iterator actual = begin();
 			std::list<Table*>::iterator last = end();
@@ -250,7 +263,7 @@ namespace apidb
 			}
 			return NULL;
 		}
-		std::list<Table*>::iterator Tables::find(const std::string& tableName)
+		std::list<Table*>::iterator Space::find(const std::string& tableName)
 		{
 			std::list<Table*>::iterator actual = begin();
 			std::list<Table*>::iterator last = end();

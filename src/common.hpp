@@ -34,13 +34,12 @@ namespace octetos
 {
 namespace apidb
 {
-
-        enum ErrorScope
+        /*enum ErrorScope
         {
                 PACKAGE,
                 Class_ConfigureProject,
                 Class_ConfigureProject_ReadFile,
-        };
+        };*/
 	/*enum InputLenguajes
 	{
 		MySQL_Server,
@@ -95,8 +94,17 @@ namespace apidb
 	class BuildException : public toolkit::Error
 	{
 	public:
+                /**
+                 * \brief Requerida por toolkit::Error
+                 * */
 		virtual ~BuildException() throw();
+                /**
+                 * \brief Requerida por std::exception
+                 * */
 		virtual const char* what() const throw();
+                /**
+                 * \brief Requerida por toolkit::Error
+                 * */
 		BuildException(const std::string &description) throw();
         //Exception()throw();
 	private:
@@ -109,8 +117,11 @@ namespace apidb
 	namespace symbols
 	{
 		struct Table;
-		struct Tables;
+		struct Space;
 		
+                /**
+                 * \private 
+                 * */
                 struct cmp_str
                 {
                 bool operator()(char const *a, char const *b) const
@@ -121,11 +132,15 @@ namespace apidb
         
 		/**
 		 * \brief Informacion sobre cada symbolo
+                 * \private
 		 * */
 		struct Symbol 
 		{
                         friend class Table;
             
+			/**
+                         * \private
+                         * */
 			enum KeyType
 			{
 				NOKEY,
@@ -135,24 +150,66 @@ namespace apidb
 			};
 			
 					
-			//in input lenguaje
-                        std::string inType;
-                        //in input lenguaje
-                        std::string name;                
-                        //in out lenguaje
-                        std::string get;
-			std::string upperName;
-			bool required;
-                        KeyType keyType;
-                        Table* classReferenced;
-                        Table* classParent;
-                        std::string outType; 
-                        Symbol* symbolReferenced;
-                        bool isPrimaryKey();
-                        bool isForeignKey();
+			/**
+                         * \private
+                         * */
+                        std::string inType;                        
+			/**
+                         * \private
+                         * */
+                        std::string name;                         
+			/**
+                         * \private
+                         * */
+                        std::string get;                    
+			/**
+                         * \private
+                         * */
+			std::string upperName;                    
+			/**
+                         * \private
+                         * */
+			bool required;                    
+			/**
+                         * \private
+                         * */
+                        KeyType keyType;                    
+			/**
+                         * \private
+                         * */
+                        Table* classReferenced;                    
+			/**
+                         * \private
+                         * */
+                        Table* classParent;                    
+			/**
+                         * \private
+                         * */
+                        std::string outType;                     
+			/**
+                         * \private
+                         * */
+                        Symbol* symbolReferenced;                    
+			/**
+                         * \brief Indica si el compo es un llave primaria
+                         * */
+                        bool isPrimaryKey();    
+			/**
+                         * \brief Indica si el compo es un llave foranea
+                         * */
+                        bool isForeignKey();    
+			/**
+                         * \brief Indica si el compo es auto incremento
+                         * */
                         bool isAutoIncrement();
-            
-                        Symbol();
+                            
+			/**
+                         * \brief Inicializa los valores
+                         * */
+                        Symbol();    
+			/**
+                         * \brief El ID de simbolo.
+                         * */
                         int getID()const;
                 
                 private:
@@ -163,60 +220,155 @@ namespace apidb
                         bool isAutoInc;
 		};
 		
+                /**
+                 * \private
+                 * */
 		struct Key : public std::vector<Symbol*>
 		{
 		};
 		/**
 		 * \brief Simbolos por alcance(tabla en SQL) 
+                 * \private
 		 **/
 		struct Table : public std::map<const char*,Symbol*,cmp_str>
 		{
+                        /**
+                         * \brief Nombre de la tabla
+                         * \private
+                         * */
 			std::string name;
+                        /**
+                         * \private
+                         * */
                         std::string upperName;
+                        /**
+                         * \private
+                         * */
                         Key key;
+                        /**
+                         * \private
+                         * */
                         std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
+                        /**
+                         * \private
+                         * */
                         std::string space;
+                        /**
+                         * \private
+                         * */
                         std::string fullname;
                         
+                        /**
+                         * \brief Simplemete crea el obejto con valores limpios
+                         * */
                         Table();
+                        /**
+                         * \brief Libera la memoroa del Objeto.
+                         * */
                         ~Table();
+                        /**
+                         * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
+                         * */
 			bool basicSymbols(octetos::toolkit::clientdb::Connector& connect);
-                        bool fillKeyType(octetos::toolkit::clientdb::Connector& connect, std::map<const char*,symbols::Tables*,symbols::cmp_str>& tables);
+                        /**
+                         * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
+                         * */
+                        bool fillKeyType(octetos::toolkit::clientdb::Connector& connect, std::map<const char*,symbols::Space*,symbols::cmp_str>& tables);
+                        /**
+                         * \brief Cuanta la cantidad de hay hacia tabla.
+                         * */
                         short getCountRefereces() const; 
                         //std::list<Symbol*>::iterator search(const std::string&);
-            
+                        /**
+                         * \brief Retorna el nombre de la tabla.
+                         * */
+                        const std::string getName()const;  
 		private:
 			short countRef;
 		};
 		
 		/**
-		 * Conjunto de tablas
+                 * \private
+		 * \brief Conjunto de tablas
 		 * */
-		struct Tables : public std::list<Table*>
+		struct Space : public std::list<Table*>
 		{
 		public:
-			~Tables();	
+                        /**
+                         * \brief Limpa el objeto
+                         * */
+			~Space();	
+                        /**
+                         * \brief Busca una tabla por su nombre y la retorna en cals de encontrarla
+                         * */
                         Table* search(const std::string&); 
-			std::list<Table*>::iterator find(const std::string& tableName);
-                        std::string name;      
-			
+                        /**
+                         * \brief Busca una tabla por su nombre y la retorna en cals de encontrarla
+                         * */
+			std::list<Table*>::iterator find(const std::string& tableName);        
+			/**
+                         * \deprecated Funcion inestable se removera en v2.
+                         * */
 			short getMaxCountRef();
-                        const std::string& getName();                     
-                private:                  
+                        /**
+                         * \brief Retorna el nombre del espacio.
+                         * */
+                        const std::string& getName()const;  
+                        /**
+                         * \brief Crea el objeto con su nombre.
+                         * */
+                        Space(const std::string name);
+                        
+                        /**
+                         * \brief Nombre del espacio.
+                         * \private Este campo sera convertir en privado en v2. Use getName en su lugar.
+                         * */
+                        std::string name;     
 		};
+                /**
+                 * \brief es confusi usar tables aveces pasa sesapercivida la 's', sin embargo se mantiene crea este alias para mantener compatibilidad.
+                 * */
+                typedef Space Tables;
                 
+                /**
+                 * \private
+                 * */
                 std::string getSpaceName(std::string fullname);
+                /**
+                 * \private
+                 * */
                 std::string getSpacePatch(std::string fullname);
+                /**
+                 * \private
+                 * */
                 short getSpaceLevel(std::string fullname);
 	}
     
+        /**
+         * \brief Implementa el modelo de mensajes basodo en la politica de toolkit::ActivityProgress.
+         * */
         class Tracer : toolkit::ActivityProgress
         {
         public:
+                /**
+                 * \brief Requerida por toolkit::ActivityProgress
+                 * */
                 Tracer(int activities);
+                /**
+                 * \brief Requerida por toolkit::ActivityProgress
+                 * */
                 virtual void add(const std::string&);
+                /**
+                 * \brief Requerida por toolkit::ActivityProgress
+                 * */
                 virtual void add(const toolkit::Error&);
+                /**
+                 * \brief Requerida por toolkit::ActivityProgress
+                 * */
                 virtual void add(const toolkit::Confirmation&);
+                /**
+                 * \brief Requerida por toolkit::ActivityProgress
+                 * */
                 virtual void add(const toolkit::Warning&);
         };
 }

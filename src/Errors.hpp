@@ -28,8 +28,14 @@ namespace octetos
 namespace apidb
 {
         //extern toolkit::Error* error;
+        /**
+         * \brief Codigo de Errores de APIDB.
+         * */
         enum ErrorCodes
         {                        
+                /**
+                 * \brief Para complier con el requisito de toolkit::Error
+                 * */
                 READFILE_TEMPUNPACKFAIL = toolkit::Error::Codes::ROOFCODE,//No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.
                 Read_FileFailParseNode,
                 Read_UncomConfigFile,

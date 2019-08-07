@@ -46,10 +46,10 @@ namespace apidb
         {
                 this->name = name;
         }
-        ConfigureProject::Table::Table()
+        /*ConfigureProject::Table::Table()
         {
                 
-        }
+        }*/
     
         std::string ConfigureProject::Function::listParams()const
         {
@@ -92,10 +92,10 @@ namespace apidb
                         delete header;
                 }
         }
-        /*void ConfigureProject::Function::setHeader(Parameters* header)
+        void ConfigureProject::Function::setHeader(Parameters* header)
         {
                 this->header = header;
-        }*/
+        }
         ConfigureProject::Function::Skeleton ConfigureProject::Function::getSkeleton() const
         {
                 return skeleton;

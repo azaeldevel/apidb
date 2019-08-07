@@ -41,8 +41,7 @@ namespace apidb
                 
         public:      
                 /**
-                 * \brief Almacena la lista de parametros que le corresponde a una funcion
-                 * \see Funtion
+                 * \brief Almacena la lista de parametros que le corresponde a una Funcion
                  */
                 class Parameters : public std::vector<const char*>
                 {
@@ -55,6 +54,9 @@ namespace apidb
                 class Function
                 {
                 public:
+                        /**
+                         * \deprecated Funcion ahora redundante. El analizaro o el generador no usan esta informacion sera removido en v2
+                         * */
                         enum Skeleton
                         {
                                 DOWNLOAD,
@@ -63,21 +65,66 @@ namespace apidb
                                 UPDATE,
                                 COSTUM
                         };
+                        /**
+                         * \brief Nombre de la funcion
+                         * */
                         const std::string& getName() const;
+                        /**
+                         * \deprecated Funcion ahora redundante. El analizaro o el generador no usan esta informacion sera removido en v2
+                         * */
                         Function(const std::string&,Skeleton skeleton);
+                        /**
+                         * \brief Simplementa contrulle la funcion con su nombre
+                         * */
                         Function(const std::string&);
+                        /**
+                         * \brief Simplemente limpia los parametros
+                         * */
                         Function();
+                        /**
+                         * \brief Libera la memoria requerid por el objeto
+                         * */
                         ~Function();
+                        /**
+                         * \deprecated Funcion ahora redundante ya que hay una estructra de datos para cada skeleton. El analizaro o el generador no usan esta informacion sera removido en v2
+                         * */
                         Skeleton getSkeleton() const;
-                        //void setHeader(Parameters*);
+                        /**
+                         * \deprecated Ya que el objeto Parameters no es creado por esta clase su liberacion causa conflictos, deve asignar NULL antes de que el objeto sea destruido. Esta funcion sera eliminada en v2
+                         * */
+                        void setHeader(Parameters*);
+                        /**
+                         * \private Funcion en desarrollo aun.
+                         * */
                         void setBody(const std::string&);
+                        /**
+                         * \brief Retorna el obejto Parameters
+                         * */
                         const Parameters* getParameters() const;
+                        /**
+                         * \brief Lista de paramatros en formato correcto.
+                         * */
                         std::string listParams()const;
+                        /**
+                         * \brief Agrega un nuevo parametro a la funcion.
+                         * */
                         void addParam(const char* p);
                 private:
+                        /**
+                         * \brief Nombre de la funcion
+                         * */
                         std::string name;
+                        /**
+                         * \deprecated Funcion ahora redundante ya que hay una estructra de datos para cada skeleton. El analizaro o el generador no usan esta informacion sera removido en v2
+                         * */
                         Skeleton skeleton;
+                        /**
+                         * \brief Parametros interno
+                         * */
                         Parameters* header; 
+                        /**
+                         * \private en desarrollo.
+                         * */
                         std::string body;
                 };
                 /**
@@ -86,14 +133,22 @@ namespace apidb
                 class Table : public std::map<const char*, const Function*>
                 {
                 private:
+                        /**
+                         * \brief Nombre completo de la tabla
+                         * */
                         std::string name;
                 public:
+                        /**
+                         * \brief Retorna el nombre completo de la tabla.
+                         * */
                         const std::string& getName() const;
-                        Table(const std::string&);
-                        Table();
+                        /**
+                         * \brief Crea el objeto inicializando el nombre de la tabla.
+                         **/
+                        Table(const std::string&);                        
+                        //Table();
                 };
         
-        private:
                 
         public:
                 /**
@@ -117,7 +172,7 @@ namespace apidb
                  * */
                 InputLenguajes inputLenguaje;
                 /**
-                 * \biref Identifica El lenguaje en que se genera el codigo fuente.
+                 * \brief Identifica El lenguaje en que se genera el codigo fuente.
                  * */
                 OutputLenguajes outputLenguaje;
                 /**
@@ -125,7 +180,7 @@ namespace apidb
                  * */
                 PackingLenguajes packing;
                 /**
-                 * \biref Edentifica el tipo de libreria que generara(statica o dinamica).
+                 * \brief Edentifica el tipo de libreria que generara(statica o dinamica).
                  * */
                 Compiled compiled;
                 /**
@@ -156,8 +211,17 @@ namespace apidb
                  **/
                 bool testConexion();
                         
+                /**
+                 * \brief Retorna el nombre del proyecto.
+                 * */
                 const std::string& getName()const;
+                /**
+                 * \brief Retorna la version del proyecto.
+                 * */
                 const octetos::toolkit::Version& getVersion()const;
+                /**
+                 * \brief Retorna los datos de conexion a la base de datos.
+                 * */
                 const octetos::toolkit::clientdb::Datconnect& getConector()const;
     };
 }

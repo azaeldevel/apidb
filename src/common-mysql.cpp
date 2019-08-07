@@ -30,7 +30,7 @@ namespace apidb
         /**
         * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
         */
-	bool symbols::Table::fillKeyType(octetos::toolkit::clientdb::Connector& connect,std::map<const char*,symbols::Tables*,symbols::cmp_str>& tables)
+	bool symbols::Table::fillKeyType(octetos::toolkit::clientdb::Connector& connect,std::map<const char*,symbols::Space*,symbols::cmp_str>& tables)
 	{
                 /**
                 * Lista las relaciones de llaves foraneas para la tabla actual
@@ -57,10 +57,10 @@ namespace apidb
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
                                 //std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
-                                Tables::iterator itTBReference;
+                                Space::iterator itTBReference;
                                 bool flFinded = false;
                                 //for(auto const& [keySpace, AttSpace]  : tables)
-                                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator itS = tables.begin(); itS != tables.end(); itS++)
+                                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator itS = tables.begin(); itS != tables.end(); itS++)
                                 {
                                         itTBReference = itS->second->find(row[1]);//buscar la tabla del campo que se refiere en el registro actual 'row[1]'
                                         if(itTBReference != itS->second->end()) 
@@ -228,13 +228,13 @@ namespace apidb
                                 prw->space = symbols::getSpacePatch(row[0]);
                                 prw->fullname = row[0];
                                 
-                                std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.find(prw->space.c_str());                                
+                                std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator it = spacies.find(prw->space.c_str());                                
                                 if(it == spacies.end())
                                 {
-                                        symbols::Tables* newSpace  = new symbols::Tables();
-                                        newSpace->name = prw->space;
+                                        symbols::Space* newSpace  = new symbols::Space(prw->space);
+                                        //newSpace->name = prw->space;
                                         newSpace->push_back(prw);
-                                        std::pair<const char*, symbols::Tables*> newInser(prw->space.c_str(),newSpace);
+                                        std::pair<const char*, symbols::Space*> newInser(prw->space.c_str(),newSpace);
                                         spacies.insert(newInser);
                                 }
                                 else

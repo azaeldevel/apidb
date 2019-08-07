@@ -766,16 +766,16 @@ namespace generators
                 file <<"namespace "<< analyzer.getNameProject() << std::endl;
                 file <<"{"<<std::endl;
 		
-                const std::map<const char*,symbols::Tables*,symbols::cmp_str>& spacies = analyzer.getListTableConst();
+                const std::map<const char*,symbols::Space*,symbols::cmp_str>& spacies = analyzer.getListTableConst();
                 
                 //for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
+                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
                         if(strcmp(it->first,"") != 0)
                         {
                                 short level = symbols::getSpaceLevel(it->first);
                                 for(short i = 0; i < level ; i++) file << "\t";
-                                file << "namespace " << it->second->name  << std::endl;
+                                file << "namespace " << it->second->getName()  << std::endl;
                                 for(short i = 0; i < level ; i++) file << "\t";
                                 file << "{" << std::endl;
                         }
@@ -1056,15 +1056,15 @@ namespace generators
 		}
                 file <<"namespace "<< analyzer.getNameProject() <<std::endl;
                 file <<"{"<<std::endl;
-                const std::map<const char*,symbols::Tables*,symbols::cmp_str> spacies = analyzer.getListTableConst();
+                const std::map<const char*,symbols::Space*,symbols::cmp_str> spacies = analyzer.getListTableConst();
 		//for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
+                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
                         if(strcmp(it->first,"") != 0)
                         {
                                 short level = symbols::getSpaceLevel(it->first);
                                 for(short i = 1; i < level ; i++) file << "\t";
-                                file << "\tnamespace " << it->second->name  << std::endl;
+                                file << "\tnamespace " << it->second->getName()  << std::endl;
                                 for(short i = 1; i < level ; i++) file << "\t";
                                 file << "\t{" << std::endl;
                         }
@@ -1082,13 +1082,13 @@ namespace generators
                 }
 		file<<std::endl;
                 
-                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
+                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
                         if(strcmp(it->first,"") != 0)
                         {
                                 short level = symbols::getSpaceLevel(it->first);
                                 for(short i =0; i < level ; i++) file << "\t";
-                                file << "\tnamespace " << it->second->name  << std::endl;
+                                file << "\tnamespace " << it->second->getName()  << std::endl;
                                 for(short i =0; i < level ; i++) file << "\t";
                                 file << "\t{" << std::endl;
                         }

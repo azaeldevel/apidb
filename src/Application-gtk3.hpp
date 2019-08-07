@@ -16,6 +16,9 @@ namespace apidb
         class Application;
         
         
+        /**
+         * \private No es parte del API
+         * */
         class CaptureParameter
         {
         public:
@@ -32,6 +35,9 @@ namespace apidb
                 const char* strParameter;
         };
         
+        /**
+         * \private No es parte del API
+         * */
         class CaptureFuntion
         {
         public:
@@ -48,6 +54,9 @@ namespace apidb
                 std::string strNameFunction;
         };
         
+        /**
+         * \private No es parte del API
+         * */
         class CaptureTable
         {
         public:
@@ -64,6 +73,9 @@ namespace apidb
                 const char* table;
         };
         
+        /**
+         * \private No es parte del API
+         * */
         class TreeView
         {
         private:                
@@ -87,6 +99,9 @@ namespace apidb
                 Application* getApplication()const;
         };
         
+        /**
+         * \private No es parte del API
+         * */
         class Application
         {
         public:

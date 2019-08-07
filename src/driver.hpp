@@ -29,11 +29,14 @@ namespace octetos
 namespace apidb
 {
         /**
-         * \brief Responsable manejar todos el proceso desde el analisis hasta la generacion de los archivos fuentes
+         * \brief Responsable de manejar todos el proceso desde el analisis hasta la generacion de los archivos fuentes
          * */
 	class Driver
 	{
 	public:
+                /**
+                 * \deprecated Lee este valor directamente de ConfigureProject
+                 * */
 		OutputLenguajes getOutputLenguaje() const;
                 
                 /**

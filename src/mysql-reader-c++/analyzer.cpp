@@ -21,7 +21,7 @@ namespace mysql
 		bool flag = listing();
                 
                 //for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
+                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
                         //for(apidb::symbols::Table* table : *AttSpace) //reading attrubtes by table
                         for(std::list<symbols::Table*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
@@ -37,7 +37,7 @@ namespace mysql
                 }
                 
                 //for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
+                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
                         //for(auto table: *AttSpace) //reading attrubtes by table
                         for(std::list<symbols::Table*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
@@ -52,7 +52,7 @@ namespace mysql
                 }
                 //std::cout<<"Step 3."<<std::endl;
                 //for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
+                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
                         //for(auto table: *AttSpace) //reading attrubtes by table
                         for(std::list<symbols::Table*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)

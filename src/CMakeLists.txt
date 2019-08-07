@@ -5,7 +5,7 @@ SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 SET(DDM_DESKTOP_DIR "/usr/share/applications/")
 SET(DDM_PIXMAPS_DIR "/usr/share/icons/")
-
+SET(${PROJECT_NAME}_DOCUMENTING TRUE)
 #SET(VERSIONSTR ${${PROJECT_NAME}_VERSION_MAJOR}"."${${PROJECT_NAME}_VERSION_MINOR}"."${${PROJECT_NAME}_VERSION_PATCH})
 
 EXECUTE_PROCESS(COMMAND date +"%Y%m%d%H%M%S" OUTPUT_VARIABLE ${PROJECT_NAME}_VERSION_BUILD)
@@ -101,7 +101,7 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}-gtk3 ${LIBRARIES} ${LIBREADER} )
 
 execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb.png" --export-width 256)
 
-
+IF(${${PROJECT_NAME}_DOCUMENTING})
 add_custom_target(
         doc ALL
         COMMAND ${DOXYGEN_EXECUTABLE} "${PROJECT_SOURCE_DIR}/${doxyfile_in}"
@@ -109,7 +109,7 @@ add_custom_target(
         COMMENT "Generating API documentation with Doxygen"
         VERBATIM
         )
-
+ENDIF()
 
 ###################################################################################################################
 ###INSTALL
@@ -118,7 +118,7 @@ INSTALL(TARGETS ${PROJECT_NAME}-gtk3 DESTINATION /bin)
 INSTALL(TARGETS ${PROJECT_NAME}  DESTINATION /lib)
 INSTALL(FILES apidb.hpp DESTINATION include/octetos/apidb)
 INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/octetos-apidb.desktop"  DESTINATION ${DDM_DESKTOP_DIR})
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/apidb.png  DESTINATION ${DDM_PIXMAPS_DIR})
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/apidb.png"  DESTINATION ${DDM_PIXMAPS_DIR})
 
 include (InstallRequiredSystemLibraries)
 SET (CPACK_PACKAGE_VERSION_MAJOR "${${PROJECT_NAME}_VERSION_MAJOR}")

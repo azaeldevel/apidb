@@ -27,6 +27,9 @@ namespace octetos
 {
 	namespace generators
 	{
+                /**
+                 * \private No es parte del API
+                 * */
 		class Generator
 		{
 		public:			
@@ -43,6 +46,9 @@ namespace octetos
                         apidb::Analyzer& analyzer;
 		};
 		
+                /**
+                 * \private No es parte del API
+                 * */
 		class CPP : public Generator
 		{
 		public:
@@ -90,6 +96,9 @@ namespace octetos
 		};
 		
 		
+                /**
+                 * \private No es parte del API
+                 * */
 		class CMake : public Generator
 		{
 		public:			
