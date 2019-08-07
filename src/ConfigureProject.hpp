@@ -160,6 +160,10 @@ namespace apidb
                  * */
                 std::string builDirectory;
                 /**
+                 * \deprecated Esta variable sera removida en v2
+                 * */
+                std::string& directory = builDirectory;
+                /**
                  * \brief La version del proyecto resultado.
                  * */
                 octetos::toolkit::Version version;
