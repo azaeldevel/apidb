@@ -766,10 +766,10 @@ namespace generators
                 file <<"namespace "<< analyzer.getNameProject() << std::endl;
                 file <<"{"<<std::endl;
 		
-                std::map<const char*,symbols::Tables*,symbols::cmp_str>& spacies = analyzer.getListTable();
+                const std::map<const char*,symbols::Tables*,symbols::cmp_str>& spacies = analyzer.getListTableConst();
                 
                 //for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
+                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
                         if(strcmp(it->first,"") != 0)
                         {
@@ -1056,9 +1056,9 @@ namespace generators
 		}
                 file <<"namespace "<< analyzer.getNameProject() <<std::endl;
                 file <<"{"<<std::endl;
-                std::map<const char*,symbols::Tables*,symbols::cmp_str> spacies = analyzer.getListTable();
+                const std::map<const char*,symbols::Tables*,symbols::cmp_str> spacies = analyzer.getListTableConst();
 		//for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
+                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
                         if(strcmp(it->first,"") != 0)
                         {
@@ -1082,7 +1082,7 @@ namespace generators
                 }
 		file<<std::endl;
                 
-                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
+                for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
                         if(strcmp(it->first,"") != 0)
                         {

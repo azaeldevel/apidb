@@ -85,6 +85,33 @@ namespace apidb
 		return configureProject.outputLenguaje;
 	}
 	
+	bool Driver::driving(toolkit::ActivityProgress* progress)
+	{
+		if(connector == NULL) 
+                {
+                        std::cout<<"El conector es NULL." << std::endl;
+                        return false;
+                }
+
+		if(analyze(progress))
+		{
+			if(generate(progress))
+                        {                
+                                return true;
+                        }
+                        else
+                        {
+                                std::cout<<"Fallo la etapa de generacion" << std::endl;                
+                        }
+		}
+		else
+                {
+                        std::cout<<"Fallo la etapa de analisis." << std::endl;                
+                }
+		
+		return false;
+	}
+	
 	bool Driver::driving(bool log)
 	{
 		if(connector == NULL) 
@@ -110,6 +137,65 @@ namespace apidb
                 }
 		
 		return false;
+	}
+	
+	bool Driver::generate(toolkit::ActivityProgress* progress)
+	{		
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
+		{
+			
+		}
+		else
+		{
+			std::string direct = configureProject.builDirectory;
+			std::ifstream ifile(direct);
+			if (!ifile) 
+			{
+				std::string cmd = "mkdir ";
+				cmd = cmd + direct;
+				system(cmd.c_str());
+			}			
+		}		
+		
+                bool flagCPP,flagCMAKE;
+		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
+		{
+			
+			//std::cout<<"apidb::generators::CPP cpp(*analyzer);..."<<std::endl;
+			apidb::generators::CPP cpp(*analyzer,configureProject);
+			if(progress != NULL)flagCPP = cpp.generate(true);	
+                        else flagCPP = cpp.generate(false);	
+			//std::cout<<"apidb::generators::CMake cmake(*analyzer);..."<<std::endl;                        
+		}
+		else
+		{
+			return false;
+		}
+		
+                if(configureProject.packing == PackingLenguajes::CMake)
+                {
+			apidb::generators::CMake cmake(*analyzer,configureProject);			
+			if(progress != NULL)flagCMAKE = cmake.generate(true);
+                        else flagCMAKE = cmake.generate(false);
+                }
+                else
+                {
+                        return false;
+                }
+			
+                ///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
+                if(flagCPP && flagCMAKE)
+                {
+                        std::string msg1 =  "Generacion completada." ;
+                        toolkit::Confirmation conf1(msg1);
+                        if(progress != NULL) progress->add(conf1);	
+                        return true;				
+                }
+                else
+                {
+                        analyzer->getOutputMessage() << "Fallo."<<std::endl;
+                        return false;
+                }
 	}
 	
 	bool Driver::generate(bool log)
@@ -168,6 +254,57 @@ namespace apidb
                 }
 	}
 	
+	bool Driver::analyze(toolkit::ActivityProgress* progress)
+	{
+                if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
+                {
+			if(analyzer != NULL)
+                        {
+                                delete analyzer;
+                                analyzer = NULL;
+                                analyzer = new mysql::Analyzer(configureProject,connector);		
+                        }
+                        else
+                        {
+                                analyzer = new mysql::Analyzer(configureProject,connector);
+                        }
+                }
+                
+                if(progress != NULL)
+                {
+                        toolkit::Confirmation conf1("Analisis de codigo...");
+                        progress->add(conf1);
+                        std::string msg ="\tLenguaje de entrada: " ;
+                        msg+= getInputLenguajeString(configureProject.inputLenguaje);
+                        toolkit::Confirmation conf2(msg);
+                        progress->add(conf2);
+                        if(configureProject.mvc != MVC::NO)
+                        {
+                                std::string msgW = "Advertencia: la opcion MVC(ConfigureProject::mvc) esta marcada como obsoleta será removida a apartir de v2.\n";
+                                toolkit::Warning war1(msgW);
+                                progress->add(war1);
+                        }
+                }
+		
+		if(!analyzer->analyze(progress)) //reading tables
+                {
+                        if(toolkit::Error::check())
+                        {
+                                progress->add(toolkit::Error::get());
+                                return false;
+                        }
+                        else
+                        {                                
+                                std::string msgErr ="\tFallo al leer durante la fase de analisis." ;
+                                toolkit::Error err(msgErr,toolkit::Error::ERROR_UNKNOW,__FILE__,__LINE__);
+                                progress->add(err);
+                                return false;
+                        }
+                }
+          
+                return true;
+	}
+	
 	bool Driver::analyze(bool log)
 	{
                 if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
@@ -189,7 +326,7 @@ namespace apidb
                 
                 if(configureProject.mvc != MVC::NO)
                 {
-                        std::cout <<"\u001b[31;1m" << "Advertencia la opcion MVC esta marcada como obsoleta será removida a aprte de v2.\n" << "\u001b[0m";
+                        std::cout <<"\u001b[31;1m" << "Advertencia: la opcion MVC(ConfigureProject::mvc) esta marcada como obsoleta será removida a apartir de v2\n" << "\u001b[0m";
                 }
 		
 		if(analyzer->analyze(log)) //reading tables

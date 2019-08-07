@@ -11,9 +11,14 @@ namespace apidb
 {	
 namespace mysql
 {
+        bool Analyzer::analyze(toolkit::ActivityProgress* progress)
+        {
+                if(progress == NULL) return analyze(true);
+                return analyze(false);
+        }
 	bool Analyzer::analyze(bool log)
 	{
-		bool flag = listing(*(octetos::toolkit::clientdb::mysql::Connector*)connector);
+		bool flag = listing();
                 
                 //for(auto const& [keySpace, AttSpace]  : spacies)
                 for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
@@ -38,7 +43,7 @@ namespace mysql
                         for(std::list<symbols::Table*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
                         {
                                 //foreign key's
-                                if(!(*itTb)->fillKeyType(*connector,getListTable()))
+                                if(!(*itTb)->fillKeyType(*connector,spacies))
                                 {
                                         //std::cerr<<"Faill on fillKeyType"<<std::endl;
                                         return false;

@@ -207,13 +207,13 @@ namespace apidb
         }
     
     
-	bool Analyzer::listing(octetos::toolkit::clientdb::mysql::Connector& connect)
+	bool Analyzer::listing()
 	{
-		std::string db = connect.getDatconection()->getDatabase();
+		std::string db = connector->getDatconection()->getDatabase();
 		//std::cout<< "db:" << db <<std::endl;
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
                 str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
-                octetos::toolkit::clientdb::Datresult* dt = connect.query(str.c_str());   
+                octetos::toolkit::clientdb::Datresult* dt = connector->query(str.c_str());   
 		if(dt != NULL) 
 		{
 			MYSQL_ROW row;
@@ -251,9 +251,9 @@ namespace apidb
                 {
                         std::string msg = "";
                         msg = msg + " MySQL Server Error No. : '";
-                        msg = msg + std::to_string(mysql_errno((MYSQL*)connect.getServerConnector()));
+                        msg = msg + std::to_string(mysql_errno((MYSQL*)connector->getServerConnector()));
                         msg = msg + "' ";
-                        msg = msg + mysql_error((MYSQL*)connect.getServerConnector());
+                        msg = msg + mysql_error((MYSQL*)connector->getServerConnector());
                         throw octetos::toolkit::clientdb::SQLException(msg);                         
                 }
 		return false;	

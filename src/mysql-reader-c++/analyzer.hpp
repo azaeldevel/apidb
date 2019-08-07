@@ -31,10 +31,14 @@ namespace apidb
 {    
 namespace mysql
 {
+        /**
+         * \private
+         * */
         class Analyzer : public apidb::Analyzer
         {
         public:            
             virtual bool analyze(bool log);
+            virtual bool analyze(toolkit::ActivityProgress* progress);
             /**
             * Parse desde una std::string
             **/

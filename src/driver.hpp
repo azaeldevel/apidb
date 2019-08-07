@@ -35,18 +35,39 @@ namespace apidb
 	{
 	public:
 		OutputLenguajes getOutputLenguaje() const;
+                
                 /**
+                 * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
+                 * \brief Lee el servidor
+                 * */
+		virtual bool analyze(toolkit::ActivityProgress* progress);
+                /**
+                 * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
+                 * \brief Genera los archivos de codigo
+                 **/
+		virtual bool generate(toolkit::ActivityProgress* progress);
+                /**
+                 * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
+                 * \brief Se puede considar como una llamada a 'analyze' seguida de una llamda a 'generate'
+                 * */
+		bool driving(toolkit::ActivityProgress* progress);
+                
+                /**
+                 * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
                  * \brief Lee el servidor
                  * */
 		virtual bool analyze(bool log);
                 /**
+                 * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
                  * \brief Genera los archivos de codigo
                  **/
 		virtual bool generate(bool log);
                 /**
+                 * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
                  * \brief Se puede considar como una llamada a 'analyze' seguida de una llamda a 'generate'
                  * */
 		bool driving(bool log);
+                
                 /**
                  * \brief Unico contructor 
                  * */

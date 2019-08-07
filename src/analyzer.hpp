@@ -28,33 +28,98 @@ namespace octetos
 {
 namespace apidb
 {    
+        /**
+         * \brief No hay muchas funciones dispoblies aquí quiza le sea utíl si desea conocer la tabla de simbolos.
+         **/
 	class Analyzer
 	{
 	public:
+                /**
+                 * \deprecated La función de restreo y notificacion basadas en std::ostream será removidas en favor de  toolkit::ActivityProgress para la version 2
+                 * */
 		virtual std::ostream& getOutputMessage();
+                /**
+                 * \deprecated La función de restreo y notificacion basadas en std::ostream será removidas en favor de  toolkit::ActivityProgress para la version 2
+                 * */
 		virtual std::ostream& getErrorMessage();
+                /**
+                 * \brief Realiza una llamada al parser interno que realiza el analisis de cadana pasada
+                 * \private no llame directame solo es para el uso del parser interno
+                 * */
 		virtual std::string parse(const std::string& line) = 0;
-		virtual bool analyze(bool log) = 0;
+                /**
+                 *  \deprecated La función de restreo y notificacion basadas en std::ostream será removidas en favor de  toolkit::ActivityProgress para la version 2
+                 * \brief Simplemete analiza la base de datos y genera la informacion de la tabla de simbolos
+                 * \param log indica si hade generar informacion de log.
+                 * */
+		virtual bool analyze(bool log) = 0;    
+                /**
+                 * \brief Simplemete analiza la base de datos y genera la informacion de la tabla de simbolos
+                 * \param progress Use NULL para especificar que no desea log o una instacia valida de toolkit::ActivityProgress para generarlos.
+                 * */
+                virtual bool analyze(toolkit::ActivityProgress* progress) = 0;
                 
+                /**
+                 * \private
+                 * \deprecated Esta funcion retorna un referencia modificable a la tabla de simbols razon por la cuan no se recomienda su uso para todo prpopiso practido puede usar getListTableConst o copyListTable
+                 * */
 		std::map<const char*,symbols::Tables*,symbols::cmp_str>& getListTable(); 
+                /**
+                 * \brief Retorna un referancia a la tabla de simbolos, no es modificable si necesita poder modicar 
+                 * \details Ya que la tabla de simbolos es un estructura de datos compleja y muy delicada no se permite acceso de escritura, si lo necesita puede considerar hacer una copia de la tabal mediante la  funcion copyListTable, la caul le construira una identica. Quiza quiera reconsiderar el modelo de su programa o la estructura del mismo tambien.
+                 **/
                 const std::map<const char*,symbols::Tables*,symbols::cmp_str>& getListTableConst() const;
+                /**
+                 * \brief Crea una copia de la tabla de simbolos las cual puede ser manipulada
+                 * */
                 std::map<const char*,symbols::Tables*,symbols::cmp_str> copyListTable()const;
 			
+                /**
+                 * \deprecated Lea esta informacion directamente de ConfigureProject
+                 * */
 		const std::string& getNameProject();
-		//const std::string& getDirectoryProject();				
-		InputLenguajes getInputLenguaje() const;
-		OutputLenguajes getOutputLenguaje() const;
+                /**
+                 * \deprecated Lea esta informacion directamente de ConfigureProject
+                 * */			
+		InputLenguajes getInputLenguaje() const;	
+                /**
+                 * \deprecated Lea esta informacion directamente de ConfigureProject
+                 * */
+		OutputLenguajes getOutputLenguaje() const;	
+                /**
+                 * \brief Requiere la configuracion del proyecto y un conector la base de datos valido.
+                 * */
 		Analyzer(const ConfigureProject&, octetos::toolkit::clientdb::Connector*);
+                /**
+                 * \brief Destructor
+                 * */
                 virtual ~Analyzer(); 
-    protected:
-		//symbols::Tables symbolsTables;		
+        protected:
+                /**
+                 * \brief Tabla de simbolos completa.
+                 * \details Consiste de un conjuto de symbols::Tables que determina un espacio, asu vez cada Tables es un constu de std::list<Table*>  que representa las tabla del espacio. Cada Table a su vez contiene std::map<const char*,Symbol*,cmp_str> que representa los campos de la tabla.
+                 * */
                 std::map<const char*,symbols::Tables*,symbols::cmp_str> spacies;
+                /**
+                 * \brief COnector a la base de datos.
+                 * */
 		octetos::toolkit::clientdb::Connector* connector;
+                /**
+                 * \deprecated La función de restreo y notificacion basadas en std::ostream será removidas en favor de  toolkit::ActivityProgress para la version v2
+                 * */
 		std::ostream* outputMessages;//out stream
+                /**
+                 * \deprecated La función de restreo y notificacion basadas en std::ostream será removidas en favor de  toolkit::ActivityProgress para la version v2
+                 * */
 		std::ostream* errorMessages;//out stream		
-		const ConfigureProject& configureProject;
-                //
-		 bool listing(octetos::toolkit::clientdb::mysql::Connector& connect);  
+		/**
+                 * \brief Esta funcion es la encarga de resolver cada simbolo encontrado en la base de datos.
+                 * */
+		bool listing();  
+                /**
+                 * \brief Indica la configuracion del proyecto.
+                 * */
+                const ConfigureProject& configureProject;
 	};
 }
 }

@@ -210,7 +210,15 @@ namespace apidb
                 short getSpaceLevel(std::string fullname);
 	}
     
-  
+        class Tracer : toolkit::ActivityProgress
+        {
+        public:
+                Tracer(int activities);
+                virtual void add(const std::string&);
+                virtual void add(const toolkit::Error&);
+                virtual void add(const toolkit::Confirmation&);
+                virtual void add(const toolkit::Warning&);
+        };
 }
 }
 #endif
