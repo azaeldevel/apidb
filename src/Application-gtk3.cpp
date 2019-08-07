@@ -58,7 +58,7 @@ namespace apidb
                                         {
                                                 for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::iterator itP = (*itT)->begin(); itP != (*itT)->end(); itP++)
                                                 {
-                                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddParameter,i,itP->second->name.c_str(),itP->second->name.c_str());        
+                                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddParameter,i,itP->second->getName().c_str(),itP->second->getName().c_str());        
                                                         i++;                                                
                                                 }
                                         }

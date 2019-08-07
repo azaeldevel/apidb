@@ -157,6 +157,36 @@ namespace apidb
                         return "";
                 }
         
+        
+                 
+                const Table* Symbol::getClassReferenced()const
+                {
+                        return classReferenced;
+                }
+                const Table* Symbol::getClassParent()const
+                {
+                        return classParent;
+                }
+                const Symbol* Symbol::getSymbolReferenced()const
+                {
+                        return symbolReferenced;
+                }
+                const std::string& Symbol::getOutType()const
+                {
+                        return outType;
+                }
+                const std::string& Symbol::getName()const
+                {
+                        return name;
+                }
+                const std::string& Symbol::getUpperName()const
+                {
+                        return upperName;
+                }
+                const std::string& Symbol::getGet()const
+                {
+                        return get;
+                }
                 bool Symbol::isPrimaryKey()
                 {
                 return isPK;
@@ -214,6 +244,10 @@ namespace apidb
 			return m;
 		}
 				
+                const std::string& Table::getUpperName()const
+                {
+                        return upperName;
+                }
 		short Table::getCountRefereces()const 
 		{
 			return countRef;
@@ -233,6 +267,10 @@ namespace apidb
 			}	
 			clear();
 		}
+		const std::string& Table::getName()const
+                {
+                        return name;
+                }
 		
 		
 		            

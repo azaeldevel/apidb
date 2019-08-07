@@ -34,6 +34,10 @@ namespace octetos
 {
 namespace apidb
 {
+        namespace mysql
+        {
+                class Analyzer;
+        }
         /*enum ErrorScope
         {
                 PACKAGE,
@@ -137,7 +141,8 @@ namespace apidb
 		struct Symbol 
 		{
                         friend class Table;
-            
+                        friend class mysql::Analyzer;
+                        
 			/**
                          * \private
                          * */
@@ -189,7 +194,8 @@ namespace apidb
 			/**
                          * \private
                          * */
-                        Symbol* symbolReferenced;                    
+                        Symbol* symbolReferenced;   
+                        
 			/**
                          * \brief Indica si el compo es un llave primaria
                          * */
@@ -212,6 +218,14 @@ namespace apidb
                          * */
                         int getID()const;
                 
+                        const std::string& getName()const;
+                        const std::string& getUpperName()const;
+                        const std::string& getGet()const;
+                        const std::string& getOutType()const;
+                        const Table* getClassReferenced()const;
+                        const Table* getClassParent()const;
+                        const Symbol* getSymbolReferenced()const;
+                        
                 private:
 			static int counter;
 			int id;	
@@ -282,7 +296,8 @@ namespace apidb
                         /**
                          * \brief Retorna el nombre de la tabla.
                          * */
-                        const std::string getName()const;  
+                        const std::string& getName()const;                          
+                        const std::string& getUpperName()const;
 		private:
 			short countRef;
 		};

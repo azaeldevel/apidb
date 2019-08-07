@@ -45,7 +45,7 @@ namespace generators
         endK--;
         for(auto k : table.key)
         {
-            ofile << k->name;
+            ofile << k->getName();
             if(k != *endK)
             {
                 ofile << ",";
@@ -71,11 +71,11 @@ namespace generators
         int count2 = 0;
         for(auto k : table.key)
         {
-            if(k->outType.compare("std::string") == 0)
+            if(k->getOutType().compare("std::string") == 0)
             {
                 ofile << "row[" << count2 << "]";
             }
-            else if(k->outType.compare("int") == 0)
+            else if(k->getOutType().compare("int") == 0)
             {
                 ofile << "std::stoi(row[" << count2 << "])";
             }
@@ -127,17 +127,17 @@ namespace generators
                             strmsg = strmsg + param + "' en la tabla '" + table.name + "'" + "File : generator-c++";
                             throw BuildException(strmsg);
                         }
-                        if((*fl).second->outType.compare("std::string") == 0)
+                        if((*fl).second->getOutType().compare("std::string") == 0)
                         {
                             ofile << "const std::string& " << param; 
                         }
-                        else if((*fl).second->symbolReferenced != NULL)
+                        else if((*fl).second->getSymbolReferenced() != NULL)
                         {
-                                ofile << "const " << (*fl).second->symbolReferenced->classParent->name << "& " << param;
+                                ofile << "const " << (*fl).second->getSymbolReferenced()->getClassParent()->getName() << "& " << param;
                         }
                         else
                         {
-                            ofile << (*fl).second->outType << " " << param;
+                            ofile << (*fl).second->getOutType() << " " << param;
                         }
                         if(param != *itParamEnd)
                         {
@@ -154,7 +154,7 @@ namespace generators
                     endK--;
                     for(auto k : table.key)
                     {
-                        ofile << k->name;
+                        ofile << k->getName();
                         if(k != *endK)
                         {
                             ofile << ",";
@@ -168,22 +168,22 @@ namespace generators
                         auto fl = table.find(param);
                         if(fl != table.end())
                         {
-                            if((*fl).second->classReferenced != NULL && (*fl).second->outType.compare("int") == 0)
+                            if((*fl).second->getClassReferenced() != NULL && (*fl).second->getOutType().compare("int") == 0)
                             {
-                                ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + " << (*fl).second->name << ".get" << (*fl).second->upperName << "String() + \"'\"";
+                                ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + " << (*fl).second->getName() << ".get" << (*fl).second->getUpperName() << "String() + \"'\"";
                             }
-                            else if((*fl).second->outType.compare("int") == 0)
+                            else if((*fl).second->getOutType().compare("int") == 0)
                             {
-                                ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + std::to_string(" << (*fl).second->name << ") + \"'\"";
+                                ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + std::to_string(" << (*fl).second->getName() << ") + \"'\"";
                             }
-                            else if((*fl).second->outType.compare("std::string") == 0)
+                            else if((*fl).second->getOutType().compare("std::string") == 0)
                             {
-                                ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + " << (*fl).second->name << " + \"'\"";
+                                ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + " << (*fl).second->getName() << " + \"'\"";
                             }
                             else
                             {
                                 std::string strmsg = "No se encontro el campo ";
-                                strmsg = strmsg + "'" + (*fl).second->name + "' en la tabla '" + table.name + "'" + "File : generator-c++";
+                                strmsg = strmsg + "'" + (*fl).second->getName() + "' en la tabla '" + table.name + "'" + "File : generator-c++";
                                 throw BuildException(strmsg);                                
                             }
                         }
@@ -218,11 +218,11 @@ namespace generators
                     int count2 = 0;
                     for(auto k : table.key)
                     {
-                        if(k->outType.compare("std::string") == 0)
+                        if(k->getOutType().compare("std::string") == 0)
                         {
                             ofile << "row[" << count2 << "]";
                         }
-                        else if(k->outType.compare("int") == 0)
+                        else if(k->getOutType().compare("int") == 0)
                         {
                             ofile << "std::stoi(row[" << count2 << "])";
                         }
@@ -286,13 +286,13 @@ namespace generators
                                 ofile << " FROM " << table.name << " WHERE " ;
                                 for(auto k : table.key)
                                 {                        
-                                        if(k->outType.compare("std::string") == 0)
+                                        if(k->getOutType().compare("std::string") == 0)
                                         {
-                                        ofile << k->name << " = '\" + " << k->name << " + \"'\"";
+                                        ofile << k->getName() << " = '\" + " << k->getName() << " + \"'\"";
                                         }
                                         else
                                         {
-                                        ofile << k->name << " = '\" + std::to_string(" << k->name << ") + \"'\"";
+                                        ofile << k->getName() << " = '\" + std::to_string(" << k->getName() << ") + \"'\"";
                                         }
                                         auto endK = table.key.end();
                                         endK--;
@@ -327,19 +327,19 @@ namespace generators
                                         auto fl = table.find(param);
                                         if(fl != table.end())
                                         {
-                                                if((*fl).second->classReferenced != NULL)
+                                                if((*fl).second->getClassReferenced() != NULL)
                                                 {
-                                                ofile << " new " << (*fl).second->classReferenced->name << "(row[" << countparam << "])" << ";" << std::endl ;
+                                                ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(row[" << countparam << "])" << ";" << std::endl ;
                                                 }
-                                                else if((*fl).second->outType.compare("int") == 0)
+                                                else if((*fl).second->getOutType().compare("int") == 0)
                                                 {
                                                 ofile << " std::stoi(row[" << countparam << "] ? row[" << countparam << "] : 0)" << ";"<< std::endl ;
                                                 }
-                                                else if((*fl).second->outType.compare("long") == 0)
+                                                else if((*fl).second->getOutType().compare("long") == 0)
                                                 {
                                                 ofile << " std::stol(row[" << countparam << "] ? row[" << countparam << "] : 0)" << ";"<< std::endl ;
                                                 }
-                                                else if((*fl).second->outType.compare("std::string") == 0 || (*fl).second->outType.compare("const char*") == 0)
+                                                else if((*fl).second->getOutType().compare("std::string") == 0 || (*fl).second->getOutType().compare("const char*") == 0)
                                                 {
                                                 ofile << " row[" << countparam << "] ? row[" << countparam << "] : \"NULL\"" << ";" << std::endl ;
                                                 }
@@ -379,22 +379,22 @@ namespace generators
         ofile <<table.name<< "::insert(octetos::toolkit::clientdb::mysql::Connector& connector";
         for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
-            if((*i)->outType.compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
+            if((*i)->getOutType().compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
             
             if(i != table.required.end())
             {
                 ofile << ","; //se agrega la coma si hay un segundo parametro
             }
             
-            if((*i)->classReferenced == NULL)
+            if((*i)->getClassReferenced() == NULL)
             {
-                ofile << (*i)->outType << " ";
+                ofile << (*i)->getOutType() << " ";
             }
             else
             {
-                ofile << "const " << (*i)->classReferenced->name << "& ";
+                ofile << "const " << (*i)->getClassReferenced()->getName() << "& ";
             }
-            ofile << (*i)->name;
+            ofile << (*i)->getName();
         }
         ofile << ")"<<std::endl;
         ofile << "\t{"<<std::endl;
@@ -403,9 +403,9 @@ namespace generators
         ofile << "\t\t"<<"sqlString = sqlString + \"(";
         for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); ++i)
         {
-            if((*i)->outType.compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
+            if((*i)->getOutType().compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
             
-			ofile << (*i)->name;
+			ofile << (*i)->getName();
             auto penultimo = --table.required.end();
 			if(i != penultimo)
 			{
@@ -416,19 +416,19 @@ namespace generators
 		ofile << "\t\tsqlString = sqlString + \" VALUES(\"";
         for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); ++i)
         {
-            if((*i)->outType.compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
+            if((*i)->getOutType().compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
             
-            if((*i)->classReferenced != NULL && (*i)->outType.compare("int") == 0)
+            if((*i)->getClassReferenced() != NULL && (*i)->getOutType().compare("int") == 0)
             {
-                ofile << " + \"'\" + " << (*i)->name << ".get" << (*i)->symbolReferenced->upperName << "String() + \"'\" ";
+                ofile << " + \"'\" + " << (*i)->getName() << ".get" << (*i)->getClassReferenced()->getUpperName() << "String() + \"'\" ";
             }
-            else if((*i)->outType.compare("std::string") == 0)
+            else if((*i)->getOutType().compare("std::string") == 0)
             {
-                ofile << " + \"'\" + " << (*i)->name << " + \"'\" ";
+                ofile << " + \"'\" + " << (*i)->getName() << " + \"'\" ";
             }
             else
             {
-                ofile << " + std::to_string(" << (*i)->name << ")";
+                ofile << " + std::to_string(" << (*i)->getName() << ")";
             }
             auto penultimo = --table.required.end();
 			if(i != penultimo)
@@ -440,19 +440,19 @@ namespace generators
 		
         if(table.key.size() > 0)
         {
-            if(table.key.size() == 1 && table.key.at(0)->outType.compare("int") == 0 && table.key.at(0)->classReferenced != NULL)
+            if(table.key.size() == 1 && table.key.at(0)->getOutType().compare("int") == 0 && table.key.at(0)->getClassReferenced() != NULL)
             {
-                ofile << "\t\tthis->" << table.key.at(0)->name << " = new " << table.key.at(0)->classReferenced->name << "(";
+                ofile << "\t\tthis->" << table.key.at(0)->getName() << " = new " << table.key.at(0)->getClassReferenced()->getName() << "(";
                 ofile << " connector.insert(sqlString.c_str()));" << std::endl;
-                ofile << "\t\tif(this->" << table.key.at(0)->name << " != NULL) return true;"<< std::endl;
+                ofile << "\t\tif(this->" << table.key.at(0)->getName() << " != NULL) return true;"<< std::endl;
                 ofile << "\t\telse return false;"<< std::endl;                 
                     
             }
-            else if(table.key.size() == 1 && table.key.at(0)->outType.compare("int") == 0)
+            else if(table.key.size() == 1 && table.key.at(0)->getOutType().compare("int") == 0)
             {
-                ofile << "\t\tthis->" << table.key.at(0)->name << " = ";
+                ofile << "\t\tthis->" << table.key.at(0)->getName() << " = ";
                 ofile << " connector.insert(sqlString.c_str());" << std::endl;
-                ofile << "\t\tif(this->" << table.key.at(0)->name << " > 0) return true;"<< std::endl;
+                ofile << "\t\tif(this->" << table.key.at(0)->getName() << " > 0) return true;"<< std::endl;
                 ofile << "\t\telse return false;"<< std::endl;                
             }            
             else if(table.key.size() > 1)
@@ -461,7 +461,7 @@ namespace generators
                 ofile << "\t\t{" << std::endl;
                 for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); ++i)
                 {
-                    ofile << "\t\t\tthis->" << (*i)->name << " = " << (*i)->name << ";" << std::endl;
+                    ofile << "\t\t\tthis->" << (*i)->getName()  << " = " << (*i)->getName()  << ";" << std::endl;
                 }
                  ofile << "\t\t\treturn true;" << std::endl;
                 ofile << "\t\t}" << std::endl;
@@ -469,9 +469,9 @@ namespace generators
         }
         else if(table.key.size() == 0)
         {
-            ofile << "\t\tthis->" << table.key.at(0)->name;
+            ofile << "\t\tthis->" << table.key.at(0)->getName() ;
             ofile << " = connector.query(sqlString.c_str());"<< std::endl;
-            ofile << "\t\tif(this->" << table.key[0]->name << " > 0) return true;"<< std::endl;
+            ofile << "\t\tif(this->" << table.key[0]->getName()  << " > 0) return true;"<< std::endl;
             ofile << "\t\telse return false;"<< std::endl;   
         }
         else 
@@ -495,7 +495,7 @@ namespace generators
                 //for (auto const& [key, attr] : table)
                 for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
 		{
-			ofile << "\t\tthis->"<< it->second->name << " = obj." << it->second->name<<";"<<std::endl;
+			ofile << "\t\tthis->"<< it->second->getName()  << " = obj." << it->second->getName() <<";"<<std::endl;
 		}
 		ofile << "\t}"<<std::endl;
 	}
@@ -509,13 +509,13 @@ namespace generators
             endIt--;
             for(auto k : table.key)
             {
-                if(k->outType.compare("std::string") == 0)
+                if(k->getOutType().compare("std::string") == 0)
                 {
-                    ofile << "const " << k->outType << "& " << k->name;
+                    ofile << "const " << k->getOutType() << "& " << k->getName() ;
                 }
                 else
                 {
-                    ofile << k->outType << " " << k->name;                    
+                    ofile << k->getOutType() << " " << k->getName() ;                    
                 }
                 if(k != *endIt)
                 {
@@ -536,13 +536,13 @@ namespace generators
         {
             for(auto k : table.key)
             {
-                if(k->classReferenced != NULL)
+                if(k->getClassReferenced() != NULL)
                 {
-                    ofile << "\t\tthis->" << k->name << " = new " << k->classReferenced->name << "(" << k->name << ");" << std::endl;
+                    ofile << "\t\tthis->" << k->getName()  << " = new " << k->getClassReferenced()->name << "(" << k->getName()  << ");" << std::endl;
                 }
                 else
                 {
-                    ofile << "\t\tthis->" << k->name << " = " << k->name << ";" << std::endl;
+                    ofile << "\t\tthis->" << k->getName()  << " = " << k->getName()  << ";" << std::endl;
                 }
             }
         }
@@ -559,83 +559,83 @@ namespace generators
                 for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
                 {
                         //gets
-			if((it->second->outType.compare("char") == 0) | (it->second->outType.compare("short") == 0) | (it->second->outType.compare("int") == 0) | (it->second->outType.compare("long") == 0) | (it->second->outType.compare("float") == 0) | (it->second->outType.compare("double") == 0))
+			if((it->second->getOutType().compare("char") == 0) | (it->second->getOutType().compare("short") == 0) | (it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0) | (it->second->getOutType().compare("float") == 0) | (it->second->getOutType().compare("double") == 0))
 			{
-				if(it->second->classReferenced == NULL)//si es foreing key
+				if(it->second->getClassReferenced() == NULL)//si es foreing key
 				{
-					ofile <<"\t"<< it->second->outType << " ";						
+					ofile <<"\t"<< it->second->getOutType() << " ";						
 				}
 				else
 				{
-					ofile <<"\t"<< "const " << it->second->classReferenced->name << "& ";
+					ofile <<"\t"<< "const " << it->second->getClassReferenced()->name << "& ";
 				}
 			}
 			else
 			{
-				ofile <<"\t" << "const " << it->second->outType <<"& ";
+				ofile <<"\t" << "const " << it->second->getOutType() <<"& ";
 			}
 				
-			ofile << table.name <<"::" << it->second->get << " const"<< std::endl;
+			ofile << table.name <<"::" << it->second->getGet() << " const"<< std::endl;
 			ofile << "\t{"<<std::endl;	
-			if((it->second->outType.compare("char") == 0) | (it->second->outType.compare("short") == 0) | (it->second->outType.compare("int") == 0) | (it->second->outType.compare("long") == 0) | (it->second->outType.compare("float") == 0) | (it->second->outType.compare("double") == 0))
+			if((it->second->getOutType().compare("char") == 0) | (it->second->getOutType().compare("short") == 0) | (it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0) | (it->second->getOutType().compare("float") == 0) | (it->second->getOutType().compare("double") == 0))
 			{
-				if(it->second->classReferenced == NULL)//si es foreing key
+				if(it->second->getClassReferenced() == NULL)//si es foreing key
 				{
-					ofile <<"\t\treturn "<< it->second->name<<";"<< std::endl;						
+					ofile <<"\t\treturn "<< it->second->getName() <<";"<< std::endl;						
 				}
 				else
 				{
-					ofile <<"\t\treturn *"<< it->second->name <<";"<< std::endl;
+					ofile <<"\t\treturn *"<< it->second->getName()  <<";"<< std::endl;
 				}						
 			}
 			else
 			{
-				ofile <<"\t\treturn " << it->second->name <<";"<< std::endl;
+				ofile <<"\t\treturn " << it->second->getName()  <<";"<< std::endl;
 			}								
 			ofile << "\t}"<<std::endl;
 			
                         //gets foreing key                        
                          if(it->second->isPrimaryKey() && !it->second->isForeignKey())
                         {
-                                ofile <<"\t"<< it->second->outType << " " << table.name << "::getKey" << it->second->upperName << "() const"<< std::endl;
+                                ofile <<"\t"<< it->second->getOutType() << " " << table.name << "::getKey" << it->second->getUpperName() << "() const"<< std::endl;
                                 ofile <<"\t{"<< std::endl;
-                                if(it->second->outType.compare("int") == 0)
+                                if(it->second->getOutType().compare("int") == 0)
                                 {
-                                        ofile <<"\t\t" << "return " << it->second->name << ";" << std::endl;
+                                        ofile <<"\t\t" << "return " << it->second->getName()  << ";" << std::endl;
                                 }
                                 ofile <<"\t}"<< std::endl;
                         }
                         else if(it->second->isForeignKey())
                         {
-                                ofile <<"\t"<< it->second->outType << " " << table.name << "::getKey" << it->second->upperName << "() const"<< std::endl;
+                                ofile <<"\t"<< it->second->getOutType() << " " << table.name << "::getKey" << it->second->getUpperName() << "() const"<< std::endl;
                                 ofile <<"\t{"<< std::endl;
-                                if(it->second->outType.compare("int") == 0)
+                                if(it->second->getOutType().compare("int") == 0)
                                 {
-                                        ofile <<"\t\t" << "return " << it->second->name << "->getKey" << it->second->symbolReferenced->upperName << "();" << std::endl;
+                                        ofile <<"\t\t" << "return " << it->second->getName()  << "->getKey" << it->second->getSymbolReferenced()->getUpperName() << "();" << std::endl;
                                 }
                                 ofile <<"\t}"<< std::endl;
                         }
                         
 			
 			//getString()		
-			ofile << "\tstd::string "<< table.name <<"::get" << it->second->upperName << "String() const "<< std::endl;
+			ofile << "\tstd::string "<< table.name <<"::get" << it->second->getUpperName() << "String() const "<< std::endl;
 			ofile << "\t{"<< std::endl;
                         
                         ofile << "\t\treturn ";
             
-                        if(it->second->classReferenced != NULL)
+                        if(it->second->getClassReferenced() != NULL)
                         {
-                                ofile <<"get" << it->second->upperName << "String();";   
+                                ofile <<"get" << it->second->getUpperName() << "String();";   
                         }
                         else
                         {
-                                if(it->second->outType.compare("std::string") == 0 || it->second->outType.compare("const char*") == 0)
+                                if(it->second->getOutType().compare("std::string") == 0 || it->second->getOutType().compare("const char*") == 0)
                                 {
-                                        ofile << it->second->name << ";";                    
+                                        ofile << it->second->getName()  << ";";                    
                                 }
                                 else
                                 {
-                                        ofile <<"std::to_string(" << it->second->name << ");";
+                                        ofile <<"std::to_string(" << it->second->getName()  << ");";
                                 }
                         }
                         ofile << std::endl;			
@@ -643,18 +643,18 @@ namespace generators
             
 			//updates
                         if((*it->second).isPrimaryKey()) goto postUpdatePosition; //si es una llave primary no se puede modificar
-			ofile << "\tbool " << table.name <<"::update" << it->second->upperName << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
-			if((it->second->outType.compare("std::string") == 0 || it->second->outType.compare("int") == 0) && it->second->classReferenced != NULL)
+			ofile << "\tbool " << table.name <<"::update" << it->second->getUpperName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
+			if((it->second->getOutType().compare("std::string") == 0 || it->second->getOutType().compare("int") == 0) && it->second->getClassReferenced() != NULL)
                         {
-                                ofile << "const " << it->second->classReferenced->name << "& " << it->second->name;
+                                ofile << "const " << it->second->getClassReferenced()->getName()  << "& " << it->second->getName() ;
                         }
-                        else if(it->second->outType.compare("std::string") == 0)
+                        else if(it->second->getOutType().compare("std::string") == 0)
                         {
-                                ofile << "const " << it->second->outType << "& " << it->second->name;
+                                ofile << "const " << it->second->getOutType() << "& " << it->second->getName() ;
                         }
                         else
                         {
-                                ofile << it->second->outType << " " << it->second->name;
+                                ofile << it->second->getOutType() << " " << it->second->getName() ;
                         }
 			ofile <<")"<< std::endl;
 			ofile << "\t{"<<std::endl;
@@ -662,26 +662,26 @@ namespace generators
 			ofile << "\t\tsqlString = \"UPDATE \" + TABLE_NAME;"<<std::endl;
 			ofile << "\t\tsqlString = sqlString + \" SET " ;
             
-                        ofile << it->second->name << " = " ;
-                         if( it->second->outType.compare("int") == 0 && it->second->symbolReferenced != NULL)
+                        ofile << it->second->getName()  << " = " ;
+                         if( it->second->getOutType().compare("int") == 0 && it->second->getSymbolReferenced() != NULL)
                          {
-                                ofile << "'\" +  std::to_string(" << it->second->name  << ".getKey" << it->second->symbolReferenced->upperName << "())+ \"'\";" << std::endl;                                    
+                                ofile << "'\" +  std::to_string(" << it->second->getName()   << ".getKey" << it->second->getSymbolReferenced()->getUpperName() << "())+ \"'\";" << std::endl;                                    
                          }
-                        else if( it->second->outType.compare("int") == 0 && it->second->symbolReferenced == NULL)
+                        else if( it->second->getOutType().compare("int") == 0 && it->second->getSymbolReferenced() == NULL)
                         {
-                                ofile << "'\" +  std::to_string(" << it->second->name  << ")+ \"'\";" << std::endl;                            
+                                ofile << "'\" +  std::to_string(" << it->second->getName()   << ")+ \"'\";" << std::endl;                            
                         }
-                        else if(it->second->outType.compare("std::string") == 0 && it->second->symbolReferenced != NULL)
+                        else if(it->second->getOutType().compare("std::string") == 0 && it->second->getSymbolReferenced() != NULL)
                         {
-                                ofile << "'\" + " << it->second->name << " + \"'\";" << std::endl;
+                                ofile << "'\" + " << it->second->getName()  << " + \"'\";" << std::endl;
                         }
-                        else if(it->second->outType.compare("std::string") == 0  && it->second->symbolReferenced == NULL)
+                        else if(it->second->getOutType().compare("std::string") == 0  && it->second->getSymbolReferenced() == NULL)
                         {
-                                ofile << "'\" + " << it->second->name << " + \"'\";" << std::endl;
+                                ofile << "'\" + " << it->second->getName()  << " + \"'\";" << std::endl;
                         }
                         else
                         {
-                                ofile << "\" + std::to_string(" << it->second->name << ");" << std::endl;
+                                ofile << "\" + std::to_string(" << it->second->getName()  << ");" << std::endl;
                         }
 			
 			ofile << "\t\tsqlString = sqlString + \" WHERE \" ";
@@ -691,21 +691,21 @@ namespace generators
                                 kEnd--;
                                 for(auto k : table.key)
                                 {
-                                        if(k->outType.compare("int") == 0 && k->symbolReferenced != NULL)
+                                        if(k->getOutType().compare("int") == 0 && k->getSymbolReferenced() != NULL)
                                         {
-                                                ofile << " + \"" << k->name << " = \" + std::to_string(" << k->name << "->getKey" << k->symbolReferenced->upperName << "())";
+                                                ofile << " + \"" << k->getName()  << " = \" + std::to_string(" << k->getName()  << "->getKey" << k->getSymbolReferenced()->getUpperName() << "())";
                                         }
-                                        else if(k->outType.compare("int") == 0 && k->symbolReferenced == NULL)
+                                        else if(k->getOutType().compare("int") == 0 && k->getSymbolReferenced() == NULL)
                                         {
-                                                 ofile << " + \"" << k->name << " = \" +  std::to_string(" << k->name << ")";
+                                                 ofile << " + \"" << k->getName()  << " = \" +  std::to_string(" << k->getName()  << ")";
                                         }
-                                        else if(k->outType.compare("std::string") == 0)
+                                        else if(k->getOutType().compare("std::string") == 0)
                                         {
-                                                ofile << " + \"" << k->name << " = \" + \"'\" + " << k->name <<" + \"'\" ";
+                                                ofile << " + \"" << k->getName()  << " = \" + \"'\" + " << k->getName()  <<" + \"'\" ";
                                         }
                                         else
                                         {
-                                                ofile << " + \"" << k->name << " = \" + std::to_string(" << k->name <<") ";
+                                                ofile << " + \"" << k->getName()  << " = \" + std::to_string(" << k->getName()  <<") ";
                                         }                     
                                         if(k != *kEnd)
                                         {
@@ -831,17 +831,17 @@ namespace generators
                                         auto fl = table.find(param);
                                         if(fl != table.end())
                                         {
-                                        if((*fl).second->outType.compare("std::string") == 0)
+                                        if((*fl).second->getOutType().compare("std::string") == 0)
                                         {
                                                 ofile << "const std::string& ";
                                         }
-                                        else if((*fl).second->symbolReferenced != NULL)
+                                        else if((*fl).second->getSymbolReferenced() != NULL)
                                         {
-                                                ofile << "const " << (*fl).second->symbolReferenced->classParent->name << "& ";
+                                                ofile << "const " << (*fl).second->getSymbolReferenced()->getClassParent()->name << "& ";
                                         }
                                         else
                                         {
-                                                ofile << (*fl).second->outType << " ";                            
+                                                ofile << (*fl).second->getOutType() << " ";                            
                                         }
                                         }
                                         ofile << param; 
@@ -865,7 +865,7 @@ namespace generators
         ofile << "insert(octetos::toolkit::clientdb::mysql::Connector& connector";
         for(std::list<symbols::Symbol*>::const_iterator i = table.required.begin(); i != table.required.end(); i++)
         {
-            if((*i)->outType.compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
+            if((*i)->getOutType().compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
             
 			countFIelds++;
 			if(i != table.required.end())
@@ -874,16 +874,16 @@ namespace generators
 			}
 				
 			//
-			if((*i)->classReferenced == NULL)
+			if((*i)->getClassReferenced() == NULL)
 			{
-				ofile << (*i)->outType << " ";
+				ofile << (*i)->getOutType() << " ";
 			}
 			else
 			{
-				ofile << "const " << (*i)->classReferenced->name << "& ";
+				ofile << "const " << (*i)->getClassReferenced()->name << "& ";
 				//ofile << "const " << (*i)->outType <<"& ";
 			}
-			ofile << (*i)->name;
+			ofile << (*i)->getName();
 		}
         ofile << ");"<<std::endl;
         
@@ -908,13 +908,13 @@ namespace generators
             endIt--;
             for(auto k : table.key)
             {
-                if(k->outType.compare("std::string") == 0)
+                if(k->getOutType().compare("std::string") == 0)
                 {
-                    ofile << "const " << k->outType << "&";
+                    ofile << "const " << k->getOutType() << "&";
                 }
                 else
                 {
-                    ofile << k->outType;                    
+                    ofile << k->getOutType();                    
                 }
                 if(k != *endIt)
                 {
@@ -937,53 +937,53 @@ namespace generators
                 for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
                 {
 			//get
-			if((it->second->outType.compare("char") == 0) | (it->second->outType.compare("short") == 0) | (it->second->outType.compare("int") == 0) | (it->second->outType.compare("long") == 0) | (it->second->outType.compare("float") == 0) | (it->second->outType.compare("double") == 0))
+			if((it->second->getOutType().compare("char") == 0) | (it->second->getOutType().compare("short") == 0) | (it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0) | (it->second->getOutType().compare("float") == 0) | (it->second->getOutType().compare("double") == 0))
 			{
-				if(it->second->classReferenced == NULL)//si es foreing key
+				if(it->second->getClassReferenced() == NULL)//si es foreing key
 				{
-					ofile <<"\t\t"<< it->second->outType << " ";						
+					ofile <<"\t\t"<< it->second->getOutType() << " ";						
 				}
 				else
 				{
-					ofile <<"\t\t"<< "const " << it->second->classReferenced->name << "& ";
+					ofile <<"\t\t"<< "const " << it->second->getClassReferenced()->name << "& ";
 				}
 			}
 			else
 			{
-				ofile <<"\t\t" << "const " << it->second->outType <<"& ";
+				ofile <<"\t\t" << "const " << it->second->getOutType() <<"& ";
 			}		
-			ofile << it->second->get << " const;"<< std::endl;
+			ofile << it->second->getGet() << " const;"<< std::endl;
 			
                         
                         //get key
                          if(it->second->isPrimaryKey() && !it->second->isForeignKey())
                         {
-                                ofile <<"\t\t"<< it->second->outType << " getKey" << it->second->upperName << "() const;"<< std::endl;
+                                ofile <<"\t\t"<< it->second->getOutType() << " getKey" << it->second->getUpperName() << "() const;"<< std::endl;
                         }
                         else if(it->second->isForeignKey())
                         {
-                                ofile <<"\t\t"<< it->second->outType << " getKey" << it->second->upperName << "() const;"<< std::endl;
+                                ofile <<"\t\t"<< it->second->getOutType() << " getKey" << it->second->getUpperName() << "() const;"<< std::endl;
                         }
 			
 			//getString()			
-			ofile << "\t\tstd::string get" << it->second->upperName << "String() const;"<< std::endl;		
+			ofile << "\t\tstd::string get" << it->second->getUpperName() << "String() const;"<< std::endl;		
 			//update
-			ofile << "\t\tbool " << "update" << it->second->upperName << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
-			if(it->second->classReferenced != 0)
+			ofile << "\t\tbool " << "update" << it->second->getUpperName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
+			if(it->second->getClassReferenced() != 0)
                         {
-                                ofile << " const " << it->second->classReferenced->name << "& " << it->second->name;
+                                ofile << " const " << it->second->getClassReferenced()->getName() << "& " << it->second->getName();
                         }
-                        else if((it->second->outType.compare("std::string") == 0))
+                        else if((it->second->getOutType().compare("std::string") == 0))
                         {
-                                ofile << "const std::string& " << it->second->name;
+                                ofile << "const std::string& " << it->second->getName();
                         }
-                        else if((it->second->outType.compare("int") == 0) | (it->second->outType.compare("long") == 0))
+                        else if((it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0))
 			{
-				ofile << it->second->outType << " " << it->second->name;						
+				ofile << it->second->getOutType() << " " << it->second->getName();						
 			}
 			else
 			{
-				ofile << it->second->outType << " " << it->second->name;
+				ofile << it->second->getOutType() << " " << it->second->getName();
 			}
 			ofile << ");"<< std::endl;            
                 }  
@@ -999,14 +999,14 @@ namespace generators
     {
                 for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
                 {
-                        if(it->second->classReferenced != NULL && (it->second->outType.compare("int") == 0 || it->second->outType.compare("std::string") == 0))
+                        if(it->second->getClassReferenced() != NULL && (it->second->getOutType().compare("int") == 0 || it->second->getOutType().compare("std::string") == 0))
                         {
-                                ofile << "\t\t" << it->second->classReferenced->name << "* "<< it->second->name<<";"<< std::endl;
+                                ofile << "\t\t" << it->second->getClassReferenced()->getName() << "* "<< it->second->getName()<<";"<< std::endl;
                         }
                         else
                         {
                                 //ofile <<"[3]"<<std::endl;
-                                ofile << "\t\t" << it->second->outType << " " << it->second->name <<";"<< std::endl;
+                                ofile << "\t\t" << it->second->getOutType() << " " << it->second->getName() <<";"<< std::endl;
                         }
                 }
     }
@@ -1022,7 +1022,7 @@ namespace generators
     void CPP::createClassH(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass,bool log)
     {
 		//file <<"keyword"<<std::endl;
-		if(log)analyzer.getOutputMessage() <<"\tHeading class " << cl.name<<std::endl;
+		if(log)analyzer.getOutputMessage() <<"\tHeading class " << cl.getName()<<std::endl;
                 short level = symbols::getSpaceLevel(cl.fullname);
                 for(short i =0; i < level ; i++) file << "\t";
                 file <<"\tclass "<<nameClass<<std::endl;  
