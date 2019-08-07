@@ -288,8 +288,9 @@ namespace apidb
 		};
 		
 		/**
-                 * \private
 		 * \brief Conjunto de tablas
+                 * \details No representa un spacio realmente sino que umula uno en base a ciertos creterio en el nombrambramiento de las tablas, esto para poder organizar mejor el codigo. En MySQL por ejemplo, Se permite poner el caracter punto en el nombre de la tabla, y este es el criterio usado para MySQL, APIDB crea un nuevo anidamiento de espacio cada vez que encuentre un punto en el nombre de la tabla.
+                 * \private
 		 * */
 		struct Space : public std::list<Table*>
 		{
