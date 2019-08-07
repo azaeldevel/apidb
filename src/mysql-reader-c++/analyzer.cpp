@@ -13,7 +13,7 @@ namespace mysql
 {
 	bool Analyzer::analyze(bool log)
 	{
-		bool flag = symbols::listing(*(octetos::toolkit::clientdb::mysql::Connector*)connector,spacies);
+		bool flag = listing(*(octetos::toolkit::clientdb::mysql::Connector*)connector);
                 
                 //for(auto const& [keySpace, AttSpace]  : spacies)
                 for(std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)

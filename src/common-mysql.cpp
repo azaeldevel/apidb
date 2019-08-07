@@ -207,7 +207,7 @@ namespace apidb
         }
     
     
-	bool symbols::listing(octetos::toolkit::clientdb::mysql::Connector& connect, std::map<const char*,symbols::Tables*,symbols::cmp_str>& tables)
+	bool Analyzer::listing(octetos::toolkit::clientdb::mysql::Connector& connect)
 	{
 		std::string db = connect.getDatconection()->getDatabase();
 		//std::cout<< "db:" << db <<std::endl;
@@ -219,23 +219,23 @@ namespace apidb
 			MYSQL_ROW row;
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
-				Table* prw = new Table();
-				prw->name = getSpaceName(row[0]);
+				symbols::Table* prw = new symbols::Table();
+				prw->name = symbols::getSpaceName(row[0]);
                                 //prw->shortname = getTableName(row[0]);
                                 std::string upper = row[0];
                                 upper[0] = toupper(upper[0]);
                                 prw->upperName = upper;
-                                prw->space = getSpacePatch(row[0]);
+                                prw->space = symbols::getSpacePatch(row[0]);
                                 prw->fullname = row[0];
                                 
-                                std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = tables.find(prw->space.c_str());                                
-                                if(it == tables.end())
+                                std::map<const char*,symbols::Tables*,symbols::cmp_str>::iterator it = spacies.find(prw->space.c_str());                                
+                                if(it == spacies.end())
                                 {
-                                        Tables* newSpace  = new Tables();
+                                        symbols::Tables* newSpace  = new symbols::Tables();
                                         newSpace->name = prw->space;
                                         newSpace->push_back(prw);
                                         std::pair<const char*, symbols::Tables*> newInser(prw->space.c_str(),newSpace);
-                                        tables.insert(newInser);
+                                        spacies.insert(newInser);
                                 }
                                 else
                                 {

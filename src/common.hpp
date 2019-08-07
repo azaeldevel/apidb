@@ -201,11 +201,10 @@ namespace apidb
                         std::string name;      
 			
 			short getMaxCountRef();
-                        const std::string& getName();                        
+                        const std::string& getName();                     
                 private:                  
 		};
                 
-                bool listing(octetos::toolkit::clientdb::mysql::Connector& connect, std::map<const char*,symbols::Tables*,symbols::cmp_str>& tables);
                 std::string getSpaceName(std::string fullname);
                 std::string getSpacePatch(std::string fullname);
                 short getSpaceLevel(std::string fullname);

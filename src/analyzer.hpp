@@ -45,8 +45,7 @@ namespace apidb
 		InputLenguajes getInputLenguaje() const;
 		OutputLenguajes getOutputLenguaje() const;
 		Analyzer(const ConfigureProject&, octetos::toolkit::clientdb::Connector*);
-                virtual ~Analyzer();
-		
+                virtual ~Analyzer(); 
     protected:
 		//symbols::Tables symbolsTables;		
                 std::map<const char*,symbols::Tables*,symbols::cmp_str> spacies;
@@ -54,6 +53,8 @@ namespace apidb
 		std::ostream* outputMessages;//out stream
 		std::ostream* errorMessages;//out stream		
 		const ConfigureProject& configureProject;
+                //
+		 bool listing(octetos::toolkit::clientdb::mysql::Connector& connect);  
 	};
 }
 }
