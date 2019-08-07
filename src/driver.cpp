@@ -200,7 +200,10 @@ namespace apidb
 	
 	bool Driver::generate(bool log)
 	{		
-                std::cout <<"\u001b[31;1m" << "\nAdvertencia: Driver::generate(bool log) esta marcada como obsoleta yserá removida a apartir de v2.\n Use Driver::analyze(toolkit::ActivityProgress* progress) en su lugar.\n" << "\u001b[0m";
+                if(ENABLE_DEVEL_WARNING)
+                {
+                        std::cout <<"\u001b[31;1m" << "\nAdvertencia: Driver::generate(bool log) esta marcada como obsoleta yserá removida a apartir de v2.\n Use Driver::analyze(toolkit::ActivityProgress* progress) en su lugar.\n" << "\u001b[0m";
+                }
                 
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
@@ -280,7 +283,7 @@ namespace apidb
                         msg+= getInputLenguajeString(configureProject.inputLenguaje);
                         toolkit::Confirmation conf2(msg);
                         progress->add(conf2);
-                        if(configureProject.mvc != MVC::NO)
+                        if(configureProject.mvc != MVC::NO and ENABLE_DEVEL_WARNING)
                         {
                                 std::string msgW = "Advertencia: la opcion MVC(ConfigureProject::mvc) esta marcada como obsoleta será removida a apartir de v2.\n";
                                 toolkit::Warning war1(msgW);
@@ -326,7 +329,7 @@ namespace apidb
 		if(log)analyzer->getOutputMessage() << "Analisis de codigo..." << std::endl;
 		if(log)analyzer->getOutputMessage() << "\tLenguaje de entrada: " << getInputLenguajeString(configureProject.inputLenguaje) << std::endl;
                 
-                if(configureProject.mvc != MVC::NO)
+                if(configureProject.mvc != MVC::NO and ENABLE_DEVEL_WARNING)
                 {
                         std::cout <<"\u001b[31;1m" << "\nAdvertencia: la opcion MVC(ConfigureProject::mvc) esta marcada como obsoleta será removida a apartir de v2\n" << "\u001b[0m";
                 }

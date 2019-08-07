@@ -34,6 +34,15 @@ namespace octetos
 {
 namespace apidb
 {
+        /**
+         * \brief Determina si los mensajes de Warning(dirigidos a los desarrolladores) seran emitidos
+         * */
+        static bool ENABLE_DEVEL_WARNING = true;
+        /**
+         * \brief Determina si los mensajes de Warning(dirigidos a los usuarios) seran emitidos
+         * */
+        static bool ENABLE_USER_WARNING = true;
+        
         class Analyzer;
         namespace mysql
         {
