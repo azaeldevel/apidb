@@ -29,8 +29,8 @@ namespace octetos
 {
 namespace apidb
 {    
-    namespace mysql
-    {
+namespace mysql
+{
         class Analyzer : public apidb::Analyzer
         {
         public:            
@@ -65,8 +65,8 @@ namespace apidb
             void parse_helper(std::istream &stream);
             Parser  *parser  = nullptr;
             Scanner *scanner = nullptr;   
-        };
-    }
+        };        
+}
 }
 }
 #endif

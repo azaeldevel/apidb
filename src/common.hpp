@@ -50,10 +50,16 @@ namespace apidb
         typedef octetos::toolkit::clientdb::Datconnect::ServerType InputLenguajes;
 	std::string getInputLenguajeString(InputLenguajes);	
         
+        /**
+         * \brief Identifica los gentores de paquetes disponibles.
+         * */
         enum PackingLenguajes
         {
                 CMake = 1
         };
+        /**
+         * \brief Identicia los posibles lenguajes del codigo generado.
+         * */
 	enum OutputLenguajes
 	{
 		CPP=1,
@@ -63,7 +69,9 @@ namespace apidb
 		//PERL,
 		//PYTHON
 	};
-	
+	/**
+         * \deprecated Sera removide en v2 y no es estable ahora. 
+         * */
 	enum MVC
 	{
 		NO = 1,
@@ -72,12 +80,18 @@ namespace apidb
 		GTK3
 		//WIN32
 	};
+        /**
+         * \brief Distinge entre librerias estaticas y dinamicas para generar.
+         * */
         enum Compiled
         {
                 STATIC = 1,
                 SHARED
         };
         
+        /**
+         * \brief Clase de manejo de errores.
+         **/
 	class BuildException : public std::exception
 	{
 	public:
@@ -89,7 +103,9 @@ namespace apidb
 		std::string description;
 	};
     
-
+        /**
+         * \private Table y elmentos de la tabla de simbolos
+         * */
 	namespace symbols
 	{
 		struct Table;
@@ -104,7 +120,7 @@ namespace apidb
                 };
         
 		/**
-		 * Informacion sobre cada symbolo
+		 * \brief Informacion sobre cada symbolo
 		 * */
 		struct Symbol 
 		{
@@ -151,7 +167,7 @@ namespace apidb
 		{
 		};
 		/**
-		 * Simbolos por alcance(tabla en SQL) 
+		 * \brief Simbolos por alcance(tabla en SQL) 
 		 **/
 		struct Table : public std::map<const char*,Symbol*,cmp_str>
 		{

@@ -51,6 +51,9 @@ namespace apidb
                  * \brief Unico contructor 
                  * */
                 Driver(const ConfigureProject&);
+                /**
+                 * \brief Retorna el obejeto Analyzer utilizado.
+                 * */
                 const Analyzer& getAnalyzer() const;
                 virtual ~Driver();
                 

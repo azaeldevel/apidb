@@ -5,6 +5,7 @@ SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 SET(DDM_DESKTOP_DIR "/usr/share/applications/")
 SET(DDM_PIXMAPS_DIR "/usr/share/icons/")
+
 #SET(VERSIONSTR ${${PROJECT_NAME}_VERSION_MAJOR}"."${${PROJECT_NAME}_VERSION_MINOR}"."${${PROJECT_NAME}_VERSION_PATCH})
 
 EXECUTE_PROCESS(COMMAND date +"%Y%m%d%H%M%S" OUTPUT_VARIABLE ${PROJECT_NAME}_VERSION_BUILD)
@@ -14,42 +15,38 @@ CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/versionInfo.h.in" "${PROJECT_SOURCE_DIR}/v
 CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/octetos-apidb.desktop.in" "${CMAKE_CURRENT_BINARY_DIR}/octetos-apidb.desktop")
 
 
+##################################################################################################################
+####FIND PAKAGES
 FIND_PACKAGE(MySQL REQUIRED PATHS ${PROJECT_SOURCE_DIR}/../cmake/Modules/)
 IF(MySQL_FOUND)
 	INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_DIR})
 ENDIF()
-
 FIND_PACKAGE(octetos-toolkit-common-c++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/../cmake/Modules/toolkit/)
 IF(OCTETOS_TOOLKIT_COMMON_CPP_FOUND)
 	INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR})
 ELSEIF(OCTETOS_TOOLKIT_COMMON_CPP_FOUND)
 	MESSAGE(FATAL_ERROR "No se encontro la toolkit-common-c++.")
 ENDIF(OCTETOS_TOOLKIT_COMMON_CPP_FOUND)
-
 FIND_PACKAGE(octetos-toolkit-clientdb-myc++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/../cmake/Modules/toolkit/)
 IF(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)
 	INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR})
 ELSEIF(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)
 	MESSAGE(FATAL_ERROR "No se encontro la toolkit-cliendb-myc++.")
 ENDIF(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)
-
 FIND_PACKAGE( LibXml2 REQUIRED )
 IF(LIBXML2_FOUND)
 	INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
 ENDIF()
-
 FIND_PACKAGE( Boost COMPONENTS REQUIRED )
 IF(Boost_FOUND)
 	INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 ENDIF()
-
 FIND_PACKAGE(tar REQUIRED PATHS ${PROJECT_SOURCE_DIR}/../cmake/Modules/)
 IF(TAR_FOUND)
 	INCLUDE_DIRECTORIES(${TAR_INCLUDE_DIR})
 ELSEIF()
 	MESSAGE(FATAL_ERROR "No se encontro la Libreria tar.")
 ENDIF()
-
 FIND_PACKAGE(PkgConfig REQUIRED)
 PKG_CHECK_MODULES(GTK3 REQUIRED gtk+-3.0)
 IF(GTK3_FOUND)
@@ -58,19 +55,26 @@ IF(GTK3_FOUND)
 ELSEIF()
 	MESSAGE(FATAL_ERROR "No se encontro la Libreria GTK3.")
 ENDIF()
-
 FIND_PACKAGE(CUnit REQUIRED PATHS ${PROJECT_SOURCE_DIR}/../cmake/Modules/)
 IF(CUNIT_FOUND)
 	INCLUDE_DIRECTORIES(${CUNIT_INCLUDE_DIR})
 ENDIF()
 
+find_package(Doxygen)
+SET(doxyfile_in "doxygen-public-c++")
+
+
+
+
+###################################################################################################
+###BUILD
 INCLUDE_DIRECTORIES(mysql-reader-c++)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/mysql-reader-c++/)
 SET(LIBREADER "NULL")
 SET(LIBPARTIAL1 ${PROJECT_NAME}-partial1)
 ADD_SUBDIRECTORY(mysql-reader-c++)
 
-SET(SOURCES_BUILDING apidb.cpp common-mysql.cpp analyzer.cpp generator.cpp generator-c++.cpp common.cpp  Errors.cpp ConfigureProject.cpp ConfigureProjectRead_v${${PROJECT_NAME}_VERSION_MAJOR}.cpp driver.cpp)
+SET(SOURCES_BUILDING common-mysql.cpp  apidb.cpp analyzer.cpp generator.cpp generator-c++.cpp common.cpp  Errors.cpp ConfigureProject.cpp ConfigureProjectRead_v${${PROJECT_NAME}_VERSION_MAJOR}.cpp driver.cpp)
 SET(LIBRARIES  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARY} ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${TAR_LIBRARIES} ${GTK3_LIBRARIES} ${CUNIT_LIBRARY})
 
 ADD_EXECUTABLE(developing  developing.cpp ${SOURCES_BUILDING})
@@ -95,12 +99,20 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}  )
 ADD_EXECUTABLE(${PROJECT_NAME}-gtk3 apidb-gtk3.cpp Application-gtk3.cpp ${SOURCES_BUILDING})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}-gtk3 ${LIBRARIES} ${LIBREADER} )
 
-
-
 execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb.png" --export-width 256)
 
-#add_custom_target(apidb_png ALL DEPENDS apidb.png)
 
+#[[add_custom_target(
+        doc ALL
+        COMMAND ${DOXYGEN_EXECUTABLE} "${PROJECT_SOURCE_DIR}/${doxyfile_in}"
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMENT "Generating API documentation with Doxygen"
+        VERBATIM
+        )]]
+
+
+###################################################################################################################
+###INSTALL
 INSTALL(TARGETS ${PROJECT_NAME}-build DESTINATION /bin)
 INSTALL(TARGETS ${PROJECT_NAME}-gtk3 DESTINATION /bin)
 INSTALL(TARGETS ${PROJECT_NAME}  DESTINATION /lib)

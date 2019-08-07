@@ -9,19 +9,6 @@ namespace octetos
 namespace apidb
 {	
 	
-
-	BuildException::~BuildException() throw()
-	{
-		;
-	}
-	const char* BuildException::what() const throw()
-	{
-		return description.c_str();
-	}
-        BuildException::BuildException(const std::string &description) throw()
-        {
-		this->description = description;
-	}
 	
 
 	

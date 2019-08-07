@@ -52,8 +52,12 @@ namespace apidb
         }
         Driver::Driver(const ConfigureProject& config) : configureProject(config)
         {
+                analyzer = NULL;
+                
+		//std::cout <<"Iniciando contruccion." <<std::endl;
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
+                        //std::cout <<"Creando conector." <<std::endl;
 			connector = new octetos::toolkit::clientdb::mysql::Connector();
 			try
 			{
@@ -61,20 +65,19 @@ namespace apidb
 				if(!flag)
 				{
 					delete connector;
-					delete analyzer;
 					connector = NULL;
-					analyzer = NULL;
 				}
 			}
 			catch(octetos::toolkit::clientdb::SQLException ex)
 			{				
-				//analyzer->getErrorMessage() <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
+				std::cout <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
 			}
 		}
 		else
 		{
-			//analyzer->getErrorMessage() <<"Lenguaje de entrada desconocido."<<std::endl;
+			std::cout <<"Lenguaje de entrada desconocido."<<std::endl;
 		}	
+		//std::cout <<"Objeto contruido" <<std::endl;
 	}
 		
 	OutputLenguajes Driver::getOutputLenguaje() const
@@ -169,7 +172,16 @@ namespace apidb
 	{
                 if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
                 {
-			analyzer = new mysql::Analyzer(configureProject,connector);		
+			if(analyzer != NULL)
+                        {
+                                delete analyzer;
+                                analyzer = NULL;
+                                analyzer = new mysql::Analyzer(configureProject,connector);		
+                        }
+                        else
+                        {
+                                analyzer = new mysql::Analyzer(configureProject,connector);
+                        }
                 }
                 
 		if(log)analyzer->getOutputMessage() << "Analisis de codigo..." << std::endl;

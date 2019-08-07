@@ -136,7 +136,7 @@ void testCreateProject()
 void testBuild_nlst()
 {
         octetos::apidb::ConfigureProject config;     
-        config.mvc =octetos::apidb::MVC::GTK3;
+        //config.mvc =octetos::apidb::MVC::GTK3;
         if(!config.readConfig(filename_nlst))
         {
                 if(octetos::toolkit::Error::check())
@@ -172,7 +172,8 @@ void testBuild()
                 return;
         }
         octetos::apidb::Driver driver(config);
-       if(!driver.driving(false))
+        //std::cout <<"Objto construido 2." <<std::endl;
+        if(!driver.driving(false))
         {
                 if(octetos::toolkit::Error::check())
                 {

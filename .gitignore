@@ -130,4 +130,10 @@ src/mysql-reader-c++/.travis.yml
 src/mysql-reader-c++/Makefile
 src/mysql-reader-c++/README.md
 src/mysql-reader-c++/main.cpp
+src/doc
+src/build/_CPack_Packages
+src/build/apidb.png
+src/build/apidb/*.apidb
+src/build/CMakeDoxy*
+src/build/octetos-apidb.desktop
 
