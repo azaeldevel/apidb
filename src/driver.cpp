@@ -200,6 +200,8 @@ namespace apidb
 	
 	bool Driver::generate(bool log)
 	{		
+                std::cout <<"\u001b[31;1m" << "\nAdvertencia: Driver::generate(bool log) esta marcada como obsoleta yserá removida a apartir de v2.\n Use Driver::analyze(toolkit::ActivityProgress* progress) en su lugar.\n" << "\u001b[0m";
+                
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
 			
@@ -326,7 +328,7 @@ namespace apidb
                 
                 if(configureProject.mvc != MVC::NO)
                 {
-                        std::cout <<"\u001b[31;1m" << "Advertencia: la opcion MVC(ConfigureProject::mvc) esta marcada como obsoleta será removida a apartir de v2\n" << "\u001b[0m";
+                        std::cout <<"\u001b[31;1m" << "\nAdvertencia: la opcion MVC(ConfigureProject::mvc) esta marcada como obsoleta será removida a apartir de v2\n" << "\u001b[0m";
                 }
 		
 		if(analyzer->analyze(log)) //reading tables
