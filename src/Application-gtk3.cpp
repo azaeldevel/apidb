@@ -54,7 +54,7 @@ namespace apidb
                         {
                                 for(std::list<symbols::Table*>::iterator itT = (*it).second->begin(); itT != (*it).second->end(); itT++)
                                 {
-                                        if((*itT)->name.compare(table) == 0)
+                                        if((*itT)->getName().compare(table) == 0)
                                         {
                                                 for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::iterator itP = (*itT)->begin(); itP != (*itT)->end(); itP++)
                                                 {
@@ -136,7 +136,7 @@ namespace apidb
                         {
                                 for(std::list<symbols::Table*>::iterator itJ = (*it).second->begin(); itJ != (*it).second->end(); itJ++)
                                 {
-                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*itJ)->fullname.c_str(),(*itJ)->fullname.c_str());        
+                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*itJ)->getFullName().c_str(),(*itJ)->getFullName().c_str());        
                                         i++;
                                 }
                         }

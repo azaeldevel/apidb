@@ -26,7 +26,7 @@ namespace mysql
                         //for(apidb::symbols::Table* table : *AttSpace) //reading attrubtes by table
                         for(std::list<symbols::Table*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
                         {
-                                if(log)  *outputMessages << "\tCreating basic simbols for " << (*itTb)->name  << "." << std::endl;
+                                if(log)  *outputMessages << "\tCreating basic simbols for " << (*itTb)->getName()  << "." << std::endl;
                                 //simbolos basicos 
                                 if(!(*itTb)->basicSymbols(*connector))
                                 {

@@ -34,6 +34,7 @@ namespace octetos
 {
 namespace apidb
 {
+        class Analyzer;
         namespace mysql
         {
                 class Analyzer;
@@ -156,45 +157,46 @@ namespace apidb
 			
 					
 			/**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
-                        std::string inType;                        
+                        std::string inType;      
 			/**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
-                        std::string name;                         
+                        std::string name;   
 			/**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
-                        std::string get;                    
+                        std::string get;       
 			/**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
-			std::string upperName;                    
+			std::string upperName;       
 			/**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
-			bool required;                    
+			bool required;             
 			/**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
-                        KeyType keyType;                    
+                        KeyType keyType;      
 			/**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
-                        Table* classReferenced;                    
+                        Table* classReferenced;  
 			/**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
-                        Table* classParent;                    
+                        Table* classParent;    
 			/**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
-                        std::string outType;                     
+                        std::string outType;         
 			/**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
                         Symbol* symbolReferenced;   
+                        
                         
 			/**
                          * \brief Indica si el compo es un llave primaria
@@ -218,12 +220,34 @@ namespace apidb
                          * */
                         int getID()const;
                 
+                        /**
+                         * \brief Retorna el nombre del campo.
+                         * */
                         const std::string& getName()const;
+                        /**
+                         * \brief Retorna el nombre del campo decorado con mayusculas.
+                         * */
                         const std::string& getUpperName()const;
+                        /**
+                         * \brief Retorna el nombre del metodo get para el campo.
+                         * */
                         const std::string& getGet()const;
+                        /**
+                         * \brief Retorna el tipo de dato correspodiente a el lenguaje resultado.
+                         * \details Por ejemplo, generará int si en la base de datos el campo es entero y el lenguaje resultado es C++ o C.
+                         * */
                         const std::string& getOutType()const;
+                        /**
+                         * \brief Tabla referenciada por el campo(En el caso de las llaves foraneas).
+                         * */
                         const Table* getClassReferenced()const;
+                        /**
+                         * \brief Tabla contenedora del campo
+                         * */
                         const Table* getClassParent()const;
+                        /**
+                         * \brief Campo referenciado por este campo(En el caso de las llaves foraneas).
+                         * */
                         const Symbol* getSymbolReferenced()const;
                         
                 private:
@@ -246,40 +270,36 @@ namespace apidb
 		 **/
 		struct Table : public std::map<const char*,Symbol*,cmp_str>
 		{
+                        friend class octetos::apidb::Analyzer;
+                        friend class octetos::apidb::mysql::Analyzer;
+                        
+                //private:
                         /**
                          * \brief Nombre de la tabla
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
 			std::string name;
                         /**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
                         std::string upperName;
                         /**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
                         Key key;
                         /**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
                         std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
                         /**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
                         std::string space;
                         /**
-                         * \private
+                         * \private Este miembro sera convertido en privado en v2
                          * */
                         std::string fullname;
                         
-                        /**
-                         * \brief Simplemete crea el obejto con valores limpios
-                         * */
-                        Table();
-                        /**
-                         * \brief Libera la memoroa del Objeto.
-                         * */
-                        ~Table();
                         /**
                          * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
                          * */
@@ -291,13 +311,26 @@ namespace apidb
                         /**
                          * \brief Cuanta la cantidad de hay hacia tabla.
                          * */
+                //public:
                         short getCountRefereces() const; 
                         //std::list<Symbol*>::iterator search(const std::string&);
                         /**
                          * \brief Retorna el nombre de la tabla.
                          * */
+                        /**
+                         * \brief Simplemete crea el obejto con valores limpios
+                         * */
+                        Table(const std::string& );
+                        /**
+                         * \brief Libera la memoroa del Objeto.
+                         * */
+                        ~Table();
                         const std::string& getName()const;                          
-                        const std::string& getUpperName()const;
+                        const std::string& getUpperName()const;           
+                        const std::list<Symbol*>& getRequired()const;           
+                        const std::string& getSpace()const;           
+                        const std::string& getFullName()const;   
+                        const Key& getKey()const;
 		private:
 			short countRef;
 		};
@@ -335,6 +368,7 @@ namespace apidb
                          * */
                         Space(const std::string name);
                         
+                //private:                        
                         /**
                          * \brief Nombre del espacio.
                          * \private Este campo sera convertir en privado en v2. Use getName en su lugar.

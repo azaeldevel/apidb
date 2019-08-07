@@ -253,10 +253,10 @@ namespace apidb
 			return countRef;
 		}
 		
-		Table::Table()
+		Table::Table(const std::string& name)
 		{
 			countRef = 0;
-			//key = NULL;
+			this->name = name;
 		}
 		
 		Table::~Table()
@@ -271,15 +271,31 @@ namespace apidb
                 {
                         return name;
                 }
+                const std::list<Symbol*>& Table::getRequired()const  
+                {
+                        return required;
+                }
+                const std::string& Table::getSpace()const           
+                {
+                        return space;
+                }
+                const std::string& Table::getFullName()const   
+                {
+                        return fullname;
+                }
+		const Key& Table::getKey()const
+		{
+                        return key;
+                }
+		
+		
 		
 		
 		            
                const std::string& Space::getName()const
                 {
                         return name;
-                }
-		
-		
+                }		
 		Space::~Space()
 		{
 			for (Table* table : *this)
@@ -296,7 +312,7 @@ namespace apidb
 			
 			while (actual != last) 
 			{
-				if ((*actual)->name.compare(tableName) == 0) return (symbols::Table*)(*actual);
+				if ((*actual)->getName().compare(tableName) == 0) return (symbols::Table*)(*actual);
 				++actual;
 			}
 			return NULL;
@@ -308,7 +324,7 @@ namespace apidb
 			
 			while (actual != last) 
 			{
-				if ((*actual)->name.compare(tableName) == 0) return actual;
+				if ((*actual)->getName().compare(tableName) == 0) return actual;
 				++actual;
 			}
 			return last;

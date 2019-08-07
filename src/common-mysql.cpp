@@ -219,8 +219,8 @@ namespace apidb
 			MYSQL_ROW row;
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
-				symbols::Table* prw = new symbols::Table();
-				prw->name = symbols::getSpaceName(row[0]);
+				symbols::Table* prw = new symbols::Table(symbols::getSpaceName(row[0]));
+				//prw->name = symbols::getSpaceName(row[0]);
                                 //prw->shortname = getTableName(row[0]);
                                 std::string upper = row[0];
                                 upper[0] = toupper(upper[0]);
