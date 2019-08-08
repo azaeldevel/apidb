@@ -114,7 +114,9 @@ namespace apidb
                 
                 TreeView* getDownloadTreeView();
                 TreeView* getSelectTreeView();
-                                
+                
+                void setSaved(bool);
+                
         private:                
                 void createWindow();
                 void createNotebookInfo(GtkWidget *boxInfo);
@@ -146,8 +148,8 @@ namespace apidb
                 static gboolean conex_lostfocus (GtkWidget *widget, GdkEvent  *event,  gpointer   user_data);
                 static void conex_switchPage (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer     user_data);
                 static void application_destroy (GtkWidget *object, gpointer   user_data);
-                
-        private:
+                bool downConf();
+                       
                 GtkWidget *window;
                 GtkWidget *vboxMain;
                 GtkWidget *toolbar;
@@ -190,11 +192,17 @@ namespace apidb
                 //seccion de Informacion
                 static const char* titleInfo;
                 GtkWidget *inName;
+                bool inNameEdited;
                 GtkWidget *inVer;
+                bool inVerEdited;
                 GtkWidget *inInL;
+                bool inInLEdited;
                 GtkWidget *inOutL;
+                bool inOutLEdited;
                 GtkWidget *inPkL;
-                GtkWidget *inCmpl;                
+                bool inPkLEdited;
+                GtkWidget *inCmpl;            
+                bool inCmplEdited;
                 GtkWidget *inFileChooserBuildDirectory;
                 GtkWidget *dlgBuildDirectory;
                 GtkFileChooser *chooser_BuilDirectory;
@@ -202,15 +210,15 @@ namespace apidb
                 static const char* titleConex;
                 bool conexEdited;
                 GtkWidget *inLoc;
-                bool locEdited;
+                bool inLocEdited;
                 GtkWidget *inPort;
-                bool portEdited;
+                bool inPortEdited;
                 GtkWidget *inDB;
-                bool dbEdited;
+                bool inDBEdited;
                 GtkWidget *inUser;
-                bool userEdited;
+                bool inUserEdited;
                 GtkWidget *inPw;
-                bool pwEdited;
+                bool inPwEdited;
                 //Descargas
                 static const char* titleDowns;
                 GtkWidget *boxDowns;
@@ -227,8 +235,9 @@ namespace apidb
                 //
                 bool isSaved;
                 bool isOpen;
+                bool isNew;
                 std::string originFilename;
-                void setSaved(bool);
+                
         };
 }
 }

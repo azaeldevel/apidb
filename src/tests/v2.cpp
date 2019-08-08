@@ -136,7 +136,7 @@ void testCreateProject()
 void testBuild_nlst()
 {
         octetos::apidb::ConfigureProject config;     
-        config.mvc =octetos::apidb::MVC::GTK3;
+        //config.mvc =octetos::apidb::MVC::GTK3;
         if(!config.readConfig(filename_nlst))
         {
                 if(octetos::toolkit::Error::check())

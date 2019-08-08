@@ -736,30 +736,12 @@ namespace generators
         
     void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"namespace "<< configureProject.name << std::endl;
-			file <<"{"<<std::endl;
-		}
-		else 
-		{
-			file <<"namespace "<< configureProject.name << std::endl;
-			file <<"{" <<std::endl;
-			file <<"namespace  controller" <<std::endl;
-			file <<"{" <<std::endl;
-		}
+                file <<"namespace "<< configureProject.name << std::endl;
+                file <<"{"<<std::endl;
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \"`"<<  cl.getFullName() << "`\";" << std::endl;
 		createClassMethodesCPP(cl,file);        
 		file<< std::endl<< std::endl;
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"}"<<std::endl;
-		}
-		else 
-		{
-			file <<"}" <<std::endl;
-			file <<"}" <<std::endl;
-		}
+                file <<"}"<<std::endl;
     }
     void CPP::createSpaceCPP(std::ofstream& file)
     {
@@ -1044,18 +1026,6 @@ namespace generators
     }
     void CPP::createSpaceH(std::ofstream& file,bool log)
     {
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"namespace "<< configureProject.name <<std::endl;
-			file <<"{"<<std::endl;
-		}
-		else if(configureProject.mvc != apidb::MVC::NO)
-		{
-			file <<"namespace "<< configureProject.name <<std::endl;
-			file <<"{" <<std::endl;
-			file <<"namespace  controller" <<std::endl;
-			file <<"{" <<std::endl;
-		}
                 file <<"namespace "<< configureProject.name <<std::endl;
                 file <<"{"<<std::endl;
                 const std::map<const char*,symbols::Space*,symbols::cmp_str> spacies = analyzer.getListTableConst();
@@ -1106,15 +1076,6 @@ namespace generators
                                 file << "\t}" << std::endl;
                         }
                 }
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"}"<<std::endl;
-		}
-		else  if(configureProject.mvc != apidb::MVC::NO)
-		{
-			file <<"}" <<std::endl;
-			file <<"}" <<std::endl;
-		}
                 file <<"}"<<std::endl;
     }
     

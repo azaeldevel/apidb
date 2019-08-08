@@ -282,15 +282,9 @@ namespace apidb
                         toolkit::Confirmation conf1("Analisis de codigo...");
                         progress->add(conf1);
                         std::string msg ="\tLenguaje de entrada: " ;
-                        msg+= getInputLenguajeString(configureProject.inputLenguaje);
+                        msg+= getInputLenguaje(configureProject.inputLenguaje);
                         toolkit::Confirmation conf2(msg);
                         progress->add(conf2);
-                        if(configureProject.mvc != MVC::NO and ENABLE_DEVEL_WARNING)
-                        {
-                                std::string msgW = "Advertencia: la opcion MVC(ConfigureProject::mvc) esta marcada como obsoleta será removida a apartir de v2.\n";
-                                toolkit::Warning war1(msgW);
-                                progress->add(war1);
-                        }
                 }
 		
 		if(!analyzer->analyze(progress)) //reading tables

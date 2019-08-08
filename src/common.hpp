@@ -50,46 +50,46 @@ namespace apidb
         }
         
         typedef octetos::toolkit::clientdb::Datconnect::ServerType InputLenguajes;
-	std::string getInputLenguajeString(InputLenguajes);	
+	std::string getInputLenguaje(InputLenguajes);	
+        InputLenguajes getInputLenguaje(const std::string&);	
         
         /**
          * \brief Identifica los gentores de paquetes disponibles.
          * */
         enum PackingLenguajes
         {
-                CMake = 1
+                NoPack,
+                CMake
         };
+        std::string getPackingLenguajes(PackingLenguajes);
+        PackingLenguajes getPackingLenguajes(const std::string&);
         /**
          * \brief Identicia los posibles lenguajes del codigo generado.
          * */
 	enum OutputLenguajes
 	{
-		CPP=1,
-                C
+                NoLang,
+                C,
+		CPP
 		//JAVA,
 		//CSHARP,
 		//PERL,
 		//PYTHON
 	};
-	/**
-         * \deprecated Sera removide en v2 y no es estable ahora. 
-         * */
-	enum MVC
-	{
-		NO = 1,
-		//X,
-		GTK2,
-		GTK3
-		//WIN32
-	};
+        std::string getOutputLenguajes(OutputLenguajes);
+        OutputLenguajes getOutputLenguajes(const std::string&);
+        
         /**
          * \brief Distinge entre librerias estaticas y dinamicas para generar.
          * */
         enum Compiled
         {
-                STATIC = 1,
+                NoCompile,
+                STATIC,
                 SHARED
         };
+        std::string getCompiled(Compiled);
+        Compiled getCompiled(const std::string&);
         
         /**
          * \brief Clase de manejo de errores.
@@ -115,7 +115,7 @@ namespace apidb
 	};
     
         /**
-         * \brief Estructura de datos para contruir la tabla de simbolos
+         * \brief Estructura de datos para construir la tabla de simbolos
          * */
 	namespace symbols
 	{
@@ -155,43 +155,43 @@ namespace apidb
 			};
                 private:
 			/**
-                         * \private Este miembro sera convertido en privado en v2
+                         * \brief Tipo de dato en Bd para el campo
                          * */
                         std::string inType;      
 			/**
-                         * \private Este miembro sera convertido en privado en v2
+                         * \brief Nombre del campo en BD
                          * */
                         std::string name;   
 			/**
-                         * \private Este miembro sera convertido en privado en v2
+                         * \brief Nombre del metodo get para leer el campo
                          * */
                         std::string get;       
 			/**
-                         * \private Este miembro sera convertido en privado en v2
+                         * \brief Nombre del campo decorado con mayusculas
                          * */
 			std::string upperName;       
 			/**
-                         * \private Este miembro sera convertido en privado en v2
+                         * \brief Determina si es campo es requierido
                          * */
 			bool required;             
 			/**
-                         * \private Este miembro sera convertido en privado en v2
+                         * \brief Tipo de llave
                          * */
                         KeyType keyType;      
 			/**
-                         * \private Este miembro sera convertido en privado en v2
+                         * \brief Puntero hacia la tabla referido por el campo en el caso de llaves foraneas.
                          * */
                         Table* classReferenced;  
 			/**
-                         * \private Este miembro sera convertido en privado en v2
+                         * \brief Clase contenedora del campo.
                          * */
                         Table* classParent;    
 			/**
-                         * \private Este miembro sera convertido en privado en v2
+                         * \brief Tipo de dato en el lenguaje resultado
                          * */
                         std::string outType;         
 			/**
-                         * \private Este miembro sera convertido en privado en v2
+                         * \brief Puntero al campo referido en el caso de campo foraneos.
                          * */
                         Symbol* symbolReferenced;   
                         
@@ -277,18 +277,23 @@ namespace apidb
                          * */
 			std::string name;
                         /**
+                         * \brief Nombre de la tabla decorado con mayusculas
                          * */
                         std::string upperName;
                         /**
+                         * \brief LLave de la tabla
                          * */
                         Key key;
                         /**
+                         * Lista los campos requerido(para uso de insert)
                          * */
                         std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
                         /**
+                         * \brief Nombre del spacio si lo tiene
                          * */
                         std::string space;
                         /**
+                         * \brief Nombre completa de la tabla
                          * */
                         std::string fullname;                        
                         /**

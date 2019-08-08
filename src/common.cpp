@@ -74,18 +74,97 @@ namespace apidb
         {
 	}
                
-        	
-	std::string getInputLenguajeString(InputLenguajes inputLenguaje )
+	std::string getCompiled(Compiled cmpl )
 	{
-		switch(inputLenguaje)
+		switch(cmpl)
 		{
-			case InputLenguajes::MySQL:
-				return "Servidor MySQL";
+                        case Compiled::SHARED:
+				return "SHARED";
+                        case Compiled::STATIC:
+				return "STATIC";
 			default:
 				return "Unknow";
 		}
 	}
-	
+	Compiled getCompiled(const std::string& str)
+        {
+                if(str.compare("static") == 0 or str.compare("STATIC") == 0)
+                {
+                        return Compiled::STATIC;
+                }
+                else if(str.compare("shared") == 0 or str.compare("SHARED") == 0)
+                {
+                        return Compiled::SHARED;
+                }                
+                
+                return Compiled::NoCompile;
+        }
+               
+	std::string getPackingLenguajes(PackingLenguajes pack )
+	{
+		switch(pack)
+		{
+                        case PackingLenguajes::CMake:
+				return "CMake";
+			default:
+				return "Unknow";
+		}
+	}
+	PackingLenguajes getPackingLenguajes(const std::string& str)
+        {
+                if(str.compare("cmake") == 0 or str.compare("CMake") == 0)
+                {
+                        return PackingLenguajes::CMake;
+                }
+                
+                return PackingLenguajes::NoPack;
+        }
+               
+	std::string getOutputLenguajes(OutputLenguajes o )
+	{
+		switch(o)
+		{
+                        case OutputLenguajes::CPP:
+				return "C++";
+                        case OutputLenguajes::C:
+				return "C";
+			default:
+				return "Unknow";
+		}
+	}
+	OutputLenguajes getOutputLenguajes(const std::string& str)
+        {
+                if(str.compare("c++") == 0 or str.compare("C++") == 0)
+                {
+                        return OutputLenguajes::CPP;
+                }
+                else if(str.compare("c") == 0 or str.compare("C") == 0)
+                {
+                        return OutputLenguajes::C;
+                }
+                
+                return OutputLenguajes::NoLang;
+        }
+        
+	std::string getInputLenguaje(InputLenguajes inputLenguaje )
+	{
+		switch(inputLenguaje)
+		{
+			case InputLenguajes::MySQL:
+				return "MySQL";
+			default:
+				return "Unknow";
+		}
+	}
+	InputLenguajes getInputLenguaje(const std::string& str)
+        {
+                if(str.compare("mysql") == 0 or str.compare("MySQL") == 0)
+                {
+                        return InputLenguajes::MySQL;
+                }
+                
+                return InputLenguajes::Unknow;
+        }
     
     
         namespace symbols

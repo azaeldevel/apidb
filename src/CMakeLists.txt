@@ -108,7 +108,7 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}-gtk3 ${LIBRARIES} ${LIBREADER} )
 
 execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb.png" --export-width 256)
 
-IF(NOT Doxygen_FOUND)
+IF(Doxygen_FOUND)
 add_custom_target(
         doc ALL
         COMMAND ${DOXYGEN_EXECUTABLE} "${PROJECT_SOURCE_DIR}/${doxyfile_in}"

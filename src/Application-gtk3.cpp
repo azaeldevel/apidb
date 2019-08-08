@@ -245,6 +245,7 @@ namespace apidb
                                                 ConfigureProject::Table* ptb =  new ConfigureProject::Table(capT.getSelectTable());
                                                 wgTree->list->insert(std::make_pair(ptb->getName().c_str(),ptb));
                                                 wgTree->fill();
+                                                wgTree->getApplication()->setSaved(false);
                                         }
                                 }
                                 break;
@@ -269,6 +270,7 @@ namespace apidb
                                                         if(flag)
                                                         {
                                                                 newF->addParam(capParams.getSelectParam());
+                                                                wgTree->getApplication()->setSaved(false);
                                                         }
                                                         else
                                                         {
@@ -365,6 +367,244 @@ namespace apidb
         }
         
 
+        
+        bool Application::downConf()
+        {
+                if(isSaved and !isOpen) return true;
+                
+                if(inNameEdited)
+                {
+                        std::string name = gtk_entry_get_text(GTK_ENTRY(inName));
+                        if(name.empty())
+                        {
+                                        GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "El nombre del proyecto no puede estar vacio",
+                                                                        "Error", g_strerror (errno));
+                                        gtk_dialog_run (GTK_DIALOG (msg));                                
+                                return false;
+                        }
+                        config->name = name;
+                }
+                if(inInLEdited)
+                {
+                        int innIn = gtk_combo_box_get_active(GTK_COMBO_BOX(inInL));
+                        if(innIn == 0)
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Selecione un lenguajde de entrada(MySQL por ejemplo) en la sección de información",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                return false;
+                        }
+                        config->inputLenguaje = getInputLenguaje(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inInL)));
+                }
+                if(inOutLEdited)
+                {
+                        int intout = gtk_combo_box_get_active(GTK_COMBO_BOX(inOutL));
+                        if(intout == 0)
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Selecione un lenguajde de salida(C++ por ejemplo) en la sección de información",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                return false;
+                        }
+                        config->outputLenguaje =  getOutputLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inOutL)));
+                }
+                if(inVerEdited)
+                {
+                        std::string verstr = gtk_entry_get_text(GTK_ENTRY(inVer));
+                        if(!config->version.fromString(verstr))
+                        {                                       
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Fallo la lectura del la version, el formato aceptable es 'x.y.z'",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                return false;
+                        }                                
+                }
+                if(inPkLEdited)
+                {
+                        int intpkl = gtk_combo_box_get_active(GTK_COMBO_BOX(inPkL));
+                        if(intpkl == 0)
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Selecione un opción de empaquetado en la seccion de información.",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                return false;
+                                
+                        }
+                        config->packing = getPackingLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inPkL)));
+                }
+                if(inCmplEdited)
+                {
+                        int intcmpl = gtk_combo_box_get_active(GTK_COMBO_BOX(inCmpl));
+                        if(intcmpl == 0)
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Selecione un opción de empaquetado en la seccion de información.",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                return false;
+                                
+                        }
+                        config->compiled = getCompiled(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inCmpl)));
+                }
+                
+                
+                if(config->conectordb == NULL)
+                {
+                        if(config->inputLenguaje == InputLenguajes::MySQL)
+                        {
+                                        config->conectordb = new toolkit::clientdb::mysql::Datconnect();
+                        }
+                        else
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Indique primero el lenguaje de la Base de Datos",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));   
+                                return false;
+                        }
+                }
+                if(inLocEdited)
+                {
+                        std::string loc = gtk_entry_get_text(GTK_ENTRY(inLoc));
+                        if(loc.empty())
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Indique la direcion del host o sitio web en la seccion de Conexión.",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                return false;
+                        }
+                        if(toolkit::clientdb::Connector::is_ipv4_address(loc))
+                        {
+                                config->conectordb->setHost(loc);                                
+                        }
+                        else if(toolkit::clientdb::Connector::is_ipv6_address(loc))
+                        {
+                                config->conectordb->setHost(loc);    
+                        }
+                        else if(toolkit::clientdb::Connector::is_valid_domain_name(loc))
+                        {
+                                config->conectordb->setHost(loc);    
+                        }
+                        else
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_WARNING,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "La dirección indica no parece ser validad, quiza tendrá que corregirlo despues.",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));  
+                        }
+                }
+                if(inPortEdited)
+                {
+                        std::string strport = gtk_entry_get_text(GTK_ENTRY(inPort));
+                        if(strport.empty())
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Indique el número de puerto.",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                return false;
+                        }
+                        unsigned int intport = std::stoi(strport.c_str());
+                        if(intport < 1)
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "El número de puesto deve er un entero positivo.",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                return false;
+                        }
+                        config->conectordb->setPort(intport);
+                }
+                if(inDBEdited)
+                {
+                        std::string strdb = gtk_entry_get_text(GTK_ENTRY(inDB));
+                        if(strdb.empty())
+                        {                                
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Indique una base de datos.",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                return false;
+                        }
+                        config->conectordb->setDatabase(strdb);
+                }
+                if(inUserEdited)
+                {
+                        std::string struser = gtk_entry_get_text(GTK_ENTRY(inUser));
+                        if(struser.empty())
+                        {                                
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Indique un nombre de usuario para la Base de Datos.",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                return false;
+                        }
+                        config->conectordb->setUser(struser);
+                }
+                if(inPwEdited)
+                {
+                        std::string strpw = gtk_entry_get_text(GTK_ENTRY(inPw));   
+                        if(strpw.empty())
+                        {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_WARNING,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Dejo vacio el campo de contraseña.",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));   
+                        }
+                        config->conectordb->setPassword(strpw);
+                }
+                
+                
+                return true;
+        }
         void Application::build(GtkWidget *widget, gpointer data) 
         {
                 Application* app = (Application*)data;
@@ -453,6 +693,11 @@ namespace apidb
                         return;
                 }
                                
+                if(!app->downConf())
+                {
+                        //ocurrio un error en downConf, ya se presento el mensaje al usuario simpleme termina esta llama.
+                        return;
+                }
                 GtkWidget *dialog;
                 GtkFileChooser *chooser;
                 GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
@@ -476,6 +721,7 @@ namespace apidb
                         filename = gtk_file_chooser_get_filename (chooser);
                         app->config->saveConfig(filename);
                         app->isOpen = true;
+                        app->isNew = false;
                         app->setSaved(true);
                         g_free (filename);
                 }
@@ -528,9 +774,30 @@ namespace apidb
                         return;
                 }
                 
-                if(app->originFilename.size() > 0) //si fue cargado simplemete usa el mismo archivo
+                if(!app->originFilename.empty() and !app->isNew) //si fue cargado simplemete usa el mismo archivo
                 {
-                        //std::cout << "Guardando en '" << app->originFilename << "'" << std::endl;
+                        //escribir en la estura de configuracion del proyecto.
+                        if(!app->downConf())
+                        {
+                                std::string msgstr;
+                                if(toolkit::Error::check())
+                                {
+                                        msgstr = toolkit::Error::get().what();
+                                }
+                                else
+                                {
+                                        msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
+                                }
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_ERROR,
+                                                                GTK_BUTTONS_CLOSE,
+                                                                msgstr.c_str(),
+                                                                "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg));
+                                return;
+                        }
+                        //Guarda los datos en disco
                         if(!app->config->saveConfig(app->originFilename))
                         {
                                 std::string msgstr;
@@ -555,10 +822,14 @@ namespace apidb
                         app->setSaved(true);
                         return;
                 }
-                
-                std::cout << "Llamando a Gaurdar como" << std::endl;
-                
-               document_saveas(widget,data);             
+                else if(app->isNew)//ya se sabe que no fue cargado desde el disco
+                {
+                        document_saveas(widget,data);                          
+                }
+                else
+                {
+                        //????????
+                }
         }
         void Application::document_new(GtkWidget *widget, gpointer data) 
         {
@@ -576,6 +847,7 @@ namespace apidb
                 app->config = new ConfigureProject();
                 app->createNotebook();
                 app->isOpen = true;
+                app->isNew = true;
                 app->setSaved(false);
                 app->originFilename = "";
                 gtk_widget_show_all (app->window); 
@@ -769,11 +1041,18 @@ namespace apidb
                 config = NULL;
                 driver = NULL;
                 conexEdited = false;
-                locEdited = false;
-                portEdited = false;
-                dbEdited = false;
-                userEdited = false;
-                pwEdited = false;
+                inLocEdited = false;
+                inPortEdited = false;
+                inDBEdited = false;
+                inUserEdited = false;
+                inPwEdited = false;
+                inNameEdited = false;
+                inVerEdited = false;
+                inInLEdited = false;
+                inOutLEdited=false;
+                inPkLEdited = false;
+                inCmplEdited = false;
+                isNew = false;
         }    
         void Application::loadConfig()
         {
@@ -902,6 +1181,7 @@ namespace apidb
                         app->loadConfig();
                         app->setSaved(true);
                         app->isOpen = true;
+                        app->isNew = false;
                         gtk_widget_show_all (app->window); 
                         //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
                         g_free (filename);
@@ -916,25 +1196,11 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
+                //if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
                 {                        
                         if(app->config != NULL)
                         {
-                                std::string verstr = gtk_entry_get_text((GtkEntry *)widget);
-                                toolkit::Version version;
-                                if(!version.fromString(verstr))
-                                {                                       
-                                        GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                        GTK_MESSAGE_ERROR,
-                                                                        GTK_BUTTONS_CLOSE,
-                                                                        "La cedena espcifica no comple con los criterios necesario para ser una cadena de Version.",
-                                                                        "Error", g_strerror (errno));
-                                        gtk_dialog_run (GTK_DIALOG (msg));
-                                        return true; 
-                                }
-                                app->config->version = version;
-                                //std::cout << "Version: " << version.toString() << std::endl;
+                                app->inVerEdited = true;
                                 if(app->isSaved)app->setSaved(false);
                         }
                         else if(!app->isOpen)
@@ -948,23 +1214,20 @@ namespace apidb
                                 gtk_dialog_run (GTK_DIALOG (msg));
                                 return true;
                         }
-                        return TRUE;
                 }
                 return FALSE;
         }
         gboolean Application::inName_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)
         {
                 Application* app = (Application*)user_data;
-                
-                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
-                {                        
-                        if(app->config != NULL)
-                        {
-                                app->config->name = gtk_entry_get_text((GtkEntry *)widget);
+                 
+                if(app->config != NULL)
+                {
+                                app->inNameEdited = true;
                                 if(app->isSaved)app->setSaved(false);
-                        }
-                        else if(!app->isOpen)
-                        {
+                }
+                else if(!app->isOpen)
+                {
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                         GTK_MESSAGE_ERROR,
@@ -972,10 +1235,8 @@ namespace apidb
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
                                 gtk_dialog_run (GTK_DIALOG (msg));
-                                return true;
                 }
-                        return TRUE;
-                }
+                
                 return FALSE;
         }
         void Application::inInL_changed (GtkComboBox *widget, gpointer     user_data)
@@ -983,8 +1244,10 @@ namespace apidb
                 Application* app = (Application*) user_data;
                 if(app->config != NULL)
                 {
-                        InputLenguajes in = (InputLenguajes) gtk_combo_box_get_active(widget);
-                        app->config->inputLenguaje = in;
+                        std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
+                        std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
+                        app->inInLEdited = true;
+                        app->setSaved(false);
                 }
                 else if(!app->isOpen)
                 {
@@ -1003,8 +1266,10 @@ namespace apidb
                 Application* app = (Application*) user_data;
                 if(app->config != NULL)
                 {
-                        OutputLenguajes out = (OutputLenguajes) gtk_combo_box_get_active(widget);
-                        app->config->outputLenguaje = out;
+                        std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
+                        std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
+                        app->inOutLEdited = true;
+                        app->setSaved(false);
                 }
                 else if(!app->isOpen)
                 {
@@ -1023,8 +1288,10 @@ namespace apidb
                 Application* app = (Application*) user_data;
                 if(app->config != NULL)
                 {
-                        PackingLenguajes pack = (PackingLenguajes) gtk_combo_box_get_active(widget);
-                        app->config->packing = pack;
+                        std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
+                        std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
+                        app->inPkLEdited = true;
+                        app->setSaved(false);
                 }
                 else if(!app->isOpen)
                 {
@@ -1042,9 +1309,11 @@ namespace apidb
         {
                 Application* app = (Application*) user_data;
                 if(app->config != NULL)
-                {
-                        Compiled com = (Compiled) gtk_combo_box_get_active(widget);
-                        app->config->compiled = com;
+                {                        
+                        std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
+                        std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
+                        app->inCmplEdited = true;
+                        app->setSaved(false);
                 }
                 else if(!app->isOpen)
                 {
@@ -1093,7 +1362,7 @@ namespace apidb
                 inInL = gtk_combo_box_text_new();
                 gtk_combo_box_text_insert((GtkComboBoxText*)inInL,0,"selecione","Selecione..."); 
                 gtk_combo_box_set_active((GtkComboBox*)inInL,0);
-                gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,"mysql","MySQL");
+                gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,getInputLenguaje(InputLenguajes::MySQL).c_str(),getInputLenguaje(InputLenguajes::MySQL).c_str());
                 gtk_box_pack_start(GTK_BOX(boxInL), inInL, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxInL, FALSE, FALSE,0);
                 g_signal_connect(G_OBJECT(inInL), "changed", G_CALLBACK(inInL_changed), this);
@@ -1104,7 +1373,8 @@ namespace apidb
                 inOutL = gtk_combo_box_text_new();
                 gtk_combo_box_text_insert((GtkComboBoxText*)inOutL,0,"selecione","Selecione..."); 
                 gtk_combo_box_set_active((GtkComboBox*)inOutL,0);
-                gtk_combo_box_text_insert((GtkComboBoxText*)inOutL,OutputLenguajes::CPP,"c++","C++");
+                gtk_combo_box_text_insert((GtkComboBoxText*)inOutL,OutputLenguajes::C,getOutputLenguajes(OutputLenguajes::C).c_str(),getOutputLenguajes(OutputLenguajes::C).c_str());
+                gtk_combo_box_text_insert((GtkComboBoxText*)inOutL,OutputLenguajes::CPP,getOutputLenguajes(OutputLenguajes::CPP).c_str(),getOutputLenguajes(OutputLenguajes::CPP).c_str());
                 gtk_box_pack_start(GTK_BOX(boxOutL), inOutL, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxOutL, FALSE, FALSE,0);        
                 g_signal_connect(G_OBJECT(inOutL), "changed", G_CALLBACK(inOutL_changed), this);
@@ -1115,7 +1385,7 @@ namespace apidb
                 inPkL = gtk_combo_box_text_new();
                 gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,0,"selecione","Selecione..."); 
                 gtk_combo_box_set_active((GtkComboBox*)inPkL,0);
-                gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,PackingLenguajes::CMake,"cmake","CMake");
+                gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,PackingLenguajes::CMake,getPackingLenguajes(PackingLenguajes::CMake).c_str(),getPackingLenguajes(PackingLenguajes::CMake).c_str());
                 gtk_box_pack_start(GTK_BOX(boxPkL), inPkL, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxPkL, FALSE, FALSE,0);  
                 g_signal_connect(G_OBJECT(inPkL), "changed", G_CALLBACK(inPkL_changed), this);
@@ -1126,7 +1396,8 @@ namespace apidb
                 inCmpl = gtk_combo_box_text_new();
                 gtk_combo_box_text_insert((GtkComboBoxText*)inCmpl,0,"selecione","Selecione..."); 
                 gtk_combo_box_set_active((GtkComboBox*)inCmpl,0);
-                gtk_combo_box_text_insert((GtkComboBoxText*)inCmpl,Compiled::STATIC,"static","Estático");
+                gtk_combo_box_text_insert((GtkComboBoxText*)inCmpl,Compiled::STATIC,getCompiled(Compiled::STATIC).c_str(),getCompiled(Compiled::STATIC).c_str());
+                gtk_combo_box_text_insert((GtkComboBoxText*)inCmpl,Compiled::SHARED,getCompiled(Compiled::SHARED).c_str(),getCompiled(Compiled::SHARED).c_str());
                 gtk_box_pack_start(GTK_BOX(boxCmpl), inCmpl, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxCmpl, FALSE, FALSE,0);        
                 g_signal_connect(G_OBJECT(inCmpl), "changed", G_CALLBACK(inCmpl_changed), this);
@@ -1146,32 +1417,13 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
+                //if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
                 {                        
                         if(app->config != NULL)
-                        {
-                                if(app->config->conectordb == NULL)
-                                {
-                                        if(app->config->inputLenguaje == InputLenguajes::MySQL)
-                                        {
-                                                app->config->conectordb = new toolkit::clientdb::mysql::Datconnect();
-                                        }
-                                        else
-                                        {
-                                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                        GTK_MESSAGE_ERROR,
-                                                                        GTK_BUTTONS_CLOSE,
-                                                                        "Indique primero el lenguaje de la Base de Datos",
-                                                                        "Error", g_strerror (errno));
-                                                gtk_dialog_run (GTK_DIALOG (msg));                                                
-                                        }
-                                }
-                                std::string h = gtk_entry_get_text(GTK_ENTRY(widget));
-                                app->config->conectordb->setHost(h);
+                        {                               
                                 //std::cout << "Loc: " << app->config->conectordb->getHost() << std::endl;
                                 if(app->isSaved)app->setSaved(false);
-                                app->locEdited = true;
+                                app->inLocEdited = true;
                         }
                         else if(!app->isOpen)
                         {
@@ -1182,9 +1434,7 @@ namespace apidb
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
                                 gtk_dialog_run (GTK_DIALOG (msg));
-                                return FALSE;
                 }
-                        return TRUE;
                 }
                 return FALSE;
         }
@@ -1192,30 +1442,12 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return )
+                //if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return )
                 {                        
                         if(app->config != NULL)
                         {
-                                if(app->config->conectordb == NULL)
-                                {
-                                        if(app->config->inputLenguaje == InputLenguajes::MySQL)
-                                        {
-                                                app->config->conectordb = new toolkit::clientdb::mysql::Datconnect();
-                                        }
-                                        else
-                                        {
-                                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                        GTK_MESSAGE_ERROR,
-                                                                        GTK_BUTTONS_CLOSE,
-                                                                        "Indique primero el lenguaje de la Base de Datos",
-                                                                        "Error", g_strerror (errno));
-                                                gtk_dialog_run (GTK_DIALOG (msg));                                                
-                                        }
-                                }
-                                app->config->conectordb->setPort((unsigned int)atoi(gtk_entry_get_text((GtkEntry *)widget)));
                                 if(app->isSaved)app->setSaved(false);
-                                app->portEdited = true;
+                                app->inPortEdited = true;
                         }
                         else if(!app->isOpen)
                         {
@@ -1226,9 +1458,7 @@ namespace apidb
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
                                 gtk_dialog_run (GTK_DIALOG (msg));
-                                return FALSE;
                 }
-                        return TRUE;
                 }
                 return FALSE;
         }
@@ -1236,30 +1466,12 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return )
+                //if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return )
                 {                        
                         if(app->config != NULL)
-                        {
-                                if(app->config->conectordb == NULL)
-                                {
-                                        if(app->config->inputLenguaje == InputLenguajes::MySQL)
-                                        {
-                                                app->config->conectordb = new toolkit::clientdb::mysql::Datconnect();
-                                        }
-                                        else
-                                        {
-                                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                        GTK_MESSAGE_ERROR,
-                                                                        GTK_BUTTONS_CLOSE,
-                                                                        "Indique primero el lenguaje de la Base de Datos",
-                                                                        "Error", g_strerror (errno));
-                                                gtk_dialog_run (GTK_DIALOG (msg));                                                
-                                        }
-                                }
-                                app->config->conectordb->setDatabase(gtk_entry_get_text((GtkEntry *)widget));
+                        {                               
                                 if(app->isSaved)app->setSaved(false);
-                                app->dbEdited = true;
+                                app->inDBEdited = true;
                         }
                         else if(!app->isOpen)
                         {
@@ -1270,9 +1482,7 @@ namespace apidb
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
                                 gtk_dialog_run (GTK_DIALOG (msg));
-                                return FALSE;
                 }
-                        return TRUE;
                 }
                 return FALSE;
         }
@@ -1280,30 +1490,12 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
+                //if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
                 {                        
                         if(app->config != NULL)
-                        {
-                                if(app->config->conectordb == NULL)
-                                {
-                                        if(app->config->inputLenguaje == InputLenguajes::MySQL)
-                                        {
-                                                app->config->conectordb = new toolkit::clientdb::mysql::Datconnect();
-                                        }
-                                        else
-                                        {
-                                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                        GTK_MESSAGE_ERROR,
-                                                                        GTK_BUTTONS_CLOSE,
-                                                                        "Indique primero el lenguaje de la Base de Datos",
-                                                                        "Error", g_strerror (errno));
-                                                gtk_dialog_run (GTK_DIALOG (msg));                                                
-                                        }
-                                }
-                                app->config->conectordb->setUser(gtk_entry_get_text((GtkEntry *)widget));
+                        {                                
                                 if(app->isSaved)app->setSaved(false);
-                                app->userEdited = true;
+                                app->inUserEdited = true;
                         }
                         else if(!app->isOpen)
                         {
@@ -1314,9 +1506,7 @@ namespace apidb
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
                                 gtk_dialog_run (GTK_DIALOG (msg));
-                                return FALSE;
                 }
-                        return TRUE;
                 }
                 return FALSE;
         }
@@ -1324,30 +1514,12 @@ namespace apidb
         {
                 Application* app = (Application*)user_data;
                 
-                if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
+                //if (event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter || event->keyval ==GDK_KEY_Return)
                 {                        
                         if(app->config != NULL)
-                        {
-                                if(app->config->conectordb == NULL)
-                                {
-                                        if(app->config->inputLenguaje == InputLenguajes::MySQL)
-                                        {
-                                                app->config->conectordb = new toolkit::clientdb::mysql::Datconnect();
-                                        }
-                                        else
-                                        {
-                                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                        GTK_MESSAGE_ERROR,
-                                                                        GTK_BUTTONS_CLOSE,
-                                                                        "Indique primero el lenguaje de la Base de Datos",
-                                                                        "Error", g_strerror (errno));
-                                                gtk_dialog_run (GTK_DIALOG (msg));                                                
-                                        }
-                                }
-                                app->config->conectordb->setPassword(gtk_entry_get_text((GtkEntry *)widget));
+                        {                                
                                 if(app->isSaved)app->setSaved(false);
-                                app->pwEdited = true;
+                                app->inPwEdited = true;
                         }
                         else if(!app->isOpen)
                         {
@@ -1358,9 +1530,7 @@ namespace apidb
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
                                 gtk_dialog_run (GTK_DIALOG (msg));
-                                return FALSE;
                 }
-                        return TRUE;
                 }
                 return FALSE;
         }
@@ -1420,7 +1590,7 @@ namespace apidb
                 if(prePage == 1 and newPage != 1) //si estaba en la pagina de conexion
                 {
                         //std::cout << "Switch from " << prePage << " to " << page_num << std::endl;
-                        if(app->locEdited || app->portEdited || app->dbEdited || app->userEdited || app->pwEdited)
+                        if(app->inLocEdited || app->inPortEdited || app->inDBEdited || app->inUserEdited || app->inPwEdited)
                         {
                                 app->conexEdited = true;
                                 if(!app->isSaved) app->setSaved(false);

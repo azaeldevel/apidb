@@ -153,7 +153,6 @@ namespace apidb
         ConfigureProject::ConfigureProject()
         {
                 conectordb = NULL;
-                mvc = MVC::NO;
         }
     
         /*ConfigureProject::ConfigureProject(const ConfigureProject& configProy)
@@ -205,6 +204,9 @@ namespace apidb
                         case InputLenguajes::MySQL:
                                 xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"MySQL");
                                 break;
+                        default:
+                                toolkit::Error::write(toolkit::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
+                                return false;                                
                 }
                 
                 //
@@ -214,6 +216,12 @@ namespace apidb
                         case OutputLenguajes::CPP:
                                 xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"C++");
                                 break;
+                        case OutputLenguajes::C:
+                                xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"C");
+                                break;
+                        default:
+                                toolkit::Error::write(toolkit::Error("Lenguaje de salida desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
+                                return false;  
                 }
                 
                 //
@@ -223,6 +231,9 @@ namespace apidb
                         case PackingLenguajes::CMake:
                                 xmlNewChild(pk_node, NULL, (const xmlChar *)"name", (const xmlChar *)"CMake");
                                 break;
+                        default:
+                                toolkit::Error::write(toolkit::Error("Opcion de enpaquetado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
+                                return false;  
                 }
                 
                 //
@@ -232,6 +243,12 @@ namespace apidb
                         case Compiled::STATIC:
                                 xmlNewChild(cmpl_node, NULL, (const xmlChar *)"name", (const xmlChar *)"STATIC");
                                 break;
+                        case Compiled::SHARED:
+                                xmlNewChild(cmpl_node, NULL, (const xmlChar *)"name", (const xmlChar *)"SHARED");
+                                break;
+                        default:
+                                toolkit::Error::write(toolkit::Error("Opcion de compilado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
+                                return false;  
                 }
                 
                 //

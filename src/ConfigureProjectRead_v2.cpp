@@ -426,6 +426,11 @@ namespace apidb
                 {
                         outputLenguaje = OutputLenguajes::CPP;
                         //std::cout << "LANG = C++" <<  std::endl;
+                }     
+                else if(outL.compare("C") == 0)
+                {
+                        outputLenguaje = OutputLenguajes::C;
+                        //std::cout << "LANG = C++" <<  std::endl;
                 }
                 else
                 {
@@ -470,6 +475,10 @@ namespace apidb
                 if(cmpl.compare("STATIC") == 0)
                 {
                         compiled = Compiled::STATIC;
+                }
+                else if(cmpl.compare("SHARED") == 0)
+                {
+                        compiled = Compiled::SHARED;
                 }
                 else
                 {
