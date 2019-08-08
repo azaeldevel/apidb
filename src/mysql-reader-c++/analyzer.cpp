@@ -70,16 +70,10 @@ namespace mysql
 	}
 	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn,toolkit::ActivityProgress* p) : apidb::Analyzer(config,conn,p)
 	{
-		//outputMessages = &std::cout;	  
-		//errorMessages = &std::cerr; 
 	}
 	
 
 		
-	/*void Analyzer::message(const std::string& msg)
-	{
-		(*outputMessages)<<msg<<std::endl;
-	}*/
 	std::string Analyzer::parse(const std::string& line)
 	{
 		std::istringstream text(line);

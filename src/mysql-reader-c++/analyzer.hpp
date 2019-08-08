@@ -55,12 +55,13 @@ namespace mysql
             
             //Analyzer();
             Analyzer(const ConfigureProject&,octetos::toolkit::clientdb::Connector*,toolkit::ActivityProgress* progress);		
-            virtual ~Analyzer();         
-            
-            //void message(const std::string&);		
+            virtual ~Analyzer();         	
             std::ostream& print(std::ostream &stream);
             
-            //Don't use, is temporal: usada por parse para retorna sui resultado
+            /**
+             * \brief El parser coloca aqui su resultado.
+             * \private
+             * */
             std::string oneLine;
             
             

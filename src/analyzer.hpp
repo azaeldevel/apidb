@@ -35,35 +35,16 @@ namespace apidb
 	{
 	public:
                 /**
-                 * \deprecated La función de restreo y notificacion basadas en std::ostream será removidas en favor de  toolkit::ActivityProgress para la version 2
-                 * */
-		//virtual std::ostream& getOutputMessage();
-                /**
-                 * \deprecated La función de restreo y notificacion basadas en std::ostream será removidas en favor de  toolkit::ActivityProgress para la version 2
-                 * */
-		//virtual std::ostream& getErrorMessage();
-                /**
                  * \brief Realiza una llamada al parser interno que realiza el analisis de cadana pasada
                  * \private no llame directame solo es para el uso del parser interno
                  * */
 		virtual std::string parse(const std::string& line) = 0;
-                /**
-                 *  \deprecated La función de restreo y notificacion basadas en std::ostream será removidas en favor de  toolkit::ActivityProgress para la version 2
-                 * \brief Simplemete analiza la base de datos y genera la informacion de la tabla de simbolos
-                 * \param log indica si hade generar informacion de log.
-                 * */
-		//virtual bool analyze(bool log) = 0;    
                 /**
                  * \brief Simplemete analiza la base de datos y genera la informacion de la tabla de simbolos
                  * \param progress Use NULL para especificar que no desea log o una instacia valida de toolkit::ActivityProgress para generarlos.
                  * */
                 virtual bool analyze(toolkit::ActivityProgress* progress) = 0;
                 
-                /**
-                 * \private
-                 * \deprecated Esta funcion retorna un referencia modificable a la tabla de simbols razon por la cuan no se recomienda su uso para todo prpopiso practido puede usar getListTableConst o copyListTable
-                 * */
-		//std::map<const char*,symbols::Space*,symbols::cmp_str>& getListTable(); 
                 /**
                  * \brief Retorna un referancia a la tabla de simbolos, no es modificable si necesita poder modicar 
                  * \details Ya que la tabla de simbolos es un estructura de datos compleja y muy delicada no se permite acceso de escritura, si lo necesita puede considerar hacer una copia de la tabal mediante la  funcion copyListTable, la caul le construira una identica. Quiza quiera reconsiderar el modelo de su programa o la estructura del mismo tambien.
@@ -74,18 +55,6 @@ namespace apidb
                  * */
                 std::map<const char*,symbols::Space*,symbols::cmp_str> copyListTable()const;
 			
-                /**
-                 * \deprecated Lea esta informacion directamente de ConfigureProject
-                 * */
-		//const std::string& getNameProject();
-                /**
-                 * \deprecated Lea esta informacion directamente de ConfigureProject
-                 * */			
-		//InputLenguajes getInputLenguaje() const;	
-                /**
-                 * \deprecated Lea esta informacion directamente de ConfigureProject
-                 * */
-		//OutputLenguajes getOutputLenguaje() const;	
                 /**
                  * \brief Requiere la configuracion del proyecto y un conector la base de datos valido.
                  * */
@@ -107,14 +76,6 @@ namespace apidb
                  * \brief COnector a la base de datos.
                  * */
 		octetos::toolkit::clientdb::Connector* connector;
-                /**
-                 * \deprecated La función de restreo y notificacion basadas en std::ostream será removidas en favor de  toolkit::ActivityProgress para la version v2
-                 * */
-		//std::ostream* outputMessages;//out stream
-                /**
-                 * \deprecated La función de restreo y notificacion basadas en std::ostream será removidas en favor de  toolkit::ActivityProgress para la version v2
-                 * */
-		//std::ostream* errorMessages;//out stream		
 		/**
                  * \brief Esta funcion es la encarga de resolver cada simbolo encontrado en la base de datos.
                  * */
