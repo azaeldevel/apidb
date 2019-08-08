@@ -171,6 +171,10 @@ namespace apidb
                 {
                         return symbolReferenced;
                 }
+                const std::string& Symbol::getInType()const
+                {
+                        return inType;
+                }
                 const std::string& Symbol::getOutType()const
                 {
                         return outType;
@@ -226,7 +230,7 @@ namespace apidb
                 {
                         this->name = name;
                 }
-		short Space::getMaxCountRef()
+		/*short Space::getMaxCountRef()
 		{
 			std::list<Table*>::iterator actual = begin();
 			std::list<Table*>::iterator last = end();
@@ -242,7 +246,7 @@ namespace apidb
 			}
 			
 			return m;
-		}
+		}*/
 				
                 const std::string& Table::getUpperName()const
                 {

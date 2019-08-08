@@ -48,18 +48,7 @@ namespace apidb
         {
                 class Analyzer;
         }
-        /*enum ErrorScope
-        {
-                PACKAGE,
-                Class_ConfigureProject,
-                Class_ConfigureProject_ReadFile,
-        };*/
-	/*enum InputLenguajes
-	{
-		MySQL_Server,
-		//MySQL_Script,
-		//PostgresSQL
-	};*/
+        
         typedef octetos::toolkit::clientdb::Datconnect::ServerType InputLenguajes;
 	std::string getInputLenguajeString(InputLenguajes);	
         
@@ -126,7 +115,7 @@ namespace apidb
 	};
     
         /**
-         * \private Table y elmentos de la tabla de simbolos
+         * \brief Estructura de datos para contruir la tabla de simbolos
          * */
 	namespace symbols
 	{
@@ -146,15 +135,16 @@ namespace apidb
         
 		/**
 		 * \brief Informacion sobre cada symbolo
-                 * \private
 		 * */
-		struct Symbol 
+		class Symbol 
 		{
-                        friend class Table;
+                        friend class Analyzer;
                         friend class mysql::Analyzer;
+                        friend class Table;
                         
+                public:
 			/**
-                         * \private
+                         * \brief Identifica el tipo de llave.
                          * */
 			enum KeyType
 			{
@@ -163,8 +153,7 @@ namespace apidb
 				UNIQUE,
 				FOREIGN_UNIQUE,
 			};
-			
-					
+                private:
 			/**
                          * \private Este miembro sera convertido en privado en v2
                          * */
@@ -206,7 +195,13 @@ namespace apidb
                          * */
                         Symbol* symbolReferenced;   
                         
+			static int counter;
+			int id;	
+                        bool isPK;
+                        bool isFK;
+                        bool isAutoInc;
                         
+                public:			
 			/**
                          * \brief Indica si el compo es un llave primaria
                          * */
@@ -258,57 +253,44 @@ namespace apidb
                          * \brief Campo referenciado por este campo(En el caso de las llaves foraneas).
                          * */
                         const Symbol* getSymbolReferenced()const;
-                        
-                private:
-			static int counter;
-			int id;	
-                        bool isPK;
-                        bool isFK;
-                        bool isAutoInc;
+                        /**
+                         * \brief retorna la string correspodiente al tipo de dato en la BD.
+                         * */
+                        const std::string& getInType()const;
 		};
 		
                 /**
-                 * \private
+                 * \brief Conjunto de campos que forma una llave, cuan la llave es compuesta se hace una entrada por cada campo relacionado.
                  * */
-		struct Key : public std::vector<Symbol*>
+		class Key : public std::vector<Symbol*>
 		{
 		};
 		/**
 		 * \brief Simbolos por alcance(tabla en SQL) 
-                 * \private
 		 **/
-		struct Table : public std::map<const char*,Symbol*,cmp_str>
+		class Table : public std::map<const char*,Symbol*,cmp_str>
 		{
                         friend class octetos::apidb::Analyzer;
                         friend class octetos::apidb::mysql::Analyzer;
-                        
-                //private:
                         /**
                          * \brief Nombre de la tabla
-                         * \private Este miembro sera convertido en privado en v2
                          * */
 			std::string name;
                         /**
-                         * \private Este miembro sera convertido en privado en v2
                          * */
                         std::string upperName;
                         /**
-                         * \private Este miembro sera convertido en privado en v2
                          * */
                         Key key;
                         /**
-                         * \private Este miembro sera convertido en privado en v2
                          * */
                         std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
                         /**
-                         * \private Este miembro sera convertido en privado en v2
                          * */
                         std::string space;
                         /**
-                         * \private Este miembro sera convertido en privado en v2
                          * */
-                        std::string fullname;
-                        
+                        std::string fullname;                        
                         /**
                          * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
                          * */
@@ -317,15 +299,10 @@ namespace apidb
                          * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
                          * */
                         bool fillKeyType(octetos::toolkit::clientdb::Connector& connect, std::map<const char*,symbols::Space*,symbols::cmp_str>& tables);
-                        /**
-                         * \brief Cuanta la cantidad de hay hacia tabla.
-                         * */
-                //public:
+
+			short countRef;
+                public:
                         short getCountRefereces() const; 
-                        //std::list<Symbol*>::iterator search(const std::string&);
-                        /**
-                         * \brief Retorna el nombre de la tabla.
-                         * */
                         /**
                          * \brief Simplemete crea el obejto con valores limpios
                          * */
@@ -334,22 +311,22 @@ namespace apidb
                          * \brief Libera la memoroa del Objeto.
                          * */
                         ~Table();
+                        /**
+                         * \brief Retorna el nombre de la tabla.
+                         * */
                         const std::string& getName()const;                          
                         const std::string& getUpperName()const;           
                         const std::list<Symbol*>& getRequired()const;           
                         const std::string& getSpace()const;           
                         const std::string& getFullName()const;   
                         const Key& getKey()const;
-		private:
-			short countRef;
 		};
 		
 		/**
 		 * \brief Conjunto de tablas
                  * \details No representa un spacio realmente sino que umula uno en base a ciertos creterio en el nombrambramiento de las tablas, esto para poder organizar mejor el codigo. En MySQL por ejemplo, Se permite poner el caracter punto en el nombre de la tabla, y este es el criterio usado para MySQL, APIDB crea un nuevo anidamiento de espacio cada vez que encuentre un punto en el nombre de la tabla.
-                 * \private
 		 * */
-		struct Space : public std::list<Table*>
+		class Space : public std::list<Table*>
 		{
 		public:
                         /**
@@ -364,10 +341,7 @@ namespace apidb
                          * \brief Busca una tabla por su nombre y la retorna en cals de encontrarla
                          * */
 			std::list<Table*>::iterator find(const std::string& tableName);        
-			/**
-                         * \deprecated Funcion inestable se removera en v2.
-                         * */
-			short getMaxCountRef();
+			//short getMaxCountRef();
                         /**
                          * \brief Retorna el nombre del espacio.
                          * */
@@ -377,17 +351,12 @@ namespace apidb
                          * */
                         Space(const std::string name);
                         
-                //private:                        
+                private:                        
                         /**
                          * \brief Nombre del espacio.
-                         * \private Este campo sera convertir en privado en v2. Use getName en su lugar.
                          * */
                         std::string name;     
 		};
-                /**
-                 * \brief es confusi usar tables aveces pasa sesapercivida la 's', sin embargo se mantiene crea este alias para mantener compatibilidad.
-                 * */
-                typedef Space Tables;
                 
                 /**
                  * \private
