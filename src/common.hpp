@@ -383,6 +383,8 @@ namespace apidb
                          * \private Este campo sera convertir en privado en v2. Use getName en su lugar.
                          * */
                         std::string name;     
+                        
+                        short level;
 		};
                 /**
                  * \brief es confusi usar tables aveces pasa sesapercivida la 's', sin embargo se mantiene crea este alias para mantener compatibilidad.
@@ -392,7 +394,7 @@ namespace apidb
                 /**
                  * \private
                  * */
-                std::string getSpaceName(std::string fullname);
+                std::string getShortTableName(std::string fullname);
                 /**
                  * \private
                  * */

@@ -736,30 +736,9 @@ namespace generators
         
     void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"namespace "<< analyzer.getNameProject() << std::endl;
-			file <<"{"<<std::endl;
-		}
-		else 
-		{
-			file <<"namespace "<< analyzer.getNameProject() << std::endl;
-			file <<"{" <<std::endl;
-			file <<"namespace  controller" <<std::endl;
-			file <<"{" <<std::endl;
-		}
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \"`"<<  cl.getFullName() << "`\";" << std::endl;
 		createClassMethodesCPP(cl,file);        
 		file<< std::endl<< std::endl;
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"}"<<std::endl;
-		}
-		else 
-		{
-			file <<"}" <<std::endl;
-			file <<"}" <<std::endl;
-		}
     }
     void CPP::createSpaceCPP(std::ofstream& file)
     {
@@ -771,7 +750,7 @@ namespace generators
                 //for(auto const& [keySpace, AttSpace]  : spacies)
                 for(std::map<const char*,symbols::Space*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
-                        if(strcmp(it->first,"") != 0)
+                       if(strcmp(it->first,"") != 0)
                         {
                                 short level = symbols::getSpaceLevel(it->first);
                                 for(short i = 0; i < level ; i++) file << "\t";
@@ -1040,20 +1019,9 @@ namespace generators
                 for(short i =0; i < level ; i++) file << "\t";
                 file <<"\t};"<<std::endl;
     }
+    
     void CPP::createSpaceH(std::ofstream& file,bool log)
     {
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
-			file <<"{"<<std::endl;
-		}
-		else if(configureProject.mvc != apidb::MVC::NO)
-		{
-			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
-			file <<"{" <<std::endl;
-			file <<"namespace  controller" <<std::endl;
-			file <<"{" <<std::endl;
-		}
                 file <<"namespace "<< analyzer.getNameProject() <<std::endl;
                 file <<"{"<<std::endl;
                 const std::map<const char*,symbols::Space*,symbols::cmp_str> spacies = analyzer.getListTableConst();
@@ -1067,6 +1035,11 @@ namespace generators
                                 file << "\tnamespace " << it->second->getName()  << std::endl;
                                 for(short i = 1; i < level ; i++) file << "\t";
                                 file << "\t{" << std::endl;
+                        }
+                        short level = symbols::getSpaceLevel(it->first);
+                        for(int i = 0; i < level; i++)
+                        {
+                                
                         }
                         //for(auto table: *(it->second)) //reading attrubtes by table
                         for(std::list<symbols::Table*>::iterator itT = it->second->begin(); itT != it->second->end(); itT++)
@@ -1104,15 +1077,6 @@ namespace generators
                                 file << "\t}" << std::endl;
                         }
                 }
-		if(configureProject.mvc == apidb::MVC::NO)
-		{
-			file <<"}"<<std::endl;
-		}
-		else  if(configureProject.mvc != apidb::MVC::NO)
-		{
-			file <<"}" <<std::endl;
-			file <<"}" <<std::endl;
-		}
                 file <<"}"<<std::endl;
     }
     

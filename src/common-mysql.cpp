@@ -17,11 +17,14 @@
  * 
  * */
 
-#include "apidb.hpp"
-#include "common.hpp"
-
 #include <iostream>
 #include <mysql/mysql.h>
+#include <string>
+
+#include "apidb.hpp"
+#include "common.hpp"
+#include "Errors.hpp"
+
 
 namespace octetos
 {
@@ -219,7 +222,7 @@ namespace apidb
 			MYSQL_ROW row;
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
-				symbols::Table* prw = new symbols::Table(symbols::getSpaceName(row[0]));
+				symbols::Table* prw = new symbols::Table(symbols::getShortTableName(row[0]));
 				//prw->name = symbols::getSpaceName(row[0]);
                                 //prw->shortname = getTableName(row[0]);
                                 std::string upper = row[0];
@@ -227,6 +230,13 @@ namespace apidb
                                 prw->upperName = upper;
                                 prw->space = symbols::getSpacePatch(row[0]);
                                 prw->fullname = row[0];
+                                if(symbols::getSpaceLevel(row[0]) > 1)
+                                {
+                                        std::string msg = "Se detecto un caractere invalido en el nombre de tabla '";
+                                        msg += prw->fullname + "'";
+                                        toolkit::Error::write(toolkit::Error(msg,ErrorCodes::BD_BAT_NAMETABLE,__FILE__,__LINE__));
+                                        return false;
+                                }
                                 
                                 std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator it = spacies.find(prw->space.c_str());                                
                                 if(it == spacies.end())
