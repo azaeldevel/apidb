@@ -51,7 +51,9 @@ namespace apidb
                 CONFIGUREPROJECT_WRITE,
                 
                 APPLICATION_GTK3_ROWACTIVE_NOTFOUND_TABLE,
-                APPLICATION_GTK3_CONFIGPROJECT_NULL
+                APPLICATION_GTK3_CONFIGPROJECT_NULL,
+                
+                BD_BAT_NAMETABLE
                 
         };
         

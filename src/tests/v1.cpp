@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
-	
+	/*
 	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.\n", testCreateProject_nlst)))
 	{
 		CU_cleanup_registry();
@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}
+	}*/
 	
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);

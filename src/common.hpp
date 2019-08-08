@@ -361,12 +361,14 @@ namespace apidb
                          * \brief Nombre del espacio.
                          * */
                         std::string name;     
+                        
+                        short level;
 		};
                 
                 /**
                  * \private
                  * */
-                std::string getSpaceName(std::string fullname);
+                std::string getShortTableName(std::string fullname);
                 /**
                  * \private
                  * */
