@@ -11,7 +11,7 @@ ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)
 MESSAGE(STATUS "Statge is '${${PROJECT_NAME}_VERSION_STAGE}'")
 IF(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot")
 	FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR toolkit/common/common.hpp
-	  $ENV{HOME}/develop
+	  ../../
 	)
 ELSEIF()
 	FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR toolkit/common/common.hpp
@@ -24,7 +24,7 @@ IF(${${PROJECT_NAME}_VERSION_STAGE} STREQUAL "snapshot")
 	SET(OCTETOS_TOOLKIT_COMMON_CPP_NAMES octetos-toolkit-common-c++)
 	FIND_LIBRARY(OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY
 	  NAMES ${OCTETOS_TOOLKIT_COMMON_CPP_NAMES}
-	  PATHS $ENV{HOME}/develop/toolkit/common/build-c++
+	  PATHS ../../toolkit/common/build-c++
 	  PATH_SUFFIXES octetos-toolkit-common-c++
 	)
 ELSEIF()

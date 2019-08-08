@@ -11,12 +11,7 @@ namespace apidb
 {	
 namespace mysql
 {
-        bool Analyzer::analyze(toolkit::ActivityProgress* progress)
-        {
-                if(progress == NULL) return analyze(true);
-                return analyze(false);
-        }
-	bool Analyzer::analyze(bool log)
+	bool Analyzer::analyze(toolkit::ActivityProgress* progress)
 	{
 		bool flag = listing();
                 
@@ -26,7 +21,12 @@ namespace mysql
                         //for(apidb::symbols::Table* table : *AttSpace) //reading attrubtes by table
                         for(std::list<symbols::Table*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
                         {
-                                if(log)  *outputMessages << "\tCreating basic simbols for " << (*itTb)->getName()  << "." << std::endl;
+                                if(progress != NULL)
+                                {
+                                        std::string msg =  "\tCreating simbolos basicos para " ;
+                                        msg +=  (*itTb)->getName() + "\n";
+                                        progress->add(msg);
+                                }
                                 //simbolos basicos 
                                 if(!(*itTb)->basicSymbols(*connector))
                                 {
@@ -68,18 +68,18 @@ namespace mysql
                 //std::cout<<"Step 4."<<std::endl;
                 return flag;
 	}
-	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn) : apidb::Analyzer(config,conn)
+	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn,toolkit::ActivityProgress* p) : apidb::Analyzer(config,conn,p)
 	{
-		outputMessages = &std::cout;	  
-		errorMessages = &std::cerr; 
+		//outputMessages = &std::cout;	  
+		//errorMessages = &std::cerr; 
 	}
 	
 
 		
-	void Analyzer::message(const std::string& msg)
+	/*void Analyzer::message(const std::string& msg)
 	{
 		(*outputMessages)<<msg<<std::endl;
-	}
+	}*/
 	std::string Analyzer::parse(const std::string& line)
 	{
 		std::istringstream text(line);

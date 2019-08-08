@@ -406,7 +406,7 @@ namespace apidb
         /**
          * \brief Implementa el modelo de mensajes basodo en la politica de toolkit::ActivityProgress.
          * */
-        class Tracer : toolkit::ActivityProgress
+        class Tracer : public toolkit::ActivityProgress
         {
         public:
                 /**

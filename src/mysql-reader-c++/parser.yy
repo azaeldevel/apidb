@@ -101,223 +101,239 @@
 data_type: BIT opt_length end
 	| TINYINT opt_length opt_uz end
 		{
-			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje== OutputLenguajes::C))
 			{
 				driver.oneLine = "short";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
 		}
 	| SMALLINT opt_length opt_uz end
 		{
-			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			if((driver.getConfigureProject().outputLenguaje== OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje== OutputLenguajes::C))
 			{
 				driver.oneLine = "unsigned char";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
 		}
 	| MEDIUMINT opt_length opt_uz end
 		{
-			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje== OutputLenguajes::C))
 			{
 				driver.oneLine = "int";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
 		}
 	| INT opt_length opt_uz end
 		{
-			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje == OutputLenguajes::C))
 			{
 				driver.oneLine = "int";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
 		}
 	| INTEGER opt_length opt_uz end
 		{
-			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje== OutputLenguajes::C))
 			{
 				driver.oneLine = "int";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
 		}
 	| BIGINT opt_length opt_uz end
 		{
-			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje == OutputLenguajes::C))
 			{
 				driver.oneLine = "long";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
 		}
 	| REAL opt_length opt_uz end
 	| DOUBLE opt_length opt_uz end
 		{
-			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje == OutputLenguajes::C))
 			{
 				driver.oneLine = "double";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
 		}
 	| FLOAT opt_length opt_uz end
 		{
-			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje == OutputLenguajes::C))
 			{
 				driver.oneLine = "float";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
 		}
 	| DECIMAL opt_length opt_uz end
 		{
-			if((driver.getOutputLenguaje() == OutputLenguajes::CPP) | (driver.getOutputLenguaje() == OutputLenguajes::C))
+			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje == OutputLenguajes::C))
 			{
 				driver.oneLine = "double";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
 		}
 	| DATE end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| TIME end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| TIMESTAMP end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| DATETIME end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| YEAR end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| CHAR opt_length opt_csc end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| VARCHAR opt_length opt_csc end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| BINARY opt_length end
@@ -328,98 +344,104 @@ data_type: BIT opt_length end
 	| LONGBLOB end
 	| TINYTEXT opt_binary opt_csc end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| TEXT opt_binary opt_csc end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| MEDIUMTEXT opt_binary opt_csc end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| LONGTEXT opt_binary opt_csc end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| ENUM PARENTHESIS_OPEN enum_list PARENTHESIS_CLOSE opt_csc end	
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 	| SET PARENTHESIS_OPEN enum_list PARENTHESIS_CLOSE opt_csc end
 		{
-			if(driver.getOutputLenguaje() == OutputLenguajes::CPP)
+			if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP)
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getOutputLenguaje() == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
 			{
 				driver.oneLine ="const char*";
 			}
 			else
 			{
-				driver.message("OutputLenguaje is unknow.");
-				driver.oneLine = "";
+                                BuildException fail("OutputLenguaje is unknow.");
+				driver.getOutput().add(fail);
+				driver.oneLine =  "";
 			}
 		}
 

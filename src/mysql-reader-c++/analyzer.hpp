@@ -37,7 +37,6 @@ namespace mysql
         class Analyzer : public apidb::Analyzer
         {
         public:            
-            virtual bool analyze(bool log);
             virtual bool analyze(toolkit::ActivityProgress* progress);
             /**
             * Parse desde una std::string
@@ -55,10 +54,10 @@ namespace mysql
             void parse(std::istream &iss);
             
             //Analyzer();
-            Analyzer(const ConfigureProject&,octetos::toolkit::clientdb::Connector*);		
+            Analyzer(const ConfigureProject&,octetos::toolkit::clientdb::Connector*,toolkit::ActivityProgress* progress);		
             virtual ~Analyzer();         
             
-            void message(const std::string&);		
+            //void message(const std::string&);		
             std::ostream& print(std::ostream &stream);
             
             //Don't use, is temporal: usada por parse para retorna sui resultado

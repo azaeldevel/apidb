@@ -112,7 +112,7 @@ namespace apidb
 		return false;
 	}
 	
-	bool Driver::driving(bool log)
+	/*bool Driver::driving(bool log)
 	{
 		if(connector == NULL) 
                 {
@@ -137,7 +137,7 @@ namespace apidb
                 }
 		
 		return false;
-	}
+	}*/
 	
 	bool Driver::generate(toolkit::ActivityProgress* progress)
 	{		
@@ -193,12 +193,13 @@ namespace apidb
                 }
                 else
                 {
-                        analyzer->getOutputMessage() << "Fallo."<<std::endl;
+                        BuildException fail("Fallo.");
+                        analyzer->getOutput().add(fail);
                         return false;
                 }
 	}
 	
-	bool Driver::generate(bool log)
+	/*bool Driver::generate(bool log)
 	{		
                 if(ENABLE_DEVEL_WARNING)
                 {
@@ -249,15 +250,16 @@ namespace apidb
                 ///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
                 if(flagCPP && flagCMAKE)
                 {
-                        if(log)analyzer->getOutputMessage() << "Generacion completada." <<std::endl;				
+                        if(log)analyzer->getOutput().add("Generacion completada.\n");				
                         return true;				
                 }
                 else
                 {
-                        analyzer->getOutputMessage() << "Fallo."<<std::endl;
+                        BuildException fail2("Fallo.");
+                        analyzer->getOutput().add(fail2);
                         return false;
                 }
-	}
+	}*/
 	
 	bool Driver::analyze(toolkit::ActivityProgress* progress)
 	{
@@ -267,11 +269,11 @@ namespace apidb
                         {
                                 delete analyzer;
                                 analyzer = NULL;
-                                analyzer = new mysql::Analyzer(configureProject,connector);		
+                                analyzer = new mysql::Analyzer(configureProject,connector,progress);		
                         }
                         else
                         {
-                                analyzer = new mysql::Analyzer(configureProject,connector);
+                                analyzer = new mysql::Analyzer(configureProject,connector,progress);
                         }
                 }
                 
@@ -310,42 +312,6 @@ namespace apidb
                 return true;
 	}
 	
-	bool Driver::analyze(bool log)
-	{
-                if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
-                {
-			if(analyzer != NULL)
-                        {
-                                delete analyzer;
-                                analyzer = NULL;
-                                analyzer = new mysql::Analyzer(configureProject,connector);		
-                        }
-                        else
-                        {
-                                analyzer = new mysql::Analyzer(configureProject,connector);
-                        }
-                }
-                
-		if(log)analyzer->getOutputMessage() << "Analisis de codigo..." << std::endl;
-		if(log)analyzer->getOutputMessage() << "\tLenguaje de entrada: " << getInputLenguajeString(configureProject.inputLenguaje) << std::endl;
-                
-                if(configureProject.mvc != MVC::NO and ENABLE_DEVEL_WARNING)
-                {
-                        std::cout <<"\u001b[31;1m" << "\nAdvertencia: la opcion MVC(ConfigureProject::mvc) esta marcada como obsoleta será removida a apartir de v2\n" << "\u001b[0m";
-                }
-		
-		if(analyzer->analyze(log)) //reading tables
-                {
-                        
-                }  
-                else
-                {
-                        std::cout<<"Faill reading table."<<std::endl;
-                        return false;
-                }
-          
-                return true;
-	}
 } 
 }
 

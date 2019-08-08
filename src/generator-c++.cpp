@@ -738,12 +738,12 @@ namespace generators
     {
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
-			file <<"namespace "<< analyzer.getNameProject() << std::endl;
+			file <<"namespace "<< configureProject.name << std::endl;
 			file <<"{"<<std::endl;
 		}
 		else 
 		{
-			file <<"namespace "<< analyzer.getNameProject() << std::endl;
+			file <<"namespace "<< configureProject.name << std::endl;
 			file <<"{" <<std::endl;
 			file <<"namespace  controller" <<std::endl;
 			file <<"{" <<std::endl;
@@ -763,7 +763,7 @@ namespace generators
     }
     void CPP::createSpaceCPP(std::ofstream& file)
     {
-                file <<"namespace "<< analyzer.getNameProject() << std::endl;
+                file <<"namespace "<< configureProject.name << std::endl;
                 file <<"{"<<std::endl;
 		
                 const std::map<const char*,symbols::Space*,symbols::cmp_str>& spacies = analyzer.getListTableConst();
@@ -1019,10 +1019,12 @@ namespace generators
     {
         file << "\tprivate:" <<std::endl;
     }
-    void CPP::createClassH(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass,bool log)
-    {
+        void CPP::createClassH(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass,bool log)
+        {
 		//file <<"keyword"<<std::endl;
-		if(log)analyzer.getOutputMessage() <<"\tHeading class " << cl.getName()<<std::endl;
+                std::string msg1 = "\tHeading class ";
+                msg1 += cl.getName() + "\n";
+		if(log)analyzer.getOutput().add(msg1);
                 short level = symbols::getSpaceLevel(cl.getFullName());
                 for(short i =0; i < level ; i++) file << "\t";
                 file <<"\tclass "<<nameClass<<std::endl;  
@@ -1044,17 +1046,17 @@ namespace generators
     {
 		if(configureProject.mvc == apidb::MVC::NO)
 		{
-			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+			file <<"namespace "<< configureProject.name <<std::endl;
 			file <<"{"<<std::endl;
 		}
 		else if(configureProject.mvc != apidb::MVC::NO)
 		{
-			file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+			file <<"namespace "<< configureProject.name <<std::endl;
 			file <<"{" <<std::endl;
 			file <<"namespace  controller" <<std::endl;
 			file <<"{" <<std::endl;
 		}
-                file <<"namespace "<< analyzer.getNameProject() <<std::endl;
+                file <<"namespace "<< configureProject.name <<std::endl;
                 file <<"{"<<std::endl;
                 const std::map<const char*,symbols::Space*,symbols::cmp_str> spacies = analyzer.getListTableConst();
 		//for(auto const& [keySpace, AttSpace]  : spacies)

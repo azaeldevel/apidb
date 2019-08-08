@@ -59,17 +59,17 @@ namespace apidb
                  * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
                  * \brief Lee el servidor
                  * */
-		virtual bool analyze(bool log);
+		//virtual bool analyze(bool log);
                 /**
                  * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
                  * \brief Genera los archivos de codigo
                  **/
-		virtual bool generate(bool log);
+		//virtual bool generate(bool log);
                 /**
                  * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
                  * \brief Se puede considar como una llamada a 'analyze' seguida de una llamda a 'generate'
                  * */
-		bool driving(bool log);
+		//bool driving(bool log);
                 
                 /**
                  * \brief Unico contructor 

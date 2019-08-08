@@ -67,8 +67,10 @@ namespace generators
 		}
 			
 		//CMakeLists.txt
-		if(log)analyzer.getOutputMessage() << "Generando archivos de gestor de projecto... " << std::endl;
-		if(log)analyzer.getOutputMessage() << "\tTipo de Gestor: " << getPackingLenguajeString() << std::endl;
+		if(log)analyzer.getOutput().add( "Generando archivos de gestor de projecto... \n");
+		std::string msg1 = "\tTipo de Gestor: " ;
+                msg1 += getPackingLenguajeString() + "\n";
+		if(log)analyzer.getOutput().add(msg1);
 		
 		cmakelists<<"CMAKE_MINIMUM_REQUIRED(VERSION ";
 		cmakelists<<"3";
@@ -86,7 +88,7 @@ namespace generators
 		cmakelists<<configureProject.getVersion().getPatch();
 		cmakelists<<".";
 		cmakelists<<"0 ";
-		if(analyzer.getOutputLenguaje() == apidb::OutputLenguajes::CPP)
+		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
 			cmakelists<<" LANGUAGES CXX)"<<std::endl;
 		}
@@ -130,7 +132,9 @@ namespace generators
                 cmakelists << configureProject.name <<".cpp )"<<std::endl;
 		cmakelists<<"TARGET_LINK_LIBRARIES("<< configureProject.name <<" ${MYSQL_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_LIBRARIES}  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} )"<<std::endl;
 		cmakelists.close();
-		if(log)analyzer.getOutputMessage()<<"\tArchivo de gestion de projecto: " << namefile <<std::endl;
+                std::string msg2 = "\tArchivo de gestion de projecto: '";
+                msg2 += namefile + "'\n";
+		if(log)analyzer.getOutput().add( msg2);
 		
 		//std::cout<<"Creating cmake.modules..."<<std::endl;
 		//cmake.modules
@@ -440,23 +444,25 @@ namespace generators
 		writeResults = new std::ofstream[2];
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0)) 
 		{
-			projectH = d.getNameProject() + ".hpp";
+			projectH = configureProject.name + ".hpp";
 			writeResults[0].open(projectH);
-			projectCPP = d.getNameProject() + ".cpp";
+			projectCPP = configureProject.name + ".cpp";
 			writeResults[1].open(projectCPP);
 		}
 		else
 		{
-			projectH = d.getNameProject() + ".hpp";
-			projectCPP = d.getNameProject() + ".cpp";
+			projectH = configureProject.name + ".hpp";
+			projectCPP = configureProject.name + ".cpp";
 			writeResults[0].open(configureProject.builDirectory + "/" + projectH);
 			writeResults[1].open(configureProject.builDirectory + "/" + projectCPP);
 		}
 	}    
 	bool CPP::generate(bool log)
 	{
-		if(log)analyzer.getOutputMessage() << "Generando archivos de codigo fuente... " << std::endl;
-		if(log)analyzer.getOutputMessage() << "\tLenguaje resultado: " << getOutputLenguajeString() << std::endl;
+		if(log)analyzer.getOutput().add("Generando archivos de codigo fuente... \n");
+                std::string msg1 = "\tLenguaje resultado: " ;
+                msg1 += getOutputLenguajeString() ;
+		if(log)analyzer.getOutput().add(msg1);;
 		//includes in header file
 		std::string headers = "";
 		getHeaderOutput()<< "#include <string>" <<std::endl;

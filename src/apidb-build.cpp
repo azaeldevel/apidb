@@ -65,7 +65,8 @@ int main(int argc, char *argv[])
 			return EXIT_FAILURE;                        
                 }
         	octetos::apidb::Driver driver(config);
-		if(!driver.driving(true))
+                octetos::apidb::Tracer tr(0);
+		if(!driver.driving(&tr))
 		{
 			std::cerr<<"Fallo la generacion."<<std::endl;
 			return EXIT_FAILURE;

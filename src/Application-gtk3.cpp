@@ -415,7 +415,8 @@ namespace apidb
                         app->driver = NULL;
                 }
                 app->driver = new Driver(*(app->config));
-                 if(!app->driver->driving(true))
+                Tracer tr(0);
+                 if(!app->driver->driving(&tr))
                 {
                         std::string msgstr = "";
                         if(toolkit::Error::check())
@@ -875,7 +876,7 @@ namespace apidb
                                 app->driver = NULL;
                         }
                         app->driver = new Driver(*(app->config));
-                        if(!app->driver->analyze(false))
+                        if(!app->driver->analyze(NULL))
                         {
                                 std::string msgstr = "";
                                 if(toolkit::Error::check())
@@ -1455,7 +1456,7 @@ namespace apidb
                                         delete (app->driver);
                                         app->driver = new Driver(*(app->config));
                                 }
-                                if(!app->driver->analyze(false))
+                                if(!app->driver->analyze(NULL))
                                 {
                                         std::string msgstr = "";
                                         if(toolkit::Error::check())
