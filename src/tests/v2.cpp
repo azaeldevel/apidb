@@ -205,13 +205,19 @@ void testCompile()
                         CU_ASSERT(false);
                 }
 
-                cmd  = " cd apidb && cmake . && make";
+                cmd  = " cd apidb && cmake . &> /dev/null";
                 if(system(cmd.c_str()) < 0)
                 {
                         std::cout << "Fallo al realizar la compialcion.\n";
                         CU_ASSERT(false);
                 }
-                cmd  = " cd apidb && make -s >> /dev/null";
+                cmd  = " cd apidb &&  make &> /dev/null";
+                if(system(cmd.c_str()) < 0)
+                {
+                        std::cout << "Fallo al realizar la compialcion.\n";
+                        CU_ASSERT(false);
+                }
+                cmd  = " cd apidb && make   &> /dev/null";
                 if(system(cmd.c_str()) < 0)
                 {
                         std::cout << "Fallo al realizar la compialcion.\n";
