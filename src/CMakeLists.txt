@@ -1,10 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
-PROJECT(apidb VERSION 2.0.0 LANGUAGES CXX)
+PROJECT(apidb VERSION 2.0.0.1 LANGUAGES CXX)
 SET(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 SET(DDM_DESKTOP_DIR "/usr/share/applications/")
 SET(DDM_PIXMAPS_DIR "/usr/share/icons/")
+SET(${PROJECT_NAME}_PAKAGENAME_DECORED "APIDB")
 
 EXECUTE_PROCESS(COMMAND date +"%Y%m%d%H%M%S" OUTPUT_VARIABLE ${PROJECT_NAME}_VERSION_BUILD)
 IF(NOT CMAKE_BUILD_TYPE)
@@ -16,7 +17,7 @@ ELSEIF(${CMAKE_BUILD_TYPE} STREQUAL "Release")
 ENDIF()
 SET(${PROJECT_NAME}_VERSION_NAME "leopard")
 CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/versionInfo.h.in" "${PROJECT_SOURCE_DIR}/versionInfo.h")
-CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/octetos-apidb.desktop.in" "${CMAKE_CURRENT_BINARY_DIR}/octetos-apidb.desktop")
+CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/apidb.desktop.in" "${CMAKE_CURRENT_BINARY_DIR}/apidb.desktop")
 
 
 ##################################################################################################################
@@ -106,7 +107,8 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}  )
 ADD_EXECUTABLE(${PROJECT_NAME}-gtk3 apidb-gtk3.cpp Application-gtk3.cpp ${SOURCES_BUILDING})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}-gtk3 ${LIBRARIES} ${LIBREADER} )
 
-execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb.png" --export-width 256)
+execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb-128x128.png" -h 128 -w 128)
+execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb-256x256.png" -h 256 -w 256)
 
 IF(Doxygen_FOUND)
 add_custom_target(
@@ -120,12 +122,13 @@ ENDIF()
 
 ###################################################################################################################
 ###INSTALL
-INSTALL(TARGETS ${PROJECT_NAME}-build DESTINATION /bin)
-INSTALL(TARGETS ${PROJECT_NAME}-gtk3 DESTINATION /bin)
+INSTALL(TARGETS ${PROJECT_NAME}-build DESTINATION /us/bin)
+INSTALL(TARGETS ${PROJECT_NAME}-gtk3 DESTINATION /usr/bin)
 INSTALL(TARGETS ${PROJECT_NAME}  DESTINATION /lib)
-INSTALL(FILES apidb.hpp DESTINATION include/octetos/apidb)
-INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/octetos-apidb.desktop"  DESTINATION ${DDM_DESKTOP_DIR})
-INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/apidb.png"  DESTINATION ${DDM_PIXMAPS_DIR})
+INSTALL(FILES apidb.hpp DESTINATION /usr/include/octetos/apidb)
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/apidb.desktop"  DESTINATION ${DDM_DESKTOP_DIR})
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/apidb-256x256.png"  DESTINATION ${DDM_PIXMAPS_DIR})
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/apidb-128x128.png"  DESTINATION /usr/shared/octetos/apidb)
 
 include (InstallRequiredSystemLibraries)
 SET (CPACK_PACKAGE_VERSION_MAJOR "${${PROJECT_NAME}_VERSION_MAJOR}")

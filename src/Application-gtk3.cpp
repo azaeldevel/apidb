@@ -7,6 +7,7 @@
 #include "Application-gtk3.hpp"
 #include "apidb.hpp"
 #include "Errors.hpp"
+#include "versionInfo.h"
 
 
 namespace octetos
@@ -854,16 +855,16 @@ namespace apidb
         }
         void Application::show_about(GtkWidget *widget, gpointer data) 
         {
-                //GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("battery.png", NULL);
+                GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("/usr/shared/octetos/apidb/apidb-128x128.png", NULL);
                 GtkWidget *dialog = gtk_about_dialog_new();
-                gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), getPakageName().c_str());
+                gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), PAKAGENAME_DECORED);
                 gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), getPakageVersion().toString().c_str()); 
                 //gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),"(c) Octetos");
                 //char  authors[1][30] = {"Azael Reyes"};
                 //gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG(dialog),(const gchar**)authors);
                 gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), "Hace sencillo crear una API para conectar tu Base de Datos.");
                 gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/azaeldevel/apidb");
-                //gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), pixbuf);
+                gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), pixbuf);
                 //g_object_unref(pixbuf), pixbuf = NULL;
                 gtk_dialog_run(GTK_DIALOG (dialog));
                 gtk_widget_destroy(dialog);

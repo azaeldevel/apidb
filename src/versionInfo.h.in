@@ -9,3 +9,4 @@
 #endif
 #define PAKAGENAME "@PROJECT_NAME@"
 #define VERSION_NAME "@apidb_VERSION_NAME@"
+#define PAKAGENAME_DECORED "@apidb_PAKAGENAME_DECORED@"
