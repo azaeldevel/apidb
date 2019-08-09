@@ -1,3 +1,23 @@
+/**
+ * 
+ *  This file is part of apidb.
+ *  APIDB do Make easy to connect your Database
+ *  Copyright (C) 2018  Azael Reyes
+ * 
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * */
 
 #include <stdio.h>
 #include <string.h>
@@ -859,13 +879,15 @@ namespace apidb
                 GtkWidget *dialog = gtk_about_dialog_new();
                 gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), PAKAGENAME_DECORED);
                 gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), getPakageVersion().toString().c_str()); 
-                //gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),"(c) Octetos");
-                //char  authors[1][30] = {"Azael Reyes"};
-                //gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG(dialog),(const gchar**)authors);
+                gtk_about_dialog_set_copyright (GTK_ABOUT_DIALOG (dialog), "APIDB  Copyright (C) 2018  Azael Reyes \n This program comes with ABSOLUTELY NO WARRANTY.");
+                const gchar *authors[] = {"Azael Reyes<azael.devel@gmail.com>", NULL};
+                const gchar *documenters[] = {"Azael Reyes<azael.devel@gmail.com>", NULL};
+                gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG(dialog),(const gchar**)authors);
+                gtk_about_dialog_set_documenters (GTK_ABOUT_DIALOG (dialog), documenters);
                 gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), "Hace sencillo crear una API para conectar tu Base de Datos.");
                 gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/azaeldevel/apidb");
                 gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), pixbuf);
-                //g_object_unref(pixbuf), pixbuf = NULL;
+                g_object_unref(pixbuf), pixbuf = NULL;
                 gtk_dialog_run(GTK_DIALOG (dialog));
                 gtk_widget_destroy(dialog);
         }

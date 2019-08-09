@@ -1,6 +1,8 @@
 /**
  * 
  *  This file is part of apidb.
+ *  APIDB do Make easy to connect your Database
+ *  Copyright (C) 2018  Azael Reyes
  * 
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,7 +17,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- *  author: Azael Reyes
  * */
 
 #include "apidb.hpp"
@@ -28,12 +29,17 @@
 
 int main(int argc, char *argv[])
 {
+        std::string copyright = "APIDB  Copyright (C) 2018  Azael Reyes \nThis program comes with ABSOLUTELY NO WARRANTY.\n    Contacto: azael.devel@gmail.com";
+        
         std::string file,dir;
 	if(argc > 0)
 	{
 		if(strcmp(argv[1],"-v") ==0 || strcmp(argv[1],"--version") == 0)
 		{
 			std::cout<<"Version: " << octetos::apidb::getPakageVersion().toString()<<std::endl;
+                        std::cout<<std::endl;
+                        std::cout<< copyright<<std::endl;
+                        
 			return EXIT_SUCCESS;
 		}
 		else if((strcmp(argv[1],"-p") ==0 || strcmp(argv[1],"--project-file") == 0) && (strcmp(argv[3],"-o") ==0 || strcmp(argv[3],"--out-build") == 0) )
