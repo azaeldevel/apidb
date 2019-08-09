@@ -342,40 +342,6 @@ namespace generators
 		config.close();		
 		//analyzer->getOutputMessage()<<"\tArchivo de configuración de projecto: " << namefile <<std::endl;
 		
-		//std::cout<<"Creating developing.cpp..."<<std::endl;
-		namefile = "developing.cpp";
-                bool preexits;
-                if (FILE *file = fopen(namefile.c_str(), "r")) 
-                {
-                        fclose(file);
-                        preexits = true;
-                }
-                else
-                {
-                        preexits = false;
-                }
-		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
-		{
-			if(!preexits) developing.open(namefile);
-		}
-		else
-		{
-			if(!preexits) developing.open(configureProject.builDirectory + "/" + namefile);
-		}
-                if(!preexits)
-                {
-                developing<<"#include \"" << configureProject.name << ".hpp\""<<std::endl;
-                developing<<std::endl;
-                developing<<"#include <iostream>"<<std::endl;
-                developing<<"#include <list>"<<std::endl;
-                developing<<std::endl;
-                developing<<"int main()"<<std::endl;
-                developing<<"{"<<std::endl;
-                developing<<"return 0;"<<std::endl;
-                developing<<"}"<<std::endl;
-                }
-		//analyzer->getOutputMessage()<<"\tArchivo de develping phase: " << namefile <<std::endl;
-		//std::cout<<"return..."<<std::endl;
 		return true;
 	}
 	

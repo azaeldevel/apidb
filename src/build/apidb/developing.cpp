@@ -74,16 +74,6 @@ int main(int argc, char **argv)
 		}
     }
     
-    sysapp::Persons* person2 = new sysapp::Persons();
-    if(person2->select(connector,"n1-4182","ap-4182"))
-    {
-		std::cout << "Select Random " << person2->getID() << "n1-4182" << "ap-4182" << std::endl;
-	}
-	else
-	{
-		std::cerr << "Fail Slected random "<< n1 << std::endl;
-		return EXIT_FAILURE;
-	}
 	
 	//std::string db = ((toolkit::clientdb::DatconectionMySQL&)(connector.getDatconection())).getDatabase();
 	//std::cout<<db<<std::endl;
