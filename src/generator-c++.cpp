@@ -37,7 +37,7 @@ namespace generators
 	void CPP::writeSelectsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
         {        
         //select(conector,where)
-        ofile << "\tstd::vector<"  << table.getName() << "*>* " << table.getName() << "::select(octetos::toolkit::clientdb::mysql::Connector& connector, const std::string& where)"<<std::endl;
+        ofile << "\tstd::vector<"  << table.getName() << "*>* " << table.getName() << "::select(octetos::toolkit::clientdb::mysql::Connector& connector, const std::string& where, int leng)"<<std::endl;
         ofile << "\t{" <<std::endl;
         ofile << "\t\tstd::string sqlString = \"SELECT ";
         //selecciona los campos de las llaves
@@ -52,6 +52,10 @@ namespace generators
             }
         }
         ofile << " FROM " << table.getName() << " WHERE \" + where ;"<< std::endl;
+        ofile << "\t\tif(leng > 0)"  << std::endl;
+        ofile << "\t\t{"  << std::endl;
+        ofile << "\t\t\tsqlString += \" LIMIT  \"  + std::to_string(leng);"  << std::endl;
+        ofile << "\t\t}"  << std::endl;
         ofile << "\t\toctetos::toolkit::clientdb::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
         ofile << "\t\tif(dt!=NULL)"  << std::endl;
         ofile << "\t\t{" << std::endl;
@@ -88,8 +92,10 @@ namespace generators
         ofile << "\t\t\t\ttmpVc->push_back(tmp);" << std::endl;
         
         ofile << "\t\t\t}"<< std::endl;
+        ofile << "\t\t\tdelete dt;" << std::endl;
         ofile << "\t\t\treturn tmpVc;" << std::endl;
         ofile << "\t\t}" << std::endl;
+        ofile << "\t\tdelete dt;" << std::endl;
         ofile << "\t\treturn NULL;" << std::endl;
         
         ofile << "\t}" <<std::endl;
@@ -140,7 +146,7 @@ namespace generators
                         }
                     }
                 }
-                ofile << ")"<<std::endl;
+                ofile << ", int leng)"<<std::endl;
                 ofile << "\t{"<<std::endl;
                 ofile << "\t\tstd::string sqlString = \"SELECT ";
                 //const apidb::ConfigureProject::Parameters& params = val->getParameters();
@@ -194,12 +200,16 @@ namespace generators
                         }
                     }
                     ofile << ";" << std::endl;
-                        ofile << "\t\toctetos::toolkit::clientdb::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
-                        ofile << "\t\tif(dt!=NULL)"  << std::endl;
-                    ofile << "\t\t{" << std::endl;
+                ofile << "\t\tif(leng > 0)"  << std::endl;
+                ofile << "\t\t{"  << std::endl;
+                ofile << "\t\t\tsqlString += \" LIMIT  \" + std::to_string(leng);"  << std::endl;
+                ofile << "\t\t}"  << std::endl;
+                ofile << "\t\toctetos::toolkit::clientdb::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
+                ofile << "\t\tif(dt!=NULL)"  << std::endl;
+                ofile << "\t\t{" << std::endl;
                     ofile << "\t\t\tstd::vector<"<< table.getName() << "*>* tmpVc = new std::vector<" << table.getName() << "*>;" << std::endl;
                     ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
-                    ofile << "\t\t\twhile((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))"<< std::endl;
+                    ofile << "\t\t\twhile((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult())))) "<< std::endl;
                     ofile << "\t\t\t{"<< std::endl;     
                     ofile << "\t\t\t\t"<< table.getName() << "* tmp = NULL;" << std::endl;             
                     ofile << "\t\t\t\ttmp = new " << table.getName() << "(";              
@@ -229,10 +239,12 @@ namespace generators
                     ofile << ")" << ";" << std::endl;
                     ofile << "\t\t\t\ttmpVc->push_back(tmp);" << std::endl;
                     ofile << "\t\t\t}"<< std::endl;
+                        ofile << "\t\t\tdelete dt;" << std::endl;
                     ofile << "\t\t\treturn tmpVc;"<< std::endl;
                     ofile << "\t\t}" << std::endl;
                     ofile << "\t\telse" << std::endl;
                     ofile << "\t\t{" << std::endl;
+                        ofile << "\t\tdelete dt;" << std::endl;
                     ofile << "\t\t\treturn NULL;" << std::endl;
                     ofile << "\t\t}" << std::endl;
                 }
@@ -254,7 +266,7 @@ namespace generators
                         //for (auto const& [key, val] : *(itT->second))//class Table : public std::map<const char*, const Function*>
                         for(ConfigureProject::Table::iterator itCfTb = itT->second->begin(); itCfTb != itT->second->end(); itCfTb++)
                         {
-                                ofile << "\tbool " << table.getName() << "::download_" << itCfTb->first << "(octetos::toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
+                                ofile << "\tbool " << table.getName() << "::" << itCfTb->first << "(octetos::toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
                                 ofile << "\t{ " << std::endl;
                                 ofile << "\t\tstd::string sqlString = \"SELECT ";
                                 const apidb::ConfigureProject::Parameters* params = itCfTb->second->getParameters();
@@ -295,12 +307,11 @@ namespace generators
                                 ofile << "\t\toctetos::toolkit::clientdb::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
                                 ofile << "\t\tif(dt!=NULL)"  << std::endl;
                                 ofile << "\t\t{" << std::endl;
-                                //ofile << "\t\t\tint num_fields = mysql_num_fields(result);"<< std::endl;
                                 ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
-                                ofile << "\t\t\twhile ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))"<< std::endl;
+                                ofile << "\t\t\twhile ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult())))) "<< std::endl;
                                 ofile << "\t\t\t{"<< std::endl;
                                 //ofile << "\t\t\t\tfor(int i = 0; i < num_fields; i++)"<< std::endl;
-                                ofile << "\t\t\t\t{"<< std::endl;
+                                //ofile << "\t\t\t\t{"<< std::endl;
                                 itParamEnd = params->end();
                                 int countparam = 0;
                                 for(const char* param : *params)
@@ -344,12 +355,14 @@ namespace generators
                                         countparam++;
                                 }
                                 //ofile << "\t\t\t;"<< std::endl;
-                                ofile << "\t\t\t\t}"<< std::endl;
+                                //ofile << "\t\t\t\t}"<< std::endl;
                                 ofile << "\t\t\t}"<< std::endl;
+                                ofile << "\t\t\tdelete dt;" << std::endl;
                                 ofile << "\t\t\treturn true;" << std::endl;
                                 ofile << "\t\t}" << std::endl;
                                 ofile << "\t\telse" << std::endl;
                                 ofile << "\t\t{" << std::endl;
+                                ofile << "\t\t\tdelete dt;" << std::endl;
                                 ofile << "\t\t\treturn false;" << std::endl;
                                 ofile << "\t\t}" << std::endl;
                                 }
@@ -721,12 +734,9 @@ namespace generators
         
     void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
-                file <<"namespace "<< configureProject.name << std::endl;
-                file <<"{"<<std::endl;
 		file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \"`"<<  cl.getFullName() << "`\";" << std::endl;
 		createClassMethodesCPP(cl,file);        
 		file<< std::endl<< std::endl;
-                file <<"}"<<std::endl;
     }
     void CPP::createSpaceCPP(std::ofstream& file)
     {
@@ -772,24 +782,27 @@ namespace generators
                         //
                         for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itF = it->second->begin(); itF != it->second->end(); itF++)
                         {
-                                ofile << "\t\tbool download_" << itF->first << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
+                                ofile << "\t\tbool " << itF->first << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
                         }
                 }
         }
 	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile)
         {
-                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where);"<<std::endl;
+                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where, int leng = 0);"<<std::endl;
                 
+                //std::cout << "List Selcct Count : " << configureProject.selects.size() << std::endl;
                 for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.selects.begin(); it != configureProject.selects.end(); it++)
                 {
+                        //std::cout << "Buscando : " << it->second->getName()<< std::endl;
                         if(table.getName().compare(it->second->getName()) != 0) 
                         {
                                 continue;//buscar la configuracion de la tabla correspondiente
                         }
+                        //std::cout << "Se encontro  : " << it->second->getName()<< std::endl;
                         for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = it->second->begin(); itT != it->second->end(); itT++)
                         {
                                 ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,";
-                                
+                                //std::cout << "Generando codigo para  : " << itT->second->getName() << std::endl;
                                 const apidb::ConfigureProject::Parameters* params = itT->second->getParameters();                                
                                 apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
                                 itParamEnd--;
@@ -817,14 +830,14 @@ namespace generators
                                         ofile << ",";
                                         }
                                 }                                
-                                ofile << ");"<<std::endl;                                
+                                ofile << ", int leng = 0);"<<std::endl;                                
                         }
                 }
     }
-    /**
-     * Genera las funciones insert solo con los datos marcados como requeridos en la DB.
-     */
-    void CPP::writeInsertH(const apidb::symbols::Table& table,std::ofstream& ofile)
+        /**
+        * Genera las funciones insert solo con los datos marcados como requeridos en la DB.
+        */
+        void CPP::writeInsertH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		int countFIelds = 0;
 		// creando insert

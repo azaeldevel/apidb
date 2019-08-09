@@ -423,7 +423,7 @@ namespace apidb
                 if(inVerEdited)
                 {
                         std::string verstr = gtk_entry_get_text(GTK_ENTRY(inVer));
-                        if(!config->version.fromString(verstr))
+                        if(!config->versionResult.fromString(verstr))
                         {                                       
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -1056,8 +1056,8 @@ namespace apidb
         }    
         void Application::loadConfig()
         {
-                gtk_entry_set_text (GTK_ENTRY(inName),config->getName().c_str());
-                gtk_entry_set_text (GTK_ENTRY(inVer),config->getVersion().toString().c_str());
+                gtk_entry_set_text (GTK_ENTRY(inName),config->name.c_str());
+                gtk_entry_set_text (GTK_ENTRY(inVer),config->versionResult.toString().c_str());
                 gtk_combo_box_set_active((GtkComboBox*)inInL,(gint)config->inputLenguaje);
                 gtk_combo_box_set_active((GtkComboBox*)inOutL,(gint)config->outputLenguaje);
                 gtk_combo_box_set_active((GtkComboBox*)inPkL,(gint)config->packing);

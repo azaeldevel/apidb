@@ -186,7 +186,7 @@ namespace apidb
                 ///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
                 if(flagCPP && flagCMAKE)
                 {
-                        std::string msg1 =  "Generacion completada." ;
+                        std::string msg1 =  "Generacion completada.\n" ;
                         toolkit::Confirmation conf1(msg1);
                         if(progress != NULL) progress->add(conf1);	
                         return true;				
@@ -279,10 +279,10 @@ namespace apidb
                 
                 if(progress != NULL)
                 {
-                        toolkit::Confirmation conf1("Analisis de codigo...");
+                        toolkit::Confirmation conf1("Analisis de codigo...\n");
                         progress->add(conf1);
                         std::string msg ="\tLenguaje de entrada: " ;
-                        msg+= getInputLenguaje(configureProject.inputLenguaje);
+                        msg+= getInputLenguaje(configureProject.inputLenguaje) + "\n";
                         toolkit::Confirmation conf2(msg);
                         progress->add(conf2);
                 }

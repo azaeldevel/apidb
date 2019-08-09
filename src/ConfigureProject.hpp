@@ -55,24 +55,9 @@ namespace apidb
                 {
                 public:
                         /**
-                         * \deprecated Funcion ahora redundante. El analizaro o el generador no usan esta informacion sera removido en v2
-                         * */
-                        enum Skeleton
-                        {
-                                DOWNLOAD,
-                                SELECT,
-                                INSERT,
-                                UPDATE,
-                                COSTUM
-                        };
-                        /**
                          * \brief Nombre de la funcion
                          * */
                         const std::string& getName() const;
-                        /**
-                         * \deprecated Funcion ahora redundante. El analizaro o el generador no usan esta informacion sera removido en v2
-                         * */
-                        Function(const std::string&,Skeleton skeleton);
                         /**
                          * \brief Simplementa contrulle la funcion con su nombre
                          * */
@@ -85,14 +70,6 @@ namespace apidb
                          * \brief Libera la memoria requerid por el objeto
                          * */
                         ~Function();
-                        /**
-                         * \deprecated Funcion ahora redundante ya que hay una estructra de datos para cada skeleton. El analizaro o el generador no usan esta informacion sera removido en v2
-                         * */
-                        Skeleton getSkeleton() const;
-                        /**
-                         * \deprecated Ya que el objeto Parameters no es creado por esta clase su liberacion causa conflictos, deve asignar NULL antes de que el objeto sea destruido. Esta funcion sera eliminada en v2
-                         * */
-                        void setHeader(Parameters*);
                         /**
                          * \private Funcion en desarrollo aun.
                          * */
@@ -117,7 +94,7 @@ namespace apidb
                         /**
                          * \deprecated Funcion ahora redundante ya que hay una estructra de datos para cada skeleton. El analizaro o el generador no usan esta informacion sera removido en v2
                          * */
-                        Skeleton skeleton;
+                        //Skeleton skeleton;
                         /**
                          * \brief Parametros interno
                          * */
@@ -160,13 +137,9 @@ namespace apidb
                  * */
                 std::string builDirectory;
                 /**
-                 * \deprecated Esta variable sera removida en v2
-                 * */
-                std::string& directory = builDirectory;
-                /**
                  * \brief La version del proyecto resultado.
                  * */
-                octetos::toolkit::Version version;
+                octetos::toolkit::Version versionResult;
                 /**
                  * \brief Información de conexión a la base de datos
                  * */
@@ -195,7 +168,11 @@ namespace apidb
                  * \brief Lista las tablas para las que se generara funciones de Selects
                  * */
                 std::map<const char*,Table*> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
-
+                /**
+                 * \brief Agrega la creacion de un Ejecutalbe
+                 * \details Si se asigna esta variable se creara el ejecutble con el mismo nobre a apartir de un archivo con el mimos nombre pero extencion del lenguaje inicado en  'outputLenguaje'.
+                 * */
+                std::string executable_target;
                 
                 ConfigureProject();
                 /**
@@ -205,24 +182,17 @@ namespace apidb
                 /**
                  * \brief Lee el proyecto desde el archivo especificado
                  * */
-                bool readConfig(std::string filename);
+                bool readConfig(const std::string filename);
                 /**
                  * \brief Verica los datos de conexion al servidor
                  **/
                 bool testConexion();
                         
                 /**
-                 * \brief Retorna el nombre del proyecto.
+                 * \brief Version del archivo de proyecto.
+                 * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
                  * */
-                const std::string& getName()const;
-                /**
-                 * \brief Retorna la version del proyecto.
-                 * */
-                const octetos::toolkit::Version& getVersion()const;
-                /**
-                 * \brief Retorna los datos de conexion a la base de datos.
-                 * */
-                const octetos::toolkit::clientdb::Datconnect& getConector()const;
+                const octetos::toolkit::Version& getVersionProject()const;
     };
 }
 }

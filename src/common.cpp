@@ -40,21 +40,21 @@ namespace octetos
 {
 namespace apidb
 {
-        void Tracer::add(const std::string&)
+        void Tracer::add(const std::string& str)
         {
-                
+                std::cout << str ;
         }
-        void Tracer::add(const toolkit::Error&)
+        void Tracer::add(const toolkit::Error& e)
         {
-                
+                std::cout << e.describe();
         }
-        void Tracer::add(const toolkit::Confirmation&)
+        void Tracer::add(const toolkit::Confirmation& c)
         {
-                
+                std::cout <<  c.getBrief();
         }
-        void Tracer::add(const toolkit::Warning&)
+        void Tracer::add(const toolkit::Warning& w)
         {
-                
+                std::cout << w.getBrief();
         }
         Tracer::Tracer(int a) : toolkit::ActivityProgress(a)
         {

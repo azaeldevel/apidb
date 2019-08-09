@@ -38,14 +38,14 @@ namespace octetos
 {
 namespace apidb
 {
-        bool ConfigureProject::readConfig(std::string filename)
+        bool ConfigureProject::readConfig(const std::string filename)
         {
                 if(toolkit::Error::check())
                 {
                         throw toolkit::Error("Hay un error pendiente de atender",toolkit::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
                 }
                 
-                //std::cout << "Step 1. file " << filename << std::endl;
+                //std::cout << "Reading : " << filename << std::endl;
                 FILE *apidbFilecheck = fopen(filename.c_str(), "r");
                 if (apidbFilecheck == NULL )
                 {
@@ -56,7 +56,7 @@ namespace apidb
                 }
                 fclose(apidbFilecheck);
                 //std::cout << "Step 2." << std::endl;
-                char tmp_filepath[] =  "/tmp/dxmg-XXXXXX";
+                char tmp_filepath[] =  "/tmp/XXXXXXXXX";
                 char * tmp_apidbDir  = mkdtemp(tmp_filepath);       
                 //Descomomprimiendo archivo
                 
@@ -104,6 +104,7 @@ namespace apidb
                 int ret;                
                 std::string xmlfile = tmp_filepath;
                 xmlfile += "/apidb/main.xml";
+                //std::cout << "Parseando XML " << xmlfile << std::endl;  
                 reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);
                 if (reader != NULL) 
                 {
@@ -238,7 +239,7 @@ namespace apidb
                         return false;
                 }
                 //std::cout << "Numbers readed : " << major << "." << minor << "." << patch << std::endl;
-                this->version.setNumbers(major,minor,patch);
+                this->versionResult.setNumbers(major,minor,patch);
         // this->version.setStage(toolkit::Version::Stage::alpha);
                 
                 xmlTextReaderRead(reader);

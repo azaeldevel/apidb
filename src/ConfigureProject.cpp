@@ -46,10 +46,6 @@ namespace apidb
         {
                 this->name = name;
         }
-        /*ConfigureProject::Table::Table()
-        {
-                
-        }*/
     
         std::string ConfigureProject::Function::listParams()const
         {
@@ -92,23 +88,9 @@ namespace apidb
                         delete header;
                 }
         }
-        void ConfigureProject::Function::setHeader(Parameters* header)
-        {
-                this->header = header;
-        }
-        ConfigureProject::Function::Skeleton ConfigureProject::Function::getSkeleton() const
-        {
-                return skeleton;
-        }
         const std::string& ConfigureProject::Function::getName() const
         {
                 return name;
-        }
-        ConfigureProject::Function::Function(const std::string& name,Skeleton skeleton)
-        {
-                this->name = name;
-                this->skeleton = skeleton;
-                header = NULL;
         }
         ConfigureProject::Function::Function(const std::string& name)
         {
@@ -133,44 +115,18 @@ namespace apidb
                 }
                 return ret;
         }
-        const octetos::toolkit::clientdb::Datconnect& ConfigureProject::getConector() const
+        const octetos::toolkit::Version& ConfigureProject::getVersionProject()const
         {
-                return *conectordb;    
+                return projectVersion;
         }
-        const octetos::toolkit::Version& ConfigureProject::getVersion()const
-        {
-                return version;
-        }
-        const std::string& ConfigureProject::getName()const
-        {
-                return name;
-                
-        }
-        /*const std::string& ConfigureProject::getDirectory()const
-        {
-                return directory;    
-        }*/
         ConfigureProject::ConfigureProject()
         {
                 conectordb = NULL;
         }
-    
-        /*ConfigureProject::ConfigureProject(const ConfigureProject& configProy)
-        {
-                        this->name = configProy.name;
-                        this->directory = configProy.directory;
-                        this->version = configProy.version;
-                        this->conectordb = configProy.conectordb;
-                        this->inputLenguaje = configProy.inputLenguaje;
-                        this->outputLenguaje = configProy.outputLenguaje;
-                        this->mvc = configProy.mvc;
-                        this->downloads = configProy.downloads;
-                        this->selects = configProy.selects;
-                        this->packing = configProy.packing;                
-        }*/
-
 	bool ConfigureProject::saveConfig(const std::string& filename)
 	{
+                //std::cout << "Saving to " << filename << std::endl;                
+                
 		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
 		xmlNodePtr root_node = xmlNewNode(NULL, (const xmlChar *)"project");
 		xmlDocSetRootElement(doc, root_node);
@@ -179,9 +135,9 @@ namespace apidb
 		//xmlNewChild(root_node, NULL, (const xmlChar *)"directory", (const xmlChar *)directory.c_str());
 				
 		xmlNodePtr version_node = xmlNewChild(root_node, NULL, (const xmlChar *)"version", NULL);
-		xmlNewChild(version_node, NULL, (const xmlChar *)"major", (const xmlChar *)std::to_string(version.getMajor()).c_str());
-		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(version.getMinor()).c_str());
-		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(version.getPatch()).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"major", (const xmlChar *)std::to_string(versionResult.getMajor()).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(versionResult.getMinor()).c_str());
+		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(versionResult.getPatch()).c_str());
 		
 		xmlNodePtr db_node = xmlNewChild(root_node, NULL, (const xmlChar *)"ConectorDB", NULL);
 		if(inputLenguaje == apidb::InputLenguajes::MySQL)
@@ -319,17 +275,6 @@ namespace apidb
                 }
                 xmlNewProp(selects_node, BAD_CAST "countTbs", BAD_CAST std::to_string(countTbs).c_str());
                 
-                //
-                /*std::string dirProy = "";
-		if((directory.empty()) || (directory.compare(".") == 0))
-		{
-			dirProy = "apidb";
-		}
-		else
-                {
-                        dirProy = directory + "/apidb";
-                }*/
-                
                 char tmp_dirpath[] =  "/tmp/apidb-XXXXXX";
                 char * tmp_apidbDir  = mkdtemp(tmp_dirpath);
                 std::string tmpDir = tmp_apidbDir;
@@ -372,12 +317,9 @@ namespace apidb
                 }
                 else
                 {
-                        //if(rename(tarFilename.c_str(),"apidb") != 0)
-                        {
                                 std::string msgstr = "Especifique el nombre completo del archivo.";
                                 toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_NOFULL_PATCH_PROJECT,__FILE__,__LINE__));
                                 return false;
-                        }
                 }
                 
                 //std::cout<< "Escritura de proyecto completada." << std::endl;

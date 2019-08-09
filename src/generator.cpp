@@ -79,13 +79,13 @@ namespace generators
 		cmakelists<<")"<<std::endl;
 		
 		cmakelists<<"PROJECT(";
-		cmakelists<<configureProject.getName();
+		cmakelists<<configureProject.name;
 		cmakelists<<" VERSION ";
-		cmakelists<<configureProject.getVersion().getMajor();
+		cmakelists<<configureProject.versionResult.getMajor();
 		cmakelists<<".";
-		cmakelists<<configureProject.getVersion().getMinor();
+		cmakelists<<configureProject.versionResult.getMinor();
 		cmakelists<<".";
-		cmakelists<<configureProject.getVersion().getPatch();
+		cmakelists<<configureProject.versionResult.getPatch();
 		cmakelists<<".";
 		cmakelists<<"0 ";
 		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
@@ -118,8 +118,21 @@ namespace generators
                 cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
 		cmakelists<<std::endl;
-		cmakelists<<"ADD_EXECUTABLE(developing "<< configureProject.name <<".cpp developing.cpp)"<<std::endl;
-		cmakelists<<"TARGET_LINK_LIBRARIES(developing ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
+                if(!configureProject.executable_target.empty())//la adicion de un ejecutable es opcional
+                {
+                        cmakelists<<"ADD_EXECUTABLE(" << configureProject.executable_target << "  "<< configureProject.name; 
+                        if(configureProject.outputLenguaje == OutputLenguajes::CPP)
+                        {
+                                cmakelists <<".cpp "; 
+                        }
+                        cmakelists<<configureProject.executable_target;
+                        if(configureProject.outputLenguaje == OutputLenguajes::CPP)
+                        {
+                                cmakelists <<".cpp "; 
+                        }
+                        cmakelists <<")"<<std::endl;
+                        cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
+                }
 		cmakelists<<"ADD_LIBRARY("<< configureProject.name;
                 if(configureProject.compiled == apidb::Compiled::SHARED)
                 {
@@ -345,7 +358,10 @@ namespace generators
 		config<<"#define PAKAGENAME \"@PROJECT_NAME@\""<<std::endl;
 		config.close();		
 		//analyzer->getOutputMessage()<<"\tArchivo de configuración de projecto: " << namefile <<std::endl;
-		
+				
+                
+		//analyzer->getOutputMessage()<<"\tArchivo de develping phase: " << namefile <<std::endl;
+		//std::cout<<"return..."<<std::endl;
 		return true;
 	}
 	
