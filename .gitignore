@@ -134,6 +134,8 @@ src/doc
 src/build/_CPack_Packages
 src/build/apidb.png
 src/build/apidb/*.apidb
+src/build/apidb/developing.cpp
+src/build/testing-v*
 src/build/CMakeDoxy*
 src/build/octetos-apidb.desktop
 
