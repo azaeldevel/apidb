@@ -52,17 +52,12 @@ namespace generators
             }
         }
         ofile << " FROM " << table.getName() << " WHERE \" + where ;"<< std::endl;
-        ofile << "\t\tif(connector.query(sqlString.c_str()))"  << std::endl;
+        ofile << "\t\toctetos::toolkit::clientdb::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
+        ofile << "\t\tif(dt!=NULL)"  << std::endl;
         ofile << "\t\t{" << std::endl;
-        ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
-        ofile << "\t\t\tif (result == NULL)"  << std::endl;
-        ofile << "\t\t\t{"  << std::endl;
-        ofile << "\t\t\t\t//throw octetos::toolkit::clientdb::SQLException(\"La descarga de los datos fallo con la consulta '\" + sqlString + \"'\");"<< std::endl;
-        ofile << "\t\t\t\t return NULL;"<< std::endl;
-        ofile << "\t\t\t}"  << std::endl;
         ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
         ofile << "\t\t\tstd::vector<"<< table.getName() << "*>* tmpVc = new std::vector<" << table.getName() << "*>;" << std::endl;
-        ofile << "\t\t\twhile((row = mysql_fetch_row(result))) " << std::endl;
+        ofile << "\t\t\twhile((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))" << std::endl;
         ofile << "\t\t\t{"<< std::endl;
         ofile << "\t\t\t\t"<< table.getName() << "* tmp = NULL;" << std::endl;            
         ofile << "\t\t\t\ttmp = new " << table.getName() << "(";
@@ -199,17 +194,12 @@ namespace generators
                         }
                     }
                     ofile << ";" << std::endl;
-                    ofile << "\t\tif(connector.query(sqlString.c_str()))"  << std::endl;
+                        ofile << "\t\toctetos::toolkit::clientdb::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
+                        ofile << "\t\tif(dt!=NULL)"  << std::endl;
                     ofile << "\t\t{" << std::endl;
-                    ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
-                    ofile << "\t\t\tif (result == NULL)"  << std::endl;
-                    ofile << "\t\t\t{"  << std::endl;
-                    ofile << "\t\t\t\t//throw octetos::toolkit::clientdb::SQLException(\"La descarga de los datos fallo con la consulta '\" + sqlString + \"'\");"<< std::endl;
-                    ofile << "\t\t\t\treturn NULL;"<< std::endl;
-                    ofile << "\t\t\t}"  << std::endl;
                     ofile << "\t\t\tstd::vector<"<< table.getName() << "*>* tmpVc = new std::vector<" << table.getName() << "*>;" << std::endl;
                     ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
-                    ofile << "\t\t\twhile((row = mysql_fetch_row(result))) "<< std::endl;
+                    ofile << "\t\t\twhile((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))"<< std::endl;
                     ofile << "\t\t\t{"<< std::endl;     
                     ofile << "\t\t\t\t"<< table.getName() << "* tmp = NULL;" << std::endl;             
                     ofile << "\t\t\t\ttmp = new " << table.getName() << "(";              
@@ -302,16 +292,12 @@ namespace generators
                                         }
                                 }
                                 ofile << ";" << std::endl;
-                                ofile << "\t\tif(connector.query(sqlString.c_str()))"  << std::endl;
+                                ofile << "\t\toctetos::toolkit::clientdb::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
+                                ofile << "\t\tif(dt!=NULL)"  << std::endl;
                                 ofile << "\t\t{" << std::endl;
-                                ofile << "\t\t\tMYSQL_RES *result = mysql_store_result((MYSQL*)connector.getServerConnector());" << std::endl;
-                                ofile << "\t\t\tif (result == NULL)"  << std::endl;
-                                ofile << "\t\t\t{"  << std::endl;
-                                ofile << "\t\t\t\treturn false;"  << std::endl;
-                                ofile << "\t\t\t}"  << std::endl;
                                 //ofile << "\t\t\tint num_fields = mysql_num_fields(result);"<< std::endl;
                                 ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
-                                ofile << "\t\t\twhile ((row = mysql_fetch_row(result))) "<< std::endl;
+                                ofile << "\t\t\twhile ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))"<< std::endl;
                                 ofile << "\t\t\t{"<< std::endl;
                                 //ofile << "\t\t\t\tfor(int i = 0; i < num_fields; i++)"<< std::endl;
                                 ofile << "\t\t\t\t{"<< std::endl;
@@ -359,8 +345,7 @@ namespace generators
                                 }
                                 //ofile << "\t\t\t;"<< std::endl;
                                 ofile << "\t\t\t\t}"<< std::endl;
-                                ofile << "\t\t\t}"<< std::endl;;
-                                ofile << "\t\t\tmysql_free_result(result);" << std::endl;
+                                ofile << "\t\t\t}"<< std::endl;
                                 ofile << "\t\t\treturn true;" << std::endl;
                                 ofile << "\t\t}" << std::endl;
                                 ofile << "\t\telse" << std::endl;
