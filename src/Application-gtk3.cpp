@@ -388,7 +388,6 @@ namespace apidb
         }
         
 
-        
         bool Application::downConf()
         {
                 if(isSaved and !isOpen) return true;
@@ -404,7 +403,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "El nombre del proyecto no puede estar vacio",
                                                                         "Error", g_strerror (errno));
-                                        gtk_dialog_run (GTK_DIALOG (msg));                                
+                                        gtk_dialog_run (GTK_DIALOG (msg));       
+                                        gtk_widget_destroy (msg);                          
                                 return false;
                         }
                         config->name = name;
@@ -420,7 +420,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Selecione un lenguajde de entrada(MySQL por ejemplo) en la sección de información",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_dialog_run (GTK_DIALOG (msg));                                  
+                                gtk_widget_destroy (msg);
                                 return false;
                         }
                         config->inputLenguaje = getInputLenguaje(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inInL)));
@@ -436,7 +437,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Selecione un lenguajde de salida(C++ por ejemplo) en la sección de información",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                gtk_widget_destroy (msg);
                                 return false;
                         }
                         config->outputLenguaje =  getOutputLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inOutL)));
@@ -452,7 +454,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Fallo la lectura del la version, el formato aceptable es 'x.y.z'",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                gtk_widget_destroy (msg);
                                 return false;
                         }                                
                 }
@@ -467,7 +470,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Selecione un opción de empaquetado en la seccion de información.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                gtk_widget_destroy (msg);
                                 return false;
                                 
                         }
@@ -484,7 +488,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Selecione un opción de empaquetado en la seccion de información.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                gtk_widget_destroy (msg);
                                 return false;
                                 
                         }
@@ -506,7 +511,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Indique primero el lenguaje de la Base de Datos",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));   
+                                gtk_dialog_run (GTK_DIALOG (msg));    
+                                gtk_widget_destroy (msg);
                                 return false;
                         }
                 }
@@ -521,7 +527,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Indique la direcion del host o sitio web en la seccion de Conexión.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                gtk_widget_destroy (msg);
                                 return false;
                         }
                         if(toolkit::clientdb::Connector::is_ipv4_address(loc))
@@ -544,7 +551,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "La dirección indica no parece ser validad, quiza tendrá que corregirlo despues.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                gtk_dialog_run (GTK_DIALOG (msg));   
+                                gtk_widget_destroy (msg);
                         }
                 }
                 if(inPortEdited)
@@ -558,7 +566,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Indique el número de puerto.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                gtk_widget_destroy (msg);
                                 return false;
                         }
                         unsigned int intport = std::stoi(strport.c_str());
@@ -570,7 +579,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "El número de puesto deve er un entero positivo.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                gtk_widget_destroy (msg);
                                 return false;
                         }
                         config->conectordb->setPort(intport);
@@ -586,7 +596,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Indique una base de datos.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                gtk_dialog_run (GTK_DIALOG (msg));   
+                                gtk_widget_destroy (msg);
                                 return false;
                         }
                         config->conectordb->setDatabase(strdb);
@@ -602,7 +613,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Indique un nombre de usuario para la Base de Datos.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));  
+                                gtk_dialog_run (GTK_DIALOG (msg));   
+                                gtk_widget_destroy (msg);
                                 return false;
                         }
                         config->conectordb->setUser(struser);
@@ -618,7 +630,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Dejo vacio el campo de contraseña.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));   
+                                gtk_dialog_run (GTK_DIALOG (msg));    
+                                gtk_widget_destroy (msg);
                         }
                         config->conectordb->setPassword(strpw);
                 }
@@ -640,7 +653,8 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 "Cree o abre un proyecto",
                                                                 "Al construir el proyecto", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                                 return;
                         }
                         else
@@ -656,7 +670,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         msgstr.c_str(),
                                                                         msgstr.c_str(), g_strerror (errno));
-                                        gtk_dialog_run (GTK_DIALOG (msg));   
+                                        gtk_dialog_run (GTK_DIALOG (msg));    
+                                        gtk_widget_destroy (msg);
                                         return;
                         }
                         std::string msgstr = "Algo anda mal, no hay configuracion de proyecto.";
@@ -666,7 +681,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         msgstr.c_str(),
                                                                         msgstr.c_str(), g_strerror (errno));
-                                        gtk_dialog_run (GTK_DIALOG (msg));   
+                                        gtk_dialog_run (GTK_DIALOG (msg));    
+                                        gtk_widget_destroy (msg);
                                         return;
                 }
                 
@@ -694,8 +710,20 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 msgstr.c_str(),
                                                                 msgstr.c_str(), g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                                 return;
+                }
+                else
+                {
+                        
+                        GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_INFO,
+                                                                GTK_BUTTONS_CLOSE,
+                                                                "La generacion del proyecto es correct, vea su directorio de salia.");
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                 }
         }
         void Application::document_saveas(GtkWidget *widget, gpointer data) 
@@ -771,7 +799,8 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 msgstr.c_str(),
                                                                 "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                                 return;
                         }
                         
@@ -791,7 +820,8 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 msgstr.c_str(),
                                                                 "Error", g_strerror (errno));
-                        gtk_dialog_run (GTK_DIALOG (msg));
+                        gtk_dialog_run (GTK_DIALOG (msg)); 
+                        gtk_widget_destroy (msg);
                         return;
                 }
                 
@@ -815,7 +845,8 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 msgstr.c_str(),
                                                                 "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                                 return;
                         }
                         //Guarda los datos en disco
@@ -836,7 +867,8 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 msgstr.c_str(),
                                                                 "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                                 return;
                         }
                         app->isOpen = true;
@@ -1168,7 +1200,8 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 e.what(),
                                                                 "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                                 gtk_widget_destroy (dialog);
                                 return;
                         }
@@ -1195,7 +1228,8 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 msgstr.c_str(),
                                                                 filename, g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                                 gtk_widget_destroy (dialog);                                
                         }
                         app->originFilename = filename;
@@ -1234,7 +1268,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                                 return true;
                         }
                 }
@@ -1257,7 +1292,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                 }
                 
                 return FALSE;
@@ -1280,7 +1316,8 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 "Deve crear un proyecto antes de captura informacion.",
                                                                 "Error", g_strerror (errno));
-                        gtk_dialog_run (GTK_DIALOG (msg));
+                        gtk_dialog_run (GTK_DIALOG (msg)); 
+                        gtk_widget_destroy (msg);
                         return;
                 }
         }
@@ -1302,7 +1339,8 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 "Deve crear un proyecto antes de captura informacion.",
                                                                 "Error", g_strerror (errno));
-                        gtk_dialog_run (GTK_DIALOG (msg));
+                        gtk_dialog_run (GTK_DIALOG (msg)); 
+                        gtk_widget_destroy (msg);
                         return;
                 }
         }
@@ -1324,7 +1362,8 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 "Deve crear un proyecto antes de captura informacion.",
                                                                 "Error", g_strerror (errno));
-                        gtk_dialog_run (GTK_DIALOG (msg));
+                        gtk_dialog_run (GTK_DIALOG (msg)); 
+                        gtk_widget_destroy (msg);
                         return;
                 }
         }
@@ -1346,7 +1385,8 @@ namespace apidb
                                                                 GTK_BUTTONS_CLOSE,
                                                                 "Deve crear un proyecto antes de captura informacion.",
                                                                 "Error", g_strerror (errno));
-                        gtk_dialog_run (GTK_DIALOG (msg));
+                        gtk_dialog_run (GTK_DIALOG (msg)); 
+                        gtk_widget_destroy (msg);
                         return;
                 }
         }
@@ -1456,7 +1496,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                 }
                 }
                 return FALSE;
@@ -1480,7 +1521,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                 }
                 }
                 return FALSE;
@@ -1504,7 +1546,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                 }
                 }
                 return FALSE;
@@ -1528,7 +1571,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
                 }
                 }
                 return FALSE;
@@ -1552,7 +1596,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Deve crear un proyecto antes de captura informacion.",
                                                                         "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                        gtk_widget_destroy (msg);
                 }
                 }
                 return FALSE;
@@ -1627,7 +1672,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         "Fallo la conexion a la Base de datos revise sus parametros de conexion.",
                                                                         "Error", g_strerror (errno));
-                                        gtk_dialog_run (GTK_DIALOG (msg));
+                                        gtk_dialog_run (GTK_DIALOG (msg)); 
+                                        gtk_widget_destroy (msg);
                                 }
                                 }
                                 catch(octetos::toolkit::clientdb::SQLException e)
@@ -1638,7 +1684,8 @@ namespace apidb
                                                                         GTK_BUTTONS_CLOSE,
                                                                         e.what(),
                                                                         "Error detectado", g_strerror (errno));
-                                        gtk_dialog_run (GTK_DIALOG (msg));
+                                        gtk_dialog_run (GTK_DIALOG (msg)); 
+                                        gtk_widget_destroy (msg);
                                 }
                                  if(app->driver == NULL)
                                  {
@@ -1667,6 +1714,7 @@ namespace apidb
                                                                         msgstr.c_str(),
                                                                         filename, g_strerror (errno));
                                         gtk_dialog_run (GTK_DIALOG (msg));     
+                                        gtk_widget_destroy (msg);
                                 }
                         }
                 }
@@ -1718,7 +1766,7 @@ namespace apidb
                 createHeader();
                 
                 gtk_widget_show_all (window);   
-                gtk_main ();
+                gtk_main ();     
         }
 
          const char*  Application::titleInfo = "Información";

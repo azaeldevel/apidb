@@ -32,7 +32,7 @@ En tiempo de construcion
 	Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
 	1.- unzip apidb-master.zip //Descomprimir archivo
 	2.- cd apidb-master/src/build // entrar en el directorio
-	3.- cmake -DAPIDB_VERSION_STAGE=snapshot ..
+	3.- cmake -DCMAKE_BUILD_TYPE=Release -DAPIDB_VERSION_STAGE=release ..
 	4.- make
 	5.- sudo cpack --config CPackConfig.cmake
-	6.- sudo ./apidb-*-Linux.sh --prefix=/usr
+	6.- sudo ./apidb-*-Linux.sh

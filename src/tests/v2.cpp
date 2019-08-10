@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
-	if ((NULL == CU_add_test(pSuite, "Verificando la conectividad del componente.\n", testConecction)))
+	if ((NULL == CU_add_test(pSuite, "Verificando la conectividad del componente.", testConecction)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
@@ -273,19 +273,19 @@ int main(int argc, char *argv[])
 	
 	
 	///////////////////////////////////////////////////////////CON LISTAS
-	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica.\n", testCreateProject)))
+	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica.", testCreateProject)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
 	
-	if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion.\n", testBuild)))
+	if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion.", testBuild)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
 	
-	if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.\n", testCompile)))
+	if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();

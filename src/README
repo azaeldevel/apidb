@@ -4,11 +4,11 @@
 Vea el archivo INSTALL para informacion especifica
 
 
-* Generador proyecto
+* Crear proyecto
 
-Existe tres forma de hacerlo
-	1- Creando un proyecto desde la interface grafica, esta es la opcion recomendad por su servidor. (youtube.com/video)
-	2- Utilizando la API de APIDB.
-	3- Llamando al programa apidb (en line de comando), sin embargo, este componete ya es obsoleto.
+Hay dos formas:
+	1- Creando un proyecto desde la interface grafica, esta es la opcion recomendad por su servidor. (https://youtu.be/9O6aDedacRE)
+	2- Utilizando la API de APIDB, no es complicado, la API es muy amigable con los programadores C++(esta escrita en C++).
 
-Adicionalmente para la etapa final de generacionde archivos fuente puede usar(en linea de comando) apidb-build, puede ser muy util para actualizar su proyecto
+Adicionalmente para la etapa final de generacionde de los archivos de código fuente puede usar(en linea de comando) apidb-build, le seá muy util para automatizar 
+la actualizacion de su proyecto aplicacion.
