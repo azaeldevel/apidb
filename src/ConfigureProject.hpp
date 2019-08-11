@@ -195,16 +195,31 @@ namespace apidb
                 /**
                  * \brief Version del archivo de proyecto.
                  * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
-                 * */
+                 **/
                 const octetos::toolkit::Version& getVersionProject()const;
                 /**
-                 * 
-                 * */
+                 * \brief Retorna el nombre del proyecto.
+                 **/
                 const std::string& getName()const;
+                /**
+                 * \brief Asigna el nombre del proyecto.
+                 * */
                 void setName(const std::string&);
+                /**
+                 * \brief Retorna el directorio de contrucción
+                 **/
                 const std::string& getBuildDirectory()const;
+                /**
+                 *\brief Asina el direcotrio de contrucción.
+                 **/
                 void setBuildDirectory(const char*);
+                /**
+                 * \brief Retorna el Objetivo Ejecutable si es que se asigno
+                 **/
                 const std::string& getExecutableTarget()const;
+                /**
+                 * \brief Asigna el objetivo de ejecutable.
+                 * */
                 void setExecutableTarget(const char*);
     };
 }

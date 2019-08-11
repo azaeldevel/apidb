@@ -65,8 +65,13 @@ namespace apidb
                  * \brief Destructor
                  * */
                 virtual ~Analyzer(); 
-                
+                /**
+                 *\brief Nuevo sistema de recuperacion de Mensajes. 
+                 **/
                 toolkit::ActivityProgress& getOutput();
+                /**
+                 * \brief Retorna una referencia al la estructura de configuracion de Proyecto.
+                 **/
                 const ConfigureProject& getConfigureProject()const;
         protected:
                 /**
@@ -86,6 +91,9 @@ namespace apidb
                  * \brief Indica la configuracion del proyecto.
                  * */
                 const ConfigureProject& configureProject;
+                /**
+                 * \brief Para envio de mensaje al usuario.
+                 * */
                 toolkit::ActivityProgress* progress;
 	};
 }

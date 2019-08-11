@@ -312,6 +312,9 @@ namespace apidb
 
 			short countRef;
                 public:
+                        /**
+                         * \brief La cantidad de rencias hechas a esta tabla en BD.
+                         * */
                         short getCountRefereces() const; 
                         /**
                          * \brief Simplemete crea el obejto con valores limpios
@@ -324,11 +327,26 @@ namespace apidb
                         /**
                          * \brief Retorna el nombre de la tabla.
                          * */
-                        const std::string& getName()const;                          
-                        const std::string& getUpperName()const;           
-                        const std::list<Symbol*>& getRequired()const;           
-                        const std::string& getSpace()const;           
+                        const std::string& getName()const;
+                        /**
+                         * \brief Retorna una string con el nombre de la tabla decorado con mayusculas
+                         * */
+                        const std::string& getUpperName()const; 
+                        /**
+                         * \brief Retorna una lista de los campos requerido en insert(NOT NULL)
+                         * */
+                        const std::list<Symbol*>& getRequired()const;  
+                        /**
+                         * \brief En desarrollo
+                         * */
+                        const std::string& getSpace()const;  
+                        /**
+                         * \brief En desarrollo
+                         * */
                         const std::string& getFullName()const;   
+                        /**
+                         * \brief Retorna una refencias a la llave de la tabla.
+                         * */
                         const Key& getKey()const;
 		};
 		
@@ -383,9 +401,15 @@ namespace apidb
                  * */
                 short getSpaceLevel(std::string fullname);
                 
+                /**
+                 *\brief Contiene las estructura completa de la tabla de symbolos 
+                 **/
                 class SymbolsTable : public std::map<const char*,symbols::Space*,symbols::cmp_str>
                 {
                 public:
+                        /**
+                         *\brief Comienza el proceso de libera memoria 
+                         **/
                         ~SymbolsTable();
                 };
 	}
