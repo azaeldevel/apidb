@@ -32,9 +32,9 @@ std::string random_string( size_t length )
 }
 
 static std::string filename;
-//static std::string filename_nlst;
+static std::string filename_nlst;
 static octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
-//static octetos::apidb::ConfigureProject configProject_nls;
+static octetos::apidb::ConfigureProject configProject_nls;
 static octetos::apidb::ConfigureProject configProject;
 
 /* The suite initialization function.
@@ -44,7 +44,7 @@ static octetos::apidb::ConfigureProject configProject;
 int init_apidb(void)
 {
         filename = random_string(10);
-        //ilename_nlst = random_string(10);
+        filename_nlst = random_string(10);
         return 0;
 }
 
@@ -59,16 +59,16 @@ int clean_apidb(void)
         return 0;
 }
 
-/*void testCreateProject_nlst()
+void testCreateProject_nlst()
 {
 	octetos::toolkit::Version version;
 	version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
         
-        configProject_nls.name = "sysapp";
-        configProject_nls.builDirectory = "apidb";
+        configProject_nls.setName("sysapp");
+        configProject_nls.setBuildDirectory("apidb");
         configProject_nls.conectordb = &mysqlSource;
-        configProject_nls.version = version;
+        configProject_nls.versionResult = version;
         configProject_nls.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
         configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
         configProject_nls.packing = octetos::apidb::PackingLenguajes::CMake;
@@ -82,7 +82,7 @@ int clean_apidb(void)
         {
                 CU_ASSERT(false);
         }
-}*/
+}
 
 void testConecction()
 {
@@ -98,37 +98,37 @@ void testCreateProject()
 	version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
         
-        configProject.name = "sysapp";
-        configProject.builDirectory = "apidb";
+        configProject.setName("sysapp");
+        configProject.setBuildDirectory("apidb");
         configProject.conectordb = &mysqlSource;
         configProject.versionResult = version;
         configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
         configProject.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
         configProject.packing = octetos::apidb::PackingLenguajes::CMake;
         configProject.compiled = octetos::apidb::Compiled::STATIC;
-        octetos::apidb::ConfigureProject::Table tbP("Persons");
-        octetos::apidb::ConfigureProject::Function dwFullName("fullname");
-        dwFullName.addParam("name1");
-        dwFullName.addParam("name2");
-        dwFullName.addParam("name3");
-        dwFullName.addParam("name4");
-        tbP.insert(std::make_pair(dwFullName.getName().c_str(), &dwFullName));
-        octetos::apidb::ConfigureProject::Function dwShortName("shortname");
-        dwShortName.addParam("name1");
-        dwShortName.addParam("name3");
-        tbP.insert(std::make_pair(dwShortName.getName().c_str(), &dwShortName));
-        configProject.downloads.insert(std::make_pair(tbP.getName().c_str(),&tbP));
-        configProject.selects.insert(std::make_pair(tbP.getName().c_str(),&tbP));
-        octetos::apidb::ConfigureProject::Table tbUsers("Users");
-        octetos::apidb::ConfigureProject::Function byUsername("byUsername");    
-        byUsername.addParam("username");
-        byUsername.addParam("person");
-        tbUsers.insert(std::make_pair(byUsername.getName().c_str(), &byUsername));
-        configProject.selects.insert(std::make_pair(tbP.getName().c_str(),&tbP));
-        configProject.selects.insert(std::make_pair(tbUsers.getName().c_str(),&tbUsers));
-        configProject.downloads.insert(std::make_pair(tbP.getName().c_str(),&tbP));
-        configProject.downloads.insert(std::make_pair(tbUsers.getName().c_str(),&tbUsers));
-        configProject.executable_target = "developing";
+        octetos::apidb::ConfigureProject::Table* tbP = new octetos::apidb::ConfigureProject::Table("Persons");
+        octetos::apidb::ConfigureProject::Function* dwFullName = new octetos::apidb::ConfigureProject::Function("fullname");
+        dwFullName->addParam("name1");
+        dwFullName->addParam("name2");
+        dwFullName->addParam("name3");
+        dwFullName->addParam("name4");
+        tbP->insert(std::make_pair(dwFullName->getName().c_str(), dwFullName));
+        octetos::apidb::ConfigureProject::Function* dwShortName = new octetos::apidb::ConfigureProject::Function("shortname");
+        dwShortName->addParam("name1");
+        dwShortName->addParam("name3");
+        tbP->insert(std::make_pair(dwShortName->getName().c_str(), dwShortName));
+        configProject.downloads.insert(std::make_pair(tbP->getName().c_str(),tbP));
+        configProject.selects.insert(std::make_pair(tbP->getName().c_str(),tbP));
+        octetos::apidb::ConfigureProject::Table* tbUsers = new octetos::apidb::ConfigureProject::Table("Users");
+        octetos::apidb::ConfigureProject::Function* byUsername = new octetos::apidb::ConfigureProject::Function("byUsername");    
+        byUsername->addParam("username");
+        byUsername->addParam("person");
+        tbUsers->insert(std::make_pair(byUsername->getName().c_str(), byUsername));
+        configProject.selects.insert(std::make_pair(tbP->getName().c_str(),tbP));
+        configProject.selects.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
+        configProject.downloads.insert(std::make_pair(tbP->getName().c_str(),tbP));
+        configProject.downloads.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
+        configProject.setExecutableTarget("developing");
         
         if(configProject.saveConfig(filename))
         {
@@ -140,7 +140,7 @@ void testCreateProject()
         }
 }
 
-/*void testBuild_nlst()
+void testBuild_nlst()
 {
         if(!configProject_nls.readConfig(filename_nlst))
         {
@@ -163,7 +163,7 @@ void testCreateProject()
         }
         
         CU_ASSERT(true);
-}*/
+}
 
 void testBuild()
 {   
@@ -223,7 +223,7 @@ void testCompile()
                         std::cout << "Fallo al realizar la compialcion.\n";
                         CU_ASSERT(false);
                 }
-                cmd  = " ./apidb/developing";
+                cmd  = "./apidb/developing";
                 ret = system(cmd.c_str()) ;
                 if (WIFSIGNALED(ret) && (WTERMSIG(ret) == SIGINT || WTERMSIG(ret) == SIGQUIT) || ret < 0)
                 {
@@ -258,16 +258,16 @@ int main(int argc, char *argv[])
 	}
 	
 	//////////////////////////////////////////////////////////////// SIN LISTAS
-	/*if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.\n", testCreateProject_nlst)))
+	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}	*/
-	/*if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.\n", testBuild_nlst)))
+	}	
+	if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.", testBuild_nlst)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}*/
+	}
 	
 	
 	
@@ -285,11 +285,11 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
-	if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
+	/*if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}
+	}*/
 	
 	
 	/* Run all tests using the CUnit Basic interface */

@@ -142,13 +142,13 @@ namespace apidb
 	
 	bool Driver::generate(toolkit::ActivityProgress* progress)
 	{		
-		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
+		if((configureProject.getBuildDirectory().empty()) | (configureProject.getBuildDirectory().compare(".") == 0))
 		{
 			
 		}
 		else
 		{
-			std::string direct = configureProject.builDirectory;
+			std::string direct = configureProject.getBuildDirectory();
 			std::ifstream ifile(direct);
 			if (!ifile) 
 			{

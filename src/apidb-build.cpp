@@ -31,7 +31,8 @@ int main(int argc, char *argv[])
 {
         std::string copyright = "APIDB  Copyright (C) 2018  Azael Reyes \nThis program comes with ABSOLUTELY NO WARRANTY.\n    Contacto: azael.devel@gmail.com";
         
-        std::string file,dir;
+        const char* file;
+        const char* dir;
 	if(argc > 0)
 	{
 		if(strcmp(argv[1],"-v") ==0 || strcmp(argv[1],"--version") == 0)
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
 	{
 		std::cout<<"Cargando '" << file << "' ..." <<std::endl;
 		octetos::apidb::ConfigureProject config;
-                config.builDirectory = dir;
+                config.setBuildDirectory(dir);
                 if(config.readConfig(file))
                 {
 			std::cerr<<"Fallo la lectura del archivo."<<std::endl;

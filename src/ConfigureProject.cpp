@@ -105,7 +105,31 @@ namespace apidb
         }
             
 
-	
+        const std::string& ConfigureProject::getName()const
+        {
+                return name;
+        }
+        void ConfigureProject::setName(const std::string& str)
+        {
+                name = str; 
+        }
+        const std::string& ConfigureProject::getBuildDirectory()const
+        {
+                return builDirectory;
+        }
+        void ConfigureProject::setBuildDirectory(const char* str)
+        {
+                builDirectory = str;
+        }
+        const std::string& ConfigureProject::getExecutableTarget()const
+        {
+                return executable_target;
+        }
+        void ConfigureProject::setExecutableTarget(const char* str)
+        {
+                executable_target = str;
+        }
+                
 	bool ConfigureProject::testConexion()
         {
                 bool ret = false;

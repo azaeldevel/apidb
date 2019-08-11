@@ -407,7 +407,7 @@ namespace apidb
                                         gtk_widget_destroy (msg);                          
                                 return false;
                         }
-                        config->name = name;
+                        config->setName(name.c_str());
                 }
                 if(inInLEdited)
                 {
@@ -761,7 +761,7 @@ namespace apidb
                                                 GTK_RESPONSE_ACCEPT,
                                                 NULL);
                 chooser = GTK_FILE_CHOOSER (dialog);
-               gtk_file_chooser_set_current_name (chooser,(app->config->name + ".apidb").c_str());
+               gtk_file_chooser_set_current_name (chooser,(app->config->getName() + ".apidb").c_str());
                 res = gtk_dialog_run (GTK_DIALOG (dialog));
                 if (res == GTK_RESPONSE_ACCEPT)
                 {
@@ -1106,13 +1106,13 @@ namespace apidb
         }    
         void Application::loadConfig()
         {
-                gtk_entry_set_text (GTK_ENTRY(inName),config->name.c_str());
+                gtk_entry_set_text (GTK_ENTRY(inName),config->getName().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inVer),config->versionResult.toString().c_str());
                 gtk_combo_box_set_active((GtkComboBox*)inInL,(gint)config->inputLenguaje);
                 gtk_combo_box_set_active((GtkComboBox*)inOutL,(gint)config->outputLenguaje);
                 gtk_combo_box_set_active((GtkComboBox*)inPkL,(gint)config->packing);
                 gtk_combo_box_set_active((GtkComboBox*)inCmpl,(gint)config->compiled);
-                gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
+                gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->getBuildDirectory().c_str());
                 //std::cout << "Buildd dir loaded" << config->builDirectory << std::endl;
                 
                 gtk_entry_set_text (GTK_ENTRY(inLoc),config->conectordb->getHost().c_str());
@@ -1390,7 +1390,7 @@ namespace apidb
                 Application* app = (Application*) user_data;
                 
                 char *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (app->inFileChooserBuildDirectory));
-                app->config->builDirectory = filename;
+                app->config->setBuildDirectory(filename);
                 //std::cout << "File set = " << filename << std::endl;
                 app->setSaved(false);
                 g_free (filename); 

@@ -741,7 +741,7 @@ namespace generators
     }
     void CPP::createSpaceCPP(std::ofstream& file)
     {
-                file <<"namespace "<< configureProject.name << std::endl;
+                file <<"namespace "<< configureProject.getName() << std::endl;
                 file <<"{"<<std::endl;
 		
                 const std::map<const char*,symbols::Space*,symbols::cmp_str>& spacies = analyzer.getListTableConst();
@@ -791,10 +791,11 @@ namespace generators
         {
                 ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where, int leng = 0);"<<std::endl;
                 
-                //std::cout << "List Selcct Count : " << configureProject.selects.size() << std::endl;
+                //std::cout << "List Select Count : " << configureProject.selects.size() << std::endl;
                 for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.selects.begin(); it != configureProject.selects.end(); it++)
                 {
-                        //std::cout << "Buscando : " << it->second->getName()<< std::endl;
+                        //std::cout << " Verificando " << table.getName();
+                        //std::cout << " tenga selects para : " << it->second->getName()  << std::endl;
                         if(table.getName().compare(it->second->getName()) != 0) 
                         {
                                 continue;//buscar la configuracion de la tabla correspondiente
@@ -1026,7 +1027,7 @@ namespace generators
     
     void CPP::createSpaceH(std::ofstream& file,bool log)
     {
-                file <<"namespace "<< configureProject.name <<std::endl;
+                file <<"namespace "<< configureProject.getName() <<std::endl;
                 file <<"{"<<std::endl;
                 const std::map<const char*,symbols::Space*,symbols::cmp_str> spacies = analyzer.getListTableConst();
 		//for(auto const& [keySpace, AttSpace]  : spacies)

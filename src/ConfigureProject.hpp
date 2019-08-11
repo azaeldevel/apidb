@@ -42,6 +42,19 @@ namespace apidb
                  * \brief la version del archivo de proyecto.
                  * */
                 octetos::toolkit::Version projectVersion;
+                /**
+                 * \brief El nombre del proyecto.
+                 */
+                std::string name; 
+                /**
+                 * \brief El directorio donde se colocará los archivos fuentes de la API generada.
+                 * */
+                std::string builDirectory;
+                /**
+                 * \brief Agrega la creacion de un Ejecutalbe
+                 * \details Si se asigna esta variable se creara el ejecutble con el mismo nobre a apartir de un archivo con el mimos nombre pero extencion del lenguaje inicado en  'outputLenguaje'.
+                 * */
+                std::string executable_target;
                 
         public:      
                 /**
@@ -133,14 +146,6 @@ namespace apidb
                 
         public:
                 /**
-                 * \brief El nombre del proyecto.
-                 */
-                std::string name; 
-                /**
-                 * \brief El directorio donde se colocará los archivos fuentes de la API generada.
-                 * */
-                std::string builDirectory;
-                /**
                  * \brief La version del proyecto resultado.
                  * */
                 octetos::toolkit::Version versionResult;
@@ -172,11 +177,6 @@ namespace apidb
                  * \brief Lista las tablas para las que se generara funciones de Selects
                  * */
                 std::map<const char*,Table*> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
-                /**
-                 * \brief Agrega la creacion de un Ejecutalbe
-                 * \details Si se asigna esta variable se creara el ejecutble con el mismo nobre a apartir de un archivo con el mimos nombre pero extencion del lenguaje inicado en  'outputLenguaje'.
-                 * */
-                std::string executable_target;
                 
                 ConfigureProject();
                 /**
@@ -197,6 +197,15 @@ namespace apidb
                  * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
                  * */
                 const octetos::toolkit::Version& getVersionProject()const;
+                /**
+                 * 
+                 * */
+                const std::string& getName()const;
+                void setName(const std::string&);
+                const std::string& getBuildDirectory()const;
+                void setBuildDirectory(const char*);
+                const std::string& getExecutableTarget()const;
+                void setExecutableTarget(const char*);
     };
 }
 }
