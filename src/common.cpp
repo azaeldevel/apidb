@@ -41,6 +41,21 @@ namespace octetos
 {
 namespace apidb
 {
+        
+        
+        symbols::SymbolsTable::~SymbolsTable()
+        {//es reposnablidad de SymbolsTable y solo de SymbolsTable liberar toda la memoria apuntada por sus datos
+                for(SymbolsTable::iterator it = begin(); it != end(); it++)
+                {
+                        delete (it->second);
+                }
+                clear();
+        }
+        
+        
+        
+        
+        
         void Tracer::add(const std::string& str)
         {
                 std::cout << str ;
@@ -280,6 +295,11 @@ namespace apidb
                 return id;
                 }
         
+        
+                Symbol::~Symbol()
+                {
+                        
+                }
                 Symbol::Symbol()
                 {
                         counter++;

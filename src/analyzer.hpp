@@ -73,7 +73,7 @@ namespace apidb
                  * \brief Tabla de simbolos completa.
                  * \details Consiste de un conjuto de symbols::Tables que determina un espacio, asu vez cada Tables es un constu de std::list<Table*>  que representa las tabla del espacio. Cada Table a su vez contiene std::map<const char*,Symbol*,cmp_str> que representa los campos de la tabla.
                  * */
-                std::map<const char*,symbols::Space*,symbols::cmp_str> spacies;
+                symbols::SymbolsTable spacies;
                 /**
                  * \brief COnector a la base de datos.
                  * */

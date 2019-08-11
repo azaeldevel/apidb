@@ -140,7 +140,7 @@ namespace apidb
                          * \brief Crea el objeto inicializando el nombre de la tabla.
                          **/
                         Table(const std::string&);                        
-                        //Table();
+                        ~Table();
                 };
         
                 

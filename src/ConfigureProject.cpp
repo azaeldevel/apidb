@@ -48,7 +48,14 @@ namespace apidb
         {
                 this->name = name;
         }
-    
+        ConfigureProject::Table::~Table()
+        {
+                for(std::map<const char*, const Function*>::iterator it = begin(); it != end(); it++)
+                {
+                        delete (it->second);
+                }
+                clear();
+        }
         std::string ConfigureProject::Function::listParams()const
         {
                 std::string str;
@@ -88,6 +95,7 @@ namespace apidb
                 if(header != NULL)
                 {
                         delete header;
+                        header = NULL;
                 }
         }
         const std::string& ConfigureProject::Function::getName() const

@@ -219,7 +219,11 @@ namespace apidb
 			/**
                          * \brief Inicializa los valores
                          * */
-                        Symbol();    
+                        Symbol();   
+			/**
+                         * \brief Inicializa los valores
+                         * */
+                        ~Symbol(); 
 			/**
                          * \brief El ID de simbolo.
                          * */
@@ -378,6 +382,12 @@ namespace apidb
                  * \private
                  * */
                 short getSpaceLevel(std::string fullname);
+                
+                class SymbolsTable : public std::map<const char*,symbols::Space*,symbols::cmp_str>
+                {
+                public:
+                        ~SymbolsTable();
+                };
 	}
     
         /**
