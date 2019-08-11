@@ -1661,20 +1661,26 @@ namespace apidb
                         if(app->inLocEdited || app->inPortEdited || app->inDBEdited || app->inUserEdited || app->inPwEdited)
                         {
                                 app->conexEdited = true;
-                                if(!app->isSaved) app->setSaved(false);
+                                if(app->isSaved) app->setSaved(false);
+                                app->downConf();
                                 try
                                 {
-                                if(!app->config->testConexion())
-                                {                                        
-                                        GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                        GTK_MESSAGE_ERROR,
-                                                                        GTK_BUTTONS_CLOSE,
-                                                                        "Fallo la conexion a la Base de datos revise sus parametros de conexion.",
-                                                                        "Error", g_strerror (errno));
-                                        gtk_dialog_run (GTK_DIALOG (msg)); 
-                                        gtk_widget_destroy (msg);
-                                }
+                                        //std::cout << app->config->conectordb->getHost() << std::endl;
+                                        //std::cout << app->config->conectordb->getDatabase() << std::endl;
+                                        //std::cout << app->config->conectordb->getPort() << std::endl;
+                                        //std::cout << app->config->conectordb->getPassword() << std::endl;
+                                        if(!app->config->testConexion())
+                                        {                                        
+                                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                                GTK_MESSAGE_ERROR,
+                                                                                GTK_BUTTONS_CLOSE,
+                                                                                "Fallo la conexion a la Base de datos revise sus parametros de conexion.",
+                                                                                "Error", g_strerror (errno));
+                                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                                gtk_widget_destroy (msg);
+                                                return;
+                                        }
                                 }
                                 catch(octetos::toolkit::clientdb::SQLException e)
                                 {
@@ -1686,6 +1692,7 @@ namespace apidb
                                                                         "Error detectado", g_strerror (errno));
                                         gtk_dialog_run (GTK_DIALOG (msg)); 
                                         gtk_widget_destroy (msg);
+                                        return;
                                 }
                                  if(app->driver == NULL)
                                  {
