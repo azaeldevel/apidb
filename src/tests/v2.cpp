@@ -65,8 +65,8 @@ void testCreateProject_nlst()
 	version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
         
-        configProject_nls.setName("sysapp");
-        configProject_nls.setBuildDirectory("apidb");
+        configProject_nls.name = "sysapp";
+        configProject_nls.builDirectory = "apidb";
         configProject_nls.conectordb = &mysqlSource;
         configProject_nls.versionResult = version;
         configProject_nls.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
@@ -98,8 +98,8 @@ void testCreateProject()
 	version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
         
-        configProject.setName("sysapp");
-        configProject.setBuildDirectory("apidb");
+        configProject.name = "sysapp";
+        configProject.builDirectory  = "apidb";
         configProject.conectordb = &mysqlSource;
         configProject.versionResult = version;
         configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
@@ -128,7 +128,7 @@ void testCreateProject()
         configProject.selects.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
         configProject.downloads.insert(std::make_pair(tbP->getName().c_str(),tbP));
         configProject.downloads.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
-        configProject.setExecutableTarget("developing");
+        configProject.executable_target  = "developing";
         
         if(configProject.saveConfig(filename))
         {

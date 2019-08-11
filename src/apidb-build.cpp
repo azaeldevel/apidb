@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 	{
 		std::cout<<"Cargando '" << file << "' ..." <<std::endl;
 		octetos::apidb::ConfigureProject config;
-                config.setBuildDirectory(dir);
+                config.builDirectory = dir;
                 if(config.readConfig(file))
                 {
 			std::cerr<<"Fallo la lectura del archivo."<<std::endl;

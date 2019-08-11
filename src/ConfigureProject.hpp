@@ -42,19 +42,6 @@ namespace apidb
                  * \brief la version del archivo de proyecto.
                  * */
                 octetos::toolkit::Version projectVersion;
-                /**
-                 * \brief El nombre del proyecto.
-                 */
-                std::string name; 
-                /**
-                 * \brief El directorio donde se colocará los archivos fuentes de la API generada.
-                 * */
-                std::string builDirectory;
-                /**
-                 * \brief Agrega la creacion de un Ejecutalbe
-                 * \details Si se asigna esta variable se creara el ejecutble con el mismo nobre a apartir de un archivo con el mimos nombre pero extencion del lenguaje inicado en  'outputLenguaje'.
-                 * */
-                std::string executable_target;
                 
         public:      
                 /**
@@ -146,6 +133,14 @@ namespace apidb
                 
         public:
                 /**
+                 * \brief El nombre del proyecto.
+                 */
+                std::string name; 
+                /**
+                 * \brief El directorio donde se colocará los archivos fuentes de la API generada.
+                 * */
+                std::string builDirectory;
+                /**
                  * \brief La version del proyecto resultado.
                  * */
                 octetos::toolkit::Version versionResult;
@@ -176,7 +171,13 @@ namespace apidb
                 /**
                  * \brief Lista las tablas para las que se generara funciones de Selects
                  * */
-                std::map<const char*,Table*> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
+                std::map<const char*,Table*> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente                
+                /**
+                 * \brief Agrega la creacion de un Ejecutalbe
+                 * \details Si se asigna esta variable se creara el ejecutble con el mismo nobre a apartir de un archivo con el mimos nombre pero extencion del lenguaje inicado en  'outputLenguaje'.
+                 * */
+                std::string executable_target;
+                bool virtual_space;
                 
                 ConfigureProject();
                 /**
@@ -200,27 +201,27 @@ namespace apidb
                 /**
                  * \brief Retorna el nombre del proyecto.
                  **/
-                const std::string& getName()const;
+                //const std::string& getName()const;
                 /**
                  * \brief Asigna el nombre del proyecto.
                  * */
-                void setName(const std::string&);
+                //void setName(const std::string&);
                 /**
                  * \brief Retorna el directorio de contrucción
                  **/
-                const std::string& getBuildDirectory()const;
+                //const std::string& getBuildDirectory()const;
                 /**
                  *\brief Asina el direcotrio de contrucción.
                  **/
-                void setBuildDirectory(const char*);
+                //void setBuildDirectory(const char*);
                 /**
                  * \brief Retorna el Objetivo Ejecutable si es que se asigno
                  **/
-                const std::string& getExecutableTarget()const;
+                //const std::string& getExecutableTarget()const;
                 /**
                  * \brief Asigna el objetivo de ejecutable.
                  * */
-                void setExecutableTarget(const char*);
+                //void setExecutableTarget(const char*);
     };
 }
 }

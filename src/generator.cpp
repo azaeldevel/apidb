@@ -58,13 +58,13 @@ namespace generators
 	bool CMake::generate(bool log)
 	{
 		std::string namefile = "CMakeLists.txt";
-		if((configureProject.getBuildDirectory().empty()) | (configureProject.getBuildDirectory().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
 			cmakelists.open(namefile);
 		}
 		else
 		{
-			cmakelists.open(configureProject.getBuildDirectory()+ "/" + namefile);
+			cmakelists.open(configureProject.builDirectory+ "/" + namefile);
 		}
 			
 		//CMakeLists.txt
@@ -80,7 +80,7 @@ namespace generators
 		cmakelists<<")"<<std::endl;
 		
 		cmakelists<<"PROJECT(";
-		cmakelists<<configureProject.getName();
+		cmakelists<<configureProject.name;
 		cmakelists<<" VERSION ";
 		cmakelists<<configureProject.versionResult.getMajor();
 		cmakelists<<".";
@@ -103,7 +103,7 @@ namespace generators
 		cmakelists<<"SET(CMAKE_CXX_EXTENSIONS OFF)"<<std::endl;
                 cmakelists<<" SET(CMAKE_BUILD_TYPE Debug)"<<std::endl;
 		cmakelists<<std::endl;
-		cmakelists<<"SET(" << configureProject.getName() << "_VERSION_STAGE \"alpha\")"<<std::endl;
+		cmakelists<<"SET(" << configureProject.name << "_VERSION_STAGE \"alpha\")"<<std::endl;
 		cmakelists<<"CONFIGURE_FILE(\"${PROJECT_SOURCE_DIR}/config.h.in\" \"${PROJECT_SOURCE_DIR}/config.h\")"<<std::endl;
 		cmakelists<<std::endl;
 		cmakelists<<"FIND_PACKAGE(MySQL REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
@@ -119,22 +119,22 @@ namespace generators
                 cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
 		cmakelists<<std::endl;
-                if(!configureProject.getExecutableTarget().empty())//la adicion de un ejecutable es opcional
+                if(!configureProject.executable_target.empty())//la adicion de un ejecutable es opcional
                 {
-                        cmakelists<<"ADD_EXECUTABLE(" << configureProject.getExecutableTarget() << "  "<< configureProject.getName(); 
+                        cmakelists<<"ADD_EXECUTABLE(" << configureProject.executable_target << "  "<< configureProject.name; 
                         if(configureProject.outputLenguaje == OutputLenguajes::CPP)
                         {
                                 cmakelists <<".cpp "; 
                         }
-                        cmakelists<<configureProject.getExecutableTarget();
+                        cmakelists<<configureProject.executable_target;
                         if(configureProject.outputLenguaje == OutputLenguajes::CPP)
                         {
                                 cmakelists <<".cpp "; 
                         }
                         cmakelists <<")"<<std::endl;
-                        cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.getExecutableTarget() << "  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
+                        cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
                 }
-		cmakelists<<"ADD_LIBRARY("<< configureProject.getName();
+		cmakelists<<"ADD_LIBRARY("<< configureProject.builDirectory;
                 if(configureProject.compiled == apidb::Compiled::SHARED)
                 {
                         cmakelists << " SHARED ";
@@ -143,8 +143,8 @@ namespace generators
                 {
                          cmakelists  << " STATIC ";
                 }                
-                cmakelists << configureProject.getName() <<".cpp )"<<std::endl;
-		cmakelists<<"TARGET_LINK_LIBRARIES("<< configureProject.getName() <<" ${MYSQL_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_LIBRARIES}  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} )"<<std::endl;
+                cmakelists << configureProject.name <<".cpp )"<<std::endl;
+		cmakelists<<"TARGET_LINK_LIBRARIES("<< configureProject.name <<" ${MYSQL_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_LIBRARIES}  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} )"<<std::endl;
 		cmakelists.close();
                 std::string msg2 = "\tArchivo de gestion de projecto: '";
                 msg2 += namefile + "'\n";
@@ -152,7 +152,7 @@ namespace generators
 		
 		//std::cout<<"Creating cmake.modules..."<<std::endl;
 		//cmake.modules
-		if((configureProject.getBuildDirectory().empty()) | (configureProject.getBuildDirectory().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
 			std::ifstream ifile("cmake.modules");
 			if (!ifile) 
@@ -162,7 +162,7 @@ namespace generators
 		}
 		else
 		{
-			std::string direct = configureProject.getBuildDirectory() + "/cmake.modules";
+			std::string direct = configureProject.builDirectory + "/cmake.modules";
 			std::ifstream ifile(direct);
 			if (!ifile) 
 			{
@@ -175,7 +175,7 @@ namespace generators
 	
 		//std::cout<<"Creating toolkit-commonConfig.cmake..."<<std::endl;
 		namefile = "octeos-toolkit-common-c++Config.cmake";
-		if((configureProject.getBuildDirectory().empty()) | (configureProject.getBuildDirectory().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
                         std::string file = "cmake.modules/";
                         file += namefile;
@@ -183,7 +183,7 @@ namespace generators
 		}
 		else
 		{
-			toolkitcommonconifg.open(configureProject.getBuildDirectory() + "/cmake.modules/" + namefile);
+			toolkitcommonconifg.open(configureProject.builDirectory + "/cmake.modules/" + namefile);
 		}
 		toolkitcommonconifg<<"IF(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)"<<std::endl;
 		  toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_FIND_QUIETLY TRUE)"<<std::endl;
@@ -230,7 +230,7 @@ namespace generators
                 {
 		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
 		namefile = "octetos-toolkit-clientdb-myc++Config.cmake";
-		if((configureProject.getBuildDirectory().empty()) | (configureProject.getBuildDirectory().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
                         std::string file = "cmake.modules/";
                         file += namefile;
@@ -238,7 +238,7 @@ namespace generators
 		}
 		else
 		{
-			toolkitclientdbConfig.open(configureProject.getBuildDirectory() + "/cmake.modules/" + namefile);
+			toolkitclientdbConfig.open(configureProject.builDirectory + "/cmake.modules/" + namefile);
 		}	
 		
 		toolkitclientdbConfig<<"IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR)"<<std::endl;
@@ -289,7 +289,7 @@ namespace generators
                 }
 		//std::cout<<"Creating MySQLConfig.cmake..."<<std::endl;
 		namefile = "MySQLConfig.cmake";
-		if((configureProject.getBuildDirectory().empty()) | (configureProject.getBuildDirectory().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
                         std::string file = "cmake.modules/";
                         file += namefile;
@@ -297,7 +297,7 @@ namespace generators
 		}
 		else
 		{
-			toolkitcommonconifg.open(configureProject.getBuildDirectory() + "/cmake.modules/" + namefile);
+			toolkitcommonconifg.open(configureProject.builDirectory + "/cmake.modules/" + namefile);
 		}
 		
 		toolkitcommonconifg<<"IF (MYSQL_INCLUDE_DIR)"<<std::endl;
@@ -344,13 +344,13 @@ namespace generators
 
 		//std::cout<<"Creating config.h.in..."<<std::endl;
 		namefile = "config.h.in";
-		if((configureProject.getBuildDirectory().empty()) | (configureProject.getBuildDirectory().compare(".") == 0))
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
 			config.open(namefile);
 		}
 		else
 		{
-			config.open(configureProject.getBuildDirectory()+ "/" + namefile);
+			config.open(configureProject.builDirectory + "/" + namefile);
 		}
 		config<<"#define VERSION_MAJOR @apidb_VERSION_MAJOR@"<<std::endl;
 		config<<"#define VERSION_MINOR @apidb_VERSION_MINOR@"<<std::endl;
@@ -425,19 +425,19 @@ namespace generators
                 
 		//outputLenguaje = d.getOutputLenguaje();
 		writeResults = new std::ofstream[2];
-		if((configureProject.getBuildDirectory().empty()) | (configureProject.getBuildDirectory().compare(".") == 0)) 
+		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0)) 
 		{
-			projectH = configureProject.getName() + ".hpp";
+			projectH = configureProject.name + ".hpp";
 			writeResults[0].open(projectH);
-			projectCPP = configureProject.getName() + ".cpp";
+			projectCPP = configureProject.name + ".cpp";
 			writeResults[1].open(projectCPP);
 		}
 		else
 		{
-			projectH = configureProject.getName() + ".hpp";
-			projectCPP = configureProject.getName() + ".cpp";
-			writeResults[0].open(configureProject.getBuildDirectory() + "/" + projectH);
-			writeResults[1].open(configureProject.getBuildDirectory() + "/" + projectCPP);
+			projectH = configureProject.builDirectory + ".hpp";
+			projectCPP = configureProject.builDirectory + ".cpp";
+			writeResults[0].open(configureProject.builDirectory + "/" + projectH);
+			writeResults[1].open(configureProject.builDirectory + "/" + projectCPP);
 		}
 	}    
 	bool CPP::generate(bool log)

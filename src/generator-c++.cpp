@@ -741,7 +741,7 @@ namespace generators
     }
     void CPP::createSpaceCPP(std::ofstream& file)
     {
-                file <<"namespace "<< configureProject.getName() << std::endl;
+                file <<"namespace "<< configureProject.name << std::endl;
                 file <<"{"<<std::endl;
 		
                 const std::map<const char*,symbols::Space*,symbols::cmp_str>& spacies = analyzer.getListTableConst();
@@ -1027,7 +1027,7 @@ namespace generators
     
     void CPP::createSpaceH(std::ofstream& file,bool log)
     {
-                file <<"namespace "<< configureProject.getName() <<std::endl;
+                file <<"namespace "<< configureProject.name <<std::endl;
                 file <<"{"<<std::endl;
                 const std::map<const char*,symbols::Space*,symbols::cmp_str> spacies = analyzer.getListTableConst();
 		//for(auto const& [keySpace, AttSpace]  : spacies)

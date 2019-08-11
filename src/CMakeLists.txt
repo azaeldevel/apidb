@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
-PROJECT(apidb VERSION 2.0.0.6 LANGUAGES CXX)
+PROJECT(apidb VERSION 2.0.0.7 LANGUAGES CXX)
 SET(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
@@ -77,12 +77,14 @@ FIND_PACKAGE(CUnit REQUIRED PATHS ${PROJECT_SOURCE_DIR}/../cmake/Modules/)
 IF(CUNIT_FOUND)
 	INCLUDE_DIRECTORIES(${CUNIT_INCLUDE_DIR})
 ENDIF()
+if(APIDB_DOC)
 FIND_PACKAGE(Doxygen)
 IF(Doxygen_FOUND)
         SET(doxyfile_in "doxygen-public-c++")
 ELSE()
         MESSAGE(FATAL_ERROR "No se encontro Doxygen.")
 ENDIF()
+endif()
 
 
 
@@ -116,7 +118,8 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}-gtk3 ${LIBRARIES} ${LIBREADER} )
 execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb-128x128.png" -h 128 -w 128)
 execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb-256x256.png" -h 256 -w 256)
 
-IF(Doxygen_FOUND)
+
+IF(Doxygen_FOUND AND APIDB_DOC)
 add_custom_target(
         doc ALL
         COMMAND ${DOXYGEN_EXECUTABLE} "${PROJECT_SOURCE_DIR}/${doxyfile_in}"
@@ -125,6 +128,7 @@ add_custom_target(
         VERBATIM
         )
 ENDIF()
+
 
 ###################################################################################################################
 ###INSTALL

@@ -113,7 +113,7 @@ namespace apidb
         }
             
 
-        const std::string& ConfigureProject::getName()const
+        /*const std::string& ConfigureProject::getName()const
         {
                 return name;
         }
@@ -136,7 +136,7 @@ namespace apidb
         void ConfigureProject::setExecutableTarget(const char* str)
         {
                 executable_target = str;
-        }
+        }*/
                 
 	bool ConfigureProject::testConexion()
         {
