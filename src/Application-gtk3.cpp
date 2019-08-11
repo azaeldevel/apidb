@@ -963,12 +963,12 @@ namespace apidb
                 }
         }
         void Application::createHeader()
-        {       
+        {                       
                 headerbar = gtk_header_bar_new();
                 //gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (headerbar), TRUE);
                 gtk_header_bar_set_title (GTK_HEADER_BAR (headerbar), nameApp.c_str());
                 gtk_header_bar_set_has_subtitle (GTK_HEADER_BAR (headerbar), FALSE);
-      
+                
                 btOpen = gtk_button_new ();
                 icoOpen = g_themed_icon_new ("document-open");
                 imgOpen = gtk_image_new_from_gicon (icoOpen,GTK_ICON_SIZE_BUTTON);
@@ -1014,8 +1014,7 @@ namespace apidb
                 gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btSaveAs);
                 g_signal_connect(G_OBJECT(btSaveAs), "clicked", G_CALLBACK(Application::document_saveas), this);
                 
-                
-                
+                                
                 btQuit = gtk_button_new ();
                 icoQuit= g_themed_icon_new ("application-exit");
                 imgQuit = gtk_image_new_from_gicon (icoQuit,GTK_ICON_SIZE_BUTTON);
@@ -1045,12 +1044,8 @@ namespace apidb
                 g_object_unref (icoCloseDoc);
                 gtk_container_add (GTK_CONTAINER (btCloseDoc), imgCloseDoc);
                 gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btCloseDoc); 
-                
-                
+                                
                 gtk_window_set_titlebar (GTK_WINDOW (window), headerbar);
-                
-                gtk_container_add (GTK_CONTAINER (window), gtk_text_view_new ());
-                
         }
         
         Driver* Application::getDriver()
@@ -1142,7 +1137,7 @@ namespace apidb
                 g_signal_connect (window, "destroy", G_CALLBACK (application_destroy), this);  
                 gtk_container_set_border_width (GTK_CONTAINER (window), 10);   
                 gtk_window_set_resizable(GTK_WINDOW (window),FALSE);
-                gtk_container_add (GTK_CONTAINER (window), vboxMain);        
+                gtk_container_add (GTK_CONTAINER (window), vboxMain);       
         }   
         void Application::document_open (GtkWidget *widget, gpointer   data)
         {
@@ -1303,8 +1298,8 @@ namespace apidb
                 Application* app = (Application*) user_data;
                 if(app->config != NULL)
                 {
-                        std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
-                        std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
+                        //std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
+                        //std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
                         app->inInLEdited = true;
                         app->setSaved(false);
                 }
@@ -1326,8 +1321,8 @@ namespace apidb
                 Application* app = (Application*) user_data;
                 if(app->config != NULL)
                 {
-                        std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
-                        std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
+                        //std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
+                        //std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
                         app->inOutLEdited = true;
                         app->setSaved(false);
                 }
@@ -1349,8 +1344,8 @@ namespace apidb
                 Application* app = (Application*) user_data;
                 if(app->config != NULL)
                 {
-                        std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
-                        std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
+                        //std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
+                        //std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
                         app->inPkLEdited = true;
                         app->setSaved(false);
                 }
@@ -1372,8 +1367,8 @@ namespace apidb
                 Application* app = (Application*) user_data;
                 if(app->config != NULL)
                 {                        
-                        std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
-                        std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
+                        //std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
+                        //std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
                         app->inCmplEdited = true;
                         app->setSaved(false);
                 }
@@ -1662,7 +1657,7 @@ namespace apidb
                         {
                                 app->conexEdited = true;
                                 if(app->isSaved) app->setSaved(false);
-                                app->downConf();
+                                if(app->isNew)  app->downConf();
                                 try
                                 {
                                         //std::cout << app->config->conectordb->getHost() << std::endl;
