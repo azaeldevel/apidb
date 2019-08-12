@@ -43,8 +43,8 @@ static octetos::apidb::ConfigureProject configProject;
  */
 int init_apidb(void)
 {
-        filename = random_string(10);
-        filename_nlst = random_string(10);
+        filename = random_string(50);
+        filename_nlst = random_string(50);
         return 0;
 }
 
@@ -247,7 +247,7 @@ void testNewAnalyzer()
         }
         octetos::apidb::Driver driver(configProject);
         octetos::apidb::Tracer tracer(0);
-        if(!driver.driving_test(&tracer))
+        if(!driver.driving(&tracer))
         {
                 if(octetos::toolkit::Error::check())
                 {

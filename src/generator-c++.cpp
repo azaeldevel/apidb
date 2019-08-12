@@ -28,6 +28,7 @@
 
 #include "analyzer.hpp"
 #include "generator.hpp"
+#include "Errors.hpp"
 
 namespace octetos
 {
@@ -739,9 +740,10 @@ namespace generators
 		createClassMethodesCPP(cl,file);        
 		file<< std::endl<< std::endl;
     }
-    void CPP::createCPP(std::ofstream& file,bool log,const std::map<const char*,symbols::ISpace*,symbols::cmp_str>&)
+    bool CPP::createCPP(std::ofstream& file,bool log,const symbols::SymbolsTable& stb)
 	{
 		
+		return true;
 	}
     /*void CPP::createSpaceCPP(std::ofstream& file)
     {
@@ -1028,9 +1030,94 @@ namespace generators
                 for(short i =0; i < level ; i++) file << "\t";
                 file <<"\t};"<<std::endl;
     }
-    void CPP::createH(std::ofstream& file,bool log,const std::map<const char*,symbols::ISpace*,symbols::cmp_str>&)
+    bool CPP::createH(std::ofstream& file,bool log,const symbols::ISpace* ispace)
 	{
+		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+		{
+			if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				symbols::Table* table = (symbols::Table*) ispace;
+				createClassH(*table,file,table->getName(),log);
+			}
+			else if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				if(ispace->what() == symbols::SpaceType::TABLE)
+				{
+					symbols::Table* table = (symbols::Table*) ispace;
+					createClassH(*table,file,table->getName(),log);
+				}
+				else if(ispace->what() == symbols::SpaceType::SPACE)
+				{
+					symbols::Space* space = (symbols::Space*) ispace;
+					file << "namespace " ;
+					if(space->getFullName().empty())
+					{
+							file << configureProject.name;
+					}
+					else
+					{
+							file << space->getFirstName() << std::endl;
+					}
+					file << "\n{\n";
+					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+					{
+							createH(file,log,it->second);
+					}
+					file << "\n}\n";
+					file << std::endl;
+				}
+			}
+		}
+		else
+		{
+			toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+			return false;
+		}
 		
+		return true;
+	}
+    bool CPP::createH(std::ofstream& file,bool log,const symbols::SymbolsTable& stb)
+	{
+		for(symbols::SymbolsTable::const_iterator it = stb.begin(); it != stb.end(); it++)
+		{			
+			symbols::ISpace* ispace = it->second;
+			if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+			{
+				if(ispace->what() == symbols::SpaceType::TABLE)
+				{					
+					symbols::Table* table = (symbols::Table*) ispace;
+					createClassH(*table,file,table->getName(),log);
+				}
+				else if(ispace->what() == symbols::SpaceType::SPACE)
+				{
+					symbols::Space* space = (symbols::Space*) ispace;
+					file << "namespace " ;
+					if(space->getFullName().empty())
+					{
+							file << configureProject.name;
+					}
+					else
+					{
+							file << space->getFirstName() << std::endl;
+					}
+					file << "\n{\n";
+					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+					{
+						createH(file,log,it->second);
+					}
+					file << "\n}\n";
+					file << std::endl;
+				}
+			}
+			else
+			{
+				toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+				return false;
+			}
+		}	
+		return true;
 	}
     /*void CPP::createSpaceH(std::ofstream& file,bool log)
     {

@@ -35,6 +35,12 @@ namespace apidb
 {
 namespace generators
 { 
+	
+	const symbols::SymbolsTable& Generator::getSymbolsTable()const
+	{
+		return analyzer.symbolsTable;
+	}
+	
 	Generator::Generator(const ConfigureProject& config,apidb::Analyzer& d)  : configureProject(config),analyzer(d)
 	{
 		
@@ -455,15 +461,14 @@ namespace generators
                 getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
 		getHeaderOutput()<< "#include <clientdb-mysql.hpp>"<<std::endl<<std::endl;
 			
+		
 		//writing code				
-		//createH(getHeaderOutput(),log,analyzer.getListTableConst());  
+		createH(getHeaderOutput(),log,getSymbolsTable());  
 		//createCPP(getSourceOutput(),log,analyzer.getListTableConst()); 
           
         return true;    
     }
     
-
-	
 }
 }
 }

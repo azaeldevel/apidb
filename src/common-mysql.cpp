@@ -74,7 +74,7 @@ namespace apidb
 					toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 					return false;
 				}
-				std::cout<<"Se encontró campo '" << referenceSymbol->getName() << "'" << std::endl;
+				//std::cout<<"Se encontró campo '" << referenceSymbol->getName() << "'" << std::endl;
 				Symbol* targetSymbol = findSymbol(row[0]);
 				if(targetSymbol == NULL)
 				{
@@ -84,7 +84,7 @@ namespace apidb
 					toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 					return false;
 				}
-				std::cout<< targetSymbol->getName() << "-->" << referenceTable->getName()  << ":" << referenceSymbol->getName() << "'" << std::endl;
+				//std::cout<< targetSymbol->getName() << "-->" << referenceTable->getName()  << ":" << referenceSymbol->getName() << "'" << std::endl;
 			}	
 		}
                 

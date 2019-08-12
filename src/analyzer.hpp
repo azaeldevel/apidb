@@ -30,11 +30,17 @@ namespace octetos
 {
 namespace apidb
 {    
+namespace generators
+{
+	class Generator;
+}
         /**
          * \brief No hay muchas funciones dispoblies aquí quiza le sea utíl si desea conocer la tabla de simbolos.
          **/
 	class Analyzer
 	{
+		friend class generators::Generator;
+		
 	public:
                 /**
                  * \brief Realiza una llamada al parser interno que realiza el analisis de cadana pasada
@@ -56,7 +62,7 @@ namespace apidb
                  * \brief Crea una copia de la tabla de simbolos las cual puede ser manipulada
                  * */
                 //std::map<const char*,symbols::ISpace*,symbols::cmp_str> copyListTable()const;
-			
+		
                 /**
                  * \brief Requiere la configuracion del proyecto y un conector la base de datos valido.
                  * */
@@ -94,8 +100,7 @@ namespace apidb
                 /**
                  * \brief Para envio de mensaje al usuario.
                  * */
-                toolkit::ActivityProgress* progress;
-				
+                toolkit::ActivityProgress* progress;				
 		bool basicSymbols(symbols::ISpace* ispace,toolkit::ActivityProgress* progress);
 		bool fillKeyType(symbols::ISpace* ispace,toolkit::ActivityProgress* progress);
 	};

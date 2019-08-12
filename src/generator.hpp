@@ -46,6 +46,7 @@ namespace octetos
 			//OutputLenguajes outputLenguaje;//se 
 			const ConfigureProject& configureProject;
                         apidb::Analyzer& analyzer;
+			const symbols::SymbolsTable& getSymbolsTable()const;
 		};
 		
                 /**
@@ -63,14 +64,15 @@ namespace octetos
 			
 		private:
 			//void createSpaceH(std::ofstream& file,bool log);
-			void createH(std::ofstream& file,bool log,const std::map<const char*,symbols::ISpace*,symbols::cmp_str>&);
+			bool createH(std::ofstream& file,bool log,const symbols::SymbolsTable&);
+			bool createH(std::ofstream& file,bool log,const symbols::ISpace*);
 			void createClassH(const apidb::symbols::Table&,std::ofstream&,const std::string&,bool log);
 			void createClassPrivateH(std::ofstream&);
 			void createClassAttributesH(const apidb::symbols::Table&,std::ofstream&);
 			void createClassPublicH(std::ofstream&);
 			void createClassMethodesH(const apidb::symbols::Table&,std::ofstream&);
 			//void createSpaceCPP(std::ofstream& file);
-			void createCPP(std::ofstream& file,bool log,const std::map<const char*,symbols::ISpace*,symbols::cmp_str>&);
+			bool createCPP(std::ofstream& file,bool log,const symbols::SymbolsTable&);
 			void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&);
 			void createClassPrivateCPP(std::ofstream&);
 			void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);
