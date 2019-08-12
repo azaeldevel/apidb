@@ -60,8 +60,8 @@ namespace apidb
 		else
 		{
 			toolkit::Error::write(toolkit::Error("Sopurte para espacios virtuales en desarrollo.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+			return NULL;
 		}
-		return NULL;
 	}
         symbols::SymbolsTable::SymbolsTable()
         {
@@ -345,6 +345,12 @@ namespace apidb
 		int Symbol::counter = 0;	
 		
         
+		Symbol* Table::findSymbol(const std::string& str)
+		{
+			iterator it = find(str.c_str());
+			if(it != end()) return it->second;
+			return NULL;
+		}
 		ISpace* Table::searh(const std::string&)
 		{
 			

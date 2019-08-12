@@ -361,10 +361,10 @@ namespace apidb
                         /**
                          * \brief Retorna una refencias a la llave de la tabla.
                          * */
-                        const Key& getKey()const;
-                        virtual SpaceType what()const;
-						Symbol* findSymbol(const std::string&);
-						virtual ISpace* searh(const std::string&);
+			const Key& getKey()const;
+			virtual SpaceType what()const;
+			Symbol* findSymbol(const std::string&);
+			virtual ISpace* searh(const std::string&);
 		};
 		
                 

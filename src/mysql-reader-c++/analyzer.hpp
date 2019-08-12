@@ -38,21 +38,6 @@ namespace mysql
         {
         public:            
             virtual bool analyze(toolkit::ActivityProgress* progress);
-            /**
-            * Parse desde una std::string
-            **/
-            virtual std::string parse(const std::string& line);
-            /** 
-            * parse - parse from a file
-            * @param filename - valid string with input file
-            */
-            void parse(const char * const filename);
-            /** 
-            * parse - parse from a c++ input stream
-            * @param is - std::istream&, valid input stream
-            */
-            void parse(std::istream &iss);
-            
             //Analyzer();
             Analyzer(const ConfigureProject&,octetos::toolkit::clientdb::Connector*,toolkit::ActivityProgress* progress);		
             virtual ~Analyzer();         	
@@ -68,7 +53,24 @@ namespace mysql
         private:
             void parse_helper(std::istream &stream);
             Parser  *parser  = nullptr;
-            Scanner *scanner = nullptr;   
+            Scanner *scanner = nullptr;  
+			
+            /** 
+            * parse - parse from a c++ input stream
+            * @param is - std::istream&, valid input stream
+            */            
+            void parse(std::istream &iss);
+			bool parse(symbols::ISpace*);
+			bool parse(symbols::Symbol*);
+            /**
+            * Parse desde una std::string
+            **/
+            virtual std::string parse(const std::string& line);
+            /** 
+            * parse - parse from a file
+            * @param filename - valid string with input file
+            */
+            void parse(const char * const filename);
         };        
 }
 }

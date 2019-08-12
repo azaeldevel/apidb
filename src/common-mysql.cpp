@@ -53,12 +53,38 @@ namespace apidb
             MYSQL_ROW row;
             while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
             {
-				std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
-				Table* tableRef = symbolsTable.findTable(row[1]);
-				if(tableRef != NULL)
+				//std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
+				Table* referenceTable = symbolsTable.findTable(row[1]);
+				if(referenceTable == NULL)
 				{
-					std::cout<<"Se encontró tabla '" << tableRef->getName() << "'" << std::endl;
+					std::string msg = "No se encontro la tabla '";
+					msg += row[1];
+					msg += "'";
+					toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					return false;
 				}
+				//std::cout<<"Se encontró tabla '" << referenceTable->getName() << "'" << std::endl;
+				Symbol* referenceSymbol = referenceTable->findSymbol(row[2]);
+				if(referenceSymbol == NULL)
+				{
+					
+					std::string msg = "No se encontro el campo '";
+					msg += row[2];
+					msg += "'";
+					toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					return false;
+				}
+				std::cout<<"Se encontró campo '" << referenceSymbol->getName() << "'" << std::endl;
+				Symbol* targetSymbol = findSymbol(row[0]);
+				if(targetSymbol == NULL)
+				{
+					std::string msg = "No se encontro el campo '";
+					msg += row[0];
+					msg += "'";
+					toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					return false;
+				}
+				std::cout<< targetSymbol->getName() << "-->" << referenceTable->getName()  << ":" << referenceSymbol->getName() << "'" << std::endl;
 			}	
 		}
                 

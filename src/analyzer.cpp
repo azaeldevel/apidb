@@ -40,10 +40,19 @@ namespace apidb
 			}
 			else if(ispace->what() == symbols::SpaceType::SPACE)
 			{
-				symbols::Space* space = (symbols::Space*) ispace;
-				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+				if(ispace->what() == symbols::SpaceType::TABLE)
 				{
-					if(!fillKeyType(it->second,progress)) return false;
+					//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
+					if(((symbols::Table*)ispace)->fillKeyType(*(toolkit::clientdb::mysql::Connector*)connector,symbolsTable) == false) return false;
+				}
+				else if(ispace->what() == symbols::SpaceType::SPACE)
+				{
+					symbols::Space* space = (symbols::Space*) ispace;
+					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+					{
+						if(fillKeyType(it->second,progress) == false) return false;
+					}
 				}
 			}
 		}

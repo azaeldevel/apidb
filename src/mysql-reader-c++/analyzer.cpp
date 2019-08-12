@@ -4,6 +4,8 @@
 #include <sstream> 
 
 #include "analyzer.hpp"
+#include "../Errors.hpp"
+
 
 namespace octetos
 {
@@ -11,10 +13,57 @@ namespace apidb
 {	
 namespace mysql
 {
+	bool Analyzer::parse(symbols::Symbol* symbol)
+	{
+		symbol->outType = parse(symbol->inType);
+		//std::cout << symbol->inType << " -> " << symbol->outType << std::endl;
+		return true;
+	}
+	bool Analyzer::parse(symbols::ISpace* ispace)
+	{
+		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+		{
+			if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				symbols::Table* tb = (symbols::Table*) ispace;
+				for(symbols::Table::iterator it = tb->begin(); it != tb->end(); it++)
+				{
+					if(parse(it->second) == false) return false;
+				}
+			}
+			else if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				if(ispace->what() == symbols::SpaceType::TABLE)
+				{
+					symbols::Table* tb = (symbols::Table*) ispace;
+					for(symbols::Table::iterator it = tb->begin(); it != tb->end(); it++)
+					{
+						if(parse(it->second) == false) return false;
+					}
+				}
+				else if(ispace->what() == symbols::SpaceType::SPACE)
+				{
+					symbols::Space* space = (symbols::Space*) ispace;
+					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+					{
+						if(parse(it->second) == false) return false;
+					}
+				}
+			}
+		}
+		else
+		{
+			toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+			return false;
+		}
+		
+		return true;
+	}
 	bool Analyzer::analyze(toolkit::ActivityProgress* progress)
 	{
 		bool flag = listing();
-                
+		
 		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{
 			if(basicSymbols(it->second,progress) == false) return false;
@@ -25,22 +74,12 @@ namespace mysql
 			if(fillKeyType(it->second,progress) == false) return false;
 		}
 		
-		/*
-                for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
-                {
-                        //for(auto table: *AttSpace) //reading attrubtes by table
-                        for(std::list<symbols::ISpace*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
-                        {
-                                //for (auto const& [key, attribute] : *table)
-                                for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::iterator itFl = (*itTb)->begin(); itFl != (*itTb)->end(); itFl++)
-                                {
-                                        //std::cout<<"\t"<<attribute->inType<<std::endl;
-                                        itFl->second->outType = parse(itFl->second->inType);
-                                }
-                        }
-                }*/
-                //std::cout<<"Step 4."<<std::endl;
-                return flag;
+		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
+		{
+			parse(it->second);
+		}
+		
+		return flag;
 	}
 	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn,toolkit::ActivityProgress* p) : apidb::Analyzer(config,conn,p)
 	{
