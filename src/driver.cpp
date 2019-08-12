@@ -112,7 +112,25 @@ namespace apidb
 		
 		return false;
 	}
-	
+	bool Driver::driving_test(toolkit::ActivityProgress* progress)
+	{
+		if(connector == NULL) 
+                {
+                        std::cout<<"El conector es NULL." << std::endl;
+                        return false;
+                }
+
+		if(analyze(progress))
+		{
+			return true;
+		}
+		else
+                {
+                        std::cout<<"Fallo la etapa de analisis." << std::endl;                
+                }
+		
+		return false;
+	}
 	/*bool Driver::driving(bool log)
 	{
 		if(connector == NULL) 

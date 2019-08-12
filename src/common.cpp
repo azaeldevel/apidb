@@ -42,12 +42,18 @@ namespace octetos
 namespace apidb
 {
         
-        
+        symbols::SymbolsTable::SymbolsTable()
+        {
+                Space* sapce = new symbols::Space("");
+                std::pair<const char*, symbols::ISpace*> newInser("",sapce);
+                insert(newInser);//aseguira que sea el primer en ser creado.
+                
+        }
         symbols::SymbolsTable::~SymbolsTable()
-        {//es reposnablidad de SymbolsTable y solo de SymbolsTable liberar toda la memoria apuntada por sus datos
+        {
                 for(SymbolsTable::iterator it = begin(); it != end(); it++)
                 {
-                        delete (it->second);
+                        delete it->second;
                 }
                 clear();
         }
@@ -227,7 +233,7 @@ namespace apidb
                 /**
                  * \private
                  * */
-                std::string getShortTableName(std::string fullname)
+                std::string getFirstName(std::string fullname)
                 {                        
                         std::vector<std::string> comps;
                         boost::split( comps, fullname, boost::is_any_of( "." ) );
@@ -317,10 +323,17 @@ namespace apidb
                 }
 		int Symbol::counter = 0;	
 		
-                Space::Space(const std::string name)
-                {
-                        this->name = name;
-                }
+                
+		
+		ISpace* Table::searh(const std::string&)
+		{
+			
+			return NULL;
+		}
+		SpaceType Table::what()const
+		{
+			return SpaceType::TABLE; 
+		}
 		/*short Space::getMaxCountRef()
 		{
 			std::list<Table*>::iterator actual = begin();
@@ -338,7 +351,6 @@ namespace apidb
 			
 			return m;
 		}*/
-				
                 const std::string& Table::getUpperName()const
                 {
                         return upperName;
@@ -385,15 +397,42 @@ namespace apidb
 		
 		
 		
-		
-		            
-               const std::string& Space::getName()const
+		ISpace* Space::searh(const std::string&)
+		{
+			
+			return NULL;
+		}
+		SpaceType Space::what()const
+		{
+                       return SpaceType::NAMESPACE; 
+                }
+                Space::Space(const std::string& middle)
                 {
-                        return name;
+                        middleName = middle;
+                        if(middleName.empty())
+                        {
+                                firstName = middleName;
+                        }
+                        else
+                        {
+                                
+                        }
+                }
+		const std::string& Space::getFullName()const
+		{
+                        return fullName;
+                }
+                const std::string& Space::getFirstName()const
+                {
+                        return firstName;
+                }
+                const std::string& Space::getMiddleName()const
+                {
+                        return middleName;
                 }		
 		Space::~Space()
 		{
-			for (Table* table : *this)
+			for (ISpace* table : *this)
 			{
 				delete table;
 			}

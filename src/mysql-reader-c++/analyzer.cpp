@@ -14,12 +14,11 @@ namespace mysql
 	bool Analyzer::analyze(toolkit::ActivityProgress* progress)
 	{
 		bool flag = listing();
-                
-                //for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
+                /*
+                for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
                 {
                         //for(apidb::symbols::Table* table : *AttSpace) //reading attrubtes by table
-                        for(std::list<symbols::Table*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
+                        for(std::list<symbols::ISpace*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
                         {
                                 if(progress != NULL)
                                 {
@@ -36,26 +35,24 @@ namespace mysql
                         }
                 }
                 
-                //for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
+                for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
                 {
                         //for(auto table: *AttSpace) //reading attrubtes by table
-                        for(std::list<symbols::Table*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
+                        for(std::list<symbols::ISpace*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
                         {
                                 //foreign key's
-                                if(!(*itTb)->fillKeyType(*connector,spacies))
+                                if(!(*itTb)->fillKeyType(*connector,symbolsTable))
                                 {
                                         //std::cerr<<"Faill on fillKeyType"<<std::endl;
                                         return false;
                                 }
                         }
                 }
-                //std::cout<<"Step 3."<<std::endl;
-                //for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator it = spacies.begin(); it != spacies.end(); it++)
+                
+                for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
                 {
                         //for(auto table: *AttSpace) //reading attrubtes by table
-                        for(std::list<symbols::Table*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
+                        for(std::list<symbols::ISpace*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
                         {
                                 //for (auto const& [key, attribute] : *table)
                                 for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::iterator itFl = (*itTb)->begin(); itFl != (*itTb)->end(); itFl++)
@@ -64,7 +61,7 @@ namespace mysql
                                         itFl->second->outType = parse(itFl->second->inType);
                                 }
                         }
-                }
+                }*/
                 //std::cout<<"Step 4."<<std::endl;
                 return flag;
 	}

@@ -55,7 +55,7 @@ int init_apidb(void)
 int clean_apidb(void)
 {
         remove(filename.c_str());
-        //remove(filename_nlst.c_str());
+        remove(filename_nlst.c_str());
         return 0;
 }
 
@@ -234,6 +234,31 @@ void testCompile()
         }
 }
 
+void testNewAnalyzer()
+{
+        if(!configProject.readConfig(filename))
+        {                
+                if(octetos::toolkit::Error::check())
+                {
+                        std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+                }
+                CU_ASSERT(false);
+                exit(EXIT_FAILURE);// hay pruebas que depende de esta.
+        }
+        octetos::apidb::Driver driver(configProject);
+        octetos::apidb::Tracer tracer(0);
+        if(!driver.driving_test(&tracer))
+        {
+                if(octetos::toolkit::Error::check())
+                {
+                        std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+                }
+                CU_ASSERT(false);
+                exit(EXIT_FAILURE);// hay pruebas que depende de esta.
+        }
+        CU_ASSERT(true);
+}
+
 int main(int argc, char *argv[])
 {
 	CU_pSuite pSuite = NULL;
@@ -242,7 +267,7 @@ int main(int argc, char *argv[])
 	if (CUE_SUCCESS != CU_initialize_registry()) return CU_get_error();
 
 	octetos::toolkit::Version ver = octetos::apidb::getPakageVersion();
-        std::string pkName = octetos::apidb::getPakageName();
+	std::string pkName = octetos::apidb::getPakageName();
 	std::string classVersionString = std::string("Probando ") + pkName + " " + ver.toString();
 	pSuite = CU_add_suite(classVersionString.c_str(), init_apidb, clean_apidb);
 	if (NULL == pSuite) 
@@ -251,24 +276,24 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
+	
 	if ((NULL == CU_add_test(pSuite, "Verificando la conectividad del componente.", testConecction)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
-	
-	//////////////////////////////////////////////////////////////// SIN LISTAS
+	////////////////////////////////////////////////////////// SIN LISTAS
 	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
 	}	
-	if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.", testBuild_nlst)))
+	/*if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.", testBuild_nlst)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}
-	
+	}*/
+
 	
 	
 	
@@ -279,18 +304,23 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
-	if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion.", testBuild)))
+	/*if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion.", testBuild)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}
+	}*/
 	
 	/*if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
 	}*/
-	
+		
+	if ((NULL == CU_add_test(pSuite, "Analizer Nuevo.", testNewAnalyzer)))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
 	
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);

@@ -54,7 +54,9 @@ namespace apidb
                 APPLICATION_GTK3_ROWACTIVE_NOTFOUND_TABLE,
                 APPLICATION_GTK3_CONFIGPROJECT_NULL,
                 
-                BD_BAT_NAMETABLE
+                BD_BAT_NAMETABLE,
+                
+                ANALYZER_FAIL
                 
         };
         

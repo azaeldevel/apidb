@@ -55,6 +55,7 @@ namespace apidb
                  * \brief Se puede considar como una llamada a 'analyze' seguida de una llamda a 'generate'
                  * */
 		bool driving(toolkit::ActivityProgress* progress);
+		bool driving_test(toolkit::ActivityProgress* progress);
                 
                 /**
                  * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 

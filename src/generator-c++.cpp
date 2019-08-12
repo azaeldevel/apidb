@@ -739,7 +739,11 @@ namespace generators
 		createClassMethodesCPP(cl,file);        
 		file<< std::endl<< std::endl;
     }
-    void CPP::createSpaceCPP(std::ofstream& file)
+    void CPP::createCPP(std::ofstream& file,bool log,const std::map<const char*,symbols::ISpace*,symbols::cmp_str>&)
+	{
+		
+	}
+    /*void CPP::createSpaceCPP(std::ofstream& file)
     {
                 file <<"namespace "<< configureProject.name << std::endl;
                 file <<"{"<<std::endl;
@@ -753,7 +757,7 @@ namespace generators
                         {
                                 short level = symbols::getSpaceLevel(it->first);
                                 for(short i = 0; i < level ; i++) file << "\t";
-                                file << "namespace " << it->second->getName()  << std::endl;
+                                file << "namespace " << it->second->getFirstName()  << std::endl;
                                 for(short i = 0; i < level ; i++) file << "\t";
                                 file << "{" << std::endl;
                         }
@@ -770,7 +774,7 @@ namespace generators
                         }
                 }
                 file <<"}"<<std::endl;
-    }
+    }*/
         void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
         {                
                 for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
@@ -1024,20 +1028,23 @@ namespace generators
                 for(short i =0; i < level ; i++) file << "\t";
                 file <<"\t};"<<std::endl;
     }
-    
-    void CPP::createSpaceH(std::ofstream& file,bool log)
+    void CPP::createH(std::ofstream& file,bool log,const std::map<const char*,symbols::ISpace*,symbols::cmp_str>&)
+	{
+		
+	}
+    /*void CPP::createSpaceH(std::ofstream& file,bool log)
     {
                 file <<"namespace "<< configureProject.name <<std::endl;
                 file <<"{"<<std::endl;
                 const std::map<const char*,symbols::Space*,symbols::cmp_str> spacies = analyzer.getListTableConst();
 		//for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
+                for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
                 {
                         if(strcmp(it->first,"") != 0)
                         {
                                 short level = symbols::getSpaceLevel(it->first);
                                 for(short i = 1; i < level ; i++) file << "\t";
-                                file << "\tnamespace " << it->second->getName()  << std::endl;
+                                file << "\tnamespace " << it->second->getFirstName()  << std::endl;
                                 for(short i = 1; i < level ; i++) file << "\t";
                                 file << "\t{" << std::endl;
                         }
@@ -1066,7 +1073,7 @@ namespace generators
                         {
                                 short level = symbols::getSpaceLevel(it->first);
                                 for(short i =0; i < level ; i++) file << "\t";
-                                file << "\tnamespace " << it->second->getName()  << std::endl;
+                                file << "\tnamespace " << it->second->getFirstName()  << std::endl;
                                 for(short i =0; i < level ; i++) file << "\t";
                                 file << "\t{" << std::endl;
                         }
@@ -1083,7 +1090,7 @@ namespace generators
                         }
                 }
                 file <<"}"<<std::endl;
-    }
+    }*/
     
     
 }

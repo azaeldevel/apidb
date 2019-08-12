@@ -32,102 +32,45 @@ namespace octetos
 {
 namespace apidb
 {
-        /**
-        * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
-        */
-	bool symbols::Table::fillKeyType(octetos::toolkit::clientdb::Connector& connect,std::map<const char*,symbols::Space*,symbols::cmp_str>& tables)
+    /**
+    * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
+    */
+    bool symbols::Table::fillKeyType(octetos::toolkit::clientdb::Connector& connect,Space& tables)
 	{
-                /**
-                * Lista las relaciones de llaves foraneas para la tabla actual
-                */
+        /**
+        * Lista las relaciones de llaves foraneas para la tabla actual
+        */
 		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME FROM information_schema.TABLE_CONSTRAINTS i,information_schema.KEY_COLUMN_USAGE k WHERE i.CONSTRAINT_NAME = k.CONSTRAINT_NAME  AND i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =k.TABLE_SCHEMA AND i.TABLE_NAME = "; 
-                fks += "'";
-                if(space.compare("") == 0)
-                {
-                        fks += "`" + space + "." + name + "`";
-                }
-                else
-                {
-                        fks += name;
-                }
-		fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
+        fks += "'";
+        if(space.compare("") == 0)
+        {
+            fks += "`" + space + "." + name + "`";
+        }
+        else
+        {
+            fks += name;
+        }
+        fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
 		fks += ((octetos::toolkit::clientdb::Datconnect*)(connect.getDatconection()))->getDatabase();
 		fks += "'";
-		//std::cout<<fks<<std::endl;
-                octetos::toolkit::clientdb::Datresult* dt = connect.query(fks.c_str());
-                if(dt != NULL)
-                {
-			//MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());                        
-			MYSQL_ROW row;
-			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
-			{
-                                //std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
-                                Space::iterator itTBReference;
-                                bool flFinded = false;
-                                //for(auto const& [keySpace, AttSpace]  : tables)
-                                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator itS = tables.begin(); itS != tables.end(); itS++)
-                                {
-                                        itTBReference = itS->second->find(row[1]);//buscar la tabla del campo que se refiere en el registro actual 'row[1]'
-                                        if(itTBReference != itS->second->end()) 
-                                        {
-                                                break;
-                                                flFinded = true;
-                                        }
-                                }
-                                if(flFinded)
-                                {//si se encontro la tabla
-                                                Table* tbReference = *itTBReference;
-                                                //std::cout<<"Se encontro tabla '" << tbFinded->name << "'" << std::endl;
-                                                //std::cout<<"Buscando campo '" << row[0] << "'" << std::endl;
-                                                iterator itatt = find(row[0]);//buscar el compo referido (REFERENCED_COLUMN_NAME) en la tabla
-                                                if(itatt != tbReference->end()) //buscar
-                                                {//si se encontro la tabla                                                 
-                                                        //if(itFinded != tables.end())
-                                                        Symbol* attribute = itatt->second;
-                                                        //std::cout<<"Se encontro campo '"<< attribute->name << "'" << std::endl;
-                                                        //std::cout  << attribute->classParent->name << "-->" << attribute->classReferenced->name << std::endl;
-                                                        tbReference->countRef++;//contando la cantiad de veces que es referida la clase
-                                                        Table::iterator itAttRefence = tbReference->find(row[2]);
-                                                        if(itAttRefence != attribute->classReferenced->end())
-                                                        {
-                                                                attribute->classReferenced = tbReference;
-                                                                attribute->symbolReferenced = (*itAttRefence).second;
-                                                                attribute->isFK = true;
-                                                                //std::cout <<  attribute->classParent->name << ":" << attribute->name << "-->" << attribute->classReferenced->name << ":" << attribute->symbolReferenced->name << std::endl;
-                                                        }
-                                                        else
-                                                        {
-                                                                std::string strmsg = "No se encontro el campo '";
-                                                                strmsg = strmsg + row[0] + "' en la tabla '" + row[1] + "', es necesario para construir la referencia a dicho campo.";
-                                                                throw BuildException(strmsg);
-                                                        }
-                                                }
-                                                else
-                                                {
-                                                        std::string strmsg = "No se encontro el campo '";
-                                                         strmsg = strmsg + row[2] + "' en la tabla '" + row[1] + "', es necesario para construir la referencia a dicho campo.";
-                                                        throw BuildException(strmsg); 
-                                                }
-                                }
-                                else
-                                {
-                                        std::string strmsg = "No se encontro el la tabla '";
-                                        strmsg = strmsg + row[1] + "'";
-                                        throw BuildException(strmsg);
-                                }
-			}
-			delete dt; 
-			return true;	
-                }
+        octetos::toolkit::clientdb::Datresult* dt = connect.query(fks.c_str());
+        if(dt != NULL)
+        {                      
+            MYSQL_ROW row;
+            while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
+            {
+				std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
+			}	
+		}
                 
-                delete dt;                
-                return false;
-	}
+		delete dt;                
+		return false;
+    }
 	
         bool symbols::Table::basicSymbols(octetos::toolkit::clientdb::Connector& connect)
         {
-		std::string str = "DESCRIBE ";
-                if(space.compare("") != 0)
+			std::string str = "DESCRIBE ";
+			if(space.compare("") != 0)
                 {
                         str += "`" + space + "." + name + "`";
                 }
@@ -209,65 +152,40 @@ namespace apidb
 			delete dt;//mysql_free_result(result);
 			return false;
 		}
-        }
+	}
     
     
 	bool Analyzer::listing()
 	{
 		std::string db = connector->getDatconection()->getDatabase();
-		//std::cout<< "db:" << db <<std::endl;
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
-                str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
-                octetos::toolkit::clientdb::Datresult* dt = connector->query(str.c_str());   
+		str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
+		octetos::toolkit::clientdb::Datresult* dt = connector->query(str.c_str());   
 		if(dt != NULL) 
 		{
 			MYSQL_ROW row;
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
-				symbols::Table* prw = new symbols::Table(symbols::getShortTableName(row[0]));
-				//prw->name = symbols::getSpaceName(row[0]);
-                                //prw->shortname = getTableName(row[0]);
-                                std::string upper = row[0];
-                                upper[0] = toupper(upper[0]);
-                                prw->upperName = upper;
-                                prw->space = symbols::getSpacePatch(row[0]);
-                                prw->fullname = row[0];
-                                if(symbols::getSpaceLevel(row[0]) > 1)
-                                {
-                                        std::string msg = "Se detecto un caractere invalido en el nombre de tabla '";
-                                        msg += prw->fullname + "'";
-                                        toolkit::Error::write(toolkit::Error(msg,ErrorCodes::BD_BAT_NAMETABLE,__FILE__,__LINE__));
-                                        return false;
-                                }
-                                
-                                std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator it = spacies.find(prw->space.c_str());                                
-                                if(it == spacies.end())
-                                {
-                                        symbols::Space* newSpace  = new symbols::Space(prw->space);
-                                        //newSpace->name = prw->space;
-                                        newSpace->push_back(prw);
-                                        std::pair<const char*, symbols::Space*> newInser(prw->space.c_str(),newSpace);
-                                        spacies.insert(newInser);
-                                }
-                                else
-                                {
-                                        (*it).second->push_back(prw);
-                                }
-                                //std::cout <<  prw->space << "::" << prw->name << std::endl;
+				symbols::Table* prw = new symbols::Table(symbols::getFirstName(row[0]));
+				std::string upper = row[0];
+				upper[0] = toupper(upper[0]);
+				prw->upperName = upper;
+				prw->space = symbols::getSpacePatch(row[0]);
+				prw->fullname = row[0];
+				std::cout<<"Table: " << row[0] << std::endl;
 			}
-                        delete dt;//mysql_free_result((MYSQL_RES*)(dt->getResult()));
-                        //std::cout << "Count : " << tables.size() << std::endl;
+			delete dt;
 			return true;
 		}
 		else
-                {
-                        std::string msg = "";
-                        msg = msg + " MySQL Server Error No. : '";
-                        msg = msg + std::to_string(mysql_errno((MYSQL*)connector->getServerConnector()));
-                        msg = msg + "' ";
-                        msg = msg + mysql_error((MYSQL*)connector->getServerConnector());
-                        throw octetos::toolkit::clientdb::SQLException(msg);                         
-                }
+		{
+			std::string msg = "";
+			msg = msg + " MySQL Server Error No. : '";
+			msg = msg + std::to_string(mysql_errno((MYSQL*)connector->getServerConnector()));
+			msg = msg + "' ";
+			msg = msg + mysql_error((MYSQL*)connector->getServerConnector());
+			toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+		}
 		return false;	
 	}
 }

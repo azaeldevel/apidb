@@ -71,7 +71,7 @@ namespace apidb
                 {
                         int i = 1;
                         //std::cout << "Buscando '" << table  << "' tabla para seleccionar parametros." << std::endl;                        
-                        for(std::map<const char*,symbols::Space*,symbols::cmp_str>::const_iterator it = driver->getAnalyzer().getListTableConst().begin(); it != driver->getAnalyzer().getListTableConst().end(); it++)
+                        /*for(std::map<const char*,symbols::Space*,symbols::cmp_str>::const_iterator it = driver->getAnalyzer().getListTableConst().begin(); it != driver->getAnalyzer().getListTableConst().end(); it++)
                         {
                                 for(std::list<symbols::Table*>::iterator itT = (*it).second->begin(); itT != (*it).second->end(); itT++)
                                 {
@@ -84,7 +84,7 @@ namespace apidb
                                                 }
                                         }
                                 }
-                        }
+                        }*/
                 }
                 gtk_combo_box_set_active((GtkComboBox*)cmbAddParameter,0);
                 gtk_container_add (GTK_CONTAINER (content_area), cmbAddParameter);
@@ -151,7 +151,7 @@ namespace apidb
                 gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
                 if(driver != NULL)
                 {
-                        std::map<const char*,symbols::Space*,symbols::cmp_str> lst = driver->getAnalyzer().copyListTable();
+                        /*std::map<const char*,symbols::Space*,symbols::cmp_str> lst = driver->getAnalyzer().copyListTable();
                         int i = 1;
                         for(std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator it = lst.begin(); it != lst.end(); it++)
                         {
@@ -160,7 +160,7 @@ namespace apidb
                                         gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*itJ)->getFullName().c_str(),(*itJ)->getFullName().c_str());        
                                         i++;
                                 }
-                        }
+                        }*/
                 }
                 gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
                 gtk_container_add (GTK_CONTAINER (content_area), cmbAddTable);

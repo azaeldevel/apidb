@@ -51,11 +51,11 @@ namespace apidb
                  * \brief Retorna un referancia a la tabla de simbolos, no es modificable si necesita poder modicar 
                  * \details Ya que la tabla de simbolos es un estructura de datos compleja y muy delicada no se permite acceso de escritura, si lo necesita puede considerar hacer una copia de la tabal mediante la  funcion copyListTable, la caul le construira una identica. Quiza quiera reconsiderar el modelo de su programa o la estructura del mismo tambien.
                  **/
-                const std::map<const char*,symbols::Space*,symbols::cmp_str>& getListTableConst() const;
+                const std::map<const char*,symbols::ISpace*,symbols::cmp_str>& getListTableConst() const;
                 /**
                  * \brief Crea una copia de la tabla de simbolos las cual puede ser manipulada
                  * */
-                std::map<const char*,symbols::Space*,symbols::cmp_str> copyListTable()const;
+                std::map<const char*,symbols::ISpace*,symbols::cmp_str> copyListTable()const;
 			
                 /**
                  * \brief Requiere la configuracion del proyecto y un conector la base de datos valido.
@@ -78,7 +78,7 @@ namespace apidb
                  * \brief Tabla de simbolos completa.
                  * \details Consiste de un conjuto de symbols::Tables que determina un espacio, asu vez cada Tables es un constu de std::list<Table*>  que representa las tabla del espacio. Cada Table a su vez contiene std::map<const char*,Symbol*,cmp_str> que representa los campos de la tabla.
                  * */
-                symbols::SymbolsTable spacies;
+                symbols::SymbolsTable symbolsTable;
                 /**
                  * \brief COnector a la base de datos.
                  * */

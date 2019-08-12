@@ -62,13 +62,15 @@ namespace octetos
 			virtual ~CPP();
 			
 		private:
-			void createSpaceH(std::ofstream& file,bool log);
+			//void createSpaceH(std::ofstream& file,bool log);
+			void createH(std::ofstream& file,bool log,const std::map<const char*,symbols::ISpace*,symbols::cmp_str>&);
 			void createClassH(const apidb::symbols::Table&,std::ofstream&,const std::string&,bool log);
 			void createClassPrivateH(std::ofstream&);
 			void createClassAttributesH(const apidb::symbols::Table&,std::ofstream&);
 			void createClassPublicH(std::ofstream&);
 			void createClassMethodesH(const apidb::symbols::Table&,std::ofstream&);
-			void createSpaceCPP(std::ofstream& file);
+			//void createSpaceCPP(std::ofstream& file);
+			void createCPP(std::ofstream& file,bool log,const std::map<const char*,symbols::ISpace*,symbols::cmp_str>&);
 			void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&);
 			void createClassPrivateCPP(std::ofstream&);
 			void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);
