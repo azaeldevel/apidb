@@ -122,6 +122,7 @@ namespace apidb
 	{
 		class Table;
 		class Space;
+		class SymbolsTable;
 		
                 /**
                  * \private 
@@ -144,7 +145,7 @@ namespace apidb
 		public:
 			virtual SpaceType what()const = 0;
 			virtual ISpace* searh(const std::string&)=0;
-			~ISpace(){};
+			virtual ~ISpace(){};
 		};
         
 		/**
@@ -317,11 +318,11 @@ namespace apidb
                         /**
                          * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
                          * */
-			bool basicSymbols(octetos::toolkit::clientdb::Connector& connect);
+			bool basicSymbols(octetos::toolkit::clientdb::mysql::Connector& connect);
                         /**
                          * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
-                         * */
-                        bool fillKeyType(octetos::toolkit::clientdb::Connector& connect, Space& tables);
+                         * */			
+			bool fillKeyType(octetos::toolkit::clientdb::mysql::Connector& connect, const SymbolsTable&);
 
 			short countRef;
                 public:
@@ -371,7 +372,7 @@ namespace apidb
 		 * \brief Conjunto de tablas
                  * \details No representa un spacio realmente sino que umula uno en base a ciertos creterio en el nombrambramiento de las tablas, esto para poder organizar mejor el codigo. En MySQL por ejemplo, Se permite poner el caracter punto en el nombre de la tabla, y este es el criterio usado para MySQL, APIDB crea un nuevo anidamiento de espacio cada vez que encuentre un punto en el nombre de la tabla.
 		 * */
-		class Space : public ISpace, public std::list<ISpace*>
+		class Space : public ISpace, public std::map<const char*,symbols::ISpace*,symbols::cmp_str>
 		{
 		public:
                         /**
@@ -400,6 +401,7 @@ namespace apidb
                         
                         virtual SpaceType what()const;
 						virtual ISpace* searh(const std::string&);
+						Table* findTable(const std::string&);
                         
                 private:                        
                         /**
@@ -436,11 +438,12 @@ namespace apidb
                 class SymbolsTable : public std::map<const char*,symbols::ISpace*,symbols::cmp_str>
                 {
                 public:
-                        /**
-                         *\brief Libera memoria
-                         **/
-                        SymbolsTable();
-                        ~SymbolsTable();
+					/**
+					*\brief Libera memoria
+					**/
+					SymbolsTable();
+					~SymbolsTable();
+					Table* findTable(const std::string&)const;
                 };
 	}
     

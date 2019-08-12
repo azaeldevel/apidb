@@ -38,6 +38,9 @@ namespace apidb
                  * \brief Para complier con el requisito de toolkit::Error
                  * */
                 READFILE_TEMPUNPACKFAIL = toolkit::Error::Codes::ROOFCODE,//No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.
+				
+				ERROR_UNNSOPORTED_INPUTLANGUAGE,
+				
                 Read_FileFailParseNode,
                 Read_UncomConfigFile,
                 READFILE_OPENXMLFILE,
@@ -56,7 +59,7 @@ namespace apidb
                 
                 BD_BAT_NAMETABLE,
                 
-                ANALYZER_FAIL
+                ANALYZER_FAIL,				
                 
         };
         

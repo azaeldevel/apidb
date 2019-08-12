@@ -24,12 +24,37 @@
 #include <sstream> 
 
 #include "analyzer.hpp"
+#include "Errors.hpp"
 
 namespace octetos
 {
 namespace apidb
 {	
-	
+	bool Analyzer::fillKeyType(symbols::ISpace* ispace,toolkit::ActivityProgress* progress)
+	{		
+		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+		{
+			if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				if(!((symbols::Table*)ispace)->fillKeyType(*(toolkit::clientdb::mysql::Connector*)connector,symbolsTable)) return false;
+			}
+			else if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				symbols::Space* space = (symbols::Space*) ispace;
+				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+				{
+					if(!fillKeyType(it->second,progress)) return false;
+				}
+			}
+		}
+		else
+		{
+			toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+			return false;
+		}
+		
+		return true;
+	}
 	bool Analyzer::basicSymbols(symbols::ISpace* ispace,toolkit::ActivityProgress* progress)
 	{
 		if(progress != NULL)
@@ -42,17 +67,27 @@ namespace apidb
 			}			
 		}
 		
-		if(ispace->what() == symbols::SpaceType::TABLE)
+		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
 		{
-			if(!((symbols::Table*)ispace)->basicSymbols(*connector)) return false;
-		}
-		else if(ispace->what() == symbols::SpaceType::SPACE)
-		{
-			symbols::Space* space = (symbols::Space*) ispace;
-			for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
-				if(!basicSymbols(*it,progress)) return false;
+				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
+				if(((symbols::Table*)ispace)->basicSymbols(*(toolkit::clientdb::mysql::Connector*)connector) == false) return false;
 			}
+			else if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				symbols::Space* space = (symbols::Space*) ispace;
+				//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+				{
+					if(basicSymbols(it->second,progress) == false) return false;
+				}
+			}
+		}
+		else
+		{
+			toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+			return false;
 		}
 		
 		return true;
@@ -73,13 +108,13 @@ namespace apidb
 	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn,toolkit::ActivityProgress* p) : configureProject(config), connector(conn),progress(p)
 	{
 	}
-	std::map<const char*,symbols::ISpace*,symbols::cmp_str> Analyzer::copyListTable() const
+	/*std::map<const char*,symbols::ISpace*,symbols::cmp_str> Analyzer::copyListTable() const
 	{
 		return symbolsTable;
-	}	
-	const std::map<const char*,symbols::ISpace*,symbols::cmp_str>& Analyzer::getListTableConst() const
+	}*/	
+	/*const std::map<const char*,symbols::ISpace*,symbols::cmp_str>& Analyzer::getListTableConst() const
 	{
 		return symbolsTable;
-	}
+	}*/
 }
 }

@@ -37,11 +37,32 @@
 
 
 #include "common.hpp"
+#include "Errors.hpp"
+
 namespace octetos
 {
 namespace apidb
 {
-        
+	
+	symbols::Table* symbols::SymbolsTable::findTable(const std::string& tablename)const
+	{
+		int level = symbols::getSpaceLevel(tablename);
+		if(level == 0)
+		{
+			const_iterator globalSpace = find("");
+			if(globalSpace == end())
+			{
+				toolkit::Error::write(toolkit::Error("No se encontró espacio global en la tabla de simbolos.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+				return NULL;
+			}
+			return ((Space*)globalSpace->second)->findTable(tablename);			
+		}	
+		else
+		{
+			toolkit::Error::write(toolkit::Error("Sopurte para espacios virtuales en desarrollo.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+		}
+		return NULL;
+	}
         symbols::SymbolsTable::SymbolsTable()
         {
                 Space* sapce = new symbols::Space("");
@@ -323,8 +344,7 @@ namespace apidb
                 }
 		int Symbol::counter = 0;	
 		
-                
-		
+        
 		ISpace* Table::searh(const std::string&)
 		{
 			
@@ -396,7 +416,17 @@ namespace apidb
                 }
 		
 		
-		
+		        
+		Table* Space::findTable(const std::string& tablename)
+		{
+			iterator it = find(tablename.c_str());
+			if(it != end())
+			{
+				if(it->second->what() == SpaceType::TABLE)return (Table*)it->second;
+			}
+			
+			return NULL;
+		}
 		ISpace* Space::searh(const std::string&)
 		{
 			
@@ -432,9 +462,9 @@ namespace apidb
                 }		
 		Space::~Space()
 		{
-			for (ISpace* table : *this)
+			for (iterator it = begin(); it != end(); it++)
 			{
-				delete table;
+				delete it->second;
 			}
 			clear();
 		}

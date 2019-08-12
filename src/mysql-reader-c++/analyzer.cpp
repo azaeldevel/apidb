@@ -17,26 +17,15 @@ namespace mysql
                 
 		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{
-			if(!basicSymbols(it->second,progress))
-			{
-				return false;
-			}
+			if(basicSymbols(it->second,progress) == false) return false;
 		}
-                /*
-                for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
-                {
-                        //for(auto table: *AttSpace) //reading attrubtes by table
-                        for(std::list<symbols::ISpace*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
-                        {
-                                //foreign key's
-                                if(!(*itTb)->fillKeyType(*connector,symbolsTable))
-                                {
-                                        //std::cerr<<"Faill on fillKeyType"<<std::endl;
-                                        return false;
-                                }
-                        }
-                }
                 
+		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
+		{
+			if(fillKeyType(it->second,progress) == false) return false;
+		}
+		
+		/*
                 for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
                 {
                         //for(auto table: *AttSpace) //reading attrubtes by table

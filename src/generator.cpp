@@ -456,8 +456,8 @@ namespace generators
 		getHeaderOutput()<< "#include <clientdb-mysql.hpp>"<<std::endl<<std::endl;
 			
 		//writing code				
-		createH(getHeaderOutput(),log,analyzer.getListTableConst());  
-		createCPP(getSourceOutput(),log,analyzer.getListTableConst()); 
+		//createH(getHeaderOutput(),log,analyzer.getListTableConst());  
+		//createCPP(getSourceOutput(),log,analyzer.getListTableConst()); 
           
         return true;    
     }

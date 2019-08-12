@@ -35,24 +35,18 @@ namespace apidb
     /**
     * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
     */
-    bool symbols::Table::fillKeyType(octetos::toolkit::clientdb::Connector& connect,Space& tables)
+    bool symbols::Table::fillKeyType(octetos::toolkit::clientdb::mysql::Connector& connect,const SymbolsTable& symbolsTable)
 	{
         /**
         * Lista las relaciones de llaves foraneas para la tabla actual
         */
 		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME FROM information_schema.TABLE_CONSTRAINTS i,information_schema.KEY_COLUMN_USAGE k WHERE i.CONSTRAINT_NAME = k.CONSTRAINT_NAME  AND i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =k.TABLE_SCHEMA AND i.TABLE_NAME = "; 
         fks += "'";
-        if(space.compare("") == 0)
-        {
-            fks += "`" + space + "." + name + "`";
-        }
-        else
-        {
-            fks += name;
-        }
+		fks += fullname;
         fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
 		fks += ((octetos::toolkit::clientdb::Datconnect*)(connect.getDatconection()))->getDatabase();
 		fks += "'";
+		//std::cout<<fks<<std::endl;
         octetos::toolkit::clientdb::Datresult* dt = connect.query(fks.c_str());
         if(dt != NULL)
         {                      
@@ -60,14 +54,19 @@ namespace apidb
             while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
             {
 				std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
+				Table* tableRef = symbolsTable.findTable(row[1]);
+				if(tableRef != NULL)
+				{
+					std::cout<<"Se encontró tabla '" << tableRef->getName() << "'" << std::endl;
+				}
 			}	
 		}
                 
 		delete dt;                
-		return false;
+		return true;
     }
 	
-        bool symbols::Table::basicSymbols(octetos::toolkit::clientdb::Connector& connect)
+        bool symbols::Table::basicSymbols(octetos::toolkit::clientdb::mysql::Connector& connect)
         {
 			std::string str = "DESCRIBE ";
 			if(space.compare("") != 0)
@@ -148,7 +147,7 @@ namespace apidb
 		}
 		else
 		{
-			std::cerr<<"Faill on basicSymbols  : "<< str <<std::endl;
+			std::cout<<"Faill on basicSymbols  : "<< str <<std::endl;
 			delete dt;//mysql_free_result(result);
 			return false;
 		}
@@ -174,10 +173,19 @@ namespace apidb
 				prw->fullname = row[0];
 				if(symbols::getSpaceLevel(prw->fullname) == 0)
 				{//si no esta anidada en un espacio.
-					//std::cout<<"Table: " << row[0] << std::endl;
 					symbols::SymbolsTable::iterator it = symbolsTable.find("");
-					symbols::Space* space  = (symbols::Space*)it->second;
-					space->push_back(prw);
+					if(it != symbolsTable.end())
+					{
+						//std::cout<<"Table: " << row[0] << std::endl;
+						symbols::Space* space = (symbols::Space*)it->second;
+						std::pair<const char*, symbols::ISpace*> newInser(prw->fullname.c_str(),prw);
+						space->insert(newInser);
+					}
+					else
+					{
+						toolkit::Error::write(toolkit::Error("No se encontró el espacio global.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+						return false;
+					}
 				}
 			}
 			delete dt;
@@ -191,8 +199,8 @@ namespace apidb
 			msg = msg + "' ";
 			msg = msg + mysql_error((MYSQL*)connector->getServerConnector());
 			toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
-		}
-		return false;	
+			return false;
+		}	
 	}
 }
 }
