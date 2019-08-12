@@ -29,6 +29,35 @@ namespace octetos
 {
 namespace apidb
 {	
+	
+	bool Analyzer::basicSymbols(symbols::ISpace* ispace,toolkit::ActivityProgress* progress)
+	{
+		if(progress != NULL)
+		{
+			if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				std::string msg =  "\tCreating simbolos basicos para " ;
+				msg +=  ((symbols::Table*)ispace)->getName() + "\n";
+				progress->add(msg);
+			}			
+		}
+		
+		if(ispace->what() == symbols::SpaceType::TABLE)
+		{
+			if(!((symbols::Table*)ispace)->basicSymbols(*connector)) return false;
+		}
+		else if(ispace->what() == symbols::SpaceType::SPACE)
+		{
+			symbols::Space* space = (symbols::Space*) ispace;
+			for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+			{
+				if(!basicSymbols(*it,progress)) return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	toolkit::ActivityProgress& Analyzer::getOutput()
         {
                 return *progress;

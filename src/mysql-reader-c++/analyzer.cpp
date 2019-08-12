@@ -14,27 +14,15 @@ namespace mysql
 	bool Analyzer::analyze(toolkit::ActivityProgress* progress)
 	{
 		bool flag = listing();
-                /*
-                for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
-                {
-                        //for(apidb::symbols::Table* table : *AttSpace) //reading attrubtes by table
-                        for(std::list<symbols::ISpace*>::iterator itTb = it->second->begin(); itTb != it->second->end(); itTb++)
-                        {
-                                if(progress != NULL)
-                                {
-                                        std::string msg =  "\tCreating simbolos basicos para " ;
-                                        msg +=  (*itTb)->getName() + "\n";
-                                        progress->add(msg);
-                                }
-                                //simbolos basicos 
-                                if(!(*itTb)->basicSymbols(*connector))
-                                {
-                                        //std::cerr<<"Faill on basicSymbols"<<std::endl;
-                                        return false;
-                                }
-                        }
-                }
                 
+		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
+		{
+			if(!basicSymbols(it->second,progress))
+			{
+				return false;
+			}
+		}
+                /*
                 for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
                 {
                         //for(auto table: *AttSpace) //reading attrubtes by table

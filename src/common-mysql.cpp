@@ -172,7 +172,13 @@ namespace apidb
 				prw->upperName = upper;
 				prw->space = symbols::getSpacePatch(row[0]);
 				prw->fullname = row[0];
-				std::cout<<"Table: " << row[0] << std::endl;
+				if(symbols::getSpaceLevel(prw->fullname) == 0)
+				{//si no esta anidada en un espacio.
+					//std::cout<<"Table: " << row[0] << std::endl;
+					symbols::SymbolsTable::iterator it = symbolsTable.find("");
+					symbols::Space* space  = (symbols::Space*)it->second;
+					space->push_back(prw);
+				}
 			}
 			delete dt;
 			return true;

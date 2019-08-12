@@ -137,7 +137,7 @@ namespace apidb
         enum SpaceType
         {
             TABLE,
-            NAMESPACE
+            SPACE
         };
 		class ISpace
 		{
@@ -371,7 +371,7 @@ namespace apidb
 		 * \brief Conjunto de tablas
                  * \details No representa un spacio realmente sino que umula uno en base a ciertos creterio en el nombrambramiento de las tablas, esto para poder organizar mejor el codigo. En MySQL por ejemplo, Se permite poner el caracter punto en el nombre de la tabla, y este es el criterio usado para MySQL, APIDB crea un nuevo anidamiento de espacio cada vez que encuentre un punto en el nombre de la tabla.
 		 * */
-		class Space : public ISpace, public std::list<Table*>
+		class Space : public ISpace, public std::list<ISpace*>
 		{
 		public:
                         /**
@@ -381,11 +381,11 @@ namespace apidb
                         /**
                          * \brief Busca una tabla por su nombre y la retorna en cals de encontrarla
                          * */
-                        Table* search(const std::string&); 
+                        //Table* search(const std::string&); 
                         /**
                          * \brief Busca una tabla por su nombre y la retorna en cals de encontrarla
                          * */
-			std::list<Table*>::iterator find(const std::string& tableName);        
+			//std::list<Table*>::iterator find(const std::string& tableName);        
 			//short getMaxCountRef();
                         /**
                          * \brief Retorna el nombre del espacio.

@@ -404,8 +404,8 @@ namespace apidb
 		}
 		SpaceType Space::what()const
 		{
-                       return SpaceType::NAMESPACE; 
-                }
+			return SpaceType::SPACE; 
+		}
                 Space::Space(const std::string& middle)
                 {
                         middleName = middle;
@@ -439,7 +439,7 @@ namespace apidb
 			clear();
 		}
 		
-		Table* Space::search(const std::string& tableName)
+		/*Table* Space::search(const std::string& tableName)
 		{
 			std::list<Table*>::iterator actual = begin();
 			std::list<Table*>::iterator last = end();
@@ -450,8 +450,8 @@ namespace apidb
 				++actual;
 			}
 			return NULL;
-		}
-		std::list<Table*>::iterator Space::find(const std::string& tableName)
+		}*/
+		/*std::list<Table*>::iterator Space::find(const std::string& tableName)
 		{
 			std::list<Table*>::iterator actual = begin();
 			std::list<Table*>::iterator last = end();
@@ -462,7 +462,7 @@ namespace apidb
 				++actual;
 			}
 			return last;
-		}		
+		}*/		
 	}
 }
 }

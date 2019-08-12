@@ -95,6 +95,8 @@ namespace apidb
                  * \brief Para envio de mensaje al usuario.
                  * */
                 toolkit::ActivityProgress* progress;
+				
+		bool basicSymbols(symbols::ISpace* ispace,toolkit::ActivityProgress* progress);
 	};
 }
 }
