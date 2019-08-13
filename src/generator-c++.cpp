@@ -884,7 +884,7 @@ namespace generators
 				const ConfigureProject::Table* tb = configureProject.findSelectTable(table.getName());
 				if(tb != NULL) 
 				{
-					std::cout << "Se encontro la tabla '" << table.getName() << std::endl;
+					//std::cout << "Se encontro la tabla '" << table.getName() << std::endl;
                         for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = tb->begin(); itT != tb->end(); itT++)
                         {
                                 ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,";

@@ -41,7 +41,7 @@ namespace apidb
 {
 
 	const ConfigureProject::Table* ConfigureProject::findSelectTable(const std::string& str)const
-	{
+	{	
 		//std::cout << "Buscar '" << str << "' en lista de select." << std::endl;
 		std::map<const char*,Table*,symbols::cmp_str>::const_iterator it = selects.find(str.c_str());
 		//std::cout << "Select count '" << selects.size() << std::endl;

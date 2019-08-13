@@ -167,6 +167,7 @@ void testBuild_nlst()
 void testBuild()
 {   
 	octetos::apidb::ConfigureProject configProject;
+	configProject.executable_target = "developing";
         if(!configProject.readConfig(filename))
         {                
                 if(octetos::toolkit::Error::check())
@@ -285,16 +286,16 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	////////////////////////////////////////////////////////// SIN LISTAS
-	/*if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
+	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}*/	
-	/*if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.", testBuild_nlst)))
+	}	
+	if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.", testBuild_nlst)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}*/
+	}
 
 	
 	
@@ -306,23 +307,23 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
-	/*if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion.", testBuild)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}*/
-	
-	/*if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}*/
-		
-	if ((NULL == CU_add_test(pSuite, "Analizer Nuevo.", testNewAnalyzer)))
+	if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion.", testBuild)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
+	
+	if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
+		
+	/*if ((NULL == CU_add_test(pSuite, "Analizer Nuevo.", testNewAnalyzer)))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}*/
 	
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);
