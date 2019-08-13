@@ -104,19 +104,19 @@ namespace apidb
                 GtkTreeStore *treestore;
                 GtkTreeModel *model;
                 GtkWidget *view;
-                std::map<const char*,ConfigureProject::Table*>* list;
+                std::map<const char*,ConfigureProject::Table*,symbols::cmp_str>* list;
                 Application* app;
                 
                 static const char* strNewFunct;
                 
                 static void row_activated(GtkTreeView       *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data);
                 static char checkTypeNode(GtkTreeModel *model,GtkTreeIter* iter);
-                static const char* getTableName(GtkTreeModel *model,GtkTreeIter* iter,std::map<const char*,ConfigureProject::Table*>*);                
+                static const char* getTableName(GtkTreeModel *model,GtkTreeIter* iter,std::map<const char*,ConfigureProject::Table*,symbols::cmp_str>*);                
                 
         public:                
                 void fill();
                 GtkWidget* create();
-                TreeView(GtkWidget *,std::map<const char*,ConfigureProject::Table*>*,Application*);
+                TreeView(GtkWidget *,std::map<const char*,ConfigureProject::Table*,symbols::cmp_str>*,Application*);
                 Application* getApplication()const;
         };
         

@@ -298,9 +298,9 @@ namespace apidb
                 
                 if(progress != NULL)
                 {
-                        toolkit::Confirmation conf1("Analisis de codigo...\n");
+                        toolkit::Confirmation conf1("\n\tAnalisis de codigo...");
                         progress->add(conf1);
-                        std::string msg ="\tLenguaje de entrada: " ;
+                        std::string msg ="\n\tLenguaje de entrada: " ;
                         msg+= getInputLenguaje(configureProject.inputLenguaje) + "\n";
                         toolkit::Confirmation conf2(msg);
                         progress->add(conf2);

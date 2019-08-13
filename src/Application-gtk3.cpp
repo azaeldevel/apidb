@@ -176,7 +176,7 @@ namespace apidb
         {
                 return app;
         }
-        const char* TreeView::getTableName(GtkTreeModel *model,GtkTreeIter* iter,std::map<const char*,ConfigureProject::Table*>* list)
+        const char* TreeView::getTableName(GtkTreeModel *model,GtkTreeIter* iter,std::map<const char*,ConfigureProject::Table*,symbols::cmp_str>* list)
         {
                 const char* path = gtk_tree_model_get_string_from_iter(model,iter);
                 char delim[] = ":";
@@ -368,7 +368,7 @@ namespace apidb
                 return view;                                
         }
         
-        TreeView::TreeView(GtkWidget *box,std::map<const char*,ConfigureProject::Table*>* l,Application* a) : list(l), app(a)
+        TreeView::TreeView(GtkWidget *box,std::map<const char*,ConfigureProject::Table*,symbols::cmp_str>* l,Application* a) : list(l), app(a)
         {
                 GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
                 gtk_container_set_border_width (GTK_CONTAINER (scrolled_window), 10);                       

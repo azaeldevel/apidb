@@ -40,6 +40,24 @@ namespace octetos
 namespace apidb
 {
 
+	const ConfigureProject::Table* ConfigureProject::findSelectTable(const std::string& str)const
+	{
+		//std::cout << "Buscar '" << str << "' en lista de select." << std::endl;
+		std::map<const char*,Table*,symbols::cmp_str>::const_iterator it = selects.find(str.c_str());
+		//std::cout << "Select count '" << selects.size() << std::endl;
+		if(it != selects.end()) 
+		{
+			//std::cout << "Se encontro '" << str << "'" << std::endl;
+			return it->second;		
+		}
+		return NULL;
+	}
+	const ConfigureProject::Table* ConfigureProject::findDownloadTable(const std::string& str)const
+	{
+		std::map<const char*,Table*,symbols::cmp_str>::const_iterator it = downloads.find(str.c_str());
+		if(it != downloads.end()) return it->second;
+		return NULL;		
+	}
         const std::string& ConfigureProject::Table::getName() const
         {
                 return name;        

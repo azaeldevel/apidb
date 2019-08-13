@@ -74,8 +74,8 @@ namespace generators
 		}
 			
 		//CMakeLists.txt
-		if(log)analyzer.getOutput().add( "Generando archivos de gestor de projecto... \n");
-		std::string msg1 = "\tTipo de Gestor: " ;
+		if(log)analyzer.getOutput().add( "\nGenerando archivos de gestor de projecto... ");
+		std::string msg1 = "\n\tTipo de Gestor: " ;
                 msg1 += getPackingLenguajeString() + "\n";
 		if(log)analyzer.getOutput().add(msg1);
 		
@@ -140,7 +140,7 @@ namespace generators
                         cmakelists <<")"<<std::endl;
                         cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
                 }
-		cmakelists<<"ADD_LIBRARY("<< configureProject.builDirectory;
+		cmakelists<<"ADD_LIBRARY("<< configureProject.name;
                 if(configureProject.compiled == apidb::Compiled::SHARED)
                 {
                         cmakelists << " SHARED ";
@@ -440,8 +440,8 @@ namespace generators
 		}
 		else
 		{
-			projectH = configureProject.builDirectory + ".hpp";
-			projectCPP = configureProject.builDirectory + ".cpp";
+			projectH = configureProject.name + ".hpp";
+			projectCPP = configureProject.name + ".cpp";
 			writeResults[0].open(configureProject.builDirectory + "/" + projectH);
 			writeResults[1].open(configureProject.builDirectory + "/" + projectCPP);
 		}
@@ -463,8 +463,14 @@ namespace generators
 			
 		
 		//writing code				
-		createH(getHeaderOutput(),log,getSymbolsTable());  
-		//createCPP(getSourceOutput(),log,analyzer.getListTableConst()); 
+		if(createH(getHeaderOutput(),log,getSymbolsTable()) == false)  
+		{
+			return false;
+		}
+		if(createCPP(getSourceOutput(),log,getSymbolsTable()) == false)
+		{
+			return false;
+		}
           
         return true;    
     }

@@ -34,8 +34,7 @@ std::string random_string( size_t length )
 static std::string filename;
 static std::string filename_nlst;
 static octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
-static octetos::apidb::ConfigureProject configProject_nls;
-static octetos::apidb::ConfigureProject configProject;
+
 
 /* The suite initialization function.
  * Opens the temporary file used by the tests.
@@ -65,6 +64,7 @@ void testCreateProject_nlst()
 	version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
         
+	octetos::apidb::ConfigureProject configProject_nls;
         configProject_nls.name = "sysapp";
         configProject_nls.builDirectory = "apidb";
         configProject_nls.conectordb = &mysqlSource;
@@ -97,7 +97,7 @@ void testCreateProject()
 	octetos::toolkit::Version version;
 	version.setNumbers(0,1,0);
         version.setStage(octetos::toolkit::Version::Stage::alpha);
-        
+	octetos::apidb::ConfigureProject configProject;
         configProject.name = "sysapp";
         configProject.builDirectory  = "apidb";
         configProject.conectordb = &mysqlSource;
@@ -124,9 +124,7 @@ void testCreateProject()
         byUsername->addParam("username");
         byUsername->addParam("person");
         tbUsers->insert(std::make_pair(byUsername->getName().c_str(), byUsername));
-        configProject.selects.insert(std::make_pair(tbP->getName().c_str(),tbP));
         configProject.selects.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
-        configProject.downloads.insert(std::make_pair(tbP->getName().c_str(),tbP));
         configProject.downloads.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
         configProject.executable_target  = "developing";
         
@@ -142,6 +140,7 @@ void testCreateProject()
 
 void testBuild_nlst()
 {
+	octetos::apidb::ConfigureProject configProject_nls;
         if(!configProject_nls.readConfig(filename_nlst))
         {
                 if(octetos::toolkit::Error::check())
@@ -167,6 +166,7 @@ void testBuild_nlst()
 
 void testBuild()
 {   
+	octetos::apidb::ConfigureProject configProject;
         if(!configProject.readConfig(filename))
         {                
                 if(octetos::toolkit::Error::check())
@@ -192,6 +192,7 @@ void testBuild()
 
 void testCompile()
 {
+	octetos::apidb::ConfigureProject configProject;
         if(configProject.packing == octetos::apidb::PackingLenguajes::CMake)
         {
 
@@ -236,6 +237,7 @@ void testCompile()
 
 void testNewAnalyzer()
 {
+	octetos::apidb::ConfigureProject configProject;
         if(!configProject.readConfig(filename))
         {                
                 if(octetos::toolkit::Error::check())
@@ -283,11 +285,11 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	////////////////////////////////////////////////////////// SIN LISTAS
-	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
+	/*if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}	
+	}*/	
 	/*if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.", testBuild_nlst)))
 	{
 		CU_cleanup_registry();

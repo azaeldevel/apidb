@@ -73,6 +73,7 @@ namespace octetos
 			void createClassMethodesH(const apidb::symbols::Table&,std::ofstream&);
 			//void createSpaceCPP(std::ofstream& file);
 			bool createCPP(std::ofstream& file,bool log,const symbols::SymbolsTable&);
+			bool createCPP(std::ofstream& file,bool log,const symbols::ISpace*);
 			void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&);
 			void createClassPrivateCPP(std::ofstream&);
 			void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);

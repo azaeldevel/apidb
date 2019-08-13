@@ -59,7 +59,8 @@ namespace apidb
                 
                 BD_BAT_NAMETABLE,
                 
-                ANALYZER_FAIL,				
+                ANALYZER_FAIL,	
+				GENERATOR_FAIL
                 
         };
         

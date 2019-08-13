@@ -130,7 +130,8 @@ namespace apidb
                         ~Table();
                 };
         
-                
+			const Table* findSelectTable(const std::string&)const;
+			const Table* findDownloadTable(const std::string&)const;
         public:
                 /**
                  * \brief El nombre del proyecto.
@@ -167,11 +168,11 @@ namespace apidb
                 /**
                  * \brief Lista las tablas para las que se generara funciones de descarga
                  * */
-                std::map<const char*,Table*> downloads;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
+                std::map<const char*,Table*,symbols::cmp_str> downloads;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente
                 /**
                  * \brief Lista las tablas para las que se generara funciones de Selects
                  * */
-                std::map<const char*,Table*> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente                
+                std::map<const char*,Table*,symbols::cmp_str> selects;//to fix: convertir el tipo en Table* ya que la myoria de las operaciones usa sub elementos creados dinamin¡camente                
                 /**
                  * \brief Agrega la creacion de un Ejecutalbe
                  * \details Si se asigna esta variable se creara el ejecutble con el mismo nobre a apartir de un archivo con el mimos nombre pero extencion del lenguaje inicado en  'outputLenguaje'.

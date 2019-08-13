@@ -740,9 +740,87 @@ namespace generators
 		createClassMethodesCPP(cl,file);        
 		file<< std::endl<< std::endl;
     }
+    bool CPP::createCPP(std::ofstream& file,bool log,const symbols::ISpace* ispace)
+	{
+		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+		{
+			if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				symbols::Table* table = (symbols::Table*) ispace;
+				//std::cout << "Es table " << table->getName() << std::endl;
+				createClassCPP(*table,file,table->getName());
+			}
+			else if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				symbols::Space* space = (symbols::Space*) ispace;
+					//std::cout << "Es Espacio " << space->getFullName() << std::endl;
+					file << "namespace " ;
+					if(space->getFullName().empty())
+					{
+							file << configureProject.name;
+					}
+					else
+					{
+							file << space->getFirstName() << std::endl;
+					}
+					file << "\n{\n";
+					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+					{
+							createCPP(file,log,it->second);
+					}
+					file << "\n}\n";
+					file << std::endl;				
+			}
+		}
+		else
+		{
+			toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+			return false;
+		}
+		
+		return true;
+	}
     bool CPP::createCPP(std::ofstream& file,bool log,const symbols::SymbolsTable& stb)
 	{
-		
+		for(symbols::SymbolsTable::const_iterator it = stb.begin(); it != stb.end(); it++)
+		{
+			symbols::ISpace* ispace = it->second;
+			if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+			{
+				if(ispace->what() == symbols::SpaceType::TABLE)
+				{					
+					symbols::Table* table = (symbols::Table*) ispace;
+					createClassCPP(*table,file,table->getName());
+				}
+				else if(ispace->what() == symbols::SpaceType::SPACE)
+				{
+					symbols::Space* space = (symbols::Space*) ispace;
+					file << "namespace " ;
+					if(space->getFullName().empty())
+					{
+							file << configureProject.name;
+					}
+					else
+					{
+							file << space->getFirstName() << std::endl;
+					}
+					file << "\n{\n";
+					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+					{
+						createCPP(file,log,it->second);
+					}
+					file << "\n}\n";
+					file << std::endl;
+				}
+			}
+			else
+			{
+				toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+				return false;
+			}
+		}	
 		return true;
 	}
     /*void CPP::createSpaceCPP(std::ofstream& file)
@@ -779,35 +857,35 @@ namespace generators
     }*/
         void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
         {                
-                for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
-                {
-                        //std::cout<<"Iterate on '" << tb.getName() << "'" << std::endl;
-                        if(table.getName().compare(it->second->getName()) != 0) 
-                        {          
-                                continue;//buscar la configuracion de la tabla correspondiente
-                        }
-                        //
-                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itF = it->second->begin(); itF != it->second->end(); itF++)
+                //for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
+			const ConfigureProject::Table* tb = configureProject.findSelectTable(table.getName());
+			if(tb != NULL)
+			{
+                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itF = tb->begin(); itF != tb->end(); itF++)
                         {
                                 ofile << "\t\tbool " << itF->first << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
                         }
-                }
+			}
         }
 	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile)
-        {
-                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where, int leng = 0);"<<std::endl;
+	{
+			ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where, int leng = 0);"<<std::endl;
                 
-                //std::cout << "List Select Count : " << configureProject.selects.size() << std::endl;
-                for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.selects.begin(); it != configureProject.selects.end(); it++)
-                {
+			//std::cout << "List Select Count : " << configureProject.selects.size() << std::endl;
+			//for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.selects.begin(); it != configureProject.selects.end(); it++)
+			
+				
                         //std::cout << " Verificando " << table.getName();
                         //std::cout << " tenga selects para : " << it->second->getName()  << std::endl;
-                        if(table.getName().compare(it->second->getName()) != 0) 
+                        /*if(table.getName().compare(it->second->getName()) != 0) 
                         {
                                 continue;//buscar la configuracion de la tabla correspondiente
-                        }
-                        //std::cout << "Se encontro  : " << it->second->getName()<< std::endl;
-                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = it->second->begin(); itT != it->second->end(); itT++)
+                        }*/
+				const ConfigureProject::Table* tb = configureProject.findSelectTable(table.getName());
+				if(tb != NULL) 
+				{
+					std::cout << "Se encontro la tabla '" << table.getName() << std::endl;
+                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = tb->begin(); itT != tb->end(); itT++)
                         {
                                 ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,";
                                 //std::cout << "Generando codigo para  : " << itT->second->getName() << std::endl;
@@ -841,7 +919,7 @@ namespace generators
                                 ofile << ", int leng = 0);"<<std::endl;                                
                         }
                 }
-    }
+	}
         /**
         * Genera las funciones insert solo con los datos marcados como requeridos en la DB.
         */
@@ -1010,8 +1088,8 @@ namespace generators
         void CPP::createClassH(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass,bool log)
         {
 		//file <<"keyword"<<std::endl;
-                std::string msg1 = "\tHeading class ";
-                msg1 += cl.getName() + "\n";
+                std::string msg1 = "\n\tHeading class ";
+                msg1 += cl.getName() + "";
 		if(log)analyzer.getOutput().add(msg1);
                 short level = symbols::getSpaceLevel(cl.getFullName());
                 for(short i =0; i < level ; i++) file << "\t";
