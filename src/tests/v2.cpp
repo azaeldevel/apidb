@@ -8,12 +8,13 @@
 #include <functional> //for std::function
 #include <algorithm>  //for std::generate_n
 #include <signal.h>
-
+#include <map>
 
 
 #include "../apidb.hpp"
 #include "../Errors.hpp"
-
+#include <toolkit/common/common.hpp>
+#include "../common.hpp"
 
 std::string random_string( size_t length )
 {
@@ -167,6 +168,7 @@ void testBuild_nlst()
 void testBuild()
 {   
 	octetos::apidb::ConfigureProject configProject;
+	//octetos::toolkit::Error::write(octetos::toolkit::Error("Teste error",1,__FILE__,__LINE__));
         if(!configProject.readConfig(filename))
         {                
                 if(octetos::toolkit::Error::check())
@@ -239,30 +241,32 @@ void testCompile()
         }
 }
 
-void testNewAnalyzer()
+void testTemp()
 {
-	octetos::apidb::ConfigureProject configProject;
-        if(!configProject.readConfig(filename))
-        {                
-                if(octetos::toolkit::Error::check())
-                {
-                        std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
-                }
-                CU_ASSERT(false);
-                exit(EXIT_FAILURE);// hay pruebas que depende de esta.
-        }
-        octetos::apidb::Driver driver(configProject);
-        octetos::apidb::Tracer tracer(0);
-        if(!driver.driving(&tracer))
-        {
-                if(octetos::toolkit::Error::check())
-                {
-                        std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
-                }
-                CU_ASSERT(false);
-                exit(EXIT_FAILURE);// hay pruebas que depende de esta.
-        }
-        CU_ASSERT(true);
+	std::map<const char*,octetos::apidb::symbols::ISpace*,octetos::apidb::symbols::cmp_str> lst;
+	octetos::apidb::symbols::Table t1("t1");
+	std::pair<const char*, octetos::apidb::symbols::ISpace*> newInser1(t1.getName().c_str(),&t1);
+	lst.insert(newInser1);
+	octetos::apidb::symbols::Table t2("t2");
+	std::pair<const char*, octetos::apidb::symbols::ISpace*> newInser2(t2.getName().c_str(),&t2);
+	lst.insert(newInser2);
+	octetos::apidb::symbols::Table t3("t3");
+	std::pair<const char*, octetos::apidb::symbols::ISpace*> newInser3(t3.getName().c_str(),&t3);
+	lst.insert(newInser3);
+	octetos::apidb::symbols::Table user("Users");
+	std::pair<const char*, octetos::apidb::symbols::ISpace*> newInser4(user.getName().c_str(),&user);
+	lst.insert(newInser4);
+	lst.insert(newInser4);
+	
+	std::map<const char*,octetos::apidb::symbols::ISpace*,octetos::apidb::symbols::cmp_str>::iterator it;
+	it = lst.find("t45");
+	if(it != lst.end()) CU_ASSERT(false);
+	std::string str = "Users";
+	it = lst.find(str.c_str());
+	if(it == lst.end()) CU_ASSERT(false);
+	it = lst.find("t1");
+	if(it == lst.end()) CU_ASSERT(false);
+	CU_ASSERT(true);
 }
 
 int main(int argc, char *argv[])
@@ -282,6 +286,12 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
+	
+	if ((NULL == CU_add_test(pSuite, "Pruebas temporales.", testTemp)))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
 	
 	if ((NULL == CU_add_test(pSuite, "Verificando la conectividad del componente.", testConecction)))
 	{
@@ -322,12 +332,6 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}*/
 		
-	/*if ((NULL == CU_add_test(pSuite, "Analizer Nuevo.", testNewAnalyzer)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}*/
-	
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);
 	CU_basic_run_tests();

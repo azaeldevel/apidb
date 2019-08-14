@@ -591,7 +591,7 @@ namespace apidb
 		
 		Table* Space::addTable(symbols::Table* table)
 		{
-			std::cout << table->getName() << " -> '" << getName() << "'" << std::endl;
+			std::cout << table->getName() << " -> '" << getName() << "' Space::addTable" << std::endl;
 			std::pair<const char*, symbols::ISpace*> newInser(table->getName().c_str(),table);
 			insert(newInser);
 			return table;
@@ -671,21 +671,8 @@ namespace apidb
 		}
 		Table* Space::findTable(const std::string& tablename)
 		{
-			std::cout << "Buscando Tabla " << tablename << "' Space::findTable" << std::endl;
+			std::cout << "Buscando Tabla '" << tablename << "' en '" << name << "' Space::findTable" << std::endl;
 			if(hasChild(tablename))
-			{
-				//std::cout << "Buscando Tabla " << tablename << std::endl;
-				iterator it = find(tablename.c_str());
-				if(it != end())
-				{
-					return (Table*)(it->second);
-				}
-				else
-				{
-					return NULL;
-				}
-			}
-			else
 			{
 				std::string top = getTopName(tablename);
 				iterator it = find(top.c_str());
@@ -699,7 +686,33 @@ namespace apidb
 					return NULL;
 				}
 			}
-			
+			else
+			{
+				std::cout << "No tiene hijos '" << tablename << "'" << std::endl;
+				iterator it2 = find(tablename.c_str());
+				if(it2 != end())
+				{
+					std::cout << "Correct '" << tablename << "'" << std::endl;
+					return (Table*)(it2->second);
+				}
+				else
+				{
+					std::cout << "No encontrada '" << tablename << "'" << std::endl;
+					for(iterator it = begin(); it != end(); it++)
+					{
+						if(it->second->what() == symbols::SpaceType::SPACE)
+						{
+							//std::cout << "S:" << ((Space*)it->second)->getName() << std::endl;
+						}
+						else if(it->second->what() == symbols::SpaceType::TABLE)
+						{
+							//std::cout << "T:" << ((Table*)it->second)->getName() << std::endl;
+							if(((Table*)it->second)->getName().compare(tablename) == 0) return (Table*)(it->second);
+						}
+					}
+					return NULL;
+				}
+			}
 			return NULL;
 		}
 		ISpace* Space::searh(const std::string&)

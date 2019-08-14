@@ -48,6 +48,7 @@ namespace apidb
 		fks += ((octetos::toolkit::clientdb::Datconnect*)(connect.getDatconection()))->getDatabase();
 		fks += "'";
 		//std::cout<<fks<<std::endl;
+		//std::cout<< "In table: " <<fullname<<std::endl;
         octetos::toolkit::clientdb::Datresult* dt = connect.query(fks.c_str());
         if(dt != NULL)
         {                      
@@ -56,8 +57,9 @@ namespace apidb
             MYSQL_ROW row;
             while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
             {
-				std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType" << std::endl;			
+				std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType Find" << std::endl;			
 				symbols::Table* table = global->findTable(row[1]);
+				std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType return" << std::endl;	
 				if(table == NULL)
 				{
 					std::string msg = "No se encontro la tabla '";
@@ -89,6 +91,11 @@ namespace apidb
 				//std::cout<< targetSymbol->getName() << "-->" << referenceTable->getName()  << ":" << referenceSymbol->getName() << "'" << std::endl;
 			}	
 		}
+		else
+		{
+			std::cout << "No retorno resultado la consulta" << std::endl;
+		}
+			
                 
 		delete dt;                
 		return true;
@@ -187,11 +194,22 @@ namespace apidb
 		std::string db = connector->getDatconection()->getDatabase();
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
 		str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
-		octetos::toolkit::clientdb::Datresult* dt = connector->query(str.c_str());   
+		octetos::toolkit::clientdb::Datresult* dt = connector->query(str.c_str());
+		std::cout << str  <<std::endl;
 		if(dt != NULL) 
 		{
 			symbols::SymbolsTable::iterator itGlobal = symbolsTable.find(configureProject.name.c_str());
+			if(itGlobal == symbolsTable.end())
+			{
+				toolkit::Error::write(toolkit::Error("No se encontró Espacion Global",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+				return false;
+			}
 			symbols::Space* spaceGlobal = (symbols::Space*)(itGlobal->second);
+			if(spaceGlobal == NULL)
+			{
+				toolkit::Error::write(toolkit::Error("No se encontró Espacion Global",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+				return false;
+			}
 			MYSQL_ROW row;
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
@@ -205,11 +223,7 @@ namespace apidb
 				std::cout << "Presesando : "<< level  << " - " << prw->fullname << std::endl;
 				if(level == 0)
 				{
-					//std::cout<<"Table: " << row[0] << std::endl;
-					symbols::SymbolsTable::iterator it = symbolsTable.find(configureProject.name.c_str());
-					std::pair<const char*, symbols::ISpace*> newInser(prw->fullname.c_str(),prw);
-					symbols::Space* space = (symbols::Space*)it->second;
-					space->insert(newInser);
+					spaceGlobal->addTable(prw);
 				}
 				else if(level > 0 and configureProject.namespace_detect.compare("emulate") == 0)
 				{
@@ -235,9 +249,10 @@ namespace apidb
 					}
 					else
 					{		
-						std::cout << prw->fullname << " -> '" << space->getName() << "'" << std::endl;
-						std::pair<const char*, symbols::ISpace*> newInser(prw->fullname.c_str(),prw);
-						space->insert(newInser);
+						//std::cout << prw->fullname << " -> '" << space->getName() << "'" << std::endl;
+						//std::pair<const char*, symbols::ISpace*> newInser(prw->fullname.c_str(),prw);
+						//space->insert(newInser);
+						space->addTable(prw);
 					}
 				}
 				else if(level > 0 and configureProject.namespace_detect.compare("reject") == 0)

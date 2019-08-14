@@ -145,7 +145,6 @@ namespace apidb
 		{
 		public:
 			virtual SpaceType what()const = 0;
-			virtual ISpace* searh(const std::string&)=0;
 			virtual ~ISpace(){};
 		};
         

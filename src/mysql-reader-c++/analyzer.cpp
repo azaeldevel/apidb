@@ -100,7 +100,7 @@ namespace mysql
 			parse(it->second);
 		}
 		
-		return flag;
+		return true;
 	}
 	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn,toolkit::ActivityProgress* p) : apidb::Analyzer(config,conn,p)
 	{

@@ -289,23 +289,26 @@ namespace apidb
                         progress->add(conf2);
                 }
 		
-		if(!analyzer->analyze(progress)) //reading tables
-                {
-                        if(toolkit::Error::check())
-                        {
-                                progress->add(toolkit::Error::get());
-                                return false;
-                        }
-                        else
-                        {                                
-                                std::string msgErr ="\tFallo al leer durante la fase de analisis." ;
-                                toolkit::Error err(msgErr,toolkit::Error::ERROR_UNKNOW,__FILE__,__LINE__);
-                                progress->add(err);
-                                return false;
-                        }
-                }
-          
-                return true;
+		if(analyzer->analyze(progress) == false) //reading tables
+		{
+			if(toolkit::Error::check())
+			{
+				if(progress != NULL)progress->add(toolkit::Error::get());
+				return false;
+			}
+			else
+			{           
+				if(progress != NULL)
+				{
+					std::string msgErr ="\tFallo al leer durante la fase de analisis." ;
+					toolkit::Error err(msgErr,toolkit::Error::ERROR_UNKNOW,__FILE__,__LINE__);
+					progress->add(err);
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 } 
