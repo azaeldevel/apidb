@@ -43,7 +43,7 @@ namespace octetos
 {
 namespace apidb
 {
-	symbols::ISpace* symbols::SymbolsTable::search(const std::string& str)const
+	/*symbols::ISpace* symbols::SymbolsTable::search(const std::string& str)const
 	{
 		const_iterator it = find(str.c_str());
 		if(it != end())
@@ -76,30 +76,62 @@ namespace apidb
 		}
 		
 		return NULL;
-	}
-	symbols::Space* symbols::SymbolsTable::findSpace(const std::string& str)const
+	}*/
+	symbols::Space* symbols::SymbolsTable::findSpace(const std::string& str)
 	{
-		//busqueda de espacio global
-		if(str.empty())
-		{
-			//std::cout << "symbols::SymbolsTable::findSpace, return defualt global space" << std::endl;
-			const_iterator it = find("");
-			if(it != end()) return (Space*)it->second;
-		}
-		
-		const_iterator it = find("");
-		if(it != end())
-		{
-			return ((Space*)it->second)->findSpace(str);
-		}
-				
-		return NULL;
+			//std::cout << "Buscando '" << str << "' en '" << name << "' Space::findSpace" << std::endl;
+			if(hasChild(str))
+			{
+				std::string top = getTopName(str);
+				iterator it = find(top.c_str());
+				if(it != end())
+				{
+					//std::cout << "Se encontro '" << top << "' en '" << name << "' Space::findSpace" << std::endl;
+					if(it->second->what() == symbols::SpaceType::SPACE)
+					{
+						return ((Space*)it->second)->findSpace(getChilFullName(str));
+					}
+					else
+					{
+						return NULL;
+					}
+				}
+				else
+				{
+					return NULL;
+				}
+			}
+			else
+			{
+				iterator it2 = find(str.c_str());
+				if(it2 != end())
+				{
+					//std::cout << "* Se encontro '" << str << "(" <<  it2->first << ")"<< "' en '" << name  << "'" << std::endl;
+					ISpace* ispace = it2->second;
+					if(ispace->what() == SpaceType::SPACE)
+					{
+						if(hasChild(str))
+						{
+							//std::cout << "1 Space::findSpace Buscando recursivamente '" << str << "' en '" << name << "'" << std::endl;
+							return ((Space*)ispace)->findSpace(getChilFullName(str));
+						}
+						else
+						{
+							//std::cout << "return " << ((Space*)ispace)->getName() << "  en '" << name << "'" << std::endl;
+							return (Space*)ispace;
+						}
+					}
+					return NULL;
+				}				
+			}
+			
+			return NULL;
 	}
-	symbols::Table* symbols::SymbolsTable::addTable(const std::string& str)
+	/*symbols::Table* symbols::SymbolsTable::addTable(const std::string& str)
 	{
 		
 		return NULL;
-	}
+	}*/
 	symbols::Space* symbols::SymbolsTable::addSpace(const std::string& str)
 	{
 		if(hasChild(str))
@@ -307,7 +339,7 @@ namespace apidb
 		/**
 		* \private
 		* */
-		std::string getExcludeChilName(const std::string& fullname)
+		/*std::string getExcludeChilName(const std::string& fullname)
 		{
 			std::vector<std::string> comps;
 			std::string str;
@@ -325,7 +357,7 @@ namespace apidb
 				}
 			}
 			return str;
-		}
+		}*/
                 
                 /**
                  * \private
@@ -388,7 +420,7 @@ namespace apidb
                         
 			return "";
 		}
-		std::string getDeepChilName(const std::string&  fullname)
+		/*std::string getDeepChilName(const std::string&  fullname)
 		{                        
 			std::vector<std::string> comps;
 			boost::split( comps, fullname, boost::is_any_of( "." ) );
@@ -398,7 +430,7 @@ namespace apidb
 			}
                         
 			return "";
-		}
+		}*/
 		std::string getChilFullName(const std::string&  fullname)
 		{
 			std::vector<std::string> comps;
@@ -522,19 +554,19 @@ namespace apidb
 			else
 			{
 				//esta linea es una cicanada, reparar pronto.
-				for(iterator it = begin(); it != end(); it++)
+				/*for(iterator it = begin(); it != end(); it++)
 				{
 					//Extraño para mi find no encontro este valor(unas lineas arriba) en la linea 517 ###BOUG STL-FIAL-FIND-MAP
 					if(((Symbol*)it->second)->getName().compare(str) == 0) return (Symbol*)it->second;
-				}
+				}*/
 			}
 			return NULL;
 		}
-		ISpace* Table::searh(const std::string&)
+		/*ISpace* Table::searh(const std::string&)
 		{
 			
 			return NULL;
-		}
+		}*/
 		SpaceType Table::what()const
 		{
 			return SpaceType::TABLE; 
@@ -603,7 +635,7 @@ namespace apidb
 		
 		Table* Space::addTable(symbols::Table* table)
 		{
-			//std::cout << table->getName() << " -> '" << getName() << "' Space::addTable" << std::endl;
+			//std::cout << table->getFullName() << " -> '" << getName() << "' Space::addTable" << std::endl;
 			std::pair<const char*, symbols::ISpace*> newInser(table->getName().c_str(),table);
 			insert(newInser);
 			return table;
@@ -623,10 +655,11 @@ namespace apidb
 			}
 			else
 			{
-				//std::cout << "+ Creando espacio '" << str << "' en '"  << name << "'" << std::endl;
+				//std::cout << "+ Creando espacio '" << str << " - " << space->getName() << "' en '"  << name << "'" << std::endl;
 				Space* space = new Space(str);
-				std::pair<const char*, symbols::ISpace*> newInser(str.c_str(),space);
+				std::pair<const char*, symbols::ISpace*> newInser(space->getName().c_str(),space);
 				insert(newInser);
+				//std::cout << "Espacion creado '" << str << " - " << space->getName() << "' en '"  << name << "'" << std::endl;
 				return space;
 			}
 		}
@@ -671,7 +704,7 @@ namespace apidb
 						}
 						else
 						{
-							//std::cout << "return " << ((Space*)ispace)->getName() << "  en '" << name << "'" << std::endl;
+							//std::cout << "return '" <<  it2->first << " - "<< ((Space*)ispace)->getName() << "'  en '" << name << "'" << std::endl;
 							return (Space*)ispace;
 						}
 					}
@@ -710,7 +743,7 @@ namespace apidb
 				else
 				{
 					//std::cout << "No encontrada '" << tablename << "'" << std::endl;
-					for(iterator it = begin(); it != end(); it++)
+					/*for(iterator it = begin(); it != end(); it++)
 					{
 						if(it->second->what() == symbols::SpaceType::SPACE)
 						{
@@ -721,17 +754,17 @@ namespace apidb
 							//Extraño para mi find no encontro este valor(unas lineas arriba) en la linea 692 ###BOUG STL-FIAL-FIND-MAP
 							if(((Table*)it->second)->getName().compare(tablename) == 0) return (Table*)(it->second);
 						}
-					}
+					}*/
 					return NULL;
 				}
 			}
 			return NULL;
 		}
-		ISpace* Space::searh(const std::string&)
+		/*ISpace* Space::searh(const std::string&)
 		{
 			
 			return NULL;
-		}
+		}*/
 		SpaceType Space::what()const
 		{
 			return SpaceType::SPACE; 

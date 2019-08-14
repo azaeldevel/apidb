@@ -364,7 +364,7 @@ namespace apidb
 			const Key& getKey()const;
 			virtual SpaceType what()const;
 			Symbol* findSymbol(const std::string&);
-			virtual ISpace* searh(const std::string&);
+			//virtual ISpace* searh(const std::string&);
 		};
 		
                 
@@ -400,7 +400,7 @@ namespace apidb
                         Space(const std::string& middleName);
                         
                         virtual SpaceType what()const;
-						virtual ISpace* searh(const std::string&);
+						//virtual ISpace* searh(const std::string&);
 						Table* findTable(const std::string&);
 						Space* findSpace(const std::string&);
 						
@@ -458,8 +458,8 @@ namespace apidb
 					Table* findTable(const std::string&)const;
 					Space* addSpace(const std::string&);
 					Table* addTable(const std::string&);
-					Space* findSpace(const std::string&)const;
-					ISpace* search(const std::string&)const;
+					Space* findSpace(const std::string&);
+					//ISpace* search(const std::string&)const;
 					const ConfigureProject& getConfigureProject()const;
                 };
 	}

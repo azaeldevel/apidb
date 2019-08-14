@@ -28,11 +28,51 @@
 #include "driver.hpp"
 #include "../common.hpp"
 #include "mysql-reader-c++/analyzer.hpp"
+#include "Errors.hpp"
+
 
 namespace octetos
 {
 namespace apidb
 {
+	bool Driver::getTablesName(std::list<std::string>& ret, symbols::Space* actualspace)const
+	{
+		symbols::Space* space;		
+		if(actualspace ==  NULL)
+		{
+			symbols::Space* global = analyzer->symbolsTable.findSpace(configureProject.name);
+			if(global == NULL)
+			{
+				std::string msg = "No se encontro el espacio Global '";
+				msg += configureProject.name + "'";
+				toolkit::Error::write(toolkit::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
+				return false;
+			}
+			space = global;
+		}
+		else
+		{
+			space = actualspace;
+		}		
+		for(symbols::SymbolsTable::iterator it = space->begin(); it != space->end(); it++)
+		{
+			symbols::ISpace* ispace = it->second;
+			if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				if(getTablesName(ret,(symbols::Space*)ispace) == false) 
+				{
+					toolkit::Error::write(toolkit::Error("Fallo durante la resolución de nombres de tabla.",ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
+					return false;
+				}
+			}
+			else if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				symbols::Table* tb = (symbols::Table*)ispace;
+				ret.push_back(tb->getFullName() + " - " + space->getName());
+			}
+		}
+		return true;
+	}
         Driver::~Driver()
         {
                 if(analyzer != NULL)

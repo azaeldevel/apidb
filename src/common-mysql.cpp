@@ -190,7 +190,7 @@ namespace apidb
     
     
 	bool Analyzer::listing()
-	{
+	{		
 		std::string db = connector->getDatconection()->getDatabase();
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
 		str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
@@ -205,6 +205,7 @@ namespace apidb
 				return false;
 			}
 			symbols::Space* spaceGlobal = (symbols::Space*)(itGlobal->second);
+			spaceGlobal->clear();
 			if(spaceGlobal == NULL)
 			{
 				toolkit::Error::write(toolkit::Error("No se encontró Espacion Global",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));

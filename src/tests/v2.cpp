@@ -194,6 +194,22 @@ void testBuild()
                 exit(EXIT_FAILURE);// hay pruebas que depende de esta.
         }
         CU_ASSERT(true);
+			
+	std::list<std::string> listName;
+	if(driver.getTablesName(listName) == false)
+	{
+		if(octetos::toolkit::Error::check())
+		{
+			std::cout << "\nError  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+	}
+	/*for(std::list<std::string>::iterator it = listName.begin(); it != listName.end(); it++)
+	{
+		std::cout << "Tabla : " << *it << std::endl;
+	}
+	std::cout << "Total de tablas : " << listName.size() << std::endl;*/
+	CU_ASSERT(listName.size()  == 23);
 }
 
 void testCompile()
@@ -266,7 +282,7 @@ void testTemp()
 	if(it == lst.end()) CU_ASSERT(false);
 	it = lst.find("t1");
 	if(it == lst.end()) CU_ASSERT(false);
-	CU_ASSERT(true);
+	CU_ASSERT(true);		
 }
 
 int main(int argc, char *argv[])

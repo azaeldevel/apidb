@@ -30,6 +30,7 @@ namespace octetos
 {
 namespace apidb
 {    
+class Driver;
 namespace generators
 {
 	class Generator;
@@ -40,6 +41,7 @@ namespace generators
 	class Analyzer
 	{
 		friend class generators::Generator;
+		friend class Driver;
 		
 	public:
                 /**

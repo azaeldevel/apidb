@@ -82,6 +82,8 @@ namespace apidb
                 const Analyzer& getAnalyzer() const;
                 virtual ~Driver();
                 
+				bool getTablesName(std::list<std::string>& retList,symbols::Space* space = NULL)const;
+				
 	private:
 		octetos::toolkit::clientdb::Connector* connector;		
                 apidb::Analyzer* analyzer;
