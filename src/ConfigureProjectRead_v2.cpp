@@ -150,8 +150,8 @@ namespace apidb
                 return true;
         }
        
-        bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
-        {         
+	bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
+	{         
                 if(projectVersion < ver100)
                 {
                         std::string msgstr = "La version del proyecto es inferior a '";
@@ -527,17 +527,63 @@ namespace apidb
                         toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
+                
+		if(projectVersion >= ver200)
+		{
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                name = xmlTextReaderConstName(reader);
+                if(strcmp((const char*)name,"namespace_detect") == 0)
+                {
+                        //std::cout << "Se encontro build directory." << std::endl;
+                        xmlTextReaderRead(reader);
+                        namespace_detect = (const char*)xmlTextReaderConstValue(reader);
+                        //std::cout << "Se encontro build directory : " << builDirectory << std::endl;
+                }
+                else
+                {
+                        std::string msgstr = "Fallo durante el parseo XML.";
+                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                        return false;
+                }
+                                
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                name = xmlTextReaderConstName(reader);
+                if(strcmp((const char*)name,"executable_target") == 0)
+                {
+                        //std::cout << "Se encontro build directory." << std::endl;
+                        xmlTextReaderRead(reader);
+                        executable_target = (const char*)xmlTextReaderConstValue(reader);
+                        //std::cout << "Se encontro build directory : " << builDirectory << std::endl;
+                }
+                else
+                {
+                        std::string msgstr = "Fallo durante el parseo XML.";
+                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                        return false;
+                }
+		}
         
         //
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         
-        for(int i = 0; i < 2; i++)
-        {
-                //std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
-                //std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
-                std::string node = (const char*)xmlTextReaderConstName(reader);
+		//const xmlChar *nameNodeList;
+		for(int i = 0; i < 2; i++)
+		{
+			//std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
+			//std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
+			std::string node = (const char*)xmlTextReaderConstName(reader);
+			if(node.compare("downloads") != 0 and node.compare("selects") != 0)
+			{
+				std::string msgstr = "Fallo durante el parseo XML.";
+				toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+				return false;				
+			}
                 int counTbs = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs"));
                 for(int j = 0; j < counTbs; j++)
                 {

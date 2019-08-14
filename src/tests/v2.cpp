@@ -127,8 +127,9 @@ void testCreateProject()
         tbUsers->insert(std::make_pair(byUsername->getName().c_str(), byUsername));
         configProject.selects.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
         configProject.downloads.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
-        configProject.executable_target  = "developing";
-        
+        //configProject.executable_target  = "developing2";
+		//configProject.namespace_detect = "emulate";
+		
         if(configProject.saveConfig(filename))
         {
                 CU_ASSERT(true);

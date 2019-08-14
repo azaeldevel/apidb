@@ -262,6 +262,25 @@ namespace apidb
                 //
                 xmlNewChild(root_node, NULL, (const xmlChar *)"buildDirectory", (const xmlChar *)builDirectory.c_str());
                 //std::cout << "Buildd dir " << builDirectory << std::endl;
+				
+				if(namespace_detect.empty())
+				{
+					xmlNewChild(root_node, NULL, (const xmlChar *)"namespace_detect", (const xmlChar *)"¿?");
+				}
+				else
+				{
+					xmlNewChild(root_node, NULL, (const xmlChar *)"namespace_detect", (const xmlChar *)namespace_detect.c_str());
+				}
+				 
+				if(executable_target.empty())
+				{
+					xmlNewChild(root_node, NULL, (const xmlChar *)"executable_target", (const xmlChar *)"¿?");
+				}
+				else
+				{
+					xmlNewChild(root_node, NULL, (const xmlChar *)"executable_target", (const xmlChar *)executable_target.c_str());
+				}
+				
                 //
                 xmlNodePtr downls_node = xmlNewChild(root_node, NULL, (const xmlChar *)"downloads", NULL);
                 int countTbs = 0;
