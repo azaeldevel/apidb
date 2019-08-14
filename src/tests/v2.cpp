@@ -178,7 +178,7 @@ void testBuild()
                 CU_ASSERT(false);
                 exit(EXIT_FAILURE);// hay pruebas que depende de esta.
         }
-	configProject.executable_target = "developing";
+	configProject.executable_target = "developing2";
 	configProject.conectordb = &mysqlSource;
 	configProject.namespace_detect = "emulate";
         octetos::apidb::Driver driver(configProject);
@@ -209,18 +209,45 @@ void testBuild()
 		std::cout << "Tabla : " << *it << std::endl;
 	}*/
 	//std::cout << "Total de tablas : " << listName.size() << std::endl;
-	//CU_ASSERT(listName.size()  == 23);
+	std::list<std::string> listFields;
+	if(driver.getFiledsName(listFields,"Persons") == false)
+	{
+		if(octetos::toolkit::Error::check())
+		{
+			std::cout << "\nError  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+	}
+	/*for(std::list<std::string>::iterator it = listFields.begin(); it != listFields.end(); it++)
+	{
+		std::cout << "\nField : " << *it;
+	}*/
 }
 
 void testCompile()
 {
 	octetos::apidb::ConfigureProject configProject;
-        if(configProject.packing == octetos::apidb::PackingLenguajes::CMake)
-        {
+	if(!configProject.readConfig(filename))
+	{                
+		if(octetos::toolkit::Error::check())
+		{
+			std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
+	}
+	else
+	{
+		CU_ASSERT(true);
+	}
+	if(configProject.packing == octetos::apidb::PackingLenguajes::CMake)
+	{
 
                 int ret = 0;
-
-                std::string cmd = "cp ../tests/developing.cpp ";
+		octetos::toolkit::Version ver = octetos::apidb::getPakageVersion();
+                std::string cmd = "cp ../tests/developing";
+				cmd += std::to_string(ver.getMajor());
+				cmd += ".cpp ";
                 cmd += " apidb/ ";
                 if(system(cmd.c_str()) < 0)
                 {
@@ -240,21 +267,25 @@ void testCompile()
                         std::cout << "Fallo al realizar la compialcion.\n";
                         CU_ASSERT(false);
                 }
-                cmd  = " cd apidb && make   &> /dev/null";
+                cmd  = " cd apidb && make &> /dev/null";
                 if(system(cmd.c_str()) < 0)
                 {
                         std::cout << "Fallo al realizar la compialcion.\n";
                         CU_ASSERT(false);
                 }
-                cmd  = "./apidb/developing";
+                /*cmd  = "./apidb/developing";
                 ret = system(cmd.c_str()) ;
                 if (WIFSIGNALED(ret) && (WTERMSIG(ret) == SIGINT || WTERMSIG(ret) == SIGQUIT) || ret < 0)
                 {
                         std::cout << "Fallo al realizar la compialcion.\n";
                         CU_ASSERT(false);
-                }
+                }*/
 
-        }
+	}
+	else
+	{
+		CU_ASSERT(false);
+	}
 }
 
 void testTemp()
@@ -342,11 +373,11 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
-	/*if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
+	if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}*/
+	}
 		
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);

@@ -35,6 +35,36 @@ namespace octetos
 {
 namespace apidb
 {
+	bool Driver::getFiledsName(std::list<std::string>& retList,const std::string& table)
+	{
+		
+		symbols::Space* global = analyzer->symbolsTable.findSpace(configureProject.name);
+		if(global == NULL)
+		{
+			std::string msg = "No se encontro el espacio Global '";
+			msg += configureProject.name + "'";
+			toolkit::Error::write(toolkit::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
+			return false;
+		}
+		
+		
+		
+		symbols::Table* tb = global->findTable(table);
+		if(tb != NULL)
+		{
+			for(symbols::Table::iterator it = tb->begin(); it != tb->end(); it++)
+			{
+				symbols::Symbol* symbol = it->second;
+				retList.push_back(symbol->getName());
+			}
+		}
+		else			
+		{
+			return false;
+		}			
+		
+		return true;
+	}
 	bool Driver::getTablesName(std::list<std::string>& ret, symbols::Space* actualspace)const
 	{
 		symbols::Space* space;		
