@@ -755,13 +755,13 @@ namespace generators
 				symbols::Space* space = (symbols::Space*) ispace;
 					//std::cout << "Es Espacio " << space->getFullName() << std::endl;
 					file << "namespace " ;
-					if(space->getFullName().empty())
+					if(space->getName().empty())
 					{
 							file << configureProject.name;
 					}
 					else
 					{
-							file << space->getFirstName() << std::endl;
+							file << space->getName() << std::endl;
 					}
 					file << "\n{\n";
 					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
@@ -797,13 +797,13 @@ namespace generators
 				{
 					symbols::Space* space = (symbols::Space*) ispace;
 					file << "namespace " ;
-					if(space->getFullName().empty())
+					if(space->getName().empty())
 					{
 							file << configureProject.name;
 					}
 					else
 					{
-							file << space->getFirstName() << std::endl;
+							file << space->getName() << std::endl;
 					}
 					file << "\n{\n";
 					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
@@ -1119,32 +1119,24 @@ namespace generators
 			}
 			else if(ispace->what() == symbols::SpaceType::SPACE)
 			{
-				if(ispace->what() == symbols::SpaceType::TABLE)
+				symbols::Space* space = (symbols::Space*) ispace;
+				file << "namespace " ;
+				if(space->getName().empty())
 				{
-					symbols::Table* table = (symbols::Table*) ispace;
-					createClassH(*table,file,table->getName(),log);
+					file << configureProject.name;
 				}
-				else if(ispace->what() == symbols::SpaceType::SPACE)
+				else
 				{
-					symbols::Space* space = (symbols::Space*) ispace;
-					file << "namespace " ;
-					if(space->getFullName().empty())
-					{
-							file << configureProject.name;
-					}
-					else
-					{
-							file << space->getFirstName() << std::endl;
-					}
-					file << "\n{\n";
-					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
-					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
-					{
-							createH(file,log,it->second);
-					}
-					file << "\n}\n";
-					file << std::endl;
+					file << space->getName() << std::endl;
 				}
+				file << "\n{\n";
+				//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+				{
+					createH(file,log,it->second);
+				}
+				file << "\n}\n";
+				file << std::endl;
 			}
 		}
 		else
@@ -1171,13 +1163,13 @@ namespace generators
 				{
 					symbols::Space* space = (symbols::Space*) ispace;
 					file << "namespace " ;
-					if(space->getFullName().empty())
+					if(space->getName().empty())
 					{
 							file << configureProject.name;
 					}
 					else
 					{
-							file << space->getFirstName() << std::endl;
+							file << space->getName() << std::endl;
 					}
 					file << "\n{\n";
 					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;

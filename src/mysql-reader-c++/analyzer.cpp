@@ -62,7 +62,28 @@ namespace mysql
 	}
 	bool Analyzer::analyze(toolkit::ActivityProgress* progress)
 	{
-		bool flag = listing();
+		bool flag = listing();		
+		if(flag == false) return false;
+		
+		for(symbols::SymbolsTable::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
+		{
+			if(it->second->what() == symbols::SpaceType::SPACE)
+			{
+				symbols::Space* space = (symbols::Space*)it->second;
+				std::cout  << "\n"<< space->getName() << std::endl;
+				for(symbols::Space::iterator subIt = space->begin(); subIt != space->end(); subIt++)
+				{
+					if(subIt->second->what() == symbols::SpaceType::SPACE)
+					{
+						std::cout << "\t" << ((symbols::Space*)subIt->second)->getName() << std::endl;
+					}
+					else if(subIt->second->what() == symbols::SpaceType::TABLE)
+					{
+						std::cout << "\t" << ((symbols::Table*)subIt->second)->getName() << std::endl;
+					}
+				}
+			}
+		}
 		
 		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{

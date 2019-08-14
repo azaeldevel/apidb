@@ -33,7 +33,7 @@ std::string random_string( size_t length )
 
 static std::string filename;
 static std::string filename_nlst;
-static octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
+static octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 
 
 /* The suite initialization function.
@@ -167,7 +167,6 @@ void testBuild_nlst()
 void testBuild()
 {   
 	octetos::apidb::ConfigureProject configProject;
-	configProject.executable_target = "developing";
         if(!configProject.readConfig(filename))
         {                
                 if(octetos::toolkit::Error::check())
@@ -177,10 +176,14 @@ void testBuild()
                 CU_ASSERT(false);
                 exit(EXIT_FAILURE);// hay pruebas que depende de esta.
         }
+	configProject.executable_target = "developing";
+	configProject.conectordb = &mysqlSource;
+	configProject.namespace_detect = "emulate";
         octetos::apidb::Driver driver(configProject);
         octetos::apidb::Tracer tracer(0);
-        if(!driver.driving((octetos::apidb::Tracer*)NULL))
+        if(driver.driving(NULL) == false)
         {
+			std::cout << "Fail  -> "<< std::endl;
                 if(octetos::toolkit::Error::check())
                 {
                         std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
@@ -286,7 +289,7 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	////////////////////////////////////////////////////////// SIN LISTAS
-	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
+	/*if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
@@ -295,7 +298,7 @@ int main(int argc, char *argv[])
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}
+	}*/
 
 	
 	
@@ -313,11 +316,11 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
-	if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
+	/*if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}
+	}*/
 		
 	/*if ((NULL == CU_add_test(pSuite, "Analizer Nuevo.", testNewAnalyzer)))
 	{

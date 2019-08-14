@@ -49,6 +49,7 @@ namespace apidb
         {
                 class Analyzer;
         }
+        class ConfigureProject;
         
         typedef octetos::toolkit::clientdb::Datconnect::ServerType InputLenguajes;
 	std::string getInputLenguaje(InputLenguajes);	
@@ -391,9 +392,9 @@ namespace apidb
                         /**
                          * \brief Retorna el nombre del espacio.
                          * */
-                        const std::string& getMiddleName()const;  
-                        const std::string& getFirstName()const;
-                        const std::string& getFullName()const;
+                        //const std::string& getMiddleName()const;  
+                        const std::string& getName()const;
+                        //const std::string& getFullName()const;
                         /**
                          * \brief Crea el objeto con su nombre.
                          * */
@@ -402,48 +403,65 @@ namespace apidb
                         virtual SpaceType what()const;
 						virtual ISpace* searh(const std::string&);
 						Table* findTable(const std::string&);
-                        
+						Space* findSpace(const std::string&);
+						
+						/**
+						 * 
+						 * 
+						 * \param name indica el nombre relativo a apartir del espacio actual
+						 * */
+                        Space* addSpace(const std::string& name);
+						/**
+						 * 
+						 * */
+						Table* addTable(symbols::Table* table);
                 private:                        
                         /**
-                         * \brief Nombre del espacion que contiene la tabla
+                         * \brief Nombre del espacion
                          * */
-                        std::string firstName;
-                        /**
-                         * \brief Es el nombre de la tabla completo sin el nombre de la db y el nombre de la tabla
-                         * */
-                        std::string middleName;
-                        /**
-                         * \incluye el nombre de la base de datos
-                         * */
-                        std::string fullName;
+                        std::string name;
                         short level;
 		};
                 
                 /**
                  * \private
                  * */
-                std::string getFirstName(std::string fullname);
+                std::string getFirstName(const std::string&fullname);
                 /**
                  * \private
                  * */
-                std::string getSpacePatch(std::string fullname);
+                std::string getSpacePatch(const std::string& fullname);
                 /**
                  * \private
                  * */
-                short getSpaceLevel(std::string fullname);
-                
+                short getSpaceLevel(const std::string& fullname);
+                std::string getDeepChilName(const std::string& fullname);
+				std::string getChilFullName(const std::string& fullname);
+				std::string getExcludeChilName(const std::string& fullname);
+				
+				bool hasChild(const std::string& fullname);
+				std::string getTopName(const std::string& fullname);
+				
                 /**
                  *\brief Contiene las estructura completa de la tabla de symbolos 
                  **/
                 class SymbolsTable : public std::map<const char*,symbols::ISpace*,symbols::cmp_str>
                 {
+				private:
+					const ConfigureProject* configureProject;
+					
                 public:
 					/**
 					*\brief Libera memoria
 					**/
-					SymbolsTable();
+					SymbolsTable(const ConfigureProject&);
 					~SymbolsTable();
 					Table* findTable(const std::string&)const;
+					Space* addSpace(const std::string&);
+					Table* addTable(const std::string&);
+					Space* findSpace(const std::string&)const;
+					ISpace* search(const std::string&)const;
+					const ConfigureProject& getConfigureProject()const;
                 };
 	}
     

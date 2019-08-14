@@ -178,7 +178,11 @@ namespace apidb
                  * \details Si se asigna esta variable se creara el ejecutble con el mismo nobre a apartir de un archivo con el mimos nombre pero extencion del lenguaje inicado en  'outputLenguaje'.
                  * */
                 std::string executable_target;
-                bool virtual_space;
+				/**
+				 * \brief Esta opción indac el comportamiento de APIDB cuan las tablas tiene formato de espacios
+				 * \details En MySQL se aceptan puntos en los nombre de las tablas, sin embargo, en C++ no se puede crear clases cuyo nombre contenga puntos, APIDB le ofrece la opcion algunas opciones para menejar este inconbeniente. Use 'emulate' para apegarce a la definicion de espacion segun el lenguaje de salida selecionado. Use 'reject' o deje en blanco para no aceptar.
+				 * */
+                std::string namespace_detect;
                 
                 ConfigureProject();
                 /**

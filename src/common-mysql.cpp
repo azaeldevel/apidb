@@ -26,6 +26,7 @@
 #include "apidb.hpp"
 #include "common.hpp"
 #include "Errors.hpp"
+#include "analyzer.hpp"
 
 
 namespace octetos
@@ -50,12 +51,14 @@ namespace apidb
         octetos::toolkit::clientdb::Datresult* dt = connect.query(fks.c_str());
         if(dt != NULL)
         {                      
+			symbols::SymbolsTable::const_iterator itGlobal = symbolsTable.find(symbolsTable.getConfigureProject().name.c_str());
+			symbols::Space* global = ((symbols::Space*)itGlobal->second);
             MYSQL_ROW row;
             while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
             {
-				//std::cout<<"Buscando tabla '" << row[1] << "'" << std::endl;
-				Table* referenceTable = symbolsTable.findTable(row[1]);
-				if(referenceTable == NULL)
+				std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType" << std::endl;			
+				symbols::Table* table = global->findTable(row[1]);
+				if(table == NULL)
 				{
 					std::string msg = "No se encontro la tabla '";
 					msg += row[1];
@@ -63,11 +66,10 @@ namespace apidb
 					toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 					return false;
 				}
-				//std::cout<<"Se encontró tabla '" << referenceTable->getName() << "'" << std::endl;
-				Symbol* referenceSymbol = referenceTable->findSymbol(row[2]);
+				std::cout<<"Se encontró tabla '" << table->getName() << "'" << std::endl;
+				Symbol* referenceSymbol = ((Table*)table)->findSymbol(row[2]);
 				if(referenceSymbol == NULL)
 				{
-					
 					std::string msg = "No se encontro el campo '";
 					msg += row[2];
 					msg += "'";
@@ -188,6 +190,8 @@ namespace apidb
 		octetos::toolkit::clientdb::Datresult* dt = connector->query(str.c_str());   
 		if(dt != NULL) 
 		{
+			symbols::SymbolsTable::iterator itGlobal = symbolsTable.find(configureProject.name.c_str());
+			symbols::Space* spaceGlobal = (symbols::Space*)(itGlobal->second);
 			MYSQL_ROW row;
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
 			{
@@ -197,21 +201,59 @@ namespace apidb
 				prw->upperName = upper;
 				prw->space = symbols::getSpacePatch(row[0]);
 				prw->fullname = row[0];
-				if(symbols::getSpaceLevel(prw->fullname) == 0)
-				{//si no esta anidada en un espacio.
-					symbols::SymbolsTable::iterator it = symbolsTable.find("");
-					if(it != symbolsTable.end())
+				int level = symbols::getSpaceLevel(prw->fullname);
+				std::cout << "Presesando : "<< level  << " - " << prw->fullname << std::endl;
+				if(level == 0)
+				{
+					//std::cout<<"Table: " << row[0] << std::endl;
+					symbols::SymbolsTable::iterator it = symbolsTable.find(configureProject.name.c_str());
+					std::pair<const char*, symbols::ISpace*> newInser(prw->fullname.c_str(),prw);
+					symbols::Space* space = (symbols::Space*)it->second;
+					space->insert(newInser);
+				}
+				else if(level > 0 and configureProject.namespace_detect.compare("emulate") == 0)
+				{
+					std::cout << "\nNested Tabla : " << prw->fullname << std::endl;
+					std::string spacePath = symbols::getSpacePatch(row[0]);
+					std::cout << "Space path : " << spacePath << std::endl;
+					symbols::Space* space = spaceGlobal->findSpace(spacePath);
+					if(space == NULL)
 					{
-						//std::cout<<"Table: " << row[0] << std::endl;
-						symbols::Space* space = (symbols::Space*)it->second;
+						std::cout << "Agregando espacio '" << spacePath << "' en '" << spaceGlobal->getName() << "' Analyzer::listing" << std::endl;  
+						space = spaceGlobal->addSpace(spacePath);
+						if(space != NULL)
+						{
+							space->addTable(prw);
+						}
+						else
+						{
+							std::string msg = "Fallo la creacion del espacion '";
+							msg += spacePath + "'";
+							toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+							return false;
+						}
+					}
+					else
+					{		
+						std::cout << prw->fullname << " -> '" << space->getName() << "'" << std::endl;
 						std::pair<const char*, symbols::ISpace*> newInser(prw->fullname.c_str(),prw);
 						space->insert(newInser);
 					}
-					else
-					{
-						toolkit::Error::write(toolkit::Error("No se encontró el espacio global.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
-						return false;
-					}
+				}
+				else if(level > 0 and configureProject.namespace_detect.compare("reject") == 0)
+				{
+					toolkit::Error::write(toolkit::Error("Usted asigno la opcion 'Nombre de espcaio detectado' con el valor 'reject', por lo que APIDB no continuara con su operacion.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					return false;
+				}
+				else if(configureProject.namespace_detect.empty())
+				{
+					toolkit::Error::write(toolkit::Error("Los nombre de las tablas contiene punto, esto provocra errores de compilacion.\nPara solucionar este incoveniente APIDB le propone le emulacion de espacios, asignado 'Deteción de nombre de espacio' = 'emulate', de esta forma APIDB creara espacio de nombre equivalentes en su lenguaje.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					return false;
+				}
+				else
+				{
+					toolkit::Error::write(toolkit::Error("Valor deconocido para 'Nombre de espcaio detectado'",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					return false;
 				}
 			}
 			delete dt;
@@ -227,6 +269,7 @@ namespace apidb
 			toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 			return false;
 		}	
+		return true;
 	}
 }
 }

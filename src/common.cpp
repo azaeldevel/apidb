@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <boost/algorithm/string.hpp>
-
+#include "ConfigureProject.hpp"
 
 #include "common.hpp"
 #include "Errors.hpp"
@@ -43,19 +43,108 @@ namespace octetos
 {
 namespace apidb
 {
-	
+	symbols::ISpace* symbols::SymbolsTable::search(const std::string& str)const
+	{
+		const_iterator it = find(str.c_str());
+		if(it != end())
+		{
+			return it->second;
+		}
+		
+		
+		if(hasChild(str))
+		{
+			std::string top = getTopName(str);
+			const_iterator it = find(top.c_str());
+			if(it != end())
+			{
+				std::string sub = getChilFullName(str);				
+				if(it->second->what() == symbols::SpaceType::SPACE)
+				{
+					Space* space = (Space*) it->second;
+					return space->findSpace(sub);
+				}
+				else
+				{
+					return it->second;
+				}
+			}
+			else
+			{
+				return NULL;
+			}
+		}
+		
+		return NULL;
+	}
+	symbols::Space* symbols::SymbolsTable::findSpace(const std::string& str)const
+	{
+		//busqueda de espacio global
+		if(str.empty())
+		{
+			//std::cout << "symbols::SymbolsTable::findSpace, return defualt global space" << std::endl;
+			const_iterator it = find("");
+			if(it != end()) return (Space*)it->second;
+		}
+		
+		const_iterator it = find("");
+		if(it != end())
+		{
+			return ((Space*)it->second)->findSpace(str);
+		}
+				
+		return NULL;
+	}
+	symbols::Table* symbols::SymbolsTable::addTable(const std::string& str)
+	{
+		
+		return NULL;
+	}
+	symbols::Space* symbols::SymbolsTable::addSpace(const std::string& str)
+	{
+		if(hasChild(str))
+		{
+			std::string top = getTopName(str);
+			std::cout << "Creando espacio '" << top << "' en 'Global'" << std::endl;
+			Space* space = new Space(top);
+			std::pair<const char*, symbols::ISpace*> newInser(top.c_str(),space);
+			insert(newInser);
+			std::string child = getChilFullName(str);
+			if(hasChild(child))
+			{
+				std::cout << "Creando sub-espacio '" << child << "' en '"  << space->getName() << "'" << std::endl;
+				return space->addSpace(child);
+			}
+			else
+			{
+				return space;
+			}
+		}
+		else
+		{
+			std::cout << "+ Creando espacio '" << str << "' en 'Golbal'" << std::endl;
+			Space* space = new Space(str);
+			std::pair<const char*, symbols::ISpace*> newInser(str.c_str(),space);
+			insert(newInser);
+			return space;
+		}
+	}
 	symbols::Table* symbols::SymbolsTable::findTable(const std::string& tablename)const
 	{
 		int level = symbols::getSpaceLevel(tablename);
 		if(level == 0)
 		{
-			const_iterator globalSpace = find("");
-			if(globalSpace == end())
+			const_iterator globalSpace = find(configureProject->name.c_str());
+			if(globalSpace != end())
+			{
+				std::string child = getChilFullName(tablename);
+				return ((Space*)globalSpace->second)->findTable(child);	
+			}
+			else
 			{
 				toolkit::Error::write(toolkit::Error("No se encontró espacio global en la tabla de simbolos.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 				return NULL;
 			}
-			return ((Space*)globalSpace->second)->findTable(tablename);			
 		}	
 		else
 		{
@@ -63,12 +152,11 @@ namespace apidb
 			return NULL;
 		}
 	}
-        symbols::SymbolsTable::SymbolsTable()
+        symbols::SymbolsTable::SymbolsTable(const ConfigureProject& config):configureProject(&config)
         {
-                Space* sapce = new symbols::Space("");
-                std::pair<const char*, symbols::ISpace*> newInser("",sapce);
-                insert(newInser);//aseguira que sea el primer en ser creado.
-                
+			Space* sapce = new symbols::Space(configureProject->name.c_str());
+			std::pair<const char*, symbols::ISpace*> newInser(configureProject->name.c_str(),sapce);
+			insert(newInser);//aseguira que sea el primer en ser creado.                
         }
         symbols::SymbolsTable::~SymbolsTable()
         {
@@ -78,6 +166,10 @@ namespace apidb
                 }
                 clear();
         }
+        const ConfigureProject& symbols::SymbolsTable::getConfigureProject()const
+        {
+			return *configureProject;
+		}
         
         
         
@@ -130,7 +222,7 @@ namespace apidb
 		}
 	}
 	Compiled getCompiled(const std::string& str)
-        {
+	{
                 if(str.compare("static") == 0 or str.compare("STATIC") == 0)
                 {
                         return Compiled::STATIC;
@@ -141,7 +233,7 @@ namespace apidb
                 }                
                 
                 return Compiled::NoCompile;
-        }
+	}
                
 	std::string getPackingLenguajes(PackingLenguajes pack )
 	{
@@ -210,12 +302,35 @@ namespace apidb
         }
     
     
-        namespace symbols
+	namespace symbols
 	{
+		/**
+		* \private
+		* */
+		std::string getExcludeChilName(const std::string& fullname)
+		{
+			std::vector<std::string> comps;
+			std::string str;
+			boost::split(comps, fullname, boost::is_any_of( "." ) );
+			if(comps.size() == 1) 
+			{
+                                return "";
+			}
+			else if(comps.size() > 1) 
+			{
+				for(int i = 1; i < comps.size(); i++)
+				{
+					if( i != 0) str += "." ;
+					str += comps[i];
+				}
+			}
+			return str;
+		}
+                
                 /**
                  * \private
                  * */
-                short  getSpaceLevel(std::string fullname)
+                short  getSpaceLevel(const std::string& fullname)
                 {
                         std::vector<std::string> comps;
                         std::string str;
@@ -227,7 +342,7 @@ namespace apidb
                 /**
                  * \private
                  * */
-                std::string getSpacePatch(std::string fullname)
+                std::string getSpacePatch(const std::string& fullname)
                 {
                         std::vector<std::string> comps;
                         std::string str;
@@ -250,11 +365,63 @@ namespace apidb
                         }
                         return str;
                 }
-                
+		bool hasChild(const std::string&  fullname)
+		{                        
+			std::vector<std::string> comps;
+			boost::split( comps, fullname, boost::is_any_of( "." ) );
+			if(comps.size() > 1) 
+			{
+				return true;
+			}
+                        
+			return false;
+		}
+		std::string getTopName(const std::string&  fullname)
+		{                        
+			std::vector<std::string> comps;
+			boost::split( comps, fullname, boost::is_any_of( "." ) );
+			if(comps.size() > 1) 
+			{
+				std::vector<std::string>::iterator it = comps.begin();
+				return *it;
+			}
+                        
+			return "";
+		}
+		std::string getDeepChilName(const std::string&  fullname)
+		{                        
+			std::vector<std::string> comps;
+			boost::split( comps, fullname, boost::is_any_of( "." ) );
+			if(comps.size() > 0) 
+			{
+				return comps.back();
+			}
+                        
+			return "";
+		}
+		std::string getChilFullName(const std::string&  fullname)
+		{
+			std::vector<std::string> comps;
+			std::string str;
+			boost::split(comps, fullname, boost::is_any_of( "." ) );
+			if(comps.size() == 1) 
+			{
+				return fullname;
+			}
+			else if(comps.size() > 1) 
+			{
+				for(int i = 1; i < comps.size() ; i++)
+				{
+					if( i != 1) str += "." ;
+					str += comps[i];
+				}
+			}
+                        return str;
+		}
                 /**
                  * \private
                  * */
-                std::string getFirstName(std::string fullname)
+                std::string getFirstName(const std::string& fullname)
                 {                        
                         std::vector<std::string> comps;
                         boost::split( comps, fullname, boost::is_any_of( "." ) );
@@ -418,17 +585,119 @@ namespace apidb
                 }
 		const Key& Table::getKey()const
 		{
-                        return key;
-                }
+			return key;
+		}
 		
 		
-		        
+		Table* Space::addTable(symbols::Table* table)
+		{
+			std::cout << table->getName() << " -> '" << getName() << "'" << std::endl;
+			std::pair<const char*, symbols::ISpace*> newInser(table->getName().c_str(),table);
+			insert(newInser);
+			return table;
+		}
+		Space* Space::addSpace(const std::string& str)
+		{
+			std::cout << "Space::addSpace" << std::endl;
+			if(hasChild(str))
+			{
+				std::string top = getTopName(str);
+				std::cout << "Creando espacio '" << top << "' en '"  << name << "'" << std::endl;
+				Space* space = new Space(top);
+				std::pair<const char*, symbols::ISpace*> newInser(top.c_str(),space);
+				insert(newInser);
+				std::cout << "Creando sub-espacio '" << getChilFullName(str) << "' en '"  << space->getName() << "'" << std::endl;
+				return space->addSpace(getChilFullName(str));
+			}
+			else
+			{
+				std::cout << "+ Creando espacio '" << str << "' en '"  << name << "'" << std::endl;
+				Space* space = new Space(str);
+				std::pair<const char*, symbols::ISpace*> newInser(str.c_str(),space);
+				insert(newInser);
+				return space;
+			}
+		}
+		
+		Space* Space::findSpace(const std::string& str)
+		{
+			std::cout << "Buscando '" << str << "' en '" << name << "' Space::findSpace" << std::endl;
+			if(hasChild(str))
+			{
+				std::string top = getTopName(str);
+				iterator it = find(top.c_str());
+				if(it != end())
+				{
+					std::cout << "Se encontro '" << top << "' en '" << name << "' Space::findSpace" << std::endl;
+					if(it->second->what() == symbols::SpaceType::SPACE)
+					{
+						return ((Space*)it->second)->findSpace(getChilFullName(str));
+					}
+					else
+					{
+						return NULL;
+					}
+				}
+				else
+				{
+					return NULL;
+				}
+			}
+			else
+			{
+				iterator it2 = find(str.c_str());
+				if(it2 != end())
+				{
+					std::cout << "* Se encontro '" << str << "(" <<  it2->first << ")"<< "' en '" << name  << "'" << std::endl;
+					ISpace* ispace = it2->second;
+					if(ispace->what() == SpaceType::SPACE)
+					{
+						if(hasChild(str))
+						{
+							std::cout << "1 Space::findSpace Buscando recursivamente '" << str << "' en '" << name << "'" << std::endl;
+							return ((Space*)ispace)->findSpace(getChilFullName(str));
+						}
+						else
+						{
+							std::cout << "return " << ((Space*)ispace)->getName() << "  en '" << name << "'" << std::endl;
+							return (Space*)ispace;
+						}
+					}
+					return NULL;
+				}				
+			}
+			
+			return NULL;
+		}
 		Table* Space::findTable(const std::string& tablename)
 		{
-			iterator it = find(tablename.c_str());
-			if(it != end())
+			std::cout << "Buscando Tabla " << tablename << "' Space::findTable" << std::endl;
+			if(hasChild(tablename))
 			{
-				if(it->second->what() == SpaceType::TABLE)return (Table*)it->second;
+				//std::cout << "Buscando Tabla " << tablename << std::endl;
+				iterator it = find(tablename.c_str());
+				if(it != end())
+				{
+					return (Table*)(it->second);
+				}
+				else
+				{
+					return NULL;
+				}
+			}
+			else
+			{
+				std::string top = getTopName(tablename);
+				iterator it = find(top.c_str());
+				if(it != end())
+				{
+					Space* space = (Space*)(it->second);
+					return space->findTable(getChilFullName(tablename));
+				}
+				else
+				{
+					return NULL;
+				}
 			}
 			
 			return NULL;
@@ -442,30 +711,22 @@ namespace apidb
 		{
 			return SpaceType::SPACE; 
 		}
-                Space::Space(const std::string& middle)
-                {
-                        middleName = middle;
-                        if(middleName.empty())
-                        {
-                                firstName = middleName;
-                        }
-                        else
-                        {
-                                
-                        }
-                }
-		const std::string& Space::getFullName()const
+		Space::Space(const std::string& str)
 		{
-                        return fullName;
-                }
-                const std::string& Space::getFirstName()const
+			name = str;			
+		}
+		/*const std::string& Space::getFullName()const
+		{
+                        return name;
+                }*/
+                const std::string& Space::getName()const
                 {
-                        return firstName;
+                        return name;
                 }
-                const std::string& Space::getMiddleName()const
+                /*const std::string& Space::getMiddleName()const
                 {
-                        return middleName;
-                }		
+                        return name;
+                }*/		
 		Space::~Space()
 		{
 			for (iterator it = begin(); it != end(); it++)
