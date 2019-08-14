@@ -35,7 +35,7 @@ namespace octetos
 {
 namespace apidb
 {
-	bool Driver::getFiledsName(std::list<std::string>& retList,const std::string& table)
+	bool Driver::getFiledsName(std::list<std::string>& retList,const std::string& table)const
 	{
 		
 		symbols::Space* global = analyzer->symbolsTable.findSpace(configureProject.name);
@@ -98,7 +98,7 @@ namespace apidb
 			else if(ispace->what() == symbols::SpaceType::TABLE)
 			{
 				symbols::Table* tb = (symbols::Table*)ispace;
-				ret.push_back(tb->getFullName() + " - " + space->getName());
+				ret.push_back(tb->getFullName());
 			}
 		}
 		return true;

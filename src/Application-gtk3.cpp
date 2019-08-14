@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <toolkit/clientdb/clientdb-mysql.hpp>
+#include <list>
 
 
 #include "Application-gtk3.hpp"
@@ -58,37 +59,28 @@ namespace apidb
                 
                 return false;
         }
-        CaptureParameter::CaptureParameter(const Driver* d,const char* table) : driver(d)
-        {
-                dialog = gtk_dialog_new_with_buttons ("Captura de Parametro.", NULL, GTK_DIALOG_MODAL,  "gtk-ok", GTK_RESPONSE_OK, NULL);                
-                //g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_response),widget);
-                content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-                label = gtk_label_new ("Seleccione la tabla para Agregar");
-                gtk_container_add (GTK_CONTAINER (content_area), label);
-                cmbAddParameter = gtk_combo_box_text_new ();
-                gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddParameter,0,"selecione","Selecione..."); 
-                if(driver != NULL)
-                {
-                        int i = 1;
-                        //std::cout << "Buscando '" << table  << "' tabla para seleccionar parametros." << std::endl;                        
-                        /*for(std::map<const char*,symbols::Space*,symbols::cmp_str>::const_iterator it = driver->getAnalyzer().getListTableConst().begin(); it != driver->getAnalyzer().getListTableConst().end(); it++)
-                        {
-                                for(std::list<symbols::Table*>::iterator itT = (*it).second->begin(); itT != (*it).second->end(); itT++)
-                                {
-                                        if((*itT)->getName().compare(table) == 0)
-                                        {
-                                                for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::iterator itP = (*itT)->begin(); itP != (*itT)->end(); itP++)
-                                                {
-                                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddParameter,i,itP->second->getName().c_str(),itP->second->getName().c_str());        
-                                                        i++;                                                
-                                                }
-                                        }
-                                }
-                        }*/
-                }
-                gtk_combo_box_set_active((GtkComboBox*)cmbAddParameter,0);
-                gtk_container_add (GTK_CONTAINER (content_area), cmbAddParameter);
-        }
+	CaptureParameter::CaptureParameter(const Driver* d,const char* table) : driver(d)
+	{
+		dialog = gtk_dialog_new_with_buttons ("Captura de Parametro.", NULL, GTK_DIALOG_MODAL,  "gtk-ok", GTK_RESPONSE_OK, NULL);                
+		//g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_response),widget);
+		content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+		label = gtk_label_new ("Seleccione la tabla para Agregar");
+		gtk_container_add (GTK_CONTAINER (content_area), label);
+		cmbAddParameter = gtk_combo_box_text_new ();
+		gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddParameter,0,"selecione","Selecione..."); 
+		if(driver != NULL)
+		{ 
+			int i = 0;
+			std::list<std::string> list;
+			driver->getFiledsName(list,table);
+			for(std::list<std::string>::iterator it = list.begin(); it != list.end(); it++,i++)
+			{
+				gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddParameter,i,(*it).c_str(),(*it).c_str()); 
+			}
+		}
+		gtk_combo_box_set_active((GtkComboBox*)cmbAddParameter,0);
+		gtk_container_add (GTK_CONTAINER (content_area), cmbAddParameter);
+	}
         
         
         
@@ -140,31 +132,28 @@ namespace apidb
                         return false;
                 } 
         }
-        CaptureTable::CaptureTable(const Driver* d) : driver(d)
-        {
-                dialog = gtk_dialog_new_with_buttons ("Captura de Tabla.", NULL, GTK_DIALOG_MODAL,  "gtk-ok", GTK_RESPONSE_OK, NULL);                
-                //g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_response),widget);
-                content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-                label = gtk_label_new ("Seleccione la tabla para Agregar");
-                gtk_container_add (GTK_CONTAINER (content_area), label);
-                cmbAddTable = gtk_combo_box_text_new ();
-                gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
-                if(driver != NULL)
-                {
-                        /*std::map<const char*,symbols::Space*,symbols::cmp_str> lst = driver->getAnalyzer().copyListTable();
-                        int i = 1;
-                        for(std::map<const char*,symbols::Space*,symbols::cmp_str>::iterator it = lst.begin(); it != lst.end(); it++)
-                        {
-                                for(std::list<symbols::Table*>::iterator itJ = (*it).second->begin(); itJ != (*it).second->end(); itJ++)
-                                {
-                                        gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*itJ)->getFullName().c_str(),(*itJ)->getFullName().c_str());        
-                                        i++;
-                                }
-                        }*/
-                }
-                gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
-                gtk_container_add (GTK_CONTAINER (content_area), cmbAddTable);
-        }
+	CaptureTable::CaptureTable(const Driver* d) : driver(d)
+	{
+		dialog = gtk_dialog_new_with_buttons ("Captura de Tabla.", NULL, GTK_DIALOG_MODAL,  "gtk-ok", GTK_RESPONSE_OK, NULL);                
+		//g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (on_response),widget);
+		content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+		label = gtk_label_new ("Seleccione la tabla para Agregar");
+		gtk_container_add (GTK_CONTAINER (content_area), label);
+		cmbAddTable = gtk_combo_box_text_new ();
+		gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,0,"selecione","Selecione..."); 
+		if(driver != NULL)
+		{
+			int i = 0;
+			std::list<std::string> list;
+			d->getTablesName(list);
+			for(std::list<std::string>::iterator it = list.begin(); it != list.end(); it++,i++)
+			{
+				gtk_combo_box_text_insert((GtkComboBoxText*)cmbAddTable,i,(*it).c_str(),(*it).c_str());
+			}
+		}
+		gtk_combo_box_set_active((GtkComboBox*)cmbAddTable,0);
+		gtk_container_add (GTK_CONTAINER (content_area), cmbAddTable);
+	}
         
         
         

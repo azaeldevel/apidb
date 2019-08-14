@@ -83,7 +83,7 @@ namespace apidb
                 virtual ~Driver();
                 
 				bool getTablesName(std::list<std::string>& retList,symbols::Space* space = NULL)const;
-				bool getFiledsName(std::list<std::string>& retList,const std::string& table);
+				bool getFiledsName(std::list<std::string>& retList,const std::string& table)const;
 				
 	private:
 		octetos::toolkit::clientdb::Connector* connector;		
