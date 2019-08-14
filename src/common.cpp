@@ -105,14 +105,14 @@ namespace apidb
 		if(hasChild(str))
 		{
 			std::string top = getTopName(str);
-			std::cout << "Creando espacio '" << top << "' en 'Global'" << std::endl;
+			//std::cout << "Creando espacio '" << top << "' en 'Global'" << std::endl;
 			Space* space = new Space(top);
 			std::pair<const char*, symbols::ISpace*> newInser(top.c_str(),space);
 			insert(newInser);
 			std::string child = getChilFullName(str);
 			if(hasChild(child))
 			{
-				std::cout << "Creando sub-espacio '" << child << "' en '"  << space->getName() << "'" << std::endl;
+				//std::cout << "Creando sub-espacio '" << child << "' en '"  << space->getName() << "'" << std::endl;
 				return space->addSpace(child);
 			}
 			else
@@ -122,7 +122,7 @@ namespace apidb
 		}
 		else
 		{
-			std::cout << "+ Creando espacio '" << str << "' en 'Golbal'" << std::endl;
+			//std::cout << "+ Creando espacio '" << str << "' en 'Golbal'" << std::endl;
 			Space* space = new Space(str);
 			std::pair<const char*, symbols::ISpace*> newInser(str.c_str(),space);
 			insert(newInser);
@@ -515,7 +515,19 @@ namespace apidb
 		Symbol* Table::findSymbol(const std::string& str)
 		{
 			iterator it = find(str.c_str());
-			if(it != end()) return it->second;
+			if(it != end()) 
+			{
+				return it->second;
+			}
+			else
+			{
+				//esta linea es una cicanada, reparar pronto.
+				for(iterator it = begin(); it != end(); it++)
+				{
+					//Extraño para mi find no encontro este valor(unas lineas arriba) en la linea 517 ###BOUG STL-FIAL-FIND-MAP
+					if(((Symbol*)it->second)->getName().compare(str) == 0) return (Symbol*)it->second;
+				}
+			}
 			return NULL;
 		}
 		ISpace* Table::searh(const std::string&)
@@ -591,27 +603,27 @@ namespace apidb
 		
 		Table* Space::addTable(symbols::Table* table)
 		{
-			std::cout << table->getName() << " -> '" << getName() << "' Space::addTable" << std::endl;
+			//std::cout << table->getName() << " -> '" << getName() << "' Space::addTable" << std::endl;
 			std::pair<const char*, symbols::ISpace*> newInser(table->getName().c_str(),table);
 			insert(newInser);
 			return table;
 		}
 		Space* Space::addSpace(const std::string& str)
 		{
-			std::cout << "Space::addSpace" << std::endl;
+			//std::cout << "Space::addSpace" << std::endl;
 			if(hasChild(str))
 			{
 				std::string top = getTopName(str);
-				std::cout << "Creando espacio '" << top << "' en '"  << name << "'" << std::endl;
+				//std::cout << "Creando espacio '" << top << "' en '"  << name << "'" << std::endl;
 				Space* space = new Space(top);
 				std::pair<const char*, symbols::ISpace*> newInser(top.c_str(),space);
 				insert(newInser);
-				std::cout << "Creando sub-espacio '" << getChilFullName(str) << "' en '"  << space->getName() << "'" << std::endl;
+				//std::cout << "Creando sub-espacio '" << getChilFullName(str) << "' en '"  << space->getName() << "'" << std::endl;
 				return space->addSpace(getChilFullName(str));
 			}
 			else
 			{
-				std::cout << "+ Creando espacio '" << str << "' en '"  << name << "'" << std::endl;
+				//std::cout << "+ Creando espacio '" << str << "' en '"  << name << "'" << std::endl;
 				Space* space = new Space(str);
 				std::pair<const char*, symbols::ISpace*> newInser(str.c_str(),space);
 				insert(newInser);
@@ -621,14 +633,14 @@ namespace apidb
 		
 		Space* Space::findSpace(const std::string& str)
 		{
-			std::cout << "Buscando '" << str << "' en '" << name << "' Space::findSpace" << std::endl;
+			//std::cout << "Buscando '" << str << "' en '" << name << "' Space::findSpace" << std::endl;
 			if(hasChild(str))
 			{
 				std::string top = getTopName(str);
 				iterator it = find(top.c_str());
 				if(it != end())
 				{
-					std::cout << "Se encontro '" << top << "' en '" << name << "' Space::findSpace" << std::endl;
+					//std::cout << "Se encontro '" << top << "' en '" << name << "' Space::findSpace" << std::endl;
 					if(it->second->what() == symbols::SpaceType::SPACE)
 					{
 						return ((Space*)it->second)->findSpace(getChilFullName(str));
@@ -648,18 +660,18 @@ namespace apidb
 				iterator it2 = find(str.c_str());
 				if(it2 != end())
 				{
-					std::cout << "* Se encontro '" << str << "(" <<  it2->first << ")"<< "' en '" << name  << "'" << std::endl;
+					//std::cout << "* Se encontro '" << str << "(" <<  it2->first << ")"<< "' en '" << name  << "'" << std::endl;
 					ISpace* ispace = it2->second;
 					if(ispace->what() == SpaceType::SPACE)
 					{
 						if(hasChild(str))
 						{
-							std::cout << "1 Space::findSpace Buscando recursivamente '" << str << "' en '" << name << "'" << std::endl;
+							//std::cout << "1 Space::findSpace Buscando recursivamente '" << str << "' en '" << name << "'" << std::endl;
 							return ((Space*)ispace)->findSpace(getChilFullName(str));
 						}
 						else
 						{
-							std::cout << "return " << ((Space*)ispace)->getName() << "  en '" << name << "'" << std::endl;
+							//std::cout << "return " << ((Space*)ispace)->getName() << "  en '" << name << "'" << std::endl;
 							return (Space*)ispace;
 						}
 					}
@@ -671,7 +683,7 @@ namespace apidb
 		}
 		Table* Space::findTable(const std::string& tablename)
 		{
-			std::cout << "Buscando Tabla '" << tablename << "' en '" << name << "' Space::findTable" << std::endl;
+			//std::cout << "Buscando Tabla '" << tablename << "' en '" << name << "' Space::findTable" << std::endl;
 			if(hasChild(tablename))
 			{
 				std::string top = getTopName(tablename);
@@ -688,16 +700,16 @@ namespace apidb
 			}
 			else
 			{
-				std::cout << "No tiene hijos '" << tablename << "'" << std::endl;
+				//std::cout << "No tiene hijos '" << tablename << "'" << std::endl;
 				iterator it2 = find(tablename.c_str());
 				if(it2 != end())
 				{
-					std::cout << "Correct '" << tablename << "'" << std::endl;
+					//std::cout << "Correct '" << tablename << "'" << std::endl;
 					return (Table*)(it2->second);
 				}
 				else
 				{
-					std::cout << "No encontrada '" << tablename << "'" << std::endl;
+					//std::cout << "No encontrada '" << tablename << "'" << std::endl;
 					for(iterator it = begin(); it != end(); it++)
 					{
 						if(it->second->what() == symbols::SpaceType::SPACE)
@@ -706,7 +718,7 @@ namespace apidb
 						}
 						else if(it->second->what() == symbols::SpaceType::TABLE)
 						{
-							//std::cout << "T:" << ((Table*)it->second)->getName() << std::endl;
+							//Extraño para mi find no encontro este valor(unas lineas arriba) en la linea 692 ###BOUG STL-FIAL-FIND-MAP
 							if(((Table*)it->second)->getName().compare(tablename) == 0) return (Table*)(it->second);
 						}
 					}

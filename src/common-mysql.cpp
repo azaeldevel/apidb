@@ -57,9 +57,9 @@ namespace apidb
             MYSQL_ROW row;
             while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
             {
-				std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType Find" << std::endl;			
+				//std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType Find" << std::endl;			
 				symbols::Table* table = global->findTable(row[1]);
-				std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType return" << std::endl;	
+				//std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType return" << std::endl;	
 				if(table == NULL)
 				{
 					std::string msg = "No se encontro la tabla '";
@@ -68,7 +68,7 @@ namespace apidb
 					toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 					return false;
 				}
-				std::cout<<"Se encontró tabla '" << table->getName() << "'" << std::endl;
+				//std::cout<<"Se encontró tabla '" << table->getName() << "'" << std::endl;
 				Symbol* referenceSymbol = ((Table*)table)->findSymbol(row[2]);
 				if(referenceSymbol == NULL)
 				{
@@ -93,7 +93,7 @@ namespace apidb
 		}
 		else
 		{
-			std::cout << "No retorno resultado la consulta" << std::endl;
+			//std::cout << "No retorno resultado la consulta" << std::endl;
 		}
 			
                 
@@ -195,7 +195,7 @@ namespace apidb
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
 		str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
 		octetos::toolkit::clientdb::Datresult* dt = connector->query(str.c_str());
-		std::cout << str  <<std::endl;
+		//std::cout << str  <<std::endl;
 		if(dt != NULL) 
 		{
 			symbols::SymbolsTable::iterator itGlobal = symbolsTable.find(configureProject.name.c_str());
@@ -220,20 +220,20 @@ namespace apidb
 				prw->space = symbols::getSpacePatch(row[0]);
 				prw->fullname = row[0];
 				int level = symbols::getSpaceLevel(prw->fullname);
-				std::cout << "Presesando : "<< level  << " - " << prw->fullname << std::endl;
+				//std::cout << "Presesando : "<< level  << " - " << prw->fullname << std::endl;
 				if(level == 0)
 				{
 					spaceGlobal->addTable(prw);
 				}
 				else if(level > 0 and configureProject.namespace_detect.compare("emulate") == 0)
 				{
-					std::cout << "\nNested Tabla : " << prw->fullname << std::endl;
+					//std::cout << "\nNested Tabla : " << prw->fullname << std::endl;
 					std::string spacePath = symbols::getSpacePatch(row[0]);
-					std::cout << "Space path : " << spacePath << std::endl;
+					//std::cout << "Space path : " << spacePath << std::endl;
 					symbols::Space* space = spaceGlobal->findSpace(spacePath);
 					if(space == NULL)
 					{
-						std::cout << "Agregando espacio '" << spacePath << "' en '" << spaceGlobal->getName() << "' Analyzer::listing" << std::endl;  
+						//std::cout << "Agregando espacio '" << spacePath << "' en '" << spaceGlobal->getName() << "' Analyzer::listing" << std::endl;  
 						space = spaceGlobal->addSpace(spacePath);
 						if(space != NULL)
 						{

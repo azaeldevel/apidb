@@ -65,7 +65,7 @@ namespace mysql
 		bool flag = listing();		
 		if(flag == false) return false;
 		
-		for(symbols::SymbolsTable::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
+		/*for(symbols::SymbolsTable::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{
 			if(it->second->what() == symbols::SpaceType::SPACE)
 			{
@@ -83,7 +83,7 @@ namespace mysql
 					}
 				}
 			}
-		}
+		}*/
 		
 		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{
