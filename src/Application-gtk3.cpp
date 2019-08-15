@@ -721,8 +721,8 @@ namespace apidb
                 }
                 else
                 {
-                        std::string strmsg = "La generacion del proyecto es correct, vea su resultado en '";
-						strmsg += app->getConfigure()->builDirectory + "'.\nPara construir rapida use los camando estandar:\n\t\tcmake . && make";
+                        std::string strmsg = "La generación del proyecto es correct, véa su resultado en '";
+						strmsg += app->getConfigure()->builDirectory + "'.\nPara construir rápida use los camando comunes:\n\t\tcmake . && make";
                         GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                 GTK_MESSAGE_INFO,
