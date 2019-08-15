@@ -258,17 +258,19 @@ namespace apidb
 				}
 				else if(level > 0 and configureProject.namespace_detect.compare("reject") == 0)
 				{
-					toolkit::Error::write(toolkit::Error("Usted asigno la opcion 'Nombre de espcaio detectado' con el valor 'reject', por lo que APIDB no continuara con su operacion.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					toolkit::Error::write(toolkit::Error("Usted asigno la opcion 'Nombre de espcaio detectado' con el valor 'reject', por lo que APIDB no continuara con su operacion.",ErrorCodes::ANALYZER_FAIL_NAMESPCE_DETECTED,__FILE__,__LINE__));
 					return false;
 				}
-				else if(configureProject.namespace_detect.empty())
+				else if(configureProject.namespace_detect.empty() or configureProject.namespace_detect.compare("¿?") == 0)
 				{
-					toolkit::Error::write(toolkit::Error("Los nombre de las tablas contiene punto, esto provocra errores de compilacion.\nPara solucionar este incoveniente APIDB le propone le emulacion de espacios, asignado 'Deteción de nombre de espacio' = 'emulate', de esta forma APIDB creara espacio de nombre equivalentes en su lenguaje.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					toolkit::Error::write(toolkit::Error("Los nombre de las tablas contiene punto, esto provocra errores de compilacion.\nPara solucionar este incoveniente APIDB le propone le emulacion de espacios, asignado 'Deteción de nombre de espacio' = 'emulate', de esta forma APIDB creara espacio de nombre equivalentes en su lenguaje.",ErrorCodes::ANALYZER_FAIL_NAMESPCE_DETECTED,__FILE__,__LINE__));
 					return false;
 				}
 				else
 				{
-					toolkit::Error::write(toolkit::Error("Valor deconocido para 'Nombre de espcaio detectado'",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					std::string msg = "El valor '";
+					msg += configureProject.namespace_detect + "' no es valido para 'Nombre de espcaio detectado'.";
+					toolkit::Error::write(toolkit::Error(msg,ErrorCodes::ANALYZER_FAIL_NAMESPCE_DETECTED,__FILE__,__LINE__));
 					return false;
 				}
 			}

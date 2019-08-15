@@ -127,7 +127,7 @@ void testCreateProject()
         tbUsers->insert(std::make_pair(byUsername->getName().c_str(), byUsername));
         configProject.selects.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
         configProject.downloads.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
-        //configProject.executable_target  = "developing2";
+        //configProject.executable_target  = "¿?";
 		//configProject.namespace_detect = "emulate";
 		
         if(configProject.saveConfig(filename))
@@ -179,7 +179,7 @@ void testBuild()
                 CU_ASSERT(false);
                 exit(EXIT_FAILURE);// hay pruebas que depende de esta.
         }
-	configProject.executable_target = "developing2";
+	//configProject.executable_target = "developing2";
 	configProject.conectordb = &mysqlSource;
 	configProject.namespace_detect = "emulate";
         octetos::apidb::Driver driver(configProject);
@@ -263,12 +263,6 @@ void testCompile()
                         CU_ASSERT(false);
                 }
                 cmd  = " cd apidb &&  make &> /dev/null";
-                if(system(cmd.c_str()) < 0)
-                {
-                        std::cout << "Fallo al realizar la compialcion.\n";
-                        CU_ASSERT(false);
-                }
-                cmd  = " cd apidb && make &> /dev/null";
                 if(system(cmd.c_str()) < 0)
                 {
                         std::cout << "Fallo al realizar la compialcion.\n";

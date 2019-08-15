@@ -114,32 +114,32 @@ namespace generators
 		cmakelists<<std::endl;
 		cmakelists<<"FIND_PACKAGE(MySQL REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
 		cmakelists<<"IF(MySQL_FOUND)"<<std::endl;
-			cmakelists<<"INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
 		cmakelists<<"FIND_PACKAGE(octeos-toolkit-common-c++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_TOOLKIT_COMMON_CPP_FOUND)"<<std::endl;
-                cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
 		cmakelists<<"FIND_PACKAGE(octetos-toolkit-clientdb-myc++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)"<<std::endl;
-                cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
 		cmakelists<<std::endl;
-                if(!configureProject.executable_target.empty())//la adicion de un ejecutable es opcional
-                {
-                        cmakelists<<"ADD_EXECUTABLE(" << configureProject.executable_target << "  "<< configureProject.name; 
-                        if(configureProject.outputLenguaje == OutputLenguajes::CPP)
-                        {
-                                cmakelists <<".cpp "; 
-                        }
-                        cmakelists<<configureProject.executable_target;
-                        if(configureProject.outputLenguaje == OutputLenguajes::CPP)
-                        {
-                                cmakelists <<".cpp "; 
-                        }
-                        cmakelists <<")"<<std::endl;
-                        cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
-                }
+		if(!configureProject.executable_target.empty() and configureProject.executable_target.compare("¿?") != 0)//la adicion de un ejecutable es opcional
+		{
+			cmakelists<<"ADD_EXECUTABLE(" << configureProject.executable_target << "  "<< configureProject.name; 
+			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
+			{
+				cmakelists <<".cpp "; 
+			}
+			cmakelists<<configureProject.executable_target;
+			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
+			{
+				cmakelists <<".cpp "; 
+			}
+			cmakelists <<")"<<std::endl;
+			cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
+		}
 		cmakelists<<"ADD_LIBRARY("<< configureProject.name;
                 if(configureProject.compiled == apidb::Compiled::SHARED)
                 {

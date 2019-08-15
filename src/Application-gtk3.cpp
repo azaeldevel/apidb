@@ -377,8 +377,8 @@ namespace apidb
         }
         
 
-        bool Application::downConf()
-        {
+	bool Application::downConf()
+	{
                 if(isSaved and !isOpen) return true;
                 
                 if(inNameEdited)
@@ -484,6 +484,22 @@ namespace apidb
                         }
                         config->compiled = getCompiled(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inCmpl)));
                 }
+		if(inNameSpaceDetectEdited)
+		{
+			int intNameSpaceDetect = gtk_combo_box_get_active(GTK_COMBO_BOX(inNameSpaceDetect));
+			if(intNameSpaceDetect == 0)
+			{
+				GtkWidget *msg = gtk_message_dialog_new (NULL,
+						GTK_DIALOG_DESTROY_WITH_PARENT,
+						GTK_MESSAGE_ERROR,
+						GTK_BUTTONS_CLOSE,
+						"Selecione 'Emular' si dese aceptar espacion en C++ en la sección de información");
+				gtk_dialog_run (GTK_DIALOG (msg));  
+				gtk_widget_destroy (msg);
+				return false;
+			}
+			config->namespace_detect = gtk_combo_box_get_active_id(GTK_COMBO_BOX(inNameSpaceDetect));
+		}
                 
                 
                 if(config->conectordb == NULL)
@@ -626,8 +642,8 @@ namespace apidb
                 }
                 
                 
-                return true;
-        }
+		return true;
+	}
         void Application::build(GtkWidget *widget, gpointer data) 
         {
                 Application* app = (Application*)data;
@@ -705,12 +721,13 @@ namespace apidb
                 }
                 else
                 {
-                        
+                        std::string strmsg = "La generacion del proyecto es correct, vea su resultado en '";
+						strmsg += app->getConfigure()->builDirectory + "'.\nPara construir rapida use los camando estandar:\n\t\tcmake . && make";
                         GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                 GTK_MESSAGE_INFO,
                                                                 GTK_BUTTONS_CLOSE,
-                                                                "La generacion del proyecto es correct, vea su directorio de salia.");
+                                                                strmsg.c_str());
                                 gtk_dialog_run (GTK_DIALOG (msg)); 
                                 gtk_widget_destroy (msg);
                 }
@@ -1092,17 +1109,18 @@ namespace apidb
                 inPkLEdited = false;
                 inCmplEdited = false;
                 isNew = false;
-        }    
+        }   
+        
         void Application::loadConfig()
         {
                 gtk_entry_set_text (GTK_ENTRY(inName),config->name.c_str());
                 gtk_entry_set_text (GTK_ENTRY(inVer),config->versionResult.toString().c_str());
-                gtk_combo_box_set_active((GtkComboBox*)inInL,(gint)config->inputLenguaje);
-                gtk_combo_box_set_active((GtkComboBox*)inOutL,(gint)config->outputLenguaje);
-                gtk_combo_box_set_active((GtkComboBox*)inPkL,(gint)config->packing);
-                gtk_combo_box_set_active((GtkComboBox*)inCmpl,(gint)config->compiled);
+                gtk_combo_box_set_active(GTK_COMBO_BOX(inInL),(gint)config->inputLenguaje);
+                gtk_combo_box_set_active(GTK_COMBO_BOX(inOutL),(gint)config->outputLenguaje);
+                gtk_combo_box_set_active(GTK_COMBO_BOX(inPkL),(gint)config->packing);
+                gtk_combo_box_set_active(GTK_COMBO_BOX(inCmpl),(gint)config->compiled);
                 gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
-                //std::cout << "Buildd dir loaded" << config->builDirectory << std::endl;
+                gtk_combo_box_set_active(GTK_COMBO_BOX(inNameSpaceDetect),inNameSpaceDetect_comboxid(config->namespace_detect));
                 
                 gtk_entry_set_text (GTK_ENTRY(inLoc),config->conectordb->getHost().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inPort),std::to_string(config->conectordb->getPort()).c_str());
@@ -1156,20 +1174,36 @@ namespace apidb
                         if(!app->config->readConfig(std::string(filename)))
                         {                 
                                 std::string msgstr = "";
+								toolkit::Error e(toolkit::Error::get());
                                 if(toolkit::Error::check())
                                 {
-                                        msgstr = toolkit::Error::get().what();
+									e = toolkit::Error::get();
+									msgstr = e.what();
                                 }
                                 else
                                 {
                                         msgstr ="Fallo la lectura del archivo de proyecto";
                                 }
-                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                GtkWidget *msg;
+                                if(e.getCode() == ErrorCodes::ANALYZER_FAIL_NAMESPCE_DETECTED)
+								{
+									
+                                msg = gtk_message_dialog_new (NULL,
+                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                GTK_MESSAGE_WARNING,
+                                                                GTK_BUTTONS_CLOSE,
+                                                                msgstr.c_str(),
+                                                                filename, g_strerror (errno));
+								}
+								else
+								{									
+                                msg = gtk_message_dialog_new (NULL,
                                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                 GTK_MESSAGE_ERROR,
                                                                 GTK_BUTTONS_CLOSE,
                                                                 msgstr.c_str(),
                                                                 filename, g_strerror (errno));
+								}
                                 gtk_dialog_run (GTK_DIALOG (msg));
                                 gtk_widget_destroy (dialog);
                                 return;
@@ -1384,6 +1418,29 @@ namespace apidb
                 app->setSaved(false);
                 g_free (filename); 
         }
+	void Application::inNameSpaceDetect_changed (GtkComboBox *widget, gpointer     user_data)
+	{
+		Application* app = (Application*) user_data;
+		if(app->config != NULL)
+		{
+			std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
+			std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
+			app->inNameSpaceDetectEdited = true;
+			app->setSaved(false);
+		}
+		else if(!app->isOpen)
+		{
+			GtkWidget *msg = gtk_message_dialog_new (NULL,
+				GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_ERROR,
+				GTK_BUTTONS_CLOSE,
+				"Deve crear un proyecto antes de captura informacion.",
+				"Error", g_strerror (errno));
+			gtk_dialog_run (GTK_DIALOG (msg)); 
+			gtk_widget_destroy (msg);
+			return;
+		}
+	}
         void Application::createNotebookInfo(GtkWidget *boxInfo)
         {
                 GtkWidget *boxName = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
@@ -1448,8 +1505,7 @@ namespace apidb
                 gtk_box_pack_start(GTK_BOX(boxCmpl), inCmpl, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxCmpl, FALSE, FALSE,0);        
                 g_signal_connect(G_OBJECT(inCmpl), "changed", G_CALLBACK(inCmpl_changed), this);
-                              
-                        
+                
                 GtkWidget *boxinFileChooserBuildDirectory = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget * lbinFileChooserBuildDirectory = gtk_label_new ("Directory de Contrucción:");
                 gtk_box_pack_start(GTK_BOX(boxinFileChooserBuildDirectory), lbinFileChooserBuildDirectory, FALSE, FALSE,0); 
@@ -1459,7 +1515,34 @@ namespace apidb
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxinFileChooserBuildDirectory, FALSE, FALSE,0);
                 gtk_widget_set_events(inFileChooserBuildDirectory,GDK_KEY_PRESS_MASK);
                 g_signal_connect(G_OBJECT(inFileChooserBuildDirectory), "file-set", G_CALLBACK(buildDirectory_fileset), this);
+				
+                GtkWidget *boxNameSpaceDetect = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget * lbNameSpaceDetect = gtk_label_new ("Deteción de nombre de espacio:   ");
+                gtk_box_pack_start(GTK_BOX(boxNameSpaceDetect), lbNameSpaceDetect, FALSE, FALSE,0); 
+                inNameSpaceDetect = gtk_combo_box_text_new();
+                gtk_combo_box_text_insert((GtkComboBoxText*)inNameSpaceDetect,inNameSpaceDetect_comboxid("selecione"),"selecione","Selecione..."); 
+                gtk_combo_box_set_active((GtkComboBox*)inNameSpaceDetect,0);
+                gtk_combo_box_text_insert((GtkComboBoxText*)inNameSpaceDetect,inNameSpaceDetect_comboxid("reject"),"reject","Rechazar");
+                gtk_combo_box_text_insert((GtkComboBoxText*)inNameSpaceDetect,inNameSpaceDetect_comboxid("emulate"),"emulate","Emular");
+                gtk_box_pack_start(GTK_BOX(boxNameSpaceDetect), inNameSpaceDetect, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxInfo), boxNameSpaceDetect, FALSE, FALSE,0);        
+                g_signal_connect(G_OBJECT(inNameSpaceDetect), "changed", G_CALLBACK(inNameSpaceDetect_changed), this);
         }
+        int Application::inNameSpaceDetect_comboxid(const std::string& str)
+		{
+			if(str.compare("selecione") == 0)
+			{
+				return 0;
+			}
+			else if(str.compare("reject") == 0)
+			{
+				return 1;
+			}
+			else if(str.compare("emulate") == 0)
+			{
+				return 2;
+			}
+		}
         gboolean Application::inLoc_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)
         {
                 Application* app = (Application*)user_data;
@@ -1721,7 +1804,7 @@ namespace apidb
                 
                 notebookMain = gtk_notebook_new();
                 //g_signal_connect(G_OBJECT(notebookMain), "switch-page", G_CALLBACK(active_tab), window);
-                GtkWidget *boxInfo = gtk_box_new (GTK_ORIENTATION_VERTICAL,6);
+                GtkWidget *boxInfo = gtk_box_new (GTK_ORIENTATION_VERTICAL,8);
                 GtkWidget *lbInfo = gtk_label_new (titleInfo);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxInfo,lbInfo);
                 createNotebookInfo(boxInfo);

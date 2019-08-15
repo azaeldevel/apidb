@@ -158,6 +158,7 @@ namespace apidb
                 static void inOutL_changed (GtkComboBox *widget, gpointer     user_data);
                 static void inPkL_changed (GtkComboBox *widget, gpointer     user_data);
                 static void inCmpl_changed (GtkComboBox *widget, gpointer     user_data);
+                static void inNameSpaceDetect_changed (GtkComboBox *widget, gpointer     user_data);
                 static gboolean inLoc_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
                 static gboolean inPort_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
                 static gboolean inDB_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
@@ -169,6 +170,7 @@ namespace apidb
                 static gboolean conex_lostfocus (GtkWidget *widget, GdkEvent  *event,  gpointer   user_data);
                 static void conex_switchPage (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer     user_data);
                 static void application_destroy (GtkWidget *object, gpointer   user_data);
+				static int inNameSpaceDetect_comboxid(const std::string&);
                 bool downConf();
                        
                 GtkWidget *window;
@@ -227,6 +229,8 @@ namespace apidb
                 GtkWidget *inFileChooserBuildDirectory;
                 GtkWidget *dlgBuildDirectory;
                 GtkFileChooser *chooser_BuilDirectory;
+                GtkWidget *inNameSpaceDetect;
+                bool inNameSpaceDetectEdited;
                 //Conexion
                 static const char* titleConex;
                 bool conexEdited;
