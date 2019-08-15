@@ -35,7 +35,8 @@ std::string random_string( size_t length )
 static std::string filename;
 static std::string filename_nlst;
 static octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
-
+static std::string sysappv1Filename = "sysappv1-alpha.apidb";
+static std::string sysappv20Filename = "sysappv20-alpha.apidb";
 
 /* The suite initialization function.
  * Opens the temporary file used by the tests.
@@ -311,6 +312,66 @@ void testTemp()
 	CU_ASSERT(true);		
 }
 
+void testBackwardCompatiblev1()
+{
+	std::string cmd = "cp -f ../tests/";
+	cmd += sysappv1Filename + " ." ;
+	system(cmd.c_str());
+	octetos::apidb::ConfigureProject configProject;
+	if(!configProject.readConfig(sysappv1Filename))
+	{                
+		if(octetos::toolkit::Error::check())
+		{
+			std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
+	}
+	octetos::apidb::Driver driver(configProject);
+	octetos::apidb::Tracer tracer(0);
+	if(driver.driving(NULL) == false)
+	{
+		std::cout << "Fail  -> "<< std::endl;
+		if(octetos::toolkit::Error::check())
+		{
+			std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
+	}
+	CU_ASSERT(true);	
+}
+
+void testBackwardCompatiblev20()
+{
+	std::string cmd = "cp -f ../tests/";
+	cmd += sysappv20Filename + " ." ;
+	system(cmd.c_str());
+	octetos::apidb::ConfigureProject configProject;
+	if(!configProject.readConfig(sysappv20Filename))
+	{                
+		if(octetos::toolkit::Error::check())
+		{
+			std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
+	}
+	octetos::apidb::Driver driver(configProject);
+	octetos::apidb::Tracer tracer(0);
+	if(driver.driving(NULL) == false)
+	{
+		std::cout << "Fail  -> "<< std::endl;
+		if(octetos::toolkit::Error::check())
+		{
+			std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
+	}
+	CU_ASSERT(true);	
+}
+
 int main(int argc, char *argv[])
 {
 	CU_pSuite pSuite = NULL;
@@ -352,6 +413,19 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}*/
 
+	
+	
+	if ((NULL == CU_add_test(pSuite, "Verificando compatibilidad con Archivo de Proyecto v1", testBackwardCompatiblev1)))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
+	
+	if ((NULL == CU_add_test(pSuite, "Verificando compatibilidad con Archivo de Proyecto v2.0", testBackwardCompatiblev20)))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
 	
 	
 	

@@ -58,19 +58,19 @@ namespace octetos
 {
 namespace apidb
 {
-        bool ConfigureProject::readConfig(const std::string filename)
-        {
-                if(toolkit::Error::check())
-                {
-                        throw toolkit::Error("Hay un error pendiente de atender",toolkit::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
-                }
+	bool ConfigureProject::readConfig(const std::string filename)
+	{
+		if(toolkit::Error::check())
+		{
+			throw toolkit::Error("Hay un error pendiente de atender",toolkit::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
+		}
                 
                 //std::cout << "Reading : " << filename << std::endl;
                 FILE *apidbFilecheck = fopen(filename.c_str(), "r");
                 if (apidbFilecheck == NULL )
                 {
-                        std::string msg = "La direecion especificada '";
-                        msg += filename + "' no indica un archivo valido.";
+                        std::string msg = "La dirección especificada '";
+                        msg += filename + "' no indica un archivo válido.";
                         toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_INVALIDPATH,__FILE__,__LINE__));
                         return false;
                 }
@@ -148,7 +148,7 @@ namespace apidb
                                 
                 
                 return true;
-        }
+	}
        
 	bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
 	{         

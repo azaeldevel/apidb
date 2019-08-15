@@ -258,7 +258,7 @@ namespace apidb
                         return false;
                 }
                 //std::cout << "Numbers readed : " << major << "." << minor << "." << patch << std::endl;
-                this->version.setNumbers(major,minor,patch);
+                this->versionResult.setNumbers(major,minor,patch);
         // this->version.setStage(toolkit::Version::Stage::alpha);
                 
                 xmlTextReaderRead(reader);
