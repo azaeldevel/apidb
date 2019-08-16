@@ -172,6 +172,7 @@ namespace apidb
                 static void application_destroy (GtkWidget *object, gpointer   user_data);
 				static int inNameSpaceDetect_comboxid(const std::string&);
                 bool downConf();
+				static void documen_open(Application*,const std::string& filefly = "");
                        
                 GtkWidget *window;
                 GtkWidget *vboxMain;

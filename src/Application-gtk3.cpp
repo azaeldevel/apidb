@@ -1145,128 +1145,110 @@ namespace apidb
                 gtk_container_set_border_width (GTK_CONTAINER (window), 10);   
                 gtk_window_set_resizable(GTK_WINDOW (window),FALSE);
                 gtk_container_add (GTK_CONTAINER (window), vboxMain);       
-        }   
-        void Application::document_open (GtkWidget *widget, gpointer   data)
-        {
-                Application* app = (Application*)data;
-                
-                GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"_Cancel",GTK_RESPONSE_CANCEL,"_Open",GTK_RESPONSE_ACCEPT,NULL);   
-                if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-                {
-                        filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-                        gtk_widget_destroy (dialog);
-                        //std::cout << "if(!config.readConfig(std::string(filename)))" << std::endl;
+        }  
+	void Application::documen_open(Application* app,const std::string& filefly)
+	{
+		std::string filename;
+		
+		if(filefly.empty())
+		{
+			GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"_Cancel",GTK_RESPONSE_CANCEL,"_Open",GTK_RESPONSE_ACCEPT,NULL);   
+			if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+			{
+				char* tmpfilename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+				filename = tmpfilename;
+				gtk_widget_destroy (dialog);
+				g_free (tmpfilename);
+			}
+			gtk_widget_destroy (dialog);
+		}
+		else		
+		{
+			filename = filefly;
+		}
+		//std::cout << "Step 1 "<< std::endl;
+		if(app->config ==  NULL)
+		{
+			app->config = new ConfigureProject();
+		}
+		else
+		{
+			delete (app->config);
+			app->config = new ConfigureProject();
+		}
                         
-                        //std::cout << "Step 1 "<< std::endl;
-                        if(app->config ==  NULL)
-                        {
-                                app->config = new ConfigureProject();
-                        }
-                        else
-                        {
-                                delete (app->config);
-                                app->config = new ConfigureProject();
-                        }
-                        
-                        //std::cout << "Step 2" << std::endl;
-                        try
-                        {
-                        if(!app->config->readConfig(std::string(filename)))
-                        {                 
-                                std::string msgstr = "";
-								toolkit::Error e(toolkit::Error::get());
-                                if(toolkit::Error::check())
-                                {
-									e = toolkit::Error::get();
-									msgstr = e.what();
-                                }
-                                else
-                                {
-                                        msgstr ="Fallo la lectura del archivo de proyecto";
-                                }
-                                GtkWidget *msg;
-                                if(e.getCode() == ErrorCodes::ANALYZER_FAIL_NAMESPCE_DETECTED)
-								{
-									
-                                msg = gtk_message_dialog_new (NULL,
-                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                GTK_MESSAGE_WARNING,
-                                                                GTK_BUTTONS_CLOSE,
-                                                                msgstr.c_str(),
-                                                                filename, g_strerror (errno));
-								}
-								else
-								{									
-                                msg = gtk_message_dialog_new (NULL,
-                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                GTK_MESSAGE_ERROR,
-                                                                GTK_BUTTONS_CLOSE,
-                                                                msgstr.c_str(),
-                                                                filename, g_strerror (errno));
-								}
-                                gtk_dialog_run (GTK_DIALOG (msg));
-                                gtk_widget_destroy (dialog);
-                                return;
-                        } 
-                        }
-                        catch(std::exception e)
-                        {
-                                
-                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                GTK_MESSAGE_ERROR,
-                                                                GTK_BUTTONS_CLOSE,
-                                                                e.what(),
-                                                                "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
-                                gtk_widget_destroy (msg);
-                                gtk_widget_destroy (dialog);
-                                return;
-                        }
-                        if(app->driver != NULL) 
-                        {
-                                delete (app->driver);
-                                app->driver = NULL;
-                        }
-                        app->driver = new Driver(*(app->config));
-                        if(!app->driver->analyze(NULL))
-                        {
-                                std::string msgstr = "";
-                                if(toolkit::Error::check())
-                                {
-                                        msgstr = toolkit::Error::get().what();
-                                }
-                                else
-                                {
-                                        msgstr ="Fallo la lectura del archivo de proyecto";
-                                }
-                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                GTK_MESSAGE_ERROR,
-                                                                GTK_BUTTONS_CLOSE,
-                                                                msgstr.c_str(),
-                                                                filename, g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
-                                gtk_widget_destroy (msg);
-                                gtk_widget_destroy (dialog);                                
-                        }
-                        app->originFilename = filename;
-                        app->createNotebook();                
-                        //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
-                        app->loadConfig();
-                        app->setSaved(true);
-                        app->isOpen = true;
-                        app->isNew = false;
-                        gtk_widget_show_all (app->window); 
-                        //std::cout << "OutputLenguajes is " << config.outputLenguaje << std::endl;
-                        g_free (filename);
-                        filename = NULL;
-                }
-                else
-                {
-                        gtk_widget_destroy (dialog);
-                }
-        }        
+		//std::cout << "Step 2" << std::endl;
+		try
+		{
+			if(!app->config->readConfig(std::string(filename)))
+			{                 
+				std::string msgstr = "";
+				toolkit::Error e(toolkit::Error::get());
+				if(toolkit::Error::check())
+				{
+					e = toolkit::Error::get();
+					msgstr = e.what();
+				}
+				else
+				{
+					msgstr ="Fallo la lectura del archivo de proyecto";
+				}
+				GtkWidget *msg;
+				if(e.getCode() == ErrorCodes::ANALYZER_FAIL_NAMESPCE_DETECTED)
+				{
+					msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
+				}
+				else
+				{									
+					msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
+				}
+				gtk_dialog_run (GTK_DIALOG (msg));
+				return;
+			} 
+		}
+		catch(std::exception e)
+		{
+			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE, e.what());
+			gtk_dialog_run (GTK_DIALOG (msg)); 
+			gtk_widget_destroy (msg);
+			return;
+		}
+		
+		if(app->driver != NULL) 
+		{
+			delete (app->driver);
+			app->driver = NULL;
+		}
+		app->driver = new Driver(*(app->config));
+		if(!app->driver->analyze(NULL))
+		{
+			std::string msgstr = "";
+			if(toolkit::Error::check())
+			{
+				msgstr = toolkit::Error::get().what();
+			}
+			else
+			{
+				msgstr ="Fallo la lectura del archivo de proyecto";
+			}
+			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
+			gtk_dialog_run (GTK_DIALOG (msg)); 
+			gtk_widget_destroy (msg);                                
+		}
+		
+		app->originFilename = filename;
+		app->createNotebook();
+		app->loadConfig();
+		app->setSaved(true);
+		app->isOpen = true;
+		app->isNew = false;
+		gtk_widget_show_all(app->window);
+	}
+	void Application::document_open (GtkWidget *widget, gpointer   data)
+	{
+		Application* app = (Application*)data;
+		documen_open(app);
+	}        
         gboolean Application::inVer_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)
         {
                 Application* app = (Application*)user_data;
@@ -1827,21 +1809,31 @@ namespace apidb
         }
         void  Application::init(int*   argc, char **argv[])
         {
-                gtk_init (argc, argv);
+			gtk_init (argc, argv);
+			if((*argc) == 1)
+			{
+				originFilename = "";
+			}
+			else if((*argc) > 1)
+			{
+				originFilename = (*argv)[1];
+				std::cout << "File " << originFilename << std::endl;
+			}
         }
                 
                 
-        void Application::create()
-        {
-                window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-                vboxMain = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
-                createWindow();        
+	void Application::create()
+	{
+		window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+		vboxMain = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
+		createWindow();        
                                 
-                createHeader();
+		createHeader();
                 
-                gtk_widget_show_all (window);   
-                gtk_main ();     
-        }
+		gtk_widget_show_all(window);  
+		if(originFilename.size() > 0)documen_open(this,originFilename);
+		gtk_main ();     
+	}
 
          const char*  Application::titleInfo = "Información";
          const char*  Application::titleConex = "Conexión";
