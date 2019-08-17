@@ -24,6 +24,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <sys/stat.h>
 
 
 #include "analyzer.hpp"
@@ -160,24 +161,15 @@ namespace generators
 		//cmake.modules
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
-			std::ifstream ifile("cmake.modules");
-			if (!ifile) 
-			{
-				system("mkdir cmake.modules");
-			}
+			std::string str = "cmake.modules";			
+			mkdir(str.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		}
 		else
 		{
 			std::string direct = configureProject.builDirectory + "/cmake.modules";
-			std::ifstream ifile(direct);
-			if (!ifile) 
-			{
-				std::string cmd = "mkdir  ";
-				//system((cmd + analyzer.getDirectoryProject()).c_str());
-				cmd = cmd + direct;				
-				system(cmd.c_str());
-			}			
+			mkdir(direct.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		}
+		
 	
 		//std::cout<<"Creating toolkit-commonConfig.cmake..."<<std::endl;
 		namefile = "octeos-toolkit-common-c++Config.cmake";
