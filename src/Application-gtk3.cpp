@@ -644,8 +644,8 @@ namespace apidb
                 
 		return true;
 	}
-        void Application::build(GtkWidget *widget, gpointer data) 
-        {
+	void Application::build(GtkWidget *widget, gpointer data) 
+	{
                 Application* app = (Application*)data;
                 
                 if(app->config == NULL)
@@ -698,29 +698,24 @@ namespace apidb
                 }
                 app->driver = new Driver(*(app->config));
                 Tracer tr(0);
-                 if(!app->driver->driving(&tr))
-                {
-                        std::string msgstr = "";
-                        if(toolkit::Error::check())
-                        {
-                                        msgstr = toolkit::Error::get().what();
-                        }
-                        else
-                        {
-                                        msgstr ="Fallo durante la construccion.";
-                        }
-                        GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                GTK_MESSAGE_ERROR,
-                                                                GTK_BUTTONS_CLOSE,
-                                                                msgstr.c_str(),
-                                                                msgstr.c_str(), g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
-                                gtk_widget_destroy (msg);
-                                return;
-                }
-                else
-                {
+		if(!app->driver->driving(&tr))
+		{
+			std::string msgstr = "";
+			if(toolkit::Error::check())
+			{
+				msgstr = toolkit::Error::get().what();
+			}
+			else
+			{
+				msgstr ="Fallo durante la construccion.";
+			}
+			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
+			gtk_dialog_run (GTK_DIALOG (msg)); 
+			gtk_widget_destroy (msg);
+			return;
+		}
+		else
+		{
                         std::string strmsg = "La generación del proyecto es correct, véa su resultado en '";
 						strmsg += app->getConfigure()->builDirectory + "'.\nPara construir rápida use los camando comunes:\n\t\tcmake . && make";
                         GtkWidget *msg = gtk_message_dialog_new (NULL,
@@ -730,8 +725,8 @@ namespace apidb
                                                                 strmsg.c_str());
                                 gtk_dialog_run (GTK_DIALOG (msg)); 
                                 gtk_widget_destroy (msg);
-                }
-        }
+		}
+	}
         void Application::document_saveas(GtkWidget *widget, gpointer data) 
         {
                 Application* app = (Application*)data;
@@ -1166,7 +1161,7 @@ namespace apidb
 		{
 			filename = filefly;
 		}
-		//std::cout << "Step 1 "<< std::endl;
+		std::cout << "Step 1 "<< std::endl;
 		if(app->config ==  NULL)
 		{
 			app->config = new ConfigureProject();
@@ -1177,29 +1172,22 @@ namespace apidb
 			app->config = new ConfigureProject();
 		}
                         
-		//std::cout << "Step 2" << std::endl;
+		std::cout << "Step 2" << std::endl;
 		try
 		{
 			if(!app->config->readConfig(std::string(filename)))
 			{                 
 				std::string msgstr = "";
-				toolkit::Error e(toolkit::Error::get());
+				GtkWidget *msg;
 				if(toolkit::Error::check())
 				{
-					e = toolkit::Error::get();
+					toolkit::Error e = toolkit::Error::get();
 					msgstr = e.what();
+					msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
 				}
 				else
 				{
 					msgstr ="Fallo la lectura del archivo de proyecto";
-				}
-				GtkWidget *msg;
-				if(e.getCode() == ErrorCodes::ANALYZER_FAIL_NAMESPCE_DETECTED)
-				{
-					msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
-				}
-				else
-				{									
 					msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
 				}
 				gtk_dialog_run (GTK_DIALOG (msg));
@@ -1213,13 +1201,25 @@ namespace apidb
 			gtk_widget_destroy (msg);
 			return;
 		}
-		
+		std::cout << "Step 3" << std::endl;
 		if(app->driver != NULL) 
 		{
 			delete (app->driver);
 			app->driver = NULL;
 		}
+		std::cout << "Step 3.5" << std::endl;
 		app->driver = new Driver(*(app->config));
+		std::string msgstr = "";
+		if(toolkit::Error::check())
+		{
+			toolkit::Error e = toolkit::Error::get();
+			msgstr = e.what();			
+			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
+			gtk_dialog_run (GTK_DIALOG (msg));
+			gtk_widget_destroy (msg);
+			return;
+		}
+		std::cout << "Step 4" << std::endl;
 		if(!app->driver->analyze(NULL))
 		{
 			std::string msgstr = "";
@@ -1235,7 +1235,7 @@ namespace apidb
 			gtk_dialog_run (GTK_DIALOG (msg)); 
 			gtk_widget_destroy (msg);                                
 		}
-		
+		std::cout << "Step 5" << std::endl;
 		app->originFilename = filename;
 		app->createNotebook();
 		app->loadConfig();
@@ -1248,7 +1248,7 @@ namespace apidb
 	{
 		Application* app = (Application*)data;
 		documen_open(app);
-	}        
+	}
         gboolean Application::inVer_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)
         {
                 Application* app = (Application*)user_data;

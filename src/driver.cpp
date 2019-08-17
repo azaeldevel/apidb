@@ -121,14 +121,13 @@ namespace apidb
         {
                 return *analyzer;
         }
-        Driver::Driver(const ConfigureProject& config) : configureProject(config)
-        {
-                analyzer = NULL;
-                
+	Driver::Driver(const ConfigureProject& config) : configureProject(config)
+	{
+		analyzer = NULL;                
 		//std::cout <<"Iniciando contruccion." <<std::endl;
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
-                        //std::cout <<"Creando conector." <<std::endl;
+			//std::cout <<"Creando conector." <<std::endl;
 			connector = new octetos::toolkit::clientdb::mysql::Connector();
 			try
 			{
@@ -140,14 +139,18 @@ namespace apidb
 				}
 			}
 			catch(octetos::toolkit::clientdb::SQLException ex)
-			{				
-				std::cout <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
+			{
+				//std::cout <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
+				toolkit::Error err(ex.what(), ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
+				toolkit::Error::write(err);
 			}
 		}
 		else
 		{
-			std::cout <<"Lenguaje de entrada desconocido."<<std::endl;
-		}	
+			//std::cout <<"Lenguaje de entrada desconocido."<<std::endl;
+			toolkit::Error err("Lenguaje no soportado", ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
+			toolkit::Error::write(err);
+		}
 		//std::cout <<"Objeto contruido" <<std::endl;
 	}
 		
@@ -229,7 +232,7 @@ namespace apidb
 			}			
 		}		
 		
-                bool flagCPP,flagCMAKE;
+		bool flagCPP,flagCMAKE;
 		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
 			
@@ -335,19 +338,19 @@ namespace apidb
 	
 	bool Driver::analyze(toolkit::ActivityProgress* progress)
 	{
-                if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
-                {
+		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
+		{
 			if(analyzer != NULL)
-                        {
-                                delete analyzer;
-                                analyzer = NULL;
-                                analyzer = new mysql::Analyzer(configureProject,connector,progress);		
-                        }
-                        else
-                        {
-                                analyzer = new mysql::Analyzer(configureProject,connector,progress);
-                        }
-                }
+			{
+				delete analyzer;
+				analyzer = NULL;
+				analyzer = new mysql::Analyzer(configureProject,connector,progress);		
+			}
+			else
+			{
+				analyzer = new mysql::Analyzer(configureProject,connector,progress);
+			}
+		}
                 
                 if(progress != NULL)
                 {
@@ -358,8 +361,18 @@ namespace apidb
                         toolkit::Confirmation conf2(msg);
                         progress->add(conf2);
                 }
-		
-		if(analyzer->analyze(progress) == false) //reading tables
+		bool flagAnalyzer = false;
+		try
+		{
+			flagAnalyzer = analyzer->analyze(progress);
+		}
+		catch(toolkit::clientdb::SQLException e)
+		{
+			toolkit::Error err(e.what(),ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
+			toolkit::Error::write(err);
+			return false;
+		}
+		if(flagAnalyzer == false) //reading tables
 		{
 			if(toolkit::Error::check())
 			{
