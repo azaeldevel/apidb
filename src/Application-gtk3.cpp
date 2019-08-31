@@ -187,13 +187,13 @@ namespace apidb
                 if(nodenumber <= list->size())
                 {
                         std::advance(it , nodenumber);
-                        //std::cout << "Selected table : " << it->second->getName().c_str() << ", node :" << ptr << std::endl;
+                        std::cout << "Selected table : " << it->second->getName().c_str() << ", node :" << ptr << std::endl;
                         return it->second->getName().c_str();
                 }
                 else
                 {
                         //node de new function
-                        //std::cout << "New funtion "<<std::endl;
+                        std::cout << "New funtion "<<std::endl;
                         return NULL;
                 }
         }
@@ -238,7 +238,7 @@ namespace apidb
 
                 if (!gtk_tree_model_get_iter(model, &iter, path))
                 {
-                        //std::cout << "No Agregado " << std::endl;
+                        std::cout << "No Agregado " << std::endl;
                         //actual = NULL;
                         return; /* path describes a non-existing row - should not happen */
                 }
@@ -266,11 +266,11 @@ namespace apidb
                                         std::string strFunction = cap.getNameFunction();
                                         const char* strTable = getTableName(model,&iter,wgTree->list);
                                         ConfigureProject::Function* newF = new ConfigureProject::Function(strFunction);
-                                        //std::cout << "Bascando tabla '" << strTable << "'" << std::endl;
+                                        std::cout << "Bascando tabla '" << strTable << "'" << std::endl;
                                         std::map<const char*,ConfigureProject::Table*>::iterator itT = wgTree->list->find(strTable);
                                         if(itT != wgTree->list->end())
                                         {
-                                                //std::cout << "tabla '" << strTable <<  "' encontrada."<< std::endl;
+                                                std::cout << "tabla '" << strTable <<  "' encontrada."<< std::endl;
                                                 itT->second->insert(std::make_pair(strFunction.c_str(), newF));
                                                 bool flag = false;
                                                 do
@@ -640,7 +640,14 @@ namespace apidb
                         }
                         config->conectordb->setPassword(strpw);
                 }
-                
+                if(inWConnNameEdited)
+				{
+					std::string str = gtk_entry_get_text(GTK_ENTRY(inWConnName));
+					if(!str.empty() and str.compare("¿?") != 0)
+					{
+						config->writeDatconnect = gtk_entry_get_text(GTK_ENTRY(inWConnName)); 
+					}
+				}
                 
 		return true;
 	}
@@ -1116,6 +1123,7 @@ namespace apidb
                 gtk_combo_box_set_active(GTK_COMBO_BOX(inCmpl),(gint)config->compiled);
                 gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
                 gtk_combo_box_set_active(GTK_COMBO_BOX(inNameSpaceDetect),inNameSpaceDetect_comboxid(config->namespace_detect));
+				if(!config->writeDatconnect.empty() and config->writeDatconnect.compare("¿?") != 0) gtk_entry_set_text (GTK_ENTRY(inWConnName),config->writeDatconnect.c_str());
                 
                 gtk_entry_set_text (GTK_ENTRY(inLoc),config->conectordb->getHost().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inPort),std::to_string(config->conectordb->getPort()).c_str());
@@ -1161,7 +1169,7 @@ namespace apidb
 		{
 			filename = filefly;
 		}
-		std::cout << "Step 1 "<< std::endl;
+		//std::cout << "Step 1 "<< std::endl;
 		if(app->config ==  NULL)
 		{
 			app->config = new ConfigureProject();
@@ -1172,7 +1180,7 @@ namespace apidb
 			app->config = new ConfigureProject();
 		}
                         
-		std::cout << "Step 2" << std::endl;
+		//std::cout << "Step 2" << std::endl;
 		try
 		{
 			if(!app->config->readConfig(std::string(filename)))
@@ -1201,13 +1209,13 @@ namespace apidb
 			gtk_widget_destroy (msg);
 			return;
 		}
-		std::cout << "Step 3" << std::endl;
+		//std::cout << "Step 3" << std::endl;
 		if(app->driver != NULL) 
 		{
 			delete (app->driver);
 			app->driver = NULL;
 		}
-		std::cout << "Step 3.5" << std::endl;
+		//std::cout << "Step 3.5" << std::endl;
 		app->driver = new Driver(*(app->config));
 		std::string msgstr = "";
 		if(toolkit::Error::check())
@@ -1219,7 +1227,7 @@ namespace apidb
 			gtk_widget_destroy (msg);
 			return;
 		}
-		std::cout << "Step 4" << std::endl;
+		//std::cout << "Step 4" << std::endl;
 		if(!app->driver->analyze(NULL))
 		{
 			std::string msgstr = "";
@@ -1235,7 +1243,7 @@ namespace apidb
 			gtk_dialog_run (GTK_DIALOG (msg)); 
 			gtk_widget_destroy (msg);                                
 		}
-		std::cout << "Step 5" << std::endl;
+		//std::cout << "Step 5" << std::endl;
 		app->originFilename = filename;
 		app->createNotebook();
 		app->loadConfig();
@@ -1405,8 +1413,8 @@ namespace apidb
 		Application* app = (Application*) user_data;
 		if(app->config != NULL)
 		{
-			std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
-			std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
+			//std::cout <<"Active " << gtk_combo_box_get_active(widget) << std::endl;
+			//std::cout <<"Active id " << gtk_combo_box_get_active_id(widget) << std::endl;
 			app->inNameSpaceDetectEdited = true;
 			app->setSaved(false);
 		}
@@ -1523,6 +1531,11 @@ namespace apidb
 			else if(str.compare("emulate") == 0)
 			{
 				return 2;
+			}
+			else
+			{
+				toolkit::Error::write(toolkit::Error("Opción de 'Espacio virtual detectado.'",ErrorCodes::APIDB_FAIL,__FILE__,__LINE__));
+				return -1;
 			}
 		}
         gboolean Application::inLoc_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)
@@ -1651,6 +1664,27 @@ namespace apidb
                 }
                 return FALSE;
         }
+        gboolean Application::inWConnName_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)
+        {
+                Application* app = (Application*)user_data;           
+				if(app->config != NULL)
+				{                                
+					if(app->isSaved)app->setSaved(false);
+					app->inWConnNameEdited = true;
+				}
+				else if(!app->isOpen)
+				{
+					GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE, "Deve crear un proyecto antes de captura informacion.", "Error", g_strerror (errno));
+					gtk_dialog_run (GTK_DIALOG (msg)); 
+					gtk_widget_destroy (msg);
+                }
+                return FALSE;
+        }
+		void Application::wConn_OnClick (GtkToggleButton *toggle_button,  gpointer  user_data)
+		{
+			Application* app = ((Application*)user_data);
+			gtk_entry_set_visibility (GTK_ENTRY(app->inWConnName),!gtk_toggle_button_get_active (toggle_button));			
+		}
         void Application::createNotebookConexion(GtkWidget *boxConex)
         {
                 GtkWidget *boxLoc = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
@@ -1693,6 +1727,17 @@ namespace apidb
                 gtk_box_pack_start(GTK_BOX(boxPw), inPw, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxConex), boxPw, FALSE, FALSE,0);
                 g_signal_connect(G_OBJECT(inPw), "key-press-event", G_CALLBACK(inPw_keypress), this);
+				
+                boxWConn= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                inWConn = gtk_check_button_new_with_label("Generar estructura de Conexión:");
+                gtk_entry_set_visibility(GTK_ENTRY(inWConn),FALSE);
+                gtk_box_pack_start(GTK_BOX(boxWConn), inWConn, FALSE, FALSE,0);
+                gtk_box_pack_start(GTK_BOX(boxConex), boxWConn, FALSE, FALSE,0);
+                //g_signal_connect(G_OBJECT(inWConn), "toggled", G_CALLBACK(wConn_OnClick), this);
+				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (inWConn), TRUE);
+                inWConnName = gtk_entry_new();
+                gtk_box_pack_start(GTK_BOX(boxWConn), inWConnName, FALSE, FALSE,0);   
+                g_signal_connect(G_OBJECT(inWConnName), "key-press-event", G_CALLBACK(inWConnName_keypress), this);
         }
 
         void Application::conex_switchPage (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer     user_data)
@@ -1790,7 +1835,7 @@ namespace apidb
                 GtkWidget *lbInfo = gtk_label_new (titleInfo);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxInfo,lbInfo);
                 createNotebookInfo(boxInfo);
-                GtkWidget *boxConex = gtk_box_new (GTK_ORIENTATION_VERTICAL,4);
+                boxConex = gtk_box_new (GTK_ORIENTATION_VERTICAL,4);
                 GtkWidget * lbConex = gtk_label_new (titleConex);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxConex,lbConex);
                 g_signal_connect(GTK_NOTEBOOK (notebookMain), "switch-page", G_CALLBACK(conex_switchPage), this);

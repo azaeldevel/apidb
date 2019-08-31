@@ -173,7 +173,10 @@ namespace apidb
 				static int inNameSpaceDetect_comboxid(const std::string&);
                 bool downConf();
 				static void documen_open(Application*,const std::string& filefly = "");
-                       
+				static void wConn_OnClick (GtkToggleButton *toggle_button,  gpointer  user_data);
+				static gboolean inWConnName_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
+				
+				
                 GtkWidget *window;
                 GtkWidget *vboxMain;
                 GtkWidget *toolbar;
@@ -211,7 +214,13 @@ namespace apidb
                 GtkWidget  *btSaveAs;
                 GIcon  *icoSaveAs;
                 GtkWidget  *imgSaveAs;
-                
+                GtkWidget  *inWConn;
+				GtkWidget *boxWConn;
+                GtkWidget  *inWConnName;
+                bool inWConnNameEdited;
+				GtkWidget *boxConex;
+				
+				
                 std::vector<GtkWidget*> tables;
                 //seccion de Informacion
                 static const char* titleInfo;

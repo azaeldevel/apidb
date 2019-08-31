@@ -23,11 +23,9 @@
 #include "Application-gtk3.hpp"
 
 int main (int   argc, char *argv[])
-{
-                                        
+{                                        
         octetos::apidb::Application app;
         app.init (&argc, &argv);                   
-        app.create();          
-        
+        app.create();        
         return EXIT_SUCCESS;
 }

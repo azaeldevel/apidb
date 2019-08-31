@@ -36,8 +36,8 @@ namespace apidb
 {
 namespace generators
 {
-	void CPP::writeSelectsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
-        {        
+		void CPP::writeSelectsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
+        {
         //select(conector,where)
         ofile << "\tstd::vector<"  << table.getName() << "*>* " << table.getName() << "::select(octetos::toolkit::clientdb::mysql::Connector& connector, const std::string& where, int leng)"<<std::endl;
         ofile << "\t{" <<std::endl;
@@ -202,13 +202,13 @@ namespace generators
                         }
                     }
                     ofile << ";" << std::endl;
-                ofile << "\t\tif(leng > 0)"  << std::endl;
-                ofile << "\t\t{"  << std::endl;
-                ofile << "\t\t\tsqlString += \" LIMIT  \" + std::to_string(leng);"  << std::endl;
-                ofile << "\t\t}"  << std::endl;
-                ofile << "\t\toctetos::toolkit::clientdb::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
-                ofile << "\t\tif(dt!=NULL)"  << std::endl;
-                ofile << "\t\t{" << std::endl;
+					ofile << "\t\tif(leng > 0)"  << std::endl;
+					ofile << "\t\t{"  << std::endl;
+					ofile << "\t\t\tsqlString += \" LIMIT  \" + std::to_string(leng);"  << std::endl;
+					ofile << "\t\t}"  << std::endl;
+					ofile << "\t\toctetos::toolkit::clientdb::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
+					ofile << "\t\tif(dt!=NULL)"  << std::endl;
+					ofile << "\t\t{" << std::endl;
                     ofile << "\t\t\tstd::vector<"<< table.getName() << "*>* tmpVc = new std::vector<" << table.getName() << "*>;" << std::endl;
                     ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
                     ofile << "\t\t\twhile((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult())))) "<< std::endl;
@@ -805,8 +805,9 @@ namespace generators
 					{
 							file << space->getName() << std::endl;
 					}
-					file << "\n{\n";
+					file << "{\n";
 					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+					file << "\n\n";
 					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
 					{
 						createCPP(file,log,it->second);
@@ -1129,20 +1130,41 @@ namespace generators
 				{
 					file << space->getName() << std::endl;
 				}
-				file << "\n{\n";
+				file << "{\n";
 				//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
 				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
 				{
 					createH(file,log,it->second);
 				}
 				file << "\n}\n";
-				file << std::endl;
 			}
 		}
 		else
 		{
 			toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
 			return false;
+		}
+		
+		return true;
+	}
+    bool CPP::createDatconnectHPP(std::ofstream& file,bool log)
+	{
+		if(!configureProject.writeDatconnect.empty() and configureProject.writeDatconnect.compare("¿?") != 0)
+		{
+			if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+			{
+				file << "\tstatic const octetos::toolkit::clientdb::mysql::Datconnect " << configureProject.writeDatconnect  << "(";
+			}
+			else
+			{
+				return false;
+			}
+			file << "\"" << configureProject.conectordb->getHost() << "\",";
+			file << configureProject.conectordb->getPort() << ",";
+			file << "\"" << configureProject.conectordb->getDatabase() << "\",";
+			file << "\"" << configureProject.conectordb->getUser() << "\",";
+			file << "\"" << configureProject.conectordb->getPassword() << "\"";
+			file << ");\n";
 		}
 		
 		return true;
@@ -1171,7 +1193,9 @@ namespace generators
 					{
 							file << space->getName() << std::endl;
 					}
-					file << "\n{\n";
+					file << "{\n";
+					createDatconnectHPP(file,log);
+					file << "\n\n";
 					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
 					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
 					{
@@ -1188,68 +1212,7 @@ namespace generators
 			}
 		}	
 		return true;
-	}
-    /*void CPP::createSpaceH(std::ofstream& file,bool log)
-    {
-                file <<"namespace "<< configureProject.name <<std::endl;
-                file <<"{"<<std::endl;
-                const std::map<const char*,symbols::Space*,symbols::cmp_str> spacies = analyzer.getListTableConst();
-		//for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
-                {
-                        if(strcmp(it->first,"") != 0)
-                        {
-                                short level = symbols::getSpaceLevel(it->first);
-                                for(short i = 1; i < level ; i++) file << "\t";
-                                file << "\tnamespace " << it->second->getFirstName()  << std::endl;
-                                for(short i = 1; i < level ; i++) file << "\t";
-                                file << "\t{" << std::endl;
-                        }
-                        short level = symbols::getSpaceLevel(it->first);
-                        for(int i = 0; i < level; i++)
-                        {
-                                
-                        }
-                        //for(auto table: *(it->second)) //reading attrubtes by table
-                        for(std::list<symbols::Table*>::iterator itT = it->second->begin(); itT != it->second->end(); itT++)
-                        {
-                                file << "\tclass " << (*itT)->getName() << ";"<<std::endl;
-                        }
-                        if(strcmp(it->first,"") != 0)
-                        {
-                                short level = symbols::getSpaceLevel(it->first);
-                                for(short i =1; i < level ; i++) file << "\t";
-                                file << "\t}" << std::endl;
-                        }
-                }
-		file<<std::endl;
-                
-                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
-                {
-                        if(strcmp(it->first,"") != 0)
-                        {
-                                short level = symbols::getSpaceLevel(it->first);
-                                for(short i =0; i < level ; i++) file << "\t";
-                                file << "\tnamespace " << it->second->getFirstName()  << std::endl;
-                                for(short i =0; i < level ; i++) file << "\t";
-                                file << "\t{" << std::endl;
-                        }
-                        for(std::list< symbols::Table*>::iterator itT = it->second->begin(); itT != it->second->end(); itT++)
-                        {
-                                //file <<"Declare Table " << table->name << std::endl;
-                                createClassH(**itT,file,(*itT)->getName(),log);       
-                        }
-                        if(strcmp(it->first,"") != 0)
-                        {
-                                short level =symbols::getSpaceLevel(it->first);
-                                for(short i =0; i < level ; i++) file << "\t";
-                                file << "\t}" << std::endl;
-                        }
-                }
-                file <<"}"<<std::endl;
-    }*/
-    
-    
+	}    
 }
 }
 }

@@ -45,7 +45,7 @@ namespace octetos
 		protected:		
 			//OutputLenguajes outputLenguaje;//se 
 			const ConfigureProject& configureProject;
-                        apidb::Analyzer& analyzer;
+			apidb::Analyzer& analyzer;
 			const symbols::SymbolsTable& getSymbolsTable()const;
 		};
 		
@@ -89,12 +89,13 @@ namespace octetos
 			void writeKeyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
 			void writeInsertH(const apidb::symbols::Table&,std::ofstream&);
 			void writeInsertCPP(const apidb::symbols::Table&,std::ofstream&);
-                        //void writeSelectH(const apidb::symbols::Table& table, std::ofstream& ofile);
-                        //void writeSelectCPP(const apidb::symbols::Table&,std::ofstream&);
-                        void writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile);
-                        void writeDownloadsCPP(const apidb::symbols::Table&,std::ofstream&);
-                        void writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile);
-                        void writeSelectsCPP(const apidb::symbols::Table&,std::ofstream&);
+			//void writeSelectH(const apidb::symbols::Table& table, std::ofstream& ofile);
+             //void writeSelectCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile);
+			void writeDownloadsCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile);
+			void writeSelectsCPP(const apidb::symbols::Table&,std::ofstream&);
+			bool createDatconnectHPP(std::ofstream& file,bool log);
 			
 			//apidb::Analyzer& analyzer;
 			std::ofstream* writeResults;//erreglo de writeoutput files

@@ -441,16 +441,16 @@ namespace generators
 	bool CPP::generate(bool log)
 	{
 		if(log)analyzer.getOutput().add("Generando archivos de codigo fuente... \n");
-                std::string msg1 = "\tLenguaje resultado: " ;
-                msg1 += getOutputLenguajeString() ;
+		std::string msg1 = "\tLenguaje resultado: " ;
+		msg1 += getOutputLenguajeString() ;
 		if(log)analyzer.getOutput().add(msg1);;
 		//includes in header file
 		std::string headers = "";
 		getHeaderOutput()<< "#include <string>" <<std::endl;
                 
 		//inlcudes in source file
-                getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl;
-                getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
+		getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl;
+		getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
 		getHeaderOutput()<< "#include <clientdb-mysql.hpp>"<<std::endl<<std::endl;
 			
 		

@@ -61,7 +61,9 @@ namespace apidb
                 
                 ANALYZER_FAIL,	
                 ANALYZER_FAIL_NAMESPCE_DETECTED,
-				GENERATOR_FAIL
+				GENERATOR_FAIL,
+				
+				APIDB_FAIL
                 
         };
         

@@ -1,4 +1,3 @@
-
 /**
  * 
  *  This file is part of apidb.
@@ -179,10 +178,15 @@ namespace apidb
                  * */
                 std::string executable_target;
 				/**
-				 * \brief Esta opción indac el comportamiento de APIDB cuan las tablas tiene formato de espacios
-				 * \details En MySQL se aceptan puntos en los nombre de las tablas, sin embargo, en C++ no se puede crear clases cuyo nombre contenga puntos, APIDB le ofrece la opcion algunas opciones para menejar este inconbeniente. Use 'emulate' para apegarce a la definicion de espacion segun el lenguaje de salida selecionado. Use 'reject' o deje en blanco para no aceptar.
+				 * \brief Esta opción indica el comportamiento de APIDB cuan las tablas tiene formato de espacios
+				 * \details En MySQL se aceptan puntos en los nombre de las tablas, sin embargo, en C++ no se puede crear clases cuyo nombre contenga puntos, APIDB le ofrece la opción algunas opciones para menejar este inconbeniente. Use 'emulate' para apegarce a la definicion de espacion segun el lenguaje de salida selecionado. Use 'reject' o deje en blanco para no aceptar.
 				 * */
                 std::string namespace_detect;
+				/**
+				 * \brief Sí es true genera una variable statica global con los datos de conexión.
+				 * */
+				std::string writeDatconnect;
+				
                 
                 ConfigureProject();
                 /**
@@ -203,30 +207,7 @@ namespace apidb
                  * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
                  **/
                 const octetos::toolkit::Version& getVersionProject()const;
-                /**
-                 * \brief Retorna el nombre del proyecto.
-                 **/
-                //const std::string& getName()const;
-                /**
-                 * \brief Asigna el nombre del proyecto.
-                 * */
-                //void setName(const std::string&);
-                /**
-                 * \brief Retorna el directorio de contrucción
-                 **/
-                //const std::string& getBuildDirectory()const;
-                /**
-                 *\brief Asina el direcotrio de contrucción.
-                 **/
-                //void setBuildDirectory(const char*);
-                /**
-                 * \brief Retorna el Objetivo Ejecutable si es que se asigno
-                 **/
-                //const std::string& getExecutableTarget()const;
-                /**
-                 * \brief Asigna el objetivo de ejecutable.
-                 * */
-                //void setExecutableTarget(const char*);
+                
     };
 }
 }

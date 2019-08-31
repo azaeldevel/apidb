@@ -566,7 +566,28 @@ namespace apidb
                         return false;
                 }
 		}
-        
+		
+		if(projectVersion >= ver220)
+		{
+			xmlTextReaderRead(reader);
+			xmlTextReaderRead(reader);
+			xmlTextReaderRead(reader);
+			name = xmlTextReaderConstName(reader);
+			if(strcmp((const char*)name,"writeDatconnect") == 0)
+			{
+				//std::cout << "Se encontro build directory." << std::endl;
+				xmlTextReaderRead(reader);
+				writeDatconnect = (const char*)xmlTextReaderConstValue(reader);
+				//std::cout << "Se encontro build directory : " << builDirectory << std::endl;
+			}
+			else
+			{
+					std::string msgstr = "Fallo durante el parseo XML.";
+					toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+					return false;
+			}
+		}
+		
         //
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);

@@ -34,7 +34,8 @@ std::string random_string( size_t length )
 
 static std::string filename;
 static std::string filename_nlst;
-static octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
+static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev1("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
+static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 static std::string sysappv1Filename = "sysappv1-alpha.apidb";
 static std::string sysappv20Filename = "sysappv20-alpha.apidb";
 
@@ -69,7 +70,7 @@ void testCreateProject_nlst()
 	octetos::apidb::ConfigureProject configProject_nls;
         configProject_nls.name = "sysapp";
         configProject_nls.builDirectory = "apidb";
-        configProject_nls.conectordb = &mysqlSource;
+        configProject_nls.conectordb = &mysqlSourcev1;
         configProject_nls.versionResult = version;
         configProject_nls.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
         configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
@@ -89,7 +90,7 @@ void testCreateProject_nlst()
 void testConecction()
 {
         octetos::apidb::ConfigureProject configProject;
-        configProject.conectordb = &mysqlSource;
+        configProject.conectordb = &mysqlSourcev1;
         configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
         CU_ASSERT(configProject.testConexion());
 }
@@ -98,47 +99,48 @@ void testCreateProject()
 {
 	octetos::toolkit::Version version;
 	version.setNumbers(0,1,0);
-        version.setStage(octetos::toolkit::Version::Stage::alpha);
+	version.setStage(octetos::toolkit::Version::Stage::alpha);
 	octetos::apidb::ConfigureProject configProject;
-        configProject.name = "sysapp";
-        configProject.builDirectory  = "apidb";
-        configProject.conectordb = &mysqlSource;
-        configProject.versionResult = version;
-        configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
-        configProject.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
-        configProject.packing = octetos::apidb::PackingLenguajes::CMake;
-        configProject.compiled = octetos::apidb::Compiled::STATIC;
-        octetos::apidb::ConfigureProject::Table* tbP = new octetos::apidb::ConfigureProject::Table("Persons");
-        octetos::apidb::ConfigureProject::Function* dwFullName = new octetos::apidb::ConfigureProject::Function("fullname");
-        dwFullName->addParam("name1");
-        dwFullName->addParam("name2");
-        dwFullName->addParam("name3");
-        dwFullName->addParam("name4");
-        tbP->insert(std::make_pair(dwFullName->getName().c_str(), dwFullName));
-        octetos::apidb::ConfigureProject::Function* dwShortName = new octetos::apidb::ConfigureProject::Function("shortname");
-        dwShortName->addParam("name1");
-        dwShortName->addParam("name3");
-        tbP->insert(std::make_pair(dwShortName->getName().c_str(), dwShortName));
-        configProject.downloads.insert(std::make_pair(tbP->getName().c_str(),tbP));
-        configProject.selects.insert(std::make_pair(tbP->getName().c_str(),tbP));
-        octetos::apidb::ConfigureProject::Table* tbUsers = new octetos::apidb::ConfigureProject::Table("Users");
-        octetos::apidb::ConfigureProject::Function* byUsername = new octetos::apidb::ConfigureProject::Function("byUsername");    
-        byUsername->addParam("username");
-        byUsername->addParam("person");
-        tbUsers->insert(std::make_pair(byUsername->getName().c_str(), byUsername));
-        configProject.selects.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
-        configProject.downloads.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
-        //configProject.executable_target  = "¿?";
-		//configProject.namespace_detect = "emulate";
-		
-        if(configProject.saveConfig(filename))
-        {
+	configProject.name = "sysapp";
+	configProject.builDirectory  = "apidb";
+	configProject.conectordb = &mysqlSourcev2;
+	configProject.versionResult = version;
+	configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
+	configProject.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
+	configProject.packing = octetos::apidb::PackingLenguajes::CMake;
+	configProject.compiled = octetos::apidb::Compiled::STATIC;
+	octetos::apidb::ConfigureProject::Table* tbP = new octetos::apidb::ConfigureProject::Table("Persons");
+	octetos::apidb::ConfigureProject::Function* dwFullName = new octetos::apidb::ConfigureProject::Function("fullname");
+	dwFullName->addParam("name1");
+	dwFullName->addParam("name2");
+	dwFullName->addParam("name3");
+	dwFullName->addParam("name4");
+	tbP->insert(std::make_pair(dwFullName->getName().c_str(), dwFullName));
+	octetos::apidb::ConfigureProject::Function* dwShortName = new octetos::apidb::ConfigureProject::Function("shortname");
+	dwShortName->addParam("name1");
+	dwShortName->addParam("name3");
+	tbP->insert(std::make_pair(dwShortName->getName().c_str(), dwShortName));
+	configProject.downloads.insert(std::make_pair(tbP->getName().c_str(),tbP));
+	configProject.selects.insert(std::make_pair(tbP->getName().c_str(),tbP));
+	octetos::apidb::ConfigureProject::Table* tbUsers = new octetos::apidb::ConfigureProject::Table("Users");
+	octetos::apidb::ConfigureProject::Function* byUsername = new octetos::apidb::ConfigureProject::Function("byUsername");    
+	byUsername->addParam("username");
+	byUsername->addParam("person");
+	tbUsers->insert(std::make_pair(byUsername->getName().c_str(), byUsername));
+	configProject.selects.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
+	configProject.downloads.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
+	configProject.executable_target  = "developing2";
+	configProject.namespace_detect = "emulate";
+	configProject.writeDatconnect = "conector";
+	
+	if(configProject.saveConfig(filename))
+	{
                 CU_ASSERT(true);
-        }
-        else
-        {
+	}
+	else
+	{
                 CU_ASSERT(false);
-        }
+	}
 }
 
 void testBuild_nlst()
@@ -169,8 +171,8 @@ void testBuild_nlst()
 
 void testBuild()
 {   
-	octetos::apidb::ConfigureProject configProject;
-	//octetos::toolkit::Error::write(octetos::toolkit::Error("Teste error",1,__FILE__,__LINE__));
+		octetos::apidb::ConfigureProject configProject;
+		//octetos::toolkit::Error::write(octetos::toolkit::Error("Teste error",1,__FILE__,__LINE__));
         if(!configProject.readConfig(filename))
         {                
                 if(octetos::toolkit::Error::check())
@@ -180,9 +182,8 @@ void testBuild()
                 CU_ASSERT(false);
                 exit(EXIT_FAILURE);// hay pruebas que depende de esta.
         }
-	//configProject.executable_target = "developing2";
-	configProject.conectordb = &mysqlSource;
-	configProject.namespace_detect = "emulate";
+		//configProject.executable_target = "developing2";
+		
         octetos::apidb::Driver driver(configProject);
         octetos::apidb::Tracer tracer(0);
         if(driver.driving(NULL) == false)

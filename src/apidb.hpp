@@ -34,6 +34,7 @@ namespace apidb
         static const octetos::toolkit::Version ver100(1,0,0);
         static const octetos::toolkit::Version ver110(1,1,0);
 	static const octetos::toolkit::Version ver200(2,0,0);
+	static const octetos::toolkit::Version ver220(2,2,0);
 }
 }
 #endif

@@ -281,6 +281,15 @@ namespace apidb
 					xmlNewChild(root_node, NULL, (const xmlChar *)"executable_target", (const xmlChar *)executable_target.c_str());
 				}
 				
+				if(writeDatconnect.empty())
+				{
+					xmlNewChild(root_node, NULL, (const xmlChar *)"writeDatconnect", (const xmlChar *)"¿?");
+				}
+				else
+				{
+					xmlNewChild(root_node, NULL, (const xmlChar *)"writeDatconnect", (const xmlChar *)writeDatconnect.c_str());
+				}
+				
                 //
                 xmlNodePtr downls_node = xmlNewChild(root_node, NULL, (const xmlChar *)"downloads", NULL);
                 int countTbs = 0;
