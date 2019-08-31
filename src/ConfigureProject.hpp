@@ -46,7 +46,7 @@ namespace apidb
                 /**
                  * \brief Almacena la lista de parametros que le corresponde a una Funcion
                  */
-                class Parameters : public std::vector<const char*>
+                class Parameters : public std::vector<std::string>
                 {
                 public:
                         ~Parameters();
@@ -88,7 +88,7 @@ namespace apidb
                         /**
                          * \brief Agrega un nuevo parametro a la funcion.
                          * */
-                        void addParam(const char* p);
+                        void addParam(const std::string& p);
                 private:
                         /**
                          * \brief Nombre de la funcion
@@ -110,7 +110,7 @@ namespace apidb
                 /**
                  * \brief Almacena la descripcion de una tabla
                  * */
-                class Table : public std::map<const char*, const Function*>
+                class Table : public std::map<const char*, const Function*,symbols::cmp_str>
                 {
                 private:
                         /**

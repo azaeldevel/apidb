@@ -77,7 +77,7 @@ namespace apidb
         std::string ConfigureProject::Function::listParams()const
         {
                 std::string str;
-                for(std::vector<const char*>::const_iterator it = header->begin(); it != header->end(); it ++)
+                for(std::vector<std::string>::const_iterator it = header->begin(); it != header->end(); it ++)
                 {
                         if(it == header->begin()) 
                         {
@@ -100,7 +100,7 @@ namespace apidb
                 return header;
         }    
     
-        void ConfigureProject::Function::addParam(const char* p)
+        void ConfigureProject::Function::addParam(const std::string& p)
         {
                 if(header == NULL)
                 {
@@ -113,7 +113,7 @@ namespace apidb
                 if(header != NULL)
                 {
                         delete header;
-                        header = NULL;
+                        //header = NULL;
                 }
         }
         const std::string& ConfigureProject::Function::getName() const
@@ -289,7 +289,7 @@ namespace apidb
 				{
 					xmlNewChild(root_node, NULL, (const xmlChar *)"writeDatconnect", (const xmlChar *)writeDatconnect.c_str());
 				}
-				
+				//std::cout << std::endl << "Testing 1" << std::endl;
                 //
                 xmlNodePtr downls_node = xmlNewChild(root_node, NULL, (const xmlChar *)"downloads", NULL);
                 int countTbs = 0;
@@ -298,6 +298,7 @@ namespace apidb
                 {
                         counFuns = 0;
                         countTbs++;
+						//std::cout << std::endl << "Testing 1 " << itT->second->getName() << std::endl;
                         xmlNodePtr downls_tb_node = xmlNewChild(downls_node, NULL, (const xmlChar *)"Table", NULL);
                         xmlNewProp(downls_tb_node, BAD_CAST "name", BAD_CAST itT->second->getName().c_str());
                         int countparams;
@@ -307,11 +308,11 @@ namespace apidb
                                 counFuns++;
                                 xmlNodePtr downls_fn_node = xmlNewChild(downls_tb_node, NULL, (const xmlChar *)"Function", NULL); 
                                 xmlNewProp(downls_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
-                                const std::vector<const char*>& params = (const std::vector<const char*>&)*(itfn->second->getParameters());
+                                const std::vector<std::string>& params = (const std::vector<std::string>&)*(itfn->second->getParameters());
                                 for(auto itParams : params)
                                 {
                                         countparams++;
-                                        xmlNodePtr downls_fn_param_node = xmlNewChild(downls_fn_node, NULL, (const xmlChar *)"parameter", (const xmlChar *)(itParams));
+                                        xmlNodePtr downls_fn_param_node = xmlNewChild(downls_fn_node, NULL, (const xmlChar *)"parameter", (const xmlChar *)(itParams.c_str()));
                                 }
                                 xmlNewProp(downls_fn_node, BAD_CAST "countParams", BAD_CAST std::to_string(countparams).c_str());
                         }
@@ -322,7 +323,7 @@ namespace apidb
                        xmlNewChild(downls_node, NULL, (const xmlChar *)"Table", NULL);
                 }
                 xmlNewProp(downls_node, BAD_CAST "countTbs", BAD_CAST std::to_string(countTbs).c_str());
-                
+                //std::cout << std::endl << "Testing 2" << std::endl;
                 //
                 xmlNodePtr selects_node = xmlNewChild(root_node, NULL, (const xmlChar *)"selects", NULL);
                 countTbs = 0;

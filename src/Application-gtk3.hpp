@@ -44,7 +44,7 @@ namespace apidb
         {
         public:
                 bool show();
-                const char* getSelectParam()const;
+                std::string getSelectParam()const;
                 CaptureParameter(const Driver*,const char* table);
                 
         private:
@@ -53,7 +53,7 @@ namespace apidb
                 GtkWidget *label;
                 GtkWidget *cmbAddParameter;
                 const Driver* driver;
-                const char* strParameter;
+                std::string strParameter;
         };
         
         /**
@@ -271,8 +271,7 @@ namespace apidb
                 bool isSaved;
                 bool isOpen;
                 bool isNew;
-                std::string originFilename;
-                
+                std::string originFilename;                
         };
 }
 }

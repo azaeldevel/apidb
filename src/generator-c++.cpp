@@ -121,9 +121,9 @@ namespace generators
                 {
                     apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
                     itParamEnd--;
-                    for(const char* param : *params)
+                    for(const std::string& param : *params)
                     {
-                        auto fl = table.find(param);
+                        auto fl = table.find(param.c_str());
                         if(fl == table.end())
                         {
                             std::string strmsg = "No se encontro el campo '";
@@ -166,9 +166,9 @@ namespace generators
                     ofile << " FROM " << table.getName() << " WHERE \";"<< std::endl;                    
                     apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
                     --itParamEnd;
-                    for(const char* param : *params)
+                    for(const std::string& param : *params)
                     {
-                        auto fl = table.find(param);
+                        auto fl = table.find(param.c_str());
                         if(fl != table.end())
                         {
                             if((*fl).second->getClassReferenced() != NULL && (*fl).second->getOutType().compare("int") == 0)
@@ -279,7 +279,7 @@ namespace generators
                                 {
                                         apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
                                         itParamEnd--;
-                                        for(const char* param : *params)
+                                        for(const std::string& param : *params)
                                         {
                                                 ofile << param; 
                                                 if(param != *itParamEnd)
@@ -316,14 +316,14 @@ namespace generators
                                 //ofile << "\t\t\t\t{"<< std::endl;
                                 itParamEnd = params->end();
                                 int countparam = 0;
-                                for(const char* param : *params)
+                                for(const std::string& param : *params)
                                 {
                                         //ofile << param; 
                                         if(param != *itParamEnd)
                                         {
                                         //ofile << "\t\t\t\t\tthis->" << param << " = (row[i] ? row[i] : NULL);"<< std::endl;
                                         ofile << "\t\t\t\t\tthis->" << param << " = ";
-                                        auto fl = table.find(param);
+                                        auto fl = table.find(param.c_str());
                                         if(fl != table.end())
                                         {
                                                 if((*fl).second->getClassReferenced() != NULL)
@@ -893,9 +893,9 @@ namespace generators
                                 const apidb::ConfigureProject::Parameters* params = itT->second->getParameters();                                
                                 apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
                                 itParamEnd--;
-                                for(const char* param : *params)
+                                for(const std::string& param : *params)
                                 {
-                                        auto fl = table.find(param);
+                                        auto fl = table.find(param.c_str());
                                         if(fl != table.end())
                                         {
                                         if((*fl).second->getOutType().compare("std::string") == 0)

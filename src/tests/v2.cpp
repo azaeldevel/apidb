@@ -111,28 +111,28 @@ void testCreateProject()
 	configProject.compiled = octetos::apidb::Compiled::STATIC;
 	octetos::apidb::ConfigureProject::Table* tbP = new octetos::apidb::ConfigureProject::Table("Persons");
 	octetos::apidb::ConfigureProject::Function* dwFullName = new octetos::apidb::ConfigureProject::Function("fullname");
-	dwFullName->addParam("name1");
-	dwFullName->addParam("name2");
-	dwFullName->addParam("name3");
-	dwFullName->addParam("name4");
+	dwFullName->addParam(std::string("name1"));
+	dwFullName->addParam(std::string("name2"));
+	dwFullName->addParam(std::string("name3"));
+	dwFullName->addParam(std::string("name4"));
 	tbP->insert(std::make_pair(dwFullName->getName().c_str(), dwFullName));
 	octetos::apidb::ConfigureProject::Function* dwShortName = new octetos::apidb::ConfigureProject::Function("shortname");
-	dwShortName->addParam("name1");
-	dwShortName->addParam("name3");
+	dwShortName->addParam(std::string("name1"));
+	dwShortName->addParam(std::string("name3"));
 	tbP->insert(std::make_pair(dwShortName->getName().c_str(), dwShortName));
 	configProject.downloads.insert(std::make_pair(tbP->getName().c_str(),tbP));
 	configProject.selects.insert(std::make_pair(tbP->getName().c_str(),tbP));
 	octetos::apidb::ConfigureProject::Table* tbUsers = new octetos::apidb::ConfigureProject::Table("Users");
 	octetos::apidb::ConfigureProject::Function* byUsername = new octetos::apidb::ConfigureProject::Function("byUsername");    
-	byUsername->addParam("username");
-	byUsername->addParam("person");
+	byUsername->addParam(std::string("username"));
+	byUsername->addParam(std::string("person"));
 	tbUsers->insert(std::make_pair(byUsername->getName().c_str(), byUsername));
 	configProject.selects.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
 	configProject.downloads.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
 	configProject.executable_target  = "developing2";
 	configProject.namespace_detect = "emulate";
 	configProject.writeDatconnect = "conector";
-	
+	//std::cout << std::endl << "Testing 1" << std::endl;
 	if(configProject.saveConfig(filename))
 	{
                 CU_ASSERT(true);

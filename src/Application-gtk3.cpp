@@ -36,29 +36,28 @@ namespace octetos
 namespace apidb
 {      
         
-        const char* CaptureParameter::getSelectParam() const
-        {
+	std::string CaptureParameter::getSelectParam() const
+	{
                 return strParameter;
-        }
-        bool CaptureParameter::show()
-        {
-                gtk_widget_show_all(dialog);
-                gint response = gtk_dialog_run(GTK_DIALOG(dialog));
-                if(response == GTK_RESPONSE_OK)
-                {
+	}
+	bool CaptureParameter::show()
+	{
+		gtk_widget_show_all(dialog);
+		gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+		if(response == GTK_RESPONSE_OK)
+		{
                         strParameter = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT(cmbAddParameter));
                         gtk_widget_destroy(dialog);
                         return true;
-                }
-                else
-                {
-                        strParameter = NULL;
+		}
+		else
+		{
                         gtk_widget_destroy(dialog);
                         return false;
-                }
+		}
                 
-                return false;
-        }
+		return false;
+	}
 	CaptureParameter::CaptureParameter(const Driver* d,const char* table) : driver(d)
 	{
 		dialog = gtk_dialog_new_with_buttons ("Captura de Parametro.", NULL, GTK_DIALOG_MODAL,  "gtk-ok", GTK_RESPONSE_OK, NULL);                
@@ -187,13 +186,13 @@ namespace apidb
                 if(nodenumber <= list->size())
                 {
                         std::advance(it , nodenumber);
-                        std::cout << "Selected table : " << it->second->getName().c_str() << ", node :" << ptr << std::endl;
+                        //std::cout << "Selected table : " << it->second->getName().c_str() << ", node :" << ptr << std::endl;
                         return it->second->getName().c_str();
                 }
                 else
                 {
                         //node de new function
-                        std::cout << "New funtion "<<std::endl;
+                        //std::cout << "New funtion "<<std::endl;
                         return NULL;
                 }
         }
@@ -238,7 +237,7 @@ namespace apidb
 
                 if (!gtk_tree_model_get_iter(model, &iter, path))
                 {
-                        std::cout << "No Agregado " << std::endl;
+                        //std::cout << "No Agregado " << std::endl;
                         //actual = NULL;
                         return; /* path describes a non-existing row - should not happen */
                 }
@@ -247,6 +246,10 @@ namespace apidb
                 //std::cout << "Agregando " << name << std::endl;
                 switch(checkTypeNode(model,&iter))
                 {
+						case 'F':
+						{
+							
+						}
                         case 'R':
                                 {
                                         CaptureTable capT(wgTree->getApplication()->getDriver());
@@ -266,29 +269,29 @@ namespace apidb
                                         std::string strFunction = cap.getNameFunction();
                                         const char* strTable = getTableName(model,&iter,wgTree->list);
                                         ConfigureProject::Function* newF = new ConfigureProject::Function(strFunction);
-                                        std::cout << "Bascando tabla '" << strTable << "'" << std::endl;
+                                        //std::cout << "Bascando tabla '" << strTable << "'" << std::endl;
                                         std::map<const char*,ConfigureProject::Table*>::iterator itT = wgTree->list->find(strTable);
                                         if(itT != wgTree->list->end())
-                                        {
-                                                std::cout << "tabla '" << strTable <<  "' encontrada."<< std::endl;
-                                                itT->second->insert(std::make_pair(strFunction.c_str(), newF));
-                                                bool flag = false;
-                                                do
-                                                {
-                                                        CaptureParameter capParams(wgTree->getApplication()->getDriver(),strTable);
-                                                        flag = capParams.show();
-                                                        if(flag)
-                                                        {
-                                                                newF->addParam(capParams.getSelectParam());
-                                                                wgTree->getApplication()->setSaved(false);
-                                                        }
-                                                        else
-                                                        {
-                                                                break;
-                                                        }
-                                                }
-                                                while(flag);
-                                                wgTree->fill();
+										{
+											//std::cout << "Tabla '" << strTable <<  "' encontrada para funcion " <<  strFunction << std::endl;
+											itT->second->insert(std::make_pair(newF->getName().c_str(), newF));
+											bool flag = false;
+											do
+											{
+												CaptureParameter capParams(wgTree->getApplication()->getDriver(),strTable);
+												flag = capParams.show();
+												if(flag)
+												{
+													newF->addParam(capParams.getSelectParam());
+													wgTree->getApplication()->setSaved(false);
+												}
+												else
+												{
+													break;
+												}
+											}
+											while(flag);
+											wgTree->fill();
                                         }
                                         else
                                         {
