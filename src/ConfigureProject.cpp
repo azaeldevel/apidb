@@ -312,7 +312,7 @@ namespace apidb
                                 for(auto itParams : params)
                                 {
                                         countparams++;
-                                        xmlNodePtr downls_fn_param_node = xmlNewChild(downls_fn_node, NULL, (const xmlChar *)"parameter", (const xmlChar *)(itParams.c_str()));
+                                        xmlNewChild(downls_fn_node, NULL, (const xmlChar *)"parameter", (const xmlChar *)(itParams.c_str()));
                                 }
                                 xmlNewProp(downls_fn_node, BAD_CAST "countParams", BAD_CAST std::to_string(countparams).c_str());
                         }
@@ -340,11 +340,11 @@ namespace apidb
                                 counFuns++;
                                 xmlNodePtr selects_fn_node = xmlNewChild(selects_tb_node, NULL, (const xmlChar *)"Function", NULL); 
                                 xmlNewProp(selects_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
-                                const std::vector<const char*>& params = (const std::vector<const char*>&)*(itfn->second->getParameters());
+                                const std::vector<std::string>& params = (const std::vector<std::string>&)*(itfn->second->getParameters());
                                 for(auto itParams : params)
                                 {
                                         countparams++;
-                                        xmlNodePtr downls_fn_param_node = xmlNewChild(selects_fn_node, NULL, (const xmlChar *)"parameter", (const xmlChar *)(itParams));
+                                        xmlNewChild(selects_fn_node, NULL, (const xmlChar *)"parameter", (const xmlChar *)(itParams.c_str()));
                                 }
                                 xmlNewProp(selects_fn_node, BAD_CAST "countParams", BAD_CAST std::to_string(countparams).c_str());
                         }

@@ -227,8 +227,8 @@ namespace apidb
                 }
                         
         }
-        void TreeView::row_activated (GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data)
-        {    
+	void TreeView::row_activated (GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data)
+	{    
                 GtkTreeModel *model;
                 GtkTreeIter iter;
                 TreeView* wgTree  = (TreeView*)user_data;
@@ -249,6 +249,7 @@ namespace apidb
 						case 'F':
 						{
 							
+							break;
 						}
                         case 'R':
                                 {
@@ -304,7 +305,7 @@ namespace apidb
                                 }
                                 break;
                 }              
-        }
+	}
         void TreeView::fill()
         {         
                 treestore = gtk_tree_store_new(1,G_TYPE_STRING);
@@ -787,14 +788,14 @@ namespace apidb
                 }
                 gtk_widget_destroy (dialog);                
         }
-        void Application::document_save(GtkWidget *widget, gpointer data) 
-        {
-                Application* app = (Application*)data;
-                
-                if(app->config == NULL)
-                {
-                        if(!app->isOpen || !app->isSaved)
-                        {//no esta abierto el proyecto.                                
+	void Application::document_save(GtkWidget *widget, gpointer data) 
+	{
+		Application* app = (Application*)data;
+		std::cout << "Step 1" << std::endl;
+		if(app->config == NULL)
+		{
+			if(!app->isOpen || !app->isSaved)
+			{//no esta abierto el proyecto.                                
                                 std::string msgstr;
                                 if(toolkit::Error::check())
                                 {
@@ -813,88 +814,80 @@ namespace apidb
                                 gtk_dialog_run (GTK_DIALOG (msg)); 
                                 gtk_widget_destroy (msg);
                                 return;
-                        }
-                        
-                                                       
-                        std::string msgstr;
-                        if(toolkit::Error::check())
-                        {
-                                        msgstr = toolkit::Error::get().what();
-                        }
-                        else
-                        {
-                                        msgstr = "Algo anda mal, no hay configuracionde proyecto cargada";
-                        }
-                        GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                GTK_MESSAGE_ERROR,
-                                                                GTK_BUTTONS_CLOSE,
-                                                                msgstr.c_str(),
-                                                                "Error", g_strerror (errno));
-                        gtk_dialog_run (GTK_DIALOG (msg)); 
-                        gtk_widget_destroy (msg);
-                        return;
-                }
-                
-                if(!app->originFilename.empty() and !app->isNew) //si fue cargado simplemete usa el mismo archivo
-                {
-                        //escribir en la estura de configuracion del proyecto.
-                        if(!app->downConf())
-                        {
-                                std::string msgstr;
-                                if(toolkit::Error::check())
-                                {
-                                        msgstr = toolkit::Error::get().what();
-                                }
-                                else
-                                {
-                                        msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
-                                }
-                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                GTK_MESSAGE_ERROR,
-                                                                GTK_BUTTONS_CLOSE,
-                                                                msgstr.c_str(),
-                                                                "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
-                                gtk_widget_destroy (msg);
-                                return;
-                        }
-                        //Guarda los datos en disco
-                        if(!app->config->saveConfig(app->originFilename))
-                        {
-                                std::string msgstr;
-                                if(toolkit::Error::check())
-                                {
-                                        msgstr = toolkit::Error::get().what();
-                                }
-                                else
-                                {
-                                        msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
-                                }
-                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                GTK_MESSAGE_ERROR,
-                                                                GTK_BUTTONS_CLOSE,
-                                                                msgstr.c_str(),
-                                                                "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
-                                gtk_widget_destroy (msg);
-                                return;
-                        }
-                        app->isOpen = true;
-                        app->setSaved(true);
-                        return;
-                }
-                else if(app->isNew)//ya se sabe que no fue cargado desde el disco
-                {
+			}
+			
+			std::string msgstr;
+			if(toolkit::Error::check())
+			{
+				msgstr = toolkit::Error::get().what();
+			}
+			else
+			{
+				msgstr = "Algo anda mal, no hay configuracion de proyecto cargada";
+			}
+			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
+			gtk_dialog_run (GTK_DIALOG (msg)); 
+			gtk_widget_destroy (msg);
+			return;
+		}
+		std::cout << "Step 2" << std::endl;                
+		if(!app->originFilename.empty() and !app->isNew) //si fue cargado simplemete usa el mismo archivo
+		{
+			std::cout << "Step 2.1" << std::endl;
+			//escribir en la estura de configuracion del proyecto.
+			if(!app->downConf())
+			{
+				std::string msgstr;
+				if(toolkit::Error::check())
+				{
+					msgstr = toolkit::Error::get().what();
+				}
+				else
+				{
+					msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
+				}
+				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
+				gtk_dialog_run (GTK_DIALOG (msg)); 
+				gtk_widget_destroy (msg);
+				return;
+			}
+			//Guarda los datos en disco
+			std::cout << "Step 2.2" << std::endl;
+			if(!app->config->saveConfig(app->originFilename))
+			{
+				std::cout << "Step 2.3" << std::endl;
+				std::string msgstr;
+				if(toolkit::Error::check())
+				{
+					msgstr = toolkit::Error::get().what();
+				}
+				else
+				{
+					msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
+				}
+				std::cout << "Step 2.4" << std::endl;
+				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
+				gtk_dialog_run (GTK_DIALOG (msg)); 
+				gtk_widget_destroy (msg);
+				return;
+			}
+			std::cout << "Step 2.4" << std::endl;                      
+			app->isOpen = true;
+			app->setSaved(true);
+			std::cout << "Step 2.5" << std::endl;
+			return;
+		}
+		else if(app->isNew)//ya se sabe que no fue cargado desde el disco
+		{
                         document_saveas(widget,data);                          
-                }
-                else
-                {
+		}
+		else
+		{
                         //????????
-                }
-        }
+		}
+		std::cout << "Step 3" << std::endl;
+	}
+        
         void Application::document_new(GtkWidget *widget, gpointer data) 
         {
                 Application* app = (Application*)data;
