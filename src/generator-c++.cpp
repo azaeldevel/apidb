@@ -116,6 +116,7 @@ namespace generators
             for(ConfigureProject::Table::iterator itCfTb = itT->second->begin(); itCfTb != itT->second->end(); itCfTb++)
             {
                 ofile << "\tstd::vector<" << table.getName()<< "*>* " << table.getName() << "::select_" << itCfTb->second->getName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
+
                 
                 const apidb::ConfigureProject::Parameters* params = itCfTb->second->getParameters();
                 {
@@ -160,7 +161,7 @@ namespace generators
                         ofile << k->getName();
                         if(k != *endK)
                         {
-                            ofile << ",";
+                            ofile << " and ";
                         }
                     }
                     ofile << " FROM " << table.getName() << " WHERE \";"<< std::endl;                    
