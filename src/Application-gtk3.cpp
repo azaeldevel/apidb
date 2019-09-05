@@ -791,29 +791,24 @@ namespace apidb
 	void Application::document_save(GtkWidget *widget, gpointer data) 
 	{
 		Application* app = (Application*)data;
-		std::cout << "Step 1" << std::endl;
+		//std::cout << "Step 1" << std::endl;
 		if(app->config == NULL)
 		{
 			if(!app->isOpen || !app->isSaved)
 			{//no esta abierto el proyecto.                                
-                                std::string msgstr;
-                                if(toolkit::Error::check())
-                                {
-                                        msgstr = toolkit::Error::get().what();
-                                }
-                                else
-                                {
-                                        msgstr = "No hay documento abierto o pendiente de guardar";
-                                }
-                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                GTK_MESSAGE_ERROR,
-                                                                GTK_BUTTONS_CLOSE,
-                                                                msgstr.c_str(),
-                                                                "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg)); 
-                                gtk_widget_destroy (msg);
-                                return;
+				std::string msgstr;
+				if(toolkit::Error::check())
+				{
+					msgstr = toolkit::Error::get().what();
+				}
+				else
+				{
+					msgstr = "No hay documento abierto o pendiente de guardar";
+				}
+				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
+				gtk_dialog_run (GTK_DIALOG (msg)); 
+				gtk_widget_destroy (msg);
+				return;
 			}
 			
 			std::string msgstr;
@@ -830,10 +825,10 @@ namespace apidb
 			gtk_widget_destroy (msg);
 			return;
 		}
-		std::cout << "Step 2" << std::endl;                
+		//std::cout << "Step 2" << std::endl;                
 		if(!app->originFilename.empty() and !app->isNew) //si fue cargado simplemete usa el mismo archivo
 		{
-			std::cout << "Step 2.1" << std::endl;
+			//std::cout << "Step 2.1" << std::endl;
 			//escribir en la estura de configuracion del proyecto.
 			if(!app->downConf())
 			{
@@ -852,10 +847,10 @@ namespace apidb
 				return;
 			}
 			//Guarda los datos en disco
-			std::cout << "Step 2.2" << std::endl;
+			//std::cout << "Step 2.2" << std::endl;
 			if(!app->config->saveConfig(app->originFilename))
 			{
-				std::cout << "Step 2.3" << std::endl;
+				//std::cout << "Step 2.3" << std::endl;
 				std::string msgstr;
 				if(toolkit::Error::check())
 				{
@@ -865,27 +860,27 @@ namespace apidb
 				{
 					msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
 				}
-				std::cout << "Step 2.4" << std::endl;
+				//std::cout << "Step 2.4" << std::endl;
 				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
 				gtk_dialog_run (GTK_DIALOG (msg)); 
 				gtk_widget_destroy (msg);
 				return;
 			}
-			std::cout << "Step 2.4" << std::endl;                      
+			//std::cout << "Step 2.4" << std::endl;                      
 			app->isOpen = true;
 			app->setSaved(true);
-			std::cout << "Step 2.5" << std::endl;
+			//std::cout << "Step 2.5" << std::endl;
 			return;
 		}
 		else if(app->isNew)//ya se sabe que no fue cargado desde el disco
 		{
-                        document_saveas(widget,data);                          
+			document_saveas(widget,data);                          
 		}
 		else
 		{
-                        //????????
+			//????????
 		}
-		std::cout << "Step 3" << std::endl;
+		//std::cout << "Step 3" << std::endl;
 	}
         
         void Application::document_new(GtkWidget *widget, gpointer data) 
