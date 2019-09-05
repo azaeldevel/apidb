@@ -1160,7 +1160,7 @@ namespace apidb
 		{
 			filename = filefly;
 		}
-		//std::cout << "Step 1 "<< std::endl;
+		std::cout << "Step 1 "<< std::endl;
 		if(app->config ==  NULL)
 		{
 			app->config = new ConfigureProject();
@@ -1170,8 +1170,8 @@ namespace apidb
 			delete (app->config);
 			app->config = new ConfigureProject();
 		}
-                        
-		//std::cout << "Step 2" << std::endl;
+		
+		std::cout << "Step 2" << std::endl;
 		try
 		{
 			if(!app->config->readConfig(std::string(filename)))
@@ -1190,6 +1190,7 @@ namespace apidb
 					msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
 				}
 				gtk_dialog_run (GTK_DIALOG (msg));
+				gtk_widget_destroy (msg);
 				return;
 			} 
 		}
@@ -1200,13 +1201,40 @@ namespace apidb
 			gtk_widget_destroy (msg);
 			return;
 		}
-		//std::cout << "Step 3" << std::endl;
+		std::cout << "Step 3" << std::endl;
 		if(app->driver != NULL) 
 		{
 			delete (app->driver);
 			app->driver = NULL;
 		}
-		//std::cout << "Step 3.5" << std::endl;
+		std::cout << "Step 3.5 : " << app->config->conectordb->getHost() << std::endl;
+		try
+		{
+			if(!app->config->testConexion())
+			{
+				std::string msgstr = "Fallo prueba de conexion a la base de datos.";
+				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
+				gtk_dialog_run (GTK_DIALOG (msg));
+				gtk_widget_destroy (msg);
+			}
+		}
+		catch(toolkit::clientdb::SQLException e)
+		{
+			std::string strmsg = ">>";
+			strmsg += e.what();
+			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE, strmsg.c_str());
+			gtk_dialog_run (GTK_DIALOG (msg)); 
+			gtk_widget_destroy (msg);
+			app->originFilename = filename;
+			app->createNotebook();
+			app->loadConfig();
+			app->setSaved(true);
+			app->isOpen = true;
+			app->isNew = false;
+			gtk_widget_show_all(app->window);
+			return;
+		}
+		std::cout << "Step 3.6" << std::endl;
 		app->driver = new Driver(*(app->config));
 		std::string msgstr = "";
 		if(toolkit::Error::check())
@@ -1216,9 +1244,16 @@ namespace apidb
 			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
 			gtk_dialog_run (GTK_DIALOG (msg));
 			gtk_widget_destroy (msg);
+			app->originFilename = filename;
+			app->createNotebook();
+			app->loadConfig();
+			app->setSaved(true);
+			app->isOpen = true;
+			app->isNew = false;
+			gtk_widget_show_all(app->window);
 			return;
 		}
-		//std::cout << "Step 4" << std::endl;
+		std::cout << "Step 4" << std::endl;
 		if(!app->driver->analyze(NULL))
 		{
 			std::string msgstr = "";
@@ -1731,54 +1766,47 @@ namespace apidb
                 g_signal_connect(G_OBJECT(inWConnName), "key-press-event", G_CALLBACK(inWConnName_keypress), this);
         }
 
-        void Application::conex_switchPage (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer     user_data)
-        {
-                static int newPage=-1;
-                static int prePage = -1;
-                Application* app = (Application*) user_data;
+	
+	void Application::conex_switchPage (GtkNotebook *notebook, GtkWidget   *page, guint page_num, gpointer     user_data)
+	{
+		static int newPage=-1;
+		static int prePage = -1;
+		Application* app = (Application*) user_data;
                 
-                if(newPage > -1) prePage = newPage;                
-                newPage = page_num;
+		if(newPage > -1) prePage = newPage;                
+		newPage = page_num;
                 
-                if(prePage == 1 and newPage != 1) //si estaba en la pagina de conexion
-                {
-                        //std::cout << "Switch from " << prePage << " to " << page_num << std::endl;
-                        if(app->inLocEdited || app->inPortEdited || app->inDBEdited || app->inUserEdited || app->inPwEdited)
-                        {
-                                app->conexEdited = true;
-                                if(app->isSaved) app->setSaved(false);
-                                if(app->isNew)  app->downConf();
-                                try
-                                {
-                                        //std::cout << app->config->conectordb->getHost() << std::endl;
-                                        //std::cout << app->config->conectordb->getDatabase() << std::endl;
-                                        //std::cout << app->config->conectordb->getPort() << std::endl;
-                                        //std::cout << app->config->conectordb->getPassword() << std::endl;
-                                        if(!app->config->testConexion())
-                                        {                                        
-                                                GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                                GTK_MESSAGE_ERROR,
-                                                                                GTK_BUTTONS_CLOSE,
-                                                                                "Fallo la conexion a la Base de datos revise sus parametros de conexion.",
-                                                                                "Error", g_strerror (errno));
-                                                gtk_dialog_run (GTK_DIALOG (msg)); 
-                                                gtk_widget_destroy (msg);
-                                                return;
-                                        }
-                                }
-                                catch(octetos::toolkit::clientdb::SQLException e)
-                                {
-                                        GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                        GTK_MESSAGE_ERROR,
-                                                                        GTK_BUTTONS_CLOSE,
-                                                                        e.what(),
-                                                                        "Error detectado", g_strerror (errno));
-                                        gtk_dialog_run (GTK_DIALOG (msg)); 
-                                        gtk_widget_destroy (msg);
-                                        return;
-                                }
+		if(prePage == 1 and newPage != 1) //si estaba en la pagina de conexion
+		{
+			std::cout << "Jump 1" << std::endl;
+			if(app->inLocEdited || app->inPortEdited || app->inDBEdited || app->inUserEdited || app->inPwEdited)
+			{
+				app->conexEdited = true;
+				if(app->isSaved) app->setSaved(false);
+				if(app->isNew)  app->downConf();
+				std::cout << "Jump 2" << std::endl;
+				try
+				{
+					//std::cout << app->config->conectordb->getHost() << std::endl;
+					//std::cout << app->config->conectordb->getDatabase() << std::endl;
+					//std::cout << app->config->conectordb->getPort() << std::endl;
+					//std::cout << app->config->conectordb->getPassword() << std::endl;
+					if(!app->config->testConexion())
+					{                                        
+						GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Fallo la conexion a la Base de datos revise sus parametros de conexion.");
+						gtk_dialog_run (GTK_DIALOG (msg)); 
+						gtk_widget_destroy (msg);
+						return;
+					}
+				}
+				catch(octetos::toolkit::clientdb::SQLException e)
+				{
+					GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,e.what());
+					gtk_dialog_run (GTK_DIALOG (msg)); 
+					gtk_widget_destroy (msg);
+					return;
+				}
+                                std::cout << "Jump 3" << std::endl;
                                  if(app->driver == NULL)
                                  {
                                         app->driver = new Driver(*(app->config));
@@ -1788,6 +1816,7 @@ namespace apidb
                                         delete (app->driver);
                                         app->driver = new Driver(*(app->config));
                                 }
+                                std::cout << "Jump 4" << std::endl;
                                 if(!app->driver->analyze(NULL))
                                 {
                                         std::string msgstr = "";
@@ -1808,9 +1837,20 @@ namespace apidb
                                         gtk_dialog_run (GTK_DIALOG (msg));     
                                         gtk_widget_destroy (msg);
                                 }
-                        }
-                }
-        }
+			}
+			else
+			{
+				if(!app->config->testConexion())
+				{                                        
+					GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Fallo la conexion a la Base de datos revise sus parametros de conexion.");
+					gtk_dialog_run (GTK_DIALOG (msg)); 
+					gtk_widget_destroy (msg);
+					return;
+				}
+				
+			}
+		}
+	}
         bool Application::createNotebook()
         {                
                 if(config == NULL)
