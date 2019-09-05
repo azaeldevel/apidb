@@ -161,7 +161,7 @@ namespace generators
                         ofile << k->getName();
                         if(k != *endK)
                         {
-                            ofile << " and ";
+                            ofile << ",";
                         }
                     }
                     ofile << " FROM " << table.getName() << " WHERE \";"<< std::endl;                    
@@ -199,7 +199,7 @@ namespace generators
                         }
                         if(param != *itParamEnd)
                         {
-                            ofile << " + \",\";"<< std::endl;
+                            ofile << " + \" and \";"<< std::endl;
                         }
                     }
                     ofile << ";" << std::endl;
@@ -235,7 +235,7 @@ namespace generators
                         }
                         if(k != *endK2)
                         {
-                            ofile << " and ";
+                            ofile << ",";
                         }
                         count2++;
                     }
