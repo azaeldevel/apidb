@@ -109,13 +109,6 @@ namespace apidb
 	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn,toolkit::ActivityProgress* p) : configureProject(config), connector(conn),progress(p),symbolsTable(config)
 	{
 	}
-	/*std::map<const char*,symbols::ISpace*,symbols::cmp_str> Analyzer::copyListTable() const
-	{
-		return symbolsTable;
-	}*/	
-	/*const std::map<const char*,symbols::ISpace*,symbols::cmp_str>& Analyzer::getListTableConst() const
-	{
-		return symbolsTable;
-	}*/
+	
 }
 }

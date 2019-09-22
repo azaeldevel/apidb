@@ -117,7 +117,7 @@ TARGET_LINK_LIBRARIES(apidb-build ${LIBRARIES} ${LIBREADER} ${PROJECT_NAME}-Conf
 ADD_EXECUTABLE(testing-v${${PROJECT_NAME}_VERSION_MAJOR} tests/v${${PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )
 TARGET_LINK_LIBRARIES(testing-v${${PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES} ${LIBREADER} ${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR})
 
-ADD_EXECUTABLE(${PROJECT_NAME}-gtk3 apidb-gtk3.cpp Application-gtk3.cpp ${SOURCES_BUILDING})
+ADD_EXECUTABLE(${PROJECT_NAME}-gtk3 apidb-gtk3.cpp Application.cpp Application-CaptureFuntion.cpp Application-CaptureParameter.cpp Application-CaptureTable.cpp Application-TreeView.cpp ${SOURCES_BUILDING})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}-gtk3 ${LIBRARIES} ${LIBREADER} ${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR})
 
 execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb-128x128.png" -h 128 -w 128)

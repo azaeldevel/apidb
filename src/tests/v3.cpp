@@ -38,6 +38,7 @@ static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev1("192.168.0.10
 static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 static std::string sysappv1Filename = "sysappv1-alpha.apidb";
 static std::string sysappv20Filename = "sysappv20-alpha.apidb";
+static std::string sysappv30Filename = "sysappv30-alpha.apidb";
 
 /* The suite initialization function.
  * Opens the temporary file used by the tests.
@@ -403,12 +404,12 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	////////////////////////////////////////////////////////// SIN LISTAS
-	/*if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
+	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
 	}	
-	if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.", testBuild_nlst)))
+	/*if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.", testBuild_nlst)))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();

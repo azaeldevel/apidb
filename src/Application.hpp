@@ -29,7 +29,6 @@
 #include "common.hpp"
 #include "driver.hpp"
 
-
 namespace octetos
 {
 namespace apidb

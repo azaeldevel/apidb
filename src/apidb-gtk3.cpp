@@ -20,7 +20,7 @@
  * */
 
 
-#include "Application-gtk3.hpp"
+#include "Application.hpp"
 
 int main (int   argc, char *argv[])
 {                                        
