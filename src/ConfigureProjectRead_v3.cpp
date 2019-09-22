@@ -58,25 +58,25 @@ namespace octetos
 {
 namespace apidb
 {
-        bool ConfigureProject::readConfig(std::string filename)
-        {
-                if(toolkit::Error::check())
-                {
-                        throw toolkit::Error("Hay un error pendiente de atender",toolkit::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
-                }
+	bool ConfigureProject::readConfig(const std::string filename)
+	{
+		if(toolkit::Error::check())
+		{
+			throw toolkit::Error("Hay un error pendiente de atender",toolkit::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
+		}
                 
-                //std::cout << "Step 1. file " << filename << std::endl;
+                //std::cout << "Reading : " << filename << std::endl;
                 FILE *apidbFilecheck = fopen(filename.c_str(), "r");
                 if (apidbFilecheck == NULL )
                 {
-                        std::string msg = "La direecion especificada '";
-                        msg += filename + "' no indica un archivo valido.";
+                        std::string msg = "La dirección especificada '";
+                        msg += filename + "' no indica un archivo válido.";
                         toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_INVALIDPATH,__FILE__,__LINE__));
                         return false;
                 }
                 fclose(apidbFilecheck);
                 //std::cout << "Step 2." << std::endl;
-                char tmp_filepath[] =  "/tmp/dxmg-XXXXXX";
+                char tmp_filepath[] =  "/tmp/XXXXXXXXX";
                 char * tmp_apidbDir  = mkdtemp(tmp_filepath);       
                 //Descomomprimiendo archivo
                 
@@ -110,9 +110,18 @@ namespace apidb
                         toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_INVALIDPATHVER,__FILE__,__LINE__));
                         return false;
                 }
+                char *line_buf = NULL;
+                size_t line_buf_size = 0;
+                int line_count = 0;
+                ssize_t line_size;
+                line_size = getline(&line_buf, &line_buf_size, apidbFilecheck2);
+                std::string strver;
+                if(line_size > 0)
+                {
+                    strver = line_buf;
+                }
                 fclose(apidbFilecheck2);
-                
-                if(!projectVersion.fromFile(tmVerFileName)) 
+                if(!projectVersion.from(strver)) 
                 {              
                         std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.";
                         toolkit::Error::write(toolkit::Error(msg,ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
@@ -125,6 +134,7 @@ namespace apidb
                 int ret;                
                 std::string xmlfile = tmp_filepath;
                 xmlfile += "/apidb/main.xml";
+                //std::cout << "Parseando XML " << xmlfile << std::endl;  
                 reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);
                 if (reader != NULL) 
                 {
@@ -148,10 +158,10 @@ namespace apidb
                                 
                 
                 return true;
-        }
+	}
        
-        bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
-        {         
+	bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
+	{         
                 if(projectVersion < ver100)
                 {
                         std::string msgstr = "La version del proyecto es inferior a '";
@@ -447,6 +457,11 @@ namespace apidb
                 {
                         outputLenguaje = OutputLenguajes::CPP;
                         //std::cout << "LANG = C++" <<  std::endl;
+                }     
+                else if(outL.compare("C") == 0)
+                {
+                        outputLenguaje = OutputLenguajes::C;
+                        //std::cout << "LANG = C++" <<  std::endl;
                 }
                 else
                 {
@@ -492,6 +507,10 @@ namespace apidb
                 {
                         compiled = Compiled::STATIC;
                 }
+                else if(cmpl.compare("SHARED") == 0)
+                {
+                        compiled = Compiled::SHARED;
+                }
                 else
                 {
                         std::string msgstr = "Fallo durante el parseo XML.";
@@ -518,17 +537,84 @@ namespace apidb
                         toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-        
+                
+		if(projectVersion >= ver200)
+		{
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                name = xmlTextReaderConstName(reader);
+                if(strcmp((const char*)name,"namespace_detect") == 0)
+                {
+                        //std::cout << "Se encontro build directory." << std::endl;
+                        xmlTextReaderRead(reader);
+                        namespace_detect = (const char*)xmlTextReaderConstValue(reader);
+                        //std::cout << "Se encontro build directory : " << builDirectory << std::endl;
+                }
+                else
+                {
+                        std::string msgstr = "Fallo durante el parseo XML.";
+                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                        return false;
+                }
+                                
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                xmlTextReaderRead(reader);
+                name = xmlTextReaderConstName(reader);
+                if(strcmp((const char*)name,"executable_target") == 0)
+                {
+                        //std::cout << "Se encontro build directory." << std::endl;
+                        xmlTextReaderRead(reader);
+                        executable_target = (const char*)xmlTextReaderConstValue(reader);
+                        //std::cout << "Se encontro build directory : " << builDirectory << std::endl;
+                }
+                else
+                {
+                        std::string msgstr = "Fallo durante el parseo XML.";
+                        toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                        return false;
+                }
+		}
+		
+		if(projectVersion >= ver220)
+		{
+			xmlTextReaderRead(reader);
+			xmlTextReaderRead(reader);
+			xmlTextReaderRead(reader);
+			name = xmlTextReaderConstName(reader);
+			if(strcmp((const char*)name,"writeDatconnect") == 0)
+			{
+				//std::cout << "Se encontro build directory." << std::endl;
+				xmlTextReaderRead(reader);
+				writeDatconnect = (const char*)xmlTextReaderConstValue(reader);
+				//std::cout << "Se encontro build directory : " << builDirectory << std::endl;
+			}
+			else
+			{
+					std::string msgstr = "Fallo durante el parseo XML.";
+					toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+					return false;
+			}
+		}
+		
         //
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         
-        for(int i = 0; i < 2; i++)
-        {
-                //std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
-                //std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
-                std::string node = (const char*)xmlTextReaderConstName(reader);
+		//const xmlChar *nameNodeList;
+		for(int i = 0; i < 2; i++)
+		{
+			//std::cout << "Node  : " <<(const char*)xmlTextReaderConstName(reader)<<std::endl;
+			//std::cout << ", count : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs") << std::endl;
+			std::string node = (const char*)xmlTextReaderConstName(reader);
+			if(node.compare("downloads") != 0 and node.compare("selects") != 0)
+			{
+				std::string msgstr = "Fallo durante el parseo XML.";
+				toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+				return false;				
+			}
                 int counTbs = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs"));
                 for(int j = 0; j < counTbs; j++)
                 {

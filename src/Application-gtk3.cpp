@@ -439,7 +439,7 @@ namespace apidb
                 if(inVerEdited)
                 {
                         std::string verstr = gtk_entry_get_text(GTK_ENTRY(inVer));
-                        if(!config->versionResult.fromString(verstr))
+                        if(!config->versionResult.from(verstr))
                         {                                       
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
