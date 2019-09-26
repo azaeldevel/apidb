@@ -152,6 +152,9 @@ namespace generators
                 }                
                 cmakelists << configureProject.name <<".cpp )"<<std::endl;
 		cmakelists<<"TARGET_LINK_LIBRARIES("<< configureProject.name <<" ${MYSQL_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_LIBRARIES}  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} )"<<std::endl;
+        cmakelists<<"if(APIDBLIB)\n";
+        cmakelists<<"set(APIDBLIB ${PROJECT_NAME} PARENT_SCOPE)\n";
+        cmakelists<<"endif()\n";
 		cmakelists.close();
                 std::string msg2 = "\tArchivo de gestion de projecto: '";
                 msg2 += namefile + "'\n";
@@ -188,8 +191,9 @@ namespace generators
 		toolkitcommonconifg<<"ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)"<<std::endl;
 
 		toolkitcommonconifg<<"FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR toolkit/common/common.hpp"<<std::endl;
-		  toolkitcommonconifg<<"/usr/local/include/octetos"<<std::endl;
+		  toolkitcommonconifg<<"/include/octetos"<<std::endl;
 		  toolkitcommonconifg<<"/usr/include/octetos"<<std::endl;
+		  toolkitcommonconifg<<"/usr/local/include/octetos"<<std::endl;
 		toolkitcommonconifg<<")"<<std::endl;
 
 		toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_NAMES octetos-toolkit-common-c++)"<<std::endl;
@@ -243,9 +247,10 @@ namespace generators
 		  toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_QUIETLY TRUE)"<<std::endl;
 		toolkitclientdbConfig<<"ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR)"<<std::endl;
 
-		toolkitclientdbConfig<<"FIND_PATH(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR clientdb.hpp"<<std::endl;
-		  toolkitclientdbConfig<<"/usr/local/include/octetos/toolkit/clientdb"<<std::endl;
+		toolkitclientdbConfig<<"FIND_PATH(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR toolkit/clientdb/clientdb.hpp"<<std::endl;
+		  toolkitclientdbConfig<<"/include/octetos/toolkit/clientdb"<<std::endl;
 		  toolkitclientdbConfig<<"/usr/include/octetos/toolkit/clientdb"<<std::endl;
+		  toolkitclientdbConfig<<"/usr/local/include/octetos/toolkit/clientdb"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
 		toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES octetos-toolkit-clientdb-myc++)"<<std::endl;
@@ -451,7 +456,7 @@ namespace generators
 		//inlcudes in source file
 		getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl;
 		getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
-		getHeaderOutput()<< "#include <clientdb-mysql.hpp>"<<std::endl<<std::endl;
+		getHeaderOutput()<< "#include <toolkit/clientdb/clientdb-mysql.hpp>"<<std::endl<<std::endl;
 			
 		
 		//writing code				
