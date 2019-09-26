@@ -390,27 +390,18 @@ namespace apidb
                                 gtk_widget_destroy (msg);
 		}
 	}
-        void Application::document_saveas(GtkWidget *widget, gpointer data) 
+    void Application::document_saveas(GtkWidget *widget, gpointer data) 
+    {
+        Application* app = (Application*)data;
+                                                               
+        if(!app->downConf())
         {
-                Application* app = (Application*)data;
-                
-                if(app->config == NULL)
-                {
-                        if(!app->isOpen)
-                        {//no esta abierto el proyecto.
-                                
-                                return;
-                        }
-                        
-                        //causo desconocida para este error
-                        return;
-                }
-                               
-                if(!app->downConf())
-                {
-                        //ocurrio un error en downConf, ya se presento el mensaje al usuario simpleme termina esta llama.
-                        return;
-                }
+            std::string strmsg = "Falló la operacionde Guardar";
+            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_CLOSE,strmsg.c_str());
+            gtk_dialog_run (GTK_DIALOG (msg)); 
+            gtk_widget_destroy (msg);
+            return;
+        }
                 GtkWidget *dialog;
                 GtkFileChooser *chooser;
                 GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
@@ -439,7 +430,7 @@ namespace apidb
                         g_free (filename);
                 }
                 gtk_widget_destroy (dialog);                
-        }
+    }
 	void Application::document_save(GtkWidget *widget, gpointer data) 
 	{
 		Application* app = (Application*)data;
