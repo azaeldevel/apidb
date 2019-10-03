@@ -27,7 +27,7 @@ else()
     SET(OCTETOS_TOOLKIT_COMMON_CPP_NAMES octetos-toolkit-common-c++)
     FIND_LIBRARY(OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY
         NAMES ${OCTETOS_TOOLKIT_COMMON_CPP_NAMES}
-        PATHS /lib /usr/lib /usr/lib/octetos/toolkit/common /usr/local/lib/octetos/toolkit/common /usr/lib/x86_64-linux-gnu/octetos/toolkit/common
+        PATHS /lib /lib64 /lib32 /usr/lib /usr/lib/octetos/toolkit/common /usr/local/lib/octetos/toolkit/common /usr/lib/x86_64-linux-gnu/octetos/toolkit/common
         PATH_SUFFIXES octetos-toolkit-common-c++
     )
 endif()

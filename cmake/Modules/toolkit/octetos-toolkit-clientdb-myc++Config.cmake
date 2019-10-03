@@ -25,7 +25,7 @@ else()
     SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES octetos-toolkit-clientdb-myc++)
     FIND_LIBRARY(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY
         NAMES ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES}
-        PATHS /lib/octetos/toolkit/clientdb  /usr/lib/octetos/toolkit/clientdb /usr/local/lib/octetos/toolkit/clientdb /usr/lib/x86_64-linux-gnu/octetos/toolkit/clientdb
+        PATHS /lib /lib64 /lib32 /lib/octetos/toolkit/clientdb  /usr/lib/octetos/toolkit/clientdb /usr/local/lib/octetos/toolkit/clientdb /usr/lib/x86_64-linux-gnu/octetos/toolkit/clientdb
         PATH_SUFFIXES octetos-toolkit-clientdb-myc++
     )
 endif()
