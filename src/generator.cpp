@@ -141,17 +141,17 @@ namespace generators
 			cmakelists <<")"<<std::endl;
 			cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
 		}
-		cmakelists<<"ADD_LIBRARY("<< configureProject.name;
-                if(configureProject.compiled == apidb::Compiled::SHARED)
-                {
-                        cmakelists << " SHARED ";
-                }
-                else if(configureProject.compiled == apidb::Compiled::STATIC)
-                {
-                         cmakelists  << " STATIC ";
-                }                
-                cmakelists << configureProject.name <<".cpp )"<<std::endl;
-		cmakelists<<"TARGET_LINK_LIBRARIES("<< configureProject.name <<" ${MYSQL_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_LIBRARIES}  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} )"<<std::endl;
+		cmakelists<<"ADD_LIBRARY(${PROJECT_NAME} ";
+        if(configureProject.compiled == apidb::Compiled::SHARED)
+        {
+            cmakelists << " SHARED ";
+        }
+        else if(configureProject.compiled == apidb::Compiled::STATIC)
+        {
+            cmakelists  << " STATIC ";
+        }                
+        cmakelists << "${PROJECT_NAME}.cpp )"<<std::endl;
+		cmakelists<<"TARGET_LINK_LIBRARIES(${PROJECT_NAME}  ${MYSQL_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_LIBRARIES}  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} )"<<std::endl;
         cmakelists<<"if(APIDBLIB)\n";
         cmakelists<<"set(APIDBLIB ${PROJECT_NAME} PARENT_SCOPE)\n";
         cmakelists<<"endif()\n";
@@ -228,8 +228,8 @@ namespace generators
 		  toolkitcommonconifg<<")"<<std::endl;
 		toolkitcommonconifg.close();
                 
-                if(configureProject.inputLenguaje  == InputLenguajes::MySQL)
-                {
+        if(configureProject.inputLenguaje  == InputLenguajes::MySQL)
+        {
 		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
 		namefile = "octetos-toolkit-clientdb-myc++Config.cmake";
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
