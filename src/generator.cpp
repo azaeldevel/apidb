@@ -256,7 +256,7 @@ namespace generators
 		toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES octetos-toolkit-clientdb-myc++)"<<std::endl;
 		toolkitclientdbConfig<<"FIND_LIBRARY(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY"<<std::endl;
 		  toolkitclientdbConfig<<"NAMES ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES}"<<std::endl;
-		  toolkitclientdbConfig<<"PATHS /usr/lib/octetos/toolkit/clientdb /usr/local/lib/octetos/toolkit/clientdb /usr/lib/x86_64-linux-gnu/octetos/toolkit/clientdb"<<std::endl;
+		  toolkitclientdbConfig<<"PATHS /lib /lib64 /usr/lib /usr/lib/octetos/toolkit/clientdb /usr/local/lib/octetos/toolkit/clientdb /usr/lib/x86_64-linux-gnu/octetos/toolkit/clientdb"<<std::endl;
 		  toolkitclientdbConfig<<"PATH_SUFFIXES octetos-toolkit-clientdb-myc++"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
