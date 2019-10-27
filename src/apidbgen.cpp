@@ -29,9 +29,8 @@
 
 int main(int argc, char *argv[])
 {
-        std::cout <<"\u001b[31;1m" << "\nAdvertencia: apidbgen se consisera deprecado y sera removido v2.\n" << "\u001b[0m";
         
-        std::string file,dir;
+    std::string file,dir;
 	if(argc > 0)
 	{
 		if(strcmp(argv[1],"-v") ==0 || strcmp(argv[1],"--version") == 0)
@@ -51,20 +50,20 @@ int main(int argc, char *argv[])
 		}
 	}
 	else
-        {
-                std::cerr<<"Deve indicar el archivo de prjecto y el directorio de generacion, use las opciones -p 'file' -o 'dir'."<<std::endl;
-                return EXIT_FAILURE;
-        }
+    {
+        std::cerr<<"Deve indicar el archivo de prjecto y el directorio de generacion, use las opciones -p 'file' -o 'dir'."<<std::endl;
+        return EXIT_FAILURE;
+    }
 		
 	std::ifstream fin(file);
 	if(fin) 
 	{
 		std::cout<<"Cargando '" << file << "' ..." <<std::endl;
 		octetos::apidb::ConfigureProject config;
-                config.directory = dir;
-                config.readConfig(file);
-        	octetos::apidb::Driver driver(config);
-                octetos::apidb::Tracer tr(0);
+        config.directory = dir;
+        config.readConfig(file);
+        octetos::apidb::Driver driver(config);
+        octetos::apidb::Tracer tr(0);
 		if(!driver.driving(&tr))
 		{
 			std::cerr<<"Fallo la generacion."<<std::endl;

@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 	configProject.executable_target  = "capture_v3";
 	configProject.namespace_detect = "emulate";
 	configProject.writeDatconnect = "datConect";
-    if(configProject.saveConfig("sysapp"))
+    if(configProject.saveConfig("sysapp.apidb"))
 	{
         std::cout << "Creacion de proyecto: completada.";
         return EXIT_SUCCESS;

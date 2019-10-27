@@ -133,16 +133,16 @@ IF(Doxygen_FOUND AND APIDB_DOC)
 	)
 ENDIF()
 
-#[[if(APIDB_EXAMPLES)
-    ADD_EXECUTABLE(capture examples/capture_v${${PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )
-    TARGET_LINK_LIBRARIES(capture ${LIBRARIES} ${LIBREADER} ${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR})
+if(APIDB_EXAMPLES)
+    #ADD_EXECUTABLE(capture examples/capture_v${${PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )
+    #TARGET_LINK_LIBRARIES(capture ${LIBRARIES} ${LIBREADER} ${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR})
 
     ADD_EXECUTABLE(createProy examples/createProy_v${${PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )
     TARGET_LINK_LIBRARIES(createProy ${LIBRARIES} ${LIBREADER} ${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR})
     
     #add_custom_command(examples/sysapp.apidb COMMAND ./examples/createProy WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Creación de ejemplo.." )
 	#ADD_DEPENDENCIES(examples/sysapp.apidb examples/capture examples/createProy)
-endif()]]
+endif()
 
 ###################################################################################################################
 ###INSTALL

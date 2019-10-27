@@ -93,82 +93,82 @@ namespace apidb
         }
 	void TreeView::row_activated (GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data)
 	{    
-                GtkTreeModel *model;
-                GtkTreeIter iter;
-                TreeView* wgTree  = (TreeView*)user_data;
+        GtkTreeModel *model;
+        GtkTreeIter iter;
+        TreeView* wgTree  = (TreeView*)user_data;
                  
-                model = gtk_tree_view_get_model(view);
+        model = gtk_tree_view_get_model(view);
 
-                if (!gtk_tree_model_get_iter(model, &iter, path))
-                {
-                        //std::cout << "No Agregado " << std::endl;
-                        //actual = NULL;
-                        return; /* path describes a non-existing row - should not happen */
-                }
+        if (!gtk_tree_model_get_iter(model, &iter, path))
+        {
+            //std::cout << "No Agregado " << std::endl;
+            //actual = NULL;
+            return; /* path describes a non-existing row - should not happen */
+        }
                 
-                const char* name = gtk_tree_model_get_string_from_iter(model,&iter);
-                //std::cout << "Agregando " << name << std::endl;
-                switch(checkTypeNode(model,&iter))
+        const char* name = gtk_tree_model_get_string_from_iter(model,&iter);
+        //std::cout << "Agregando " << name << std::endl;
+        switch(checkTypeNode(model,&iter))
+        {
+            case 'F':
+            {
+                
+                break;
+            }
+            case 'R':
+            {
+                CaptureTable capT(wgTree->getApplication()->getDriver());
+                if(capT.show())
                 {
-						case 'F':
-						{
-							
-							break;
-						}
-                        case 'R':
-                                {
-                                        CaptureTable capT(wgTree->getApplication()->getDriver());
-                                        if(capT.show())
-                                        {
-                                                ConfigureProject::Table* ptb =  new ConfigureProject::Table(capT.getSelectTable());
-                                                wgTree->list->insert(std::make_pair(ptb->getName().c_str(),ptb));
-                                                wgTree->fill();
-                                                wgTree->getApplication()->setSaved(false);
-                                        }
-                                }
-                                break;
-                        case 'T':
-                                {
-                                        CaptureFuntion cap(wgTree->getApplication()->getDriver(),&iter,getTableName(model,&iter,wgTree->list));
-                                        cap.show();
-                                        std::string strFunction = cap.getNameFunction();
-                                        const char* strTable = getTableName(model,&iter,wgTree->list);
-                                        ConfigureProject::Function* newF = new ConfigureProject::Function(strFunction);
-                                        //std::cout << "Bascando tabla '" << strTable << "'" << std::endl;
-                                        std::map<const char*,ConfigureProject::Table*>::iterator itT = wgTree->list->find(strTable);
-                                        if(itT != wgTree->list->end())
-										{
-											//std::cout << "Tabla '" << strTable <<  "' encontrada para funcion " <<  strFunction << std::endl;
-											itT->second->insert(std::make_pair(newF->getName().c_str(), newF));
-											bool flag = false;
-											do
-											{
-												CaptureParameter capParams(wgTree->getApplication()->getDriver(),strTable);
-												flag = capParams.show();
-												if(flag)
-												{
-													newF->addParam(capParams.getSelectParam());
-													wgTree->getApplication()->setSaved(false);
-												}
-												else
-												{
-													break;
-												}
-											}
-											while(flag);
-											wgTree->fill();
-                                        }
-                                        else
-                                        {
-                                                //std::cout << "No se encontro la tabla " << strTable << std::endl;
-                                                //std::cout << "Tabla size:" <<  wgTree->list->size() << std::endl;
-                                                std::string msgstr = "Fallo interno, no se encontro la tabla busca ";
-                                                msgstr = msgstr + strTable + "'";
-                                                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::APPLICATION_GTK3_ROWACTIVE_NOTFOUND_TABLE,__FILE__,__LINE__));
-                                        }
-                                }
-                                break;
-                }              
+                    ConfigureProject::Table* ptb =  new ConfigureProject::Table(capT.getSelectTable());
+                    wgTree->list->insert(std::make_pair(ptb->getName().c_str(),ptb));
+                    wgTree->fill();
+                    wgTree->getApplication()->setSaved(false);
+                }
+            }
+            break;
+            case 'T':
+            {
+                CaptureFuntion cap(wgTree->getApplication()->getDriver(),&iter,getTableName(model,&iter,wgTree->list));
+                cap.show();
+                std::string strFunction = cap.getNameFunction();
+                const char* strTable = getTableName(model,&iter,wgTree->list);
+                ConfigureProject::Function* newF = new ConfigureProject::Function(strFunction);
+                //std::cout << "Bascando tabla '" << strTable << "'" << std::endl;
+                std::map<const char*,ConfigureProject::Table*>::iterator itT = wgTree->list->find(strTable);
+                if(itT != wgTree->list->end())
+                {
+                    //std::cout << "Tabla '" << strTable <<  "' encontrada para funcion " <<  strFunction << std::endl;
+                    itT->second->insert(std::make_pair(newF->getName().c_str(), newF));
+                    bool flag = false;
+                    do
+                    {
+                        CaptureParameter capParams(wgTree->getApplication()->getDriver(),strTable);
+                        flag = capParams.show();
+                        if(flag)
+                        {
+                            newF->addParam(capParams.getSelectParam());
+                            wgTree->getApplication()->setSaved(false);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    while(flag);
+                    wgTree->fill();
+                }
+                else
+                {
+                    //std::cout << "No se encontro la tabla " << strTable << std::endl;
+                    //std::cout << "Tabla size:" <<  wgTree->list->size() << std::endl;
+                    std::string msgstr = "Fallo interno, no se encontro la tabla busca ";
+                    msgstr = msgstr + strTable + "'";
+                    toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::APPLICATION_GTK3_ROWACTIVE_NOTFOUND_TABLE,__FILE__,__LINE__));
+                }
+            }
+            break;
+        }              
 	}
         void TreeView::fill()
         {         
