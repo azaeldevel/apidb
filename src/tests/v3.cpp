@@ -35,7 +35,7 @@ std::string random_string( size_t length )
 static std::string filename;
 static std::string filename_nlst;
 static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev1("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
-static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
+//static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 static std::string sysappv1Filename = "sysappv1-alpha.apidb";
 static std::string sysappv20Filename = "sysappv20-alpha.apidb";
 static std::string sysappv30Filename = "sysappv30-alpha.apidb";
