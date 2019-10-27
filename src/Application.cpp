@@ -353,15 +353,31 @@ namespace apidb
                                         gtk_widget_destroy (msg);
                                         return;
                 }
-                
-                if(app->driver != NULL) 
-                {
-                        delete (app->driver);
-                        app->driver = NULL;
-                }
-                app->driver = new Driver(*(app->config));
-                Tracer tr(0);
-		if(!app->driver->driving(&tr))
+        bool flagDriver = false;
+        try
+        {
+            //std::cout << "Step 1\n";
+            if(app->driver != NULL) 
+            {
+                delete (app->driver);
+                app->driver = NULL;
+            }
+            //std::cout << "Step 2\n";
+            app->driver = new Driver(*(app->config));
+            //std::cout << "Step 3\n";
+            Tracer tr(0);  
+            //std::cout << "Step 4\n";
+            flagDriver = app->driver->driving(&tr);
+            //std::cout << "Step 5\n";
+        }
+        catch(BuildException e)
+        {
+            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,e.what());
+            gtk_dialog_run (GTK_DIALOG (msg)); 
+            gtk_widget_destroy (msg);
+            return;
+        }
+		if(!flagDriver)
 		{
 			std::string msgstr = "";
 			if(toolkit::Error::check())
@@ -1551,7 +1567,8 @@ namespace apidb
                 
 		gtk_widget_show_all(window);  
 		if(originFilename.size() > 0)documen_open(this,originFilename);
-		gtk_main ();     
+        
+		gtk_main ();  
 	}
 
          const char*  Application::titleInfo = "Información";

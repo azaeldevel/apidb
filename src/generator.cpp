@@ -162,7 +162,7 @@ namespace generators
 		
 		//std::cout<<"Creating cmake.modules..."<<std::endl;
 		//cmake.modules
-		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
+		if(configureProject.builDirectory.empty() | (configureProject.builDirectory.compare(".") == 0))
 		{
 			std::string str = "cmake.modules";			
 			mkdir(str.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
