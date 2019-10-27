@@ -34,7 +34,7 @@ std::string random_string( size_t length )
 
 static std::string filename;
 static std::string filename_nlst;
-static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev1("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
+static octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
 //static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 static std::string sysappv1Filename = "sysappv1-alpha.apidb";
 static std::string sysappv20Filename = "sysappv20-alpha.apidb";
@@ -71,7 +71,7 @@ void testCreateProject_nlst()
 	octetos::apidb::ConfigureProject configProject_nls;
         configProject_nls.name = "sysapp";
         configProject_nls.builDirectory = "apidb";
-        configProject_nls.conectordb = &mysqlSourcev1;
+        configProject_nls.conectordb = &mysqlSource;
         configProject_nls.versionResult = version;
         configProject_nls.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
         configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
@@ -91,7 +91,7 @@ void testCreateProject_nlst()
 void testConecction()
 {
         octetos::apidb::ConfigureProject configProject;
-        configProject.conectordb = &mysqlSourcev1;
+        configProject.conectordb = &mysqlSource;
         configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
         CU_ASSERT(configProject.testConexion());
 }
@@ -104,7 +104,7 @@ void testCreateProject()
 	octetos::apidb::ConfigureProject configProject;
 	configProject.name = "sysapp";
 	configProject.builDirectory  = "apidb";
-	configProject.conectordb = &mysqlSourcev2;
+	configProject.conectordb = &mysqlSource;
 	configProject.versionResult = version;
 	configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
 	configProject.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
