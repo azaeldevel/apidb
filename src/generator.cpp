@@ -248,9 +248,9 @@ namespace generators
 		toolkitclientdbConfig<<"ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR)"<<std::endl;
 
 		toolkitclientdbConfig<<"FIND_PATH(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR toolkit/clientdb/clientdb.hpp"<<std::endl;
-		  toolkitclientdbConfig<<"/include/octetos/toolkit/clientdb"<<std::endl;
-		  toolkitclientdbConfig<<"/usr/include/octetos/toolkit/clientdb"<<std::endl;
-		  toolkitclientdbConfig<<"/usr/local/include/octetos/toolkit/clientdb"<<std::endl;
+		  toolkitclientdbConfig<<"/include/octetos"<<std::endl;
+		  toolkitclientdbConfig<<"/usr/include/octetos"<<std::endl;
+		  toolkitclientdbConfig<<"/usr/local/include/octetos"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
 		toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES octetos-toolkit-clientdb-myc++)"<<std::endl;
