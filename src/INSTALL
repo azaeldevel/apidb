@@ -35,7 +35,7 @@ En tiempo de construcion
 	3.- cmake -DCMAKE_BUILD_TYPE=Release -DAPIDB_VERSION_STAGE=betarelease ..
 	4.- make
 	5.- sudo cpack --config CPackConfig.cmake
-	6.- sudo ./apidb-*-Linux.sh  --prefix=/usr/local
+	6.- sudo ./apidb-*-Linux.sh  --prefix=/usr
                 Do you accept the license? [yN]:
                 ¿?..
                 Saying no will install in: X
