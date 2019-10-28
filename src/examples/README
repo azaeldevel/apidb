@@ -1,0 +1,17 @@
+
+1.- Cree la base de datos con la descripcion en le archivo 'db.sql'
+2.- Abre el archivo 'coredb.apidb' con la aplicacion APIDB y editelo según los parámetros en su servidor. https://www.youtube.com/watch?v=9O6aDedacRE
+3.- Compile y ejeucte el program, simplmete mente le desplegara
+    ./capture --verbose
+Le desplegara un mesaje como el que sigue:
+    SQL Server version: 10.4.8
+    Inserted n1-6375 ap-6375 de Mexico.
+    Commit done 
+    n1-6375 
+    Listando los que tiene 8 con 5 registro maximo.
+La primera linea indica la version del MySQL
+La segunda es el nombre(con numero al azar) de una persona node 'n1' el el nombre y 'ap' es su apellido
+La tercera line confirma que la operacion ha sido completada(commit confirmado)
+La cuarta linea es el nombre de la persona actualmente insertada
+La sexta line is la hay, es un select de maximo 5 renglones que muestra las persona cuyo nombre termina en 8, lo cual se indica con la clausula 'name1 like 'n1-%8'' en la linea 80.
+Repita ./capture --verbose y eventualmete la linea 6 aparaecerá.

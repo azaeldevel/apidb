@@ -1,3 +1,4 @@
+CREATE DATABASE `sysapp.alpha`;
 
 CREATE TABLE IF NOT EXISTS `sysapp.alpha`.`Persons` (
   `id` INT NOT NULL AUTO_INCREMENT,

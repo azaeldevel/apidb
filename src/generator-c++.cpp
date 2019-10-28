@@ -115,7 +115,7 @@ namespace generators
             //for (auto const& [key, val] : *(itT->second))//class Table : public std::map<std::string,Function>
             for(ConfigureProject::Table::iterator itCfTb = itT->second->begin(); itCfTb != itT->second->end(); itCfTb++)
             {
-                ofile << "\tstd::vector<" << table.getName()<< "*>* " << table.getName() << "::select_" << itCfTb->second->getName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
+                ofile << "\tstd::vector<" << table.getName()<< "*>* " << table.getName() << "::" << itCfTb->second->getName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
 
                 
                 const apidb::ConfigureProject::Parameters* params = itCfTb->second->getParameters();
@@ -269,7 +269,7 @@ namespace generators
                         //for (auto const& [key, val] : *(itT->second))//class Table : public std::map<const char*, const Function*>
                         for(ConfigureProject::Table::iterator itCfTb = itT->second->begin(); itCfTb != itT->second->end(); itCfTb++)
                         {
-                                ofile << "\tbool " << table.getName() << "::download_" << itCfTb->first << "(octetos::toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
+                                ofile << "\tbool " << table.getName() << "::" << itCfTb->first << "(octetos::toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
                                 ofile << "\t{ " << std::endl;
                                 ofile << "\t\tstd::string sqlString = \"SELECT ";
                                 const apidb::ConfigureProject::Parameters* params = itCfTb->second->getParameters();
@@ -857,18 +857,19 @@ namespace generators
                 }
                 file <<"}"<<std::endl;
     }*/
-        void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
-        {                
-                //for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
-			const ConfigureProject::Table* tb = configureProject.findSelectTable(table.getName());
-			if(tb != NULL)
-			{
-                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itF = tb->begin(); itF != tb->end(); itF++)
-                        {
-                                ofile << "\t\tbool download_" << itF->first << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
-                        }
-			}
+    void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
+    {                
+        //for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
+        const ConfigureProject::Table* tb = configureProject.findDownloadTable(table.getName());
+        if(tb != NULL)
+        {
+            for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itF = tb->begin(); itF != tb->end(); itF++)
+            {
+                ofile << "\t\tbool " << itF->first << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
+            }
         }
+    }
+        
 	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile)
 	{
 			ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where, int leng = 0);"<<std::endl;
@@ -889,7 +890,7 @@ namespace generators
 					//std::cout << "Se encontro la tabla '" << table.getName() << std::endl;
                         for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = tb->begin(); itT != tb->end(); itT++)
                         {
-                                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select_" << itT->second->getName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
+                                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* " << itT->second->getName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
                                 //std::cout << "Generando codigo para  : " << itT->second->getName() << std::endl;
                                 const apidb::ConfigureProject::Parameters* params = itT->second->getParameters();                                
                                 apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();

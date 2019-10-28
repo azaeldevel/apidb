@@ -6,7 +6,13 @@ src/mysql-reader-c++/main.cpp
 src/mysql-reader-c++/.travis.yml
 src/mysql-reader-c++/Makefile
 src/mysql-reader-c++/README.md
-
+src/examples/build
+src/examples/*.cmake
+src/examples/sysapp.hpp
+src/examples/sysapp.cpp
+src/examples/CMakeLists.txt
+src/examples/config.*
+src/examples/cmake.modules/*
 
 src/versionInfo.h
 

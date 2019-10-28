@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "sysapp.hpp"
+
 int main(int argc, char **argv)
 {	
     bool verbose = false;
@@ -14,12 +16,12 @@ int main(int argc, char **argv)
         }
     }
         
-	octetos::toolkit::clientdb::mysql::Datconnect mysqlConnector("192.168.0.101",3306,"sysappv2.alpha","develop","123456");  
+	//octetos::toolkit::clientdb::mysql::Datconnect mysqlConnector("192.168.0.101",3306,"sysappv2.alpha","develop","123456");  
     octetos::toolkit::clientdb::mysql::Connector connector; 
     bool flag = false;  
     try
     {
-		flag = connector.connect(&mysqlConnector);
+		flag = connector.connect(&sysapp::datConect);
 	}
 	catch(octetos::toolkit::clientdb::SQLException& ex)
 	{
@@ -64,7 +66,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 	
-    if(person1.shortname(connector))
+    if(person1.downShortname(connector))
     {
                 if(verbose)   std::cout << ""<< person1.getName1() << " " << person1.getName3() << std::endl;
     }
@@ -80,7 +82,7 @@ int main(int argc, char **argv)
     {
         for(auto p : *lst)
         {
-            if(p->shortname(connector) and verbose)
+            if(p->downShortname(connector) and verbose)
             {
                 if(verbose)  std::cout << ""<< p->getName1() << " " << p->getName3() << std::endl;
             }
