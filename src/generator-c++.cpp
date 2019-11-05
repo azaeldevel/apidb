@@ -115,7 +115,7 @@ namespace generators
             //for (auto const& [key, val] : *(itT->second))//class Table : public std::map<std::string,Function>
             for(ConfigureProject::Table::iterator itCfTb = itT->second->begin(); itCfTb != itT->second->end(); itCfTb++)
             {
-                ofile << "\tstd::vector<" << table.getName()<< "*>* " << table.getName() << "::select_" << itCfTb->second->getName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
+                ofile << "\tstd::vector<" << table.getName()<< "*>* " << table.getName() << "::" << itCfTb->second->getName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
 
                 
                 const apidb::ConfigureProject::Parameters* params = itCfTb->second->getParameters();
@@ -269,7 +269,7 @@ namespace generators
                         //for (auto const& [key, val] : *(itT->second))//class Table : public std::map<const char*, const Function*>
                         for(ConfigureProject::Table::iterator itCfTb = itT->second->begin(); itCfTb != itT->second->end(); itCfTb++)
                         {
-                                ofile << "\tbool " << table.getName() << "::download_" << itCfTb->first << "(octetos::toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
+                                ofile << "\tbool " << table.getName() << "::" << itCfTb->first << "(octetos::toolkit::clientdb::mysql::Connector& connector)"<<std::endl;
                                 ofile << "\t{ " << std::endl;
                                 ofile << "\t\tstd::string sqlString = \"SELECT ";
                                 const apidb::ConfigureProject::Parameters* params = itCfTb->second->getParameters();
@@ -730,7 +730,7 @@ namespace generators
 		writeCopyContructorCPP(table,ofile);
 		writeDefaultContructorCPP(table,ofile);			
 		writeInsertCPP(table,ofile);
-                writeDownloadsCPP(table,ofile);
+        writeDownloadsCPP(table,ofile);
 		writeSelectsCPP(table,ofile);
 		ofile << std::endl; 
     }
@@ -857,18 +857,19 @@ namespace generators
                 }
                 file <<"}"<<std::endl;
     }*/
-        void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
-        {                
-                //for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
-			const ConfigureProject::Table* tb = configureProject.findSelectTable(table.getName());
-			if(tb != NULL)
-			{
-                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itF = tb->begin(); itF != tb->end(); itF++)
-                        {
-                                ofile << "\t\tbool download_" << itF->first << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
-                        }
-			}
+    void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
+    {                
+        //for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
+        const ConfigureProject::Table* tb = configureProject.findDownloadTable(table.getName());
+        if(tb != NULL)
+        {
+            for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itF = tb->begin(); itF != tb->end(); itF++)
+            {
+                ofile << "\t\tbool " << itF->first << "(octetos::toolkit::clientdb::mysql::Connector& connector);"<<std::endl;
+            }
         }
+    }
+        
 	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile)
 	{
 			ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::toolkit::clientdb::mysql::Connector& connector,const std::string& where, int leng = 0);"<<std::endl;
@@ -889,7 +890,7 @@ namespace generators
 					//std::cout << "Se encontro la tabla '" << table.getName() << std::endl;
                         for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = tb->begin(); itT != tb->end(); itT++)
                         {
-                                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select_" << itT->second->getName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
+                                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* " << itT->second->getName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
                                 //std::cout << "Generando codigo para  : " << itT->second->getName() << std::endl;
                                 const apidb::ConfigureProject::Parameters* params = itT->second->getParameters();                                
                                 apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
@@ -1001,67 +1002,67 @@ namespace generators
 	}
 	void CPP::createClassMethodesH(const apidb::symbols::Table& table,std::ofstream& ofile)
         {
-		std::string insertMethode = "";
-                for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
+            std::string insertMethode = "";
+            for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
+            {
+                //get
+                if((it->second->getOutType().compare("char") == 0) | (it->second->getOutType().compare("short") == 0) | (it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0) | (it->second->getOutType().compare("float") == 0) | (it->second->getOutType().compare("double") == 0))
                 {
-			//get
-			if((it->second->getOutType().compare("char") == 0) | (it->second->getOutType().compare("short") == 0) | (it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0) | (it->second->getOutType().compare("float") == 0) | (it->second->getOutType().compare("double") == 0))
-			{
-				if(it->second->getClassReferenced() == NULL)//si es foreing key
-				{
-					ofile <<"\t\t"<< it->second->getOutType() << " ";						
-				}
-				else
-				{
-					ofile <<"\t\t"<< "const " << it->second->getClassReferenced()->getName() << "& ";
-				}
-			}
-			else
-			{
-				ofile <<"\t\t" << "const " << it->second->getOutType() <<"& ";
-			}		
-			ofile << it->second->getGet() << " const;"<< std::endl;
-			
-                        
-                        //get key
-                         if(it->second->isPrimaryKey() && !it->second->isForeignKey())
-                        {
-                                ofile <<"\t\t"<< it->second->getOutType() << " getKey" << it->second->getUpperName() << "() const;"<< std::endl;
-                        }
-                        else if(it->second->isForeignKey())
-                        {
-                                ofile <<"\t\t"<< it->second->getOutType() << " getKey" << it->second->getUpperName() << "() const;"<< std::endl;
-                        }
-			
-			//getString()			
-			ofile << "\t\tstd::string get" << it->second->getUpperName() << "String() const;"<< std::endl;		
-			//update
-			ofile << "\t\tbool " << "update" << it->second->getUpperName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
-			if(it->second->getClassReferenced() != 0)
-                        {
-                                ofile << " const " << it->second->getClassReferenced()->getName() << "& " << it->second->getName();
-                        }
-                        else if((it->second->getOutType().compare("std::string") == 0))
-                        {
-                                ofile << "const std::string& " << it->second->getName();
-                        }
-                        else if((it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0))
-			{
-				ofile << it->second->getOutType() << " " << it->second->getName();						
-			}
-			else
-			{
-				ofile << it->second->getOutType() << " " << it->second->getName();
-			}
-			ofile << ");"<< std::endl;            
-                }  
+                    if(it->second->getClassReferenced() == NULL)//si es foreing key
+                    {
+                        ofile <<"\t\t"<< it->second->getOutType() << " ";						
+                    }
+                    else
+                    {
+                        ofile <<"\t\t"<< "const " << it->second->getClassReferenced()->getName() << "& ";
+                    }
+                }
+                else
+                {
+                    ofile <<"\t\t" << "const " << it->second->getOutType() <<"& ";
+                }		
+                ofile << it->second->getGet() << " const;"<< std::endl;
+                
+                            
+                //get key
+                if(it->second->isPrimaryKey() && !it->second->isForeignKey())
+                {
+                    ofile <<"\t\t"<< it->second->getOutType() << " getKey" << it->second->getUpperName() << "() const;"<< std::endl;
+                }
+                else if(it->second->isForeignKey())
+                {
+                    ofile <<"\t\t"<< it->second->getOutType() << " getKey" << it->second->getUpperName() << "() const;"<< std::endl;
+                }
+                
+                //getString()			
+                ofile << "\t\tstd::string get" << it->second->getUpperName() << "String() const;"<< std::endl;		
+                //update
+                ofile << "\t\tbool " << "update" << it->second->getUpperName() << "(octetos::toolkit::clientdb::mysql::Connector& connector,";
+                if(it->second->getClassReferenced() != 0)
+                            {
+                                    ofile << " const " << it->second->getClassReferenced()->getName() << "& " << it->second->getName();
+                            }
+                            else if((it->second->getOutType().compare("std::string") == 0))
+                            {
+                                    ofile << "const std::string& " << it->second->getName();
+                            }
+                            else if((it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0))
+                {
+                    ofile << it->second->getOutType() << " " << it->second->getName();						
+                }
+                else
+                {
+                    ofile << it->second->getOutType() << " " << it->second->getName();
+                }
+                ofile << ");"<< std::endl;            
+        }
                  
 		writeKeyContructorH(table,ofile);		
 		writeCopyContructorH(table,ofile);
 		writeDefaultContructorH(table,ofile);
 		writeInsertH(table,ofile);	
-                writeSelectsH(table,ofile);
-                writeDownloadsH(table,ofile);
+        writeSelectsH(table,ofile);
+        writeDownloadsH(table,ofile);
     }
     void CPP::createClassAttributesH(const apidb::symbols::Table& table,std::ofstream& ofile)
     {

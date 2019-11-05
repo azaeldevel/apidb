@@ -17,7 +17,6 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	- GTK 3 library
 	- Tar library
 	- Doxygen (opcional)
-
 En tiempo de construcion
 	-Inkscape  solo como herramienta para generar el icono
 
@@ -32,10 +31,10 @@ En tiempo de construcion
 	Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
 	1.- unzip apidb-master.zip //Descomprimir archivo
 	2.- cd apidb-master/src/build // entrar en el directorio
-	3.- cmake -DCMAKE_BUILD_TYPE=Release -DAPIDB_VERSION_STAGE=betarelease ..
+	3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease ..
 	4.- make
 	5.- sudo cpack --config CPackConfig.cmake
-	6.- sudo ./apidb-*-Linux.sh  --prefix=/usr/local
+	6.- sudo ./apidb-*-Linux.sh  --prefix=/usr
                 Do you accept the license? [yN]:
                 ¿?..
                 Saying no will install in: X

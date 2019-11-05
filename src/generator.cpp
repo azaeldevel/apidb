@@ -162,7 +162,7 @@ namespace generators
 		
 		//std::cout<<"Creating cmake.modules..."<<std::endl;
 		//cmake.modules
-		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
+		if(configureProject.builDirectory.empty() | (configureProject.builDirectory.compare(".") == 0))
 		{
 			std::string str = "cmake.modules";			
 			mkdir(str.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -199,7 +199,7 @@ namespace generators
 		toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_NAMES octetos-toolkit-common-c++)"<<std::endl;
 		toolkitcommonconifg<<"FIND_LIBRARY(OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY"<<std::endl;
 		  toolkitcommonconifg<<"NAMES ${OCTETOS_TOOLKIT_COMMON_CPP_NAMES}"<<std::endl;
-		  toolkitcommonconifg<<"PATHS /usr/lib/octetos/toolkit/common /usr/local/lib/octetos/toolkit/common /usr/lib/x86_64-linux-gnu/octetos/toolkit/common"<<std::endl;
+		  toolkitcommonconifg<<"PATHS  /lib /lib32 /lib64 /usr/lib /usr/local/lib"<<std::endl;
 		  toolkitcommonconifg<<"PATH_SUFFIXES octetos-toolkit-common-c++"<<std::endl;
 		toolkitcommonconifg<<")"<<std::endl;
 
@@ -248,15 +248,15 @@ namespace generators
 		toolkitclientdbConfig<<"ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR)"<<std::endl;
 
 		toolkitclientdbConfig<<"FIND_PATH(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR toolkit/clientdb/clientdb.hpp"<<std::endl;
-		  toolkitclientdbConfig<<"/include/octetos/toolkit/clientdb"<<std::endl;
-		  toolkitclientdbConfig<<"/usr/include/octetos/toolkit/clientdb"<<std::endl;
-		  toolkitclientdbConfig<<"/usr/local/include/octetos/toolkit/clientdb"<<std::endl;
+		  toolkitclientdbConfig<<"/include/octetos"<<std::endl;
+		  toolkitclientdbConfig<<"/usr/include/octetos"<<std::endl;
+		  toolkitclientdbConfig<<"/usr/local/include/octetos"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
 		toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES octetos-toolkit-clientdb-myc++)"<<std::endl;
 		toolkitclientdbConfig<<"FIND_LIBRARY(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY"<<std::endl;
 		  toolkitclientdbConfig<<"NAMES ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES}"<<std::endl;
-		  toolkitclientdbConfig<<"PATHS /lib /lib64 /usr/lib /usr/lib/octetos/toolkit/clientdb /usr/local/lib/octetos/toolkit/clientdb /usr/lib/x86_64-linux-gnu/octetos/toolkit/clientdb"<<std::endl;
+		  toolkitclientdbConfig<<"PATHS /lib /lib32 /lib64 /usr/lib /usr/local/lib "<<std::endl;
 		  toolkitclientdbConfig<<"PATH_SUFFIXES octetos-toolkit-clientdb-myc++"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
@@ -284,12 +284,12 @@ namespace generators
 		  toolkitclientdbConfig<<"OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR"<<std::endl;
 		  toolkitclientdbConfig<<")"<<std::endl;
 		toolkitclientdbConfig.close();
-                }                
-                else
-                {
-                        std::cerr << "No hay soporte para este lenguaje en cmake" << std::endl;
-                        return false;
-                }
+        }                
+        else
+        {
+            std::cerr << "No hay soporte para este lenguaje en cmake" << std::endl;
+            return false;
+        }
 		//std::cout<<"Creating MySQLConfig.cmake..."<<std::endl;
 		namefile = "MySQLConfig.cmake";
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))

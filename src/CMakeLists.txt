@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
-PROJECT(apidb VERSION 3.1.1.2 LANGUAGES CXX)
+PROJECT(apidb VERSION 3.1.2.2 LANGUAGES CXX)
 #SET(CMAKE_CXX_STANDARD 11)
 #SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 #SET(CMAKE_CXX_EXTENSIONS OFF)
@@ -109,7 +109,6 @@ ADD_LIBRARY(${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR}-o
 set_target_properties(${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR}-obj  PROPERTIES POSITION_INDEPENDENT_CODE 1 )
 ADD_LIBRARY(${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR} SHARED $<TARGET_OBJECTS:${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR}-obj>)
 
-
 ADD_EXECUTABLE(${PROJECT_NAME}-build apidb-build.cpp ${SOURCES_BUILDING})
 
 TARGET_LINK_LIBRARIES(apidb-build ${LIBRARIES} ${LIBREADER} ${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR})
@@ -134,6 +133,16 @@ IF(Doxygen_FOUND AND APIDB_DOC)
 	)
 ENDIF()
 
+if(APIDB_EXAMPLES)
+    #ADD_EXECUTABLE(capture examples/capture_v${${PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )
+    #TARGET_LINK_LIBRARIES(capture ${LIBRARIES} ${LIBREADER} ${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR})
+
+    ADD_EXECUTABLE(createProy examples/createProy_v${${PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )
+    TARGET_LINK_LIBRARIES(createProy ${LIBRARIES} ${LIBREADER} ${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR})
+    
+    #add_custom_command(examples/sysapp.apidb COMMAND ./examples/createProy WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Creación de ejemplo.." )
+	#ADD_DEPENDENCIES(examples/sysapp.apidb examples/capture examples/createProy)
+endif()
 
 ###################################################################################################################
 ###INSTALL
