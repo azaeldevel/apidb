@@ -108,9 +108,10 @@ namespace apidb
                 
                 static const char* strNewFunct;
                 
-                static void row_activated(GtkTreeView       *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data);
+                static void row_activated(GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data);
                 static char checkTypeNode(GtkTreeModel *model,GtkTreeIter* iter);
                 static const char* getTableName(GtkTreeModel *model,GtkTreeIter* iter,std::map<const char*,ConfigureProject::Table*,symbols::cmp_str>*);                
+                static gboolean remove(GtkWidget *widget, GdkEvent  *event,gpointer user_data);
                 
         public:                
                 void fill();

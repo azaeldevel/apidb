@@ -28,6 +28,13 @@ namespace octetos
 namespace apidb
 { 
 
+    gboolean TreeView::remove(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+    {
+        TreeView* wgTree  = (TreeView*)user_data;
+        std::cout << "Prueba key press\n";
+        
+        return false;
+    }
         const char* TreeView::getTableName(GtkTreeModel *model,GtkTreeIter* iter,std::map<const char*,ConfigureProject::Table*,symbols::cmp_str>* list)
         {
                 const char* path = gtk_tree_model_get_string_from_iter(model,iter);
@@ -210,6 +217,7 @@ namespace apidb
                 //GtkCellRenderer *add;
                 view = gtk_tree_view_new();    
                 g_signal_connect(G_OBJECT(view), "row-activated", G_CALLBACK(row_activated), this);
+                g_signal_connect(G_OBJECT(view), "key-press-event", G_CALLBACK(remove), this);
                 
                 col = gtk_tree_view_column_new();
                 gtk_tree_view_column_set_title(col, "Tablas");
