@@ -39,7 +39,6 @@ namespace octetos
 {
 namespace apidb
 {
-
 	const ConfigureProject::Table* ConfigureProject::findSelectTable(const std::string& str)const
 	{	
 		//std::cout << "Buscar '" << str << "' en lista de select." << std::endl;
@@ -87,7 +86,7 @@ namespace apidb
                         {
                                 str += ",";
                                 str += (*it);
-                        }                        
+                        }
                 }
                 
                 return str;

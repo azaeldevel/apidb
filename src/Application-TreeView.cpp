@@ -21,19 +21,60 @@
 
 #include "Application.hpp"
 #include "Errors.hpp"
+#include "map"
+#include "ConfigureProject.hpp"
 
 
 namespace octetos
 {
 namespace apidb
 { 
-
-    gboolean TreeView::remove(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+    gboolean TreeView::delete_keypress (GtkWidget *widget, GdkEventKey *event, gpointer user_data)
     {
-        TreeView* wgTree  = (TreeView*)user_data;
-        std::cout << "Prueba key press\n";
+        TreeView* treeview = (TreeView*)user_data;
         
-        return false;
+        if (event->keyval == GDK_KEY_KP_Delete || event->keyval == GDK_KEY_Delete)
+        {
+            if(treeview->activeDelete)
+            {
+                treeview->tbDelete->erase(treeview->itDelete);
+                treeview->activeDelete = false;
+                treeview->tbDelete = NULL;
+                treeview->fill();
+                treeview->getApplication()->setSaved(false);
+            }
+        }  
+        
+        return TRUE;
+    }
+    bool TreeView::removeFunction(char* path_gtk, std::map<const char*,octetos::apidb::ConfigureProject::Table*,symbols::cmp_str>* lst, TreeView* treeview)
+    {
+        const char* vPath[] = {"","","",NULL};
+        const char delim[] = ":"; 
+        char* path = path_gtk;
+        int i = -1;
+        do
+        {
+            i++;
+            vPath[i] = strtok(path, delim);
+            path = NULL;
+            std::cout << "i = " << i << ", ";
+            if(vPath[i] != NULL) std::cout << vPath[i] << "\n";
+        }
+        while(vPath[i] != NULL);
+        std::cout << "\n";
+        std::map<const char*,octetos::apidb::ConfigureProject::Table*,symbols::cmp_str>::iterator it = lst->begin();
+        std::advance(it,std::atoi(vPath[1]));
+        treeview->tbDelete = it->second;
+        std::cout << "Class:" << treeview->tbDelete->getName() << "\n";
+        std::map<const char*, const octetos::apidb::ConfigureProject::Function*,symbols::cmp_str>::iterator itF = treeview->tbDelete->begin();
+        std::advance(itF,std::atoi(vPath[2]));
+        treeview->itDelete = itF;
+        treeview->activeDelete = true;
+        //const octetos::apidb::ConfigureProject::Function* fn = itF->second;
+        //std::cout << "Function:" << fn->getName() << "\n";
+        //cl->erase(itF);
+        return true;
     }
         const char* TreeView::getTableName(GtkTreeModel *model,GtkTreeIter* iter,std::map<const char*,ConfigureProject::Table*,symbols::cmp_str>* list)
         {
@@ -80,8 +121,8 @@ namespace apidb
                         ptr = strtok(NULL, delim);
                         count++;
                 }
-                 if(count == 3)
-                 {
+                if(count == 3)
+                {
                          return 'F';
                 }
                 else if(count == 2)
@@ -98,12 +139,13 @@ namespace apidb
                 }
                         
         }
+        
 	void TreeView::row_activated (GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data)
-	{    
+	{
         GtkTreeModel *model;
         GtkTreeIter iter;
         TreeView* wgTree  = (TreeView*)user_data;
-                 
+        
         model = gtk_tree_view_get_model(view);
 
         if (!gtk_tree_model_get_iter(model, &iter, path))
@@ -119,7 +161,10 @@ namespace apidb
         {
             case 'F':
             {
-                
+                if(removeFunction((char*)name,wgTree->list,wgTree))
+                {
+                    wgTree->getApplication()->setSaved(false);
+                }
                 break;
             }
             case 'R':
@@ -178,7 +223,7 @@ namespace apidb
         }              
 	}
         void TreeView::fill()
-        {         
+        {
                 treestore = gtk_tree_store_new(1,G_TYPE_STRING);
                 //std::cout << "Creating..." << std::endl;
                 gtk_tree_store_append(treestore, &toplevel, NULL);
@@ -217,7 +262,7 @@ namespace apidb
                 //GtkCellRenderer *add;
                 view = gtk_tree_view_new();    
                 g_signal_connect(G_OBJECT(view), "row-activated", G_CALLBACK(row_activated), this);
-                g_signal_connect(G_OBJECT(view), "key-press-event", G_CALLBACK(remove), this);
+                g_signal_connect(G_OBJECT(view), "key-press-event", G_CALLBACK(delete_keypress), this);
                 
                 col = gtk_tree_view_column_new();
                 gtk_tree_view_column_set_title(col, "Tablas");
@@ -250,6 +295,8 @@ namespace apidb
                 view = create(); 
                 selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
                 gtk_box_pack_start(GTK_BOX(vbox), view, TRUE, TRUE, 1); 
+                
+                activeDelete = false;
         }
         
         

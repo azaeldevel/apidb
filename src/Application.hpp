@@ -105,14 +105,16 @@ namespace apidb
                 GtkWidget *view;
                 std::map<const char*,ConfigureProject::Table*,symbols::cmp_str>* list;
                 Application* app;
-                
+                std::map<const char*, const octetos::apidb::ConfigureProject::Function*,symbols::cmp_str>::iterator itDelete;
+                bool activeDelete;
                 static const char* strNewFunct;
+                octetos::apidb::ConfigureProject::Table* tbDelete;
                 
                 static void row_activated(GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer  user_data);
                 static char checkTypeNode(GtkTreeModel *model,GtkTreeIter* iter);
-                static const char* getTableName(GtkTreeModel *model,GtkTreeIter* iter,std::map<const char*,ConfigureProject::Table*,symbols::cmp_str>*);                
-                static gboolean remove(GtkWidget *widget, GdkEvent  *event,gpointer user_data);
-                
+                static const char* getTableName(GtkTreeModel *model,GtkTreeIter* iter,std::map<const char*,ConfigureProject::Table*,symbols::cmp_str>*);                 
+                static bool removeFunction(char* path_gtk, std::map<const char*,octetos::apidb::ConfigureProject::Table*,symbols::cmp_str>*, TreeView* treeview);
+                static gboolean delete_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
         public:                
                 void fill();
                 GtkWidget* create();
