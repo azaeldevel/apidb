@@ -19,9 +19,10 @@
  * 
  * */
 
+#include <map>
+
 #include "Application.hpp"
 #include "Errors.hpp"
-#include "map"
 #include "ConfigureProject.hpp"
 
 
@@ -32,9 +33,9 @@ namespace apidb
     gboolean TreeView::delete_keypress (GtkWidget *widget, GdkEventKey *event, gpointer user_data)
     {
         TreeView* treeview = (TreeView*)user_data;
-        
-        if (event->keyval == GDK_KEY_KP_Delete || event->keyval == GDK_KEY_Delete)
+        if (event->keyval == GDK_KEY_KP_Delete | event->keyval == GDK_KEY_Delete )
         {
+            std::cout << "Delete event \n";
             if(treeview->activeDelete)
             {
                 treeview->tbDelete->erase(treeview->itDelete);
