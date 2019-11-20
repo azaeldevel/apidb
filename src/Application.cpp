@@ -156,6 +156,25 @@ namespace apidb
 			}
 			config->namespace_detect = gtk_combo_box_get_active_id(GTK_COMBO_BOX(inNameSpaceDetect));
 		}
+		
+		
+		if(inExeEdited)
+        {
+                        std::string exe = gtk_entry_get_text(GTK_ENTRY(inExe));
+                        if(exe.empty())
+                        {
+                                        GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "El nombre del proyecto no puede estar vacio",
+                                                                        "Error", g_strerror (errno));
+                                        gtk_dialog_run (GTK_DIALOG (msg));       
+                                        gtk_widget_destroy (msg);                          
+                                return false;
+                        }
+                        config->executable_target = exe;
+        }
                 
                 
                 if(config->conectordb == NULL)
@@ -774,6 +793,7 @@ namespace apidb
                 gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
                 gtk_combo_box_set_active(GTK_COMBO_BOX(inNameSpaceDetect),inNameSpaceDetect_comboxid(config->namespace_detect));
 				if(!config->writeDatconnect.empty() and config->writeDatconnect.compare("¿?") != 0) gtk_entry_set_text (GTK_ENTRY(inWConnName),config->writeDatconnect.c_str());
+                gtk_entry_set_text (GTK_ENTRY(inExe),config->executable_target.c_str());
                 
                 gtk_entry_set_text (GTK_ENTRY(inLoc),config->conectordb->getHost().c_str());
                 gtk_entry_set_text (GTK_ENTRY(inPort),std::to_string(config->conectordb->getPort()).c_str());
@@ -819,7 +839,7 @@ namespace apidb
 		{
 			filename = filefly;
 		}
-		std::cout << "Step 1 "<< std::endl;
+		//std::cout << "Step 1 "<< std::endl;
 		if(app->config ==  NULL)
 		{
 			app->config = new ConfigureProject();
@@ -830,7 +850,7 @@ namespace apidb
 			app->config = new ConfigureProject();
 		}
 		
-		std::cout << "Step 2" << std::endl;
+		//std::cout << "Step 2" << std::endl;
 		try
 		{
 			if(!app->config->readConfig(std::string(filename)))
@@ -860,13 +880,13 @@ namespace apidb
 			gtk_widget_destroy (msg);
 			return;
 		}
-		std::cout << "Step 3" << std::endl;
+		//std::cout << "Step 3" << std::endl;
 		if(app->driver != NULL) 
 		{
 			delete (app->driver);
 			app->driver = NULL;
 		}
-		std::cout << "Step 3.5 : " << app->config->conectordb->getHost() << std::endl;
+		//std::cout << "Step 3.5 : " << app->config->conectordb->getHost() << std::endl;
 		try
 		{
 			if(!app->config->testConexion())
@@ -893,7 +913,7 @@ namespace apidb
 			gtk_widget_show_all(app->window);
 			return;
 		}
-		std::cout << "Step 3.6" << std::endl;
+		//std::cout << "Step 3.6" << std::endl;
 		app->driver = new Driver(*(app->config));
 		std::string msgstr = "";
 		if(toolkit::Error::check())
@@ -912,7 +932,7 @@ namespace apidb
 			gtk_widget_show_all(app->window);
 			return;
 		}
-		std::cout << "Step 4" << std::endl;
+		//std::cout << "Step 4" << std::endl;
 		if(!app->driver->analyze(NULL))
 		{
 			std::string msgstr = "";
@@ -966,6 +986,29 @@ namespace apidb
                                 return true;
                         }
                 }
+                return FALSE;
+        }
+        gboolean Application::inExe_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)
+        {
+                Application* app = (Application*)user_data;
+                 
+                if(app->config != NULL)
+                {
+                                app->inExeEdited = true;
+                                if(app->isSaved)app->setSaved(false);
+                }
+                else if(!app->isOpen)
+                {
+                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                                        GTK_MESSAGE_ERROR,
+                                                                        GTK_BUTTONS_CLOSE,
+                                                                        "Deve crear un proyecto antes de captura informacion.",
+                                                                        "Error", g_strerror (errno));
+                                gtk_dialog_run (GTK_DIALOG (msg)); 
+                                gtk_widget_destroy (msg);
+                }
+                
                 return FALSE;
         }
         gboolean Application::inName_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)
@@ -1202,6 +1245,16 @@ namespace apidb
                 gtk_box_pack_start(GTK_BOX(boxNameSpaceDetect), inNameSpaceDetect, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxNameSpaceDetect, FALSE, FALSE,0);        
                 g_signal_connect(G_OBJECT(inNameSpaceDetect), "changed", G_CALLBACK(inNameSpaceDetect_changed), this);
+                
+                
+                GtkWidget *boxExe = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget * lbExe = gtk_label_new ("Ejecutable:");
+                gtk_box_pack_start(GTK_BOX(boxExe), lbExe, FALSE, FALSE,0); 
+                inExe = gtk_entry_new();
+                gtk_box_pack_start(GTK_BOX(boxExe), inExe, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxInfo), boxExe, FALSE, FALSE,0);
+                gtk_widget_set_events(inName,GDK_KEY_PRESS_MASK);
+                g_signal_connect(G_OBJECT(inExe), "key-press-event", G_CALLBACK(inExe_keypress), this);
         }
         int Application::inNameSpaceDetect_comboxid(const std::string& str)
 		{

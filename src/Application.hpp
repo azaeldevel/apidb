@@ -177,7 +177,7 @@ namespace apidb
 				static void documen_open(Application*,const std::string& filefly = "");
 				static void wConn_OnClick (GtkToggleButton *toggle_button,  gpointer  user_data);
 				static gboolean inWConnName_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
-				
+				static gboolean inExe_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data);
 				
                 GtkWidget *window;
                 GtkWidget *vboxMain;
@@ -243,6 +243,8 @@ namespace apidb
                 GtkFileChooser *chooser_BuilDirectory;
                 GtkWidget *inNameSpaceDetect;
                 bool inNameSpaceDetectEdited;
+                GtkWidget *inExe;
+                bool inExeEdited;
                 //Conexion
                 static const char* titleConex;
                 bool conexEdited;
