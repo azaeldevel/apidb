@@ -2,7 +2,7 @@
 1.- Cree la base de datos con la descripcion en le archivo 'db.sql'
 2.- Abre el archivo 'coredb.apidb' con la aplicacion APIDB y editelo según los parámetros en su servidor. https://www.youtube.com/watch?v=9O6aDedacRE
 3.- Compile y ejeucte el program, simplmete mente le desplegara
-    ./capture --verbose
+    ./developing3 --verbose
 Le desplegara un mesaje como el que sigue:
     SQL Server version: 10.4.8
     Inserted n1-6375 ap-6375 de Mexico.

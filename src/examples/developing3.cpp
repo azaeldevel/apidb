@@ -44,13 +44,13 @@ int main(int argc, char **argv)
     n1 += std::to_string(random);
     std::string ap = "ap-";
     ap += std::to_string(random);
-    if(person1.insert(connector,n1,ap))
+    if(person1.insert(connector,n1,"MEX"))
     {
 		if(verbose)   std::cout << "Inserted "<< n1 << " " << ap << " de Mexico." << std::endl;
 	}
 	else
 	{
-		std::cerr << "Fail "<< n1 << std::endl;
+		std::cerr << "Fail 1 "<< n1 << std::endl;
 		return EXIT_FAILURE;
 	}
     
