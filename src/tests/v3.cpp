@@ -13,7 +13,6 @@
 
 #include "../apidb.hpp"
 #include "../Errors.hpp"
-#include <toolkit/common/common.hpp>
 #include "../common.hpp"
 
 std::string random_string( size_t length )
@@ -34,7 +33,7 @@ std::string random_string( size_t length )
 
 static std::string filename;
 static std::string filename_nlst;
-static octetos::toolkit::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
+static octetos::db::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysapp.alpha","develop","123456"); 
 //static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 static std::string sysappv1Filename = "sysappv1-alpha.apidb";
 static std::string sysappv20Filename = "sysappv20-alpha.apidb";
@@ -64,9 +63,9 @@ int clean_apidb(void)
 
 void testCreateProject_nlst()
 {
-	octetos::toolkit::Version version;
+	octetos::core::Version version;
 	version.setNumbers(0,1,0);
-        version.setStage(octetos::toolkit::Version::Stage::alpha);
+        version.setStage(octetos::core::Version::Stage::alpha);
         
 	octetos::apidb::ConfigureProject configProject_nls;
         configProject_nls.name = "sysapp";
@@ -98,9 +97,9 @@ void testConecction()
 
 void testCreateProject()
 {
-	octetos::toolkit::Version version;
+	octetos::core::Version version;
 	version.setNumbers(0,1,0);
-	version.setStage(octetos::toolkit::Version::Stage::alpha);
+	version.setStage(octetos::core::Version::Stage::alpha);
 	octetos::apidb::ConfigureProject configProject;
 	configProject.name = "sysapp";
 	configProject.builDirectory  = "apidb";
@@ -149,9 +148,9 @@ void testBuild_nlst()
 	octetos::apidb::ConfigureProject configProject_nls;
         if(!configProject_nls.readConfig(filename_nlst))
         {
-                if(octetos::toolkit::Error::check())
+                if(octetos::core::Error::check())
                 {
-                        std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+                        std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
                 }
                 CU_ASSERT(false);
                 return;
@@ -160,9 +159,9 @@ void testBuild_nlst()
         octetos::apidb::Tracer tracer(0);
         if(!driver.driving((octetos::apidb::Tracer*)NULL))
         {
-                if(octetos::toolkit::Error::check())
+                if(octetos::core::Error::check())
                 {
-                        std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+                        std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
                 }
                 CU_ASSERT(false);
         }
@@ -173,12 +172,12 @@ void testBuild_nlst()
 void testBuild()
 {   
 		octetos::apidb::ConfigureProject configProject;
-		//octetos::toolkit::Error::write(octetos::toolkit::Error("Teste error",1,__FILE__,__LINE__));
+		//octetos::core::Error::write(octetos::core::Error("Teste error",1,__FILE__,__LINE__));
         if(!configProject.readConfig(filename))
         {                
-                if(octetos::toolkit::Error::check())
+                if(octetos::core::Error::check())
                 {
-                        std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+                        std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
                 }
                 CU_ASSERT(false);
                 exit(EXIT_FAILURE);// hay pruebas que depende de esta.
@@ -190,9 +189,9 @@ void testBuild()
         if(driver.driving(NULL) == false)
         {
 			std::cout << "Fail  -> "<< std::endl;
-                if(octetos::toolkit::Error::check())
+                if(octetos::core::Error::check())
                 {
-                        std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+                        std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
                 }
                 CU_ASSERT(false);
                 exit(EXIT_FAILURE);// hay pruebas que depende de esta.
@@ -202,9 +201,9 @@ void testBuild()
 	std::list<std::string> listName;
 	if(driver.getTablesName(listName) == false)
 	{
-		if(octetos::toolkit::Error::check())
+		if(octetos::core::Error::check())
 		{
-			std::cout << "\nError  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+			std::cout << "\nError  -> "<< octetos::core::Error::get().describe() << std::endl;
 		}
 		CU_ASSERT(false);
 	}
@@ -216,9 +215,9 @@ void testBuild()
 	std::list<std::string> listFields;
 	if(driver.getFiledsName(listFields,"Persons") == false)
 	{
-		if(octetos::toolkit::Error::check())
+		if(octetos::core::Error::check())
 		{
-			std::cout << "\nError  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+			std::cout << "\nError  -> "<< octetos::core::Error::get().describe() << std::endl;
 		}
 		CU_ASSERT(false);
 	}
@@ -233,9 +232,9 @@ void testCompile()
 	octetos::apidb::ConfigureProject configProject;
 	if(!configProject.readConfig(filename))
 	{                
-		if(octetos::toolkit::Error::check())
+		if(octetos::core::Error::check())
 		{
-			std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+			std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
 		}
 		CU_ASSERT(false);
 		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
@@ -248,7 +247,7 @@ void testCompile()
 	{
 
                 int ret = 0;
-		octetos::toolkit::Version ver = octetos::apidb::getPakageVersion();
+		octetos::core::Version ver = octetos::apidb::getPakageVersion();
                 std::string cmd = "cp ../tests/developing";
 				cmd += std::to_string(ver.getMajor());
 				cmd += ".cpp ";
@@ -322,9 +321,9 @@ void testBackwardCompatiblev1()
 	octetos::apidb::ConfigureProject configProject;
 	if(!configProject.readConfig(sysappv1Filename))
 	{                
-		if(octetos::toolkit::Error::check())
+		if(octetos::core::Error::check())
 		{
-			std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+			std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
 		}
 		CU_ASSERT(false);
 		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
@@ -334,9 +333,9 @@ void testBackwardCompatiblev1()
 	if(driver.driving(NULL) == false)
 	{
 		std::cout << "Fail  -> "<< std::endl;
-		if(octetos::toolkit::Error::check())
+		if(octetos::core::Error::check())
 		{
-			std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+			std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
 		}
 		CU_ASSERT(false);
 		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
@@ -352,9 +351,9 @@ void testBackwardCompatiblev20()
 	octetos::apidb::ConfigureProject configProject;
 	if(!configProject.readConfig(sysappv20Filename))
 	{                
-		if(octetos::toolkit::Error::check())
+		if(octetos::core::Error::check())
 		{
-			std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+			std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
 		}
 		CU_ASSERT(false);
 		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
@@ -364,9 +363,9 @@ void testBackwardCompatiblev20()
 	if(driver.driving(NULL) == false)
 	{
 		std::cout << "Fail  -> "<< std::endl;
-		if(octetos::toolkit::Error::check())
+		if(octetos::core::Error::check())
 		{
-			std::cout << "Error  -> "<< octetos::toolkit::Error::get().describe() << std::endl;
+			std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
 		}
 		CU_ASSERT(false);
 		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
@@ -381,7 +380,7 @@ int main(int argc, char *argv[])
 	/* initialize the CUnit test registry */
 	if (CUE_SUCCESS != CU_initialize_registry()) return CU_get_error();
 
-	octetos::toolkit::Version ver = octetos::apidb::getPakageVersion();
+	octetos::core::Version ver = octetos::apidb::getPakageVersion();
 	std::string pkName = octetos::apidb::getPakageName();
 	std::string classVersionString = std::string("Probando ") + pkName + " " + ver.toString();
 	pSuite = CU_add_suite(classVersionString.c_str(), init_apidb, clean_apidb);

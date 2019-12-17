@@ -217,7 +217,7 @@ namespace apidb
                     //std::cout << "Tabla size:" <<  wgTree->list->size() << std::endl;
                     std::string msgstr = "Fallo interno, no se encontro la tabla busca ";
                     msgstr = msgstr + strTable + "'";
-                    toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::APPLICATION_GTK3_ROWACTIVE_NOTFOUND_TABLE,__FILE__,__LINE__));
+                    core::Error::write(core::Error(msgstr,ErrorCodes::APPLICATION_GTK3_ROWACTIVE_NOTFOUND_TABLE,__FILE__,__LINE__));
                 }
             }
             break;

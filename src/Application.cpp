@@ -29,10 +29,10 @@ namespace octetos
 namespace apidb
 {
 
-        Application* TreeView::getApplication()const
-        {
-                return app;
-        }
+    Application* TreeView::getApplication()const
+    {
+        return app;
+    }
 	bool Application::downConf()
 	{
                 if(isSaved and !isOpen) return true;
@@ -181,7 +181,7 @@ namespace apidb
                 {
                         if(config->inputLenguaje == InputLenguajes::MySQL)
                         {
-                                        config->conectordb = new toolkit::clientdb::mysql::Datconnect();
+                                        config->conectordb = new octetos::db::clientdb::mysql::Datconnect();
                         }
                         else
                         {
@@ -211,15 +211,15 @@ namespace apidb
                                 gtk_widget_destroy (msg);
                                 return false;
                         }
-                        if(toolkit::clientdb::Connector::is_ipv4_address(loc))
+                        if(octetos::db::clientdb::Connector::is_ipv4_address(loc))
                         {
                                 config->conectordb->setHost(loc);                                
                         }
-                        else if(toolkit::clientdb::Connector::is_ipv6_address(loc))
+                        else if(octetos::db::clientdb::Connector::is_ipv6_address(loc))
                         {
                                 config->conectordb->setHost(loc);    
                         }
-                        else if(toolkit::clientdb::Connector::is_valid_domain_name(loc))
+                        else if(octetos::db::clientdb::Connector::is_valid_domain_name(loc))
                         {
                                 config->conectordb->setHost(loc);    
                         }
@@ -347,9 +347,9 @@ namespace apidb
                         else
                         {
                                 std::string msgstr = "";
-                                if(toolkit::Error::check())
+                                if(core::Error::check())
                                 {
-                                                msgstr = toolkit::Error::get().what();
+                                                msgstr = core::Error::get().what();
                                 }
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -399,9 +399,9 @@ namespace apidb
 		if(!flagDriver)
 		{
 			std::string msgstr = "";
-			if(toolkit::Error::check())
+			if(core::Error::check())
 			{
-				msgstr = toolkit::Error::get().what();
+				msgstr = core::Error::get().what();
 			}
 			else
 			{
@@ -475,9 +475,9 @@ namespace apidb
 			if(!app->isOpen || !app->isSaved)
 			{//no esta abierto el proyecto.                                
 				std::string msgstr;
-				if(toolkit::Error::check())
+				if(core::Error::check())
 				{
-					msgstr = toolkit::Error::get().what();
+					msgstr = core::Error::get().what();
 				}
 				else
 				{
@@ -490,9 +490,9 @@ namespace apidb
 			}
 			
 			std::string msgstr;
-			if(toolkit::Error::check())
+			if(core::Error::check())
 			{
-				msgstr = toolkit::Error::get().what();
+				msgstr = core::Error::get().what();
 			}
 			else
 			{
@@ -511,9 +511,9 @@ namespace apidb
 			if(!app->downConf())
 			{
 				std::string msgstr;
-				if(toolkit::Error::check())
+				if(core::Error::check())
 				{
-					msgstr = toolkit::Error::get().what();
+					msgstr = core::Error::get().what();
 				}
 				else
 				{
@@ -530,9 +530,9 @@ namespace apidb
 			{
 				//std::cout << "Step 2.3" << std::endl;
 				std::string msgstr;
-				if(toolkit::Error::check())
+				if(core::Error::check())
 				{
-					msgstr = toolkit::Error::get().what();
+					msgstr = core::Error::get().what();
 				}
 				else
 				{
@@ -857,9 +857,9 @@ namespace apidb
 			{                 
 				std::string msgstr = "";
 				GtkWidget *msg;
-				if(toolkit::Error::check())
+				if(core::Error::check())
 				{
-					toolkit::Error e = toolkit::Error::get();
+					core::Error e = core::Error::get();
 					msgstr = e.what();
 					msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
 				}
@@ -897,7 +897,7 @@ namespace apidb
 				gtk_widget_destroy (msg);
 			}
 		}
-		catch(toolkit::clientdb::SQLException e)
+		catch(octetos::db::clientdb::SQLException e)
 		{
 			std::string strmsg = ">>";
 			strmsg += e.what();
@@ -916,9 +916,9 @@ namespace apidb
 		//std::cout << "Step 3.6" << std::endl;
 		app->driver = new Driver(*(app->config));
 		std::string msgstr = "";
-		if(toolkit::Error::check())
+		if(core::Error::check())
 		{
-			toolkit::Error e = toolkit::Error::get();
+			core::Error e = core::Error::get();
 			msgstr = e.what();			
 			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
 			gtk_dialog_run (GTK_DIALOG (msg));
@@ -936,9 +936,9 @@ namespace apidb
 		if(!app->driver->analyze(NULL))
 		{
 			std::string msgstr = "";
-			if(toolkit::Error::check())
+			if(core::Error::check())
 			{
-				msgstr = toolkit::Error::get().what();
+				msgstr = core::Error::get().what();
 			}
 			else
 			{
@@ -1272,7 +1272,7 @@ namespace apidb
 			}
 			else
 			{
-				toolkit::Error::write(toolkit::Error("Opción de 'Espacio virtual detectado.'",ErrorCodes::APIDB_FAIL,__FILE__,__LINE__));
+				core::Error::write(core::Error("Opción de 'Espacio virtual detectado.'",ErrorCodes::APIDB_FAIL,__FILE__,__LINE__));
 				return -1;
 			}
 		}
@@ -1511,7 +1511,7 @@ namespace apidb
 						return;
 					}
 				}
-				catch(octetos::toolkit::clientdb::SQLException e)
+				catch(octetos::db::clientdb::SQLException e)
 				{
 					GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,e.what());
 					gtk_dialog_run (GTK_DIALOG (msg)); 
@@ -1532,9 +1532,9 @@ namespace apidb
                                 if(!app->driver->analyze(NULL))
                                 {
                                         std::string msgstr = "";
-                                        if(toolkit::Error::check())
+                                        if(core::Error::check())
                                         {
-                                                msgstr = toolkit::Error::get().what();
+                                                msgstr = core::Error::get().what();
                                         }
                                         else
                                         {
@@ -1568,7 +1568,7 @@ namespace apidb
                 if(config == NULL)
                 {
                         std::string msg = "Deve cargar del proyecto. '";
-                        toolkit::Error::write(toolkit::Error(msg,ErrorCodes::APPLICATION_GTK3_CONFIGPROJECT_NULL));
+                        core::Error::write(core::Error(msg,ErrorCodes::APPLICATION_GTK3_CONFIGPROJECT_NULL));
                         return false;
                 }
                 

@@ -53,7 +53,7 @@ namespace generators
                  * \brief Simplemete analiza la base de datos y genera la informacion de la tabla de simbolos
                  * \param progress Use NULL para especificar que no desea log o una instacia valida de toolkit::ActivityProgress para generarlos.
                  * */
-                virtual bool analyze(toolkit::ActivityProgress* progress) = 0;
+                virtual bool analyze(core::ActivityProgress* progress) = 0;
                 
                 /**
                  * \brief Retorna un referancia a la tabla de simbolos, no es modificable si necesita poder modicar 
@@ -68,7 +68,7 @@ namespace generators
                 /**
                  * \brief Requiere la configuracion del proyecto y un conector la base de datos valido.
                  * */
-		Analyzer(const ConfigureProject&, octetos::toolkit::clientdb::Connector*,toolkit::ActivityProgress* progress);
+		Analyzer(const ConfigureProject&, octetos::db::clientdb::Connector*,core::ActivityProgress* progress);
                 /**
                  * \brief Destructor
                  * */
@@ -76,7 +76,7 @@ namespace generators
                 /**
                  *\brief Nuevo sistema de recuperacion de Mensajes. 
                  **/
-                toolkit::ActivityProgress& getOutput();
+                core::ActivityProgress& getOutput();
                 /**
                  * \brief Retorna una referencia al la estructura de configuracion de Proyecto.
                  **/
@@ -90,21 +90,21 @@ namespace generators
                 /**
                  * \brief COnector a la base de datos.
                  * */
-		octetos::toolkit::clientdb::Connector* connector;
+		octetos::db::clientdb::Connector* connector;
 		/**
                  * \brief Esta funcion es la encarga de resolver cada simbolo encontrado en la base de datos.
                  * */
 		bool listing();  
-                /**
-                 * \brief Indica la configuracion del proyecto.
-                 * */
-                const ConfigureProject& configureProject;
-                /**
-                 * \brief Para envio de mensaje al usuario.
-                 * */
-                toolkit::ActivityProgress* progress;				
-		bool basicSymbols(symbols::ISpace* ispace,toolkit::ActivityProgress* progress);
-		bool fillKeyType(symbols::ISpace* ispace,toolkit::ActivityProgress* progress);
+        /**
+        * \brief Indica la configuracion del proyecto.
+        * */
+        const ConfigureProject& configureProject;
+        /**
+        * \brief Para envio de mensaje al usuario.
+        * */
+        core::ActivityProgress* progress;				
+		bool basicSymbols(symbols::ISpace* ispace,core::ActivityProgress* progress);
+		bool fillKeyType(symbols::ISpace* ispace,core::ActivityProgress* progress);
 	};
 }
 }

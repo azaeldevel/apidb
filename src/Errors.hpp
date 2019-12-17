@@ -22,7 +22,7 @@
 #ifndef APIDB_ERRORS_HPP
 #define APIDB_ERRORS_HPP
 
-#include <toolkit/common/common.hpp>
+#include <core/common.hh>
 
 namespace octetos
 {
@@ -37,7 +37,7 @@ namespace apidb
                 /**
                  * \brief Para complier con el requisito de toolkit::Error
                  * */
-                READFILE_TEMPUNPACKFAIL = toolkit::Error::Codes::ROOFCODE,//No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.
+                READFILE_TEMPUNPACKFAIL = core::Error::Codes::ROOFCODE,//No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.
 				
 				ERROR_UNNSOPORTED_INPUTLANGUAGE,
 				

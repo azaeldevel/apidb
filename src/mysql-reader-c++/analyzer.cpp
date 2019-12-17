@@ -54,13 +54,13 @@ namespace mysql
 		}
 		else
 		{
-			toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
 			return false;
 		}
 		
 		return true;
 	}
-	bool Analyzer::analyze(toolkit::ActivityProgress* progress)
+	bool Analyzer::analyze(core::ActivityProgress* progress)
 	{
 		bool flag = listing();		
 		if(flag == false) return false;
@@ -102,7 +102,7 @@ namespace mysql
 		
 		return true;
 	}
-	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn,toolkit::ActivityProgress* p) : apidb::Analyzer(config,conn,p)
+	Analyzer::Analyzer(const ConfigureProject& config,octetos::db::clientdb::Connector* conn,core::ActivityProgress* p) : apidb::Analyzer(config,conn,p)
 	{
 	}
 	

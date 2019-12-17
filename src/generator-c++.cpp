@@ -776,7 +776,7 @@ namespace generators
 		}
 		else
 		{
-			toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
 			return false;
 		}
 		
@@ -819,7 +819,7 @@ namespace generators
 			}
 			else
 			{
-				toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+				core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
 				return false;
 			}
 		}	
@@ -1143,7 +1143,7 @@ namespace generators
 		}
 		else
 		{
-			toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
 			return false;
 		}
 		
@@ -1209,7 +1209,7 @@ namespace generators
 			}
 			else
 			{
-				toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+				core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
 				return false;
 			}
 		}	

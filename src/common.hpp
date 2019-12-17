@@ -26,7 +26,7 @@
 #include <list>
 #include <vector>
 #include <map>
-#include <toolkit/clientdb/clientdb-mysql.hpp>
+#include <db/clientdb-mysql.hh>
 #include <libxml/xmlreader.h>
 #include <iostream>
 #include <cstring>
@@ -51,7 +51,7 @@ namespace apidb
         }
         class ConfigureProject;
         
-        typedef octetos::toolkit::clientdb::Datconnect::ServerType InputLenguajes;
+        typedef octetos::db::clientdb::Datconnect::ServerType InputLenguajes;
 	std::string getInputLenguaje(InputLenguajes);	
         InputLenguajes getInputLenguaje(const std::string&);	
         
@@ -96,7 +96,7 @@ namespace apidb
         /**
          * \brief Clase de manejo de errores.
          **/
-	class BuildException : public toolkit::Error
+	class BuildException : public core::Error
 	{
 	public:
                 /**
@@ -318,11 +318,11 @@ namespace apidb
                         /**
                          * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
                          * */
-			bool basicSymbols(octetos::toolkit::clientdb::mysql::Connector& connect);
+			bool basicSymbols(octetos::db::clientdb::mysql::Connector& connect);
                         /**
                          * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
                          * */			
-			bool fillKeyType(octetos::toolkit::clientdb::mysql::Connector& connect, const SymbolsTable&);
+			bool fillKeyType(octetos::db::clientdb::mysql::Connector& connect, const SymbolsTable&);
 
 			short countRef;
                 public:
@@ -467,7 +467,7 @@ namespace apidb
         /**
          * \brief Implementa el modelo de mensajes basodo en la politica de toolkit::ActivityProgress.
          * */
-        class Tracer : public toolkit::ActivityProgress
+        class Tracer : public core::ActivityProgress
         {
         public:
                 /**
@@ -481,15 +481,15 @@ namespace apidb
                 /**
                  * \brief Requerida por toolkit::ActivityProgress
                  * */
-                virtual void add(const toolkit::Error&);
+                virtual void add(const core::Error&);
                 /**
                  * \brief Requerida por toolkit::ActivityProgress
                  * */
-                virtual void add(const toolkit::Confirmation&);
+                virtual void add(const core::Confirmation&);
                 /**
                  * \brief Requerida por toolkit::ActivityProgress
                  * */
-                virtual void add(const toolkit::Warning&);
+                virtual void add(const core::Warning&);
         };
 }
 }

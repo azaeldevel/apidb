@@ -40,7 +40,7 @@ namespace apidb
                 /**
                  * \brief la version del archivo de proyecto.
                  * */
-                octetos::toolkit::Version projectVersion;
+                octetos::core::Version projectVersion;
                 
         public:      
                 /**
@@ -143,11 +143,11 @@ namespace apidb
                 /**
                  * \brief La version del proyecto resultado.
                  * */
-                octetos::toolkit::Version versionResult;
+                octetos::core::Version versionResult;
                 /**
                  * \brief Información de conexión a la base de datos
                  * */
-                octetos::toolkit::clientdb::Datconnect* conectordb;
+                octetos::db::clientdb::Datconnect* conectordb;
                 /**
                  * \brief Identifica el tipo del Servidor de base de datos
                  * */
@@ -206,7 +206,7 @@ namespace apidb
                  * \brief Version del archivo de proyecto.
                  * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
                  **/
-                const octetos::toolkit::Version& getVersionProject()const;
+                const octetos::core::Version& getVersionProject()const;
                 
     };
 }

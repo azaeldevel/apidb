@@ -44,17 +44,17 @@ namespace apidb
                  * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
                  * \brief Lee el servidor
                  * */
-		virtual bool analyze(toolkit::ActivityProgress* progress);
+		virtual bool analyze(core::ActivityProgress* progress);
                 /**
                  * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
                  * \brief Genera los archivos de codigo
                  **/
-		virtual bool generate(toolkit::ActivityProgress* progress);
+		virtual bool generate(core::ActivityProgress* progress);
                 /**
                  * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
                  * \brief Se puede considar como una llamada a 'analyze' seguida de una llamda a 'generate'
                  * */
-		bool driving(toolkit::ActivityProgress* progress);
+		bool driving(core::ActivityProgress* progress);
                 
                 /**
                  * \deprecated Ya que esta funcion genera log  mediante la salida estandar sera removido en favor de toolkit::ActivityProgress en v2 
@@ -86,7 +86,7 @@ namespace apidb
 				bool getFiledsName(std::list<std::string>& retList,const std::string& table)const;
 				
 	private:
-		octetos::toolkit::clientdb::Connector* connector;		
+		octetos::db::clientdb::Connector* connector;		
                 apidb::Analyzer* analyzer;
 		const ConfigureProject& configureProject;
 	};

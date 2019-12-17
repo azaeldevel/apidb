@@ -174,13 +174,13 @@ namespace apidb
 			}
 			else
 			{
-				toolkit::Error::write(toolkit::Error("No se encontró espacio global en la tabla de simbolos.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+				core::Error::write(core::Error("No se encontró espacio global en la tabla de simbolos.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 				return NULL;
 			}
 		}	
 		else
 		{
-			toolkit::Error::write(toolkit::Error("Sopurte para espacios virtuales en desarrollo.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+			core::Error::write(core::Error("Sopurte para espacios virtuales en desarrollo.",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 			return NULL;
 		}
 	}
@@ -211,19 +211,19 @@ namespace apidb
         {
                 std::cout << str ;
         }
-        void Tracer::add(const toolkit::Error& e)
+        void Tracer::add(const core::Error& e)
         {
                 std::cout << e.describe();
         }
-        void Tracer::add(const toolkit::Confirmation& c)
+        void Tracer::add(const core::Confirmation& c)
         {
                 std::cout <<  c.getBrief();
         }
-        void Tracer::add(const toolkit::Warning& w)
+        void Tracer::add(const core::Warning& w)
         {
                 std::cout << w.getBrief();
         }
-        Tracer::Tracer(int a) : toolkit::ActivityProgress(a)
+        Tracer::Tracer(int a) : core::ActivityProgress(a)
         {
                 
         }
@@ -235,9 +235,9 @@ namespace apidb
 	}
 	const char* BuildException::what() const throw()
 	{
-		return toolkit::Error::what();
+		return core::Error::what();
 	}
-        BuildException::BuildException(const std::string &description) throw() : toolkit::Error(description,toolkit::Error::ERROR_UNKNOW)
+        BuildException::BuildException(const std::string &description) throw() : core::Error(description,core::Error::ERROR_UNKNOW)
         {
 	}
                

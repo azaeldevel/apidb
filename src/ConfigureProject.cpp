@@ -160,13 +160,13 @@ namespace apidb
                 bool ret = false;
                 if(inputLenguaje == apidb::InputLenguajes::MySQL)
                 {
-                       octetos::toolkit::clientdb::mysql::Connector  connector;
+                       octetos::db::clientdb::mysql::Connector  connector;
                        ret = connector.connect(conectordb);
                        connector.close();
                 }
                 return ret;
         }
-        const octetos::toolkit::Version& ConfigureProject::getVersionProject()const
+        const octetos::core::Version& ConfigureProject::getVersionProject()const
         {
                 return projectVersion;
         }
@@ -212,7 +212,7 @@ namespace apidb
                                 xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"MySQL");
                                 break;
                         default:
-                                toolkit::Error::write(toolkit::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
+                                core::Error::write(core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
                                 return false;                                
                 }
                 
@@ -227,7 +227,7 @@ namespace apidb
                                 xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"C");
                                 break;
                         default:
-                                toolkit::Error::write(toolkit::Error("Lenguaje de salida desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
+                                core::Error::write(core::Error("Lenguaje de salida desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
                                 return false;  
                 }
                 
@@ -239,7 +239,7 @@ namespace apidb
                                 xmlNewChild(pk_node, NULL, (const xmlChar *)"name", (const xmlChar *)"CMake");
                                 break;
                         default:
-                                toolkit::Error::write(toolkit::Error("Opcion de enpaquetado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
+                                core::Error::write(core::Error("Opcion de enpaquetado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
                                 return false;  
                 }
                 
@@ -254,7 +254,7 @@ namespace apidb
                                 xmlNewChild(cmpl_node, NULL, (const xmlChar *)"name", (const xmlChar *)"SHARED");
                                 break;
                         default:
-                                toolkit::Error::write(toolkit::Error("Opcion de compilado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
+                                core::Error::write(core::Error("Opcion de compilado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
                                 return false;  
                 }
                 
@@ -388,18 +388,18 @@ namespace apidb
                 
                 if(filename.size()>0)
                 {
-                        if(rename(tarFilename.c_str(),filename.c_str()) != 0)
-                        {
-                                std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
-                                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,__FILE__,__LINE__));
-                                return false;
-                        }                        
+                    if(rename(tarFilename.c_str(),filename.c_str()) != 0)
+                    {
+                        std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
+                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,__FILE__,__LINE__));
+                        return false;
+                    }                        
                 }
                 else
                 {
-                                std::string msgstr = "Especifique el nombre completo del archivo.";
-                                toolkit::Error::write(toolkit::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_NOFULL_PATCH_PROJECT,__FILE__,__LINE__));
-                                return false;
+                    std::string msgstr = "Especifique el nombre completo del archivo.";
+                    core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_NOFULL_PATCH_PROJECT,__FILE__,__LINE__));
+                    return false;
                 }
                 
                 //std::cout<< "Escritura de proyecto completada." << std::endl;

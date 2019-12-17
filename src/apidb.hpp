@@ -29,12 +29,12 @@ namespace octetos
 {
 namespace apidb
 {
-	octetos::toolkit::Version getPakageVersion();
+	octetos::core::Version getPakageVersion();
 	std::string getPakageName();	
-        static const octetos::toolkit::Version ver100(1,0,0);
-        static const octetos::toolkit::Version ver110(1,1,0);
-	static const octetos::toolkit::Version ver200(2,0,0);
-	static const octetos::toolkit::Version ver220(2,2,0);
+        static const octetos::core::Version ver100(1,0,0);
+        static const octetos::core::Version ver110(1,1,0);
+	static const octetos::core::Version ver200(2,0,0);
+	static const octetos::core::Version ver220(2,2,0);
 }
 }
 #endif

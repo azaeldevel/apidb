@@ -30,13 +30,13 @@ namespace octetos
 {
 namespace apidb
 {	
-	bool Analyzer::fillKeyType(symbols::ISpace* ispace,toolkit::ActivityProgress* progress)
+	bool Analyzer::fillKeyType(symbols::ISpace* ispace,core::ActivityProgress* progress)
 	{		
 		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
-				if((((symbols::Table*)ispace)->fillKeyType(*(toolkit::clientdb::mysql::Connector*)connector,symbolsTable)) == false) return false;
+				if((((symbols::Table*)ispace)->fillKeyType(*(octetos::db::clientdb::mysql::Connector*)connector,symbolsTable)) == false) return false;
 			}
 			else if(ispace->what() == symbols::SpaceType::SPACE)
 			{
@@ -50,13 +50,13 @@ namespace apidb
 		}
 		else
 		{
-			toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
 			return false;
 		}
 		
 		return true;
 	}
-	bool Analyzer::basicSymbols(symbols::ISpace* ispace,toolkit::ActivityProgress* progress)
+	bool Analyzer::basicSymbols(symbols::ISpace* ispace,core::ActivityProgress* progress)
 	{
 		if(progress != NULL)
 		{
@@ -73,7 +73,7 @@ namespace apidb
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
 				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
-				if(((symbols::Table*)ispace)->basicSymbols(*(toolkit::clientdb::mysql::Connector*)connector) == false) return false;
+				if(((symbols::Table*)ispace)->basicSymbols(*(octetos::db::clientdb::mysql::Connector*)connector) == false) return false;
 			}
 			else if(ispace->what() == symbols::SpaceType::SPACE)
 			{
@@ -87,14 +87,14 @@ namespace apidb
 		}
 		else
 		{
-			toolkit::Error::write(toolkit::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
+			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
 			return false;
 		}
 		
 		return true;
 	}
 	
-	toolkit::ActivityProgress& Analyzer::getOutput()
+	core::ActivityProgress& Analyzer::getOutput()
         {
                 return *progress;
         }
@@ -106,7 +106,7 @@ namespace apidb
 	Analyzer::~Analyzer()
 	{
 	}
-	Analyzer::Analyzer(const ConfigureProject& config,octetos::toolkit::clientdb::Connector* conn,toolkit::ActivityProgress* p) : configureProject(config), connector(conn),progress(p),symbolsTable(config)
+	Analyzer::Analyzer(const ConfigureProject& config,octetos::db::clientdb::Connector* conn,core::ActivityProgress* p) : configureProject(config), connector(conn),progress(p),symbolsTable(config)
 	{
 	}
 	

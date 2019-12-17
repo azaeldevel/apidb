@@ -23,7 +23,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <exception>
-#include <toolkit/common/common.hpp>
+#include <core/common.hh>
 
 #include "driver.hpp"
 #include "../common.hpp"
@@ -43,7 +43,7 @@ namespace apidb
 		{
 			std::string msg = "No se encontro el espacio Global '";
 			msg += configureProject.name + "'";
-			toolkit::Error::write(toolkit::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
+			core::Error::write(core::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
 			return false;
 		}
 		
@@ -75,7 +75,7 @@ namespace apidb
 			{
 				std::string msg = "No se encontro el espacio Global '";
 				msg += configureProject.name + "'";
-				toolkit::Error::write(toolkit::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
+				core::Error::write(core::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
 				return false;
 			}
 			space = global;
@@ -91,7 +91,7 @@ namespace apidb
 			{
 				if(getTablesName(ret,(symbols::Space*)ispace) == false) 
 				{
-					toolkit::Error::write(toolkit::Error("Fallo durante la resolución de nombres de tabla.",ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
+					core::Error::write(core::Error("Fallo durante la resolución de nombres de tabla.",ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
 					return false;
 				}
 			}
@@ -128,7 +128,7 @@ namespace apidb
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
 			//std::cout <<"Creando conector." <<std::endl;
-			connector = new octetos::toolkit::clientdb::mysql::Connector();
+			connector = new octetos::db::clientdb::mysql::Connector();
 			try
 			{
 				bool flag = connector->connect(config.conectordb);
@@ -138,18 +138,18 @@ namespace apidb
 					connector = NULL;
 				}
 			}
-			catch(octetos::toolkit::clientdb::SQLException ex)
+			catch(octetos::db::clientdb::SQLException ex)
 			{
 				//std::cout <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
-				toolkit::Error err(ex.what(), ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
-				toolkit::Error::write(err);
+				core::Error err(ex.what(), ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
+				core::Error::write(err);
 			}
 		}
 		else
 		{
 			//std::cout <<"Lenguaje de entrada desconocido."<<std::endl;
-			toolkit::Error err("Lenguaje no soportado", ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
-			toolkit::Error::write(err);
+			core::Error err("Lenguaje no soportado", ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
+			core::Error::write(err);
 		}
 		//std::cout <<"Objeto contruido" <<std::endl;
 	}
@@ -159,7 +159,7 @@ namespace apidb
 		return configureProject.outputLenguaje;
 	}
 	
-	bool Driver::driving(toolkit::ActivityProgress* progress)
+	bool Driver::driving(core::ActivityProgress* progress)
 	{
 		if(connector == NULL) 
 		{
@@ -214,7 +214,7 @@ namespace apidb
 		return false;
 	}*/
 	
-	bool Driver::generate(toolkit::ActivityProgress* progress)
+	bool Driver::generate(core::ActivityProgress* progress)
 	{		
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
@@ -262,7 +262,7 @@ namespace apidb
                 if(flagCPP && flagCMAKE)
                 {
                         std::string msg1 =  "Generacion completada.\n" ;
-                        toolkit::Confirmation conf1(msg1);
+                        core::Confirmation conf1(msg1);
                         if(progress != NULL) progress->add(conf1);	
                         return true;				
                 }
@@ -336,7 +336,7 @@ namespace apidb
                 }
 	}*/
 	
-	bool Driver::analyze(toolkit::ActivityProgress* progress)
+	bool Driver::analyze(core::ActivityProgress* progress)
 	{
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
@@ -354,11 +354,11 @@ namespace apidb
                 
                 if(progress != NULL)
                 {
-                        toolkit::Confirmation conf1("\n\tAnalisis de codigo...");
+                        core::Confirmation conf1("\n\tAnalisis de codigo...");
                         progress->add(conf1);
                         std::string msg ="\n\tLenguaje de entrada: " ;
                         msg+= getInputLenguaje(configureProject.inputLenguaje) + "\n";
-                        toolkit::Confirmation conf2(msg);
+                        core::Confirmation conf2(msg);
                         progress->add(conf2);
                 }
 		bool flagAnalyzer = false;
@@ -366,17 +366,17 @@ namespace apidb
 		{
 			flagAnalyzer = analyzer->analyze(progress);
 		}
-		catch(toolkit::clientdb::SQLException e)
+		catch(db::clientdb::SQLException e)
 		{
-			toolkit::Error err(e.what(),ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
-			toolkit::Error::write(err);
+			core::Error err(e.what(),ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
+			core::Error::write(err);
 			return false;
 		}
 		if(flagAnalyzer == false) //reading tables
 		{
-			if(toolkit::Error::check())
+			if(core::Error::check())
 			{
-				if(progress != NULL)progress->add(toolkit::Error::get());
+				if(progress != NULL)progress->add(core::Error::get());
 				return false;
 			}
 			else
@@ -384,7 +384,7 @@ namespace apidb
 				if(progress != NULL)
 				{
 					std::string msgErr ="\tFallo al leer durante la fase de analisis." ;
-					toolkit::Error err(msgErr,toolkit::Error::ERROR_UNKNOW,__FILE__,__LINE__);
+					core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
 					progress->add(err);
 					return false;
 				}

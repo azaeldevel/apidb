@@ -37,9 +37,9 @@ namespace mysql
         class Analyzer : public apidb::Analyzer
         {
         public:            
-            virtual bool analyze(toolkit::ActivityProgress* progress);
+            virtual bool analyze(core::ActivityProgress* progress);
             //Analyzer();
-            Analyzer(const ConfigureProject&,octetos::toolkit::clientdb::Connector*,toolkit::ActivityProgress* progress);		
+            Analyzer(const ConfigureProject&,octetos::db::clientdb::Connector*,core::ActivityProgress* progress);		
             virtual ~Analyzer();         	
             std::ostream& print(std::ostream &stream);
             
