@@ -156,28 +156,27 @@ namespace apidb
         }*/
                 
 	bool ConfigureProject::testConexion()
+    {
+        bool ret = false;
+        if(inputLenguaje == apidb::InputLenguajes::MySQL)
         {
-                bool ret = false;
-                if(inputLenguaje == apidb::InputLenguajes::MySQL)
-                {
-                       octetos::db::clientdb::mysql::Connector  connector;
-                       ret = connector.connect(conectordb);
-                       connector.close();
-                }
-                return ret;
+            octetos::db::clientdb::mysql::Connector  connector;
+            ret = connector.connect(conectordb);
+            connector.close();
         }
-        const octetos::core::Version& ConfigureProject::getVersionProject()const
-        {
-                return projectVersion;
-        }
-        ConfigureProject::ConfigureProject()
-        {
-                conectordb = NULL;
-        }
+        return ret;
+    }
+    const octetos::core::Version& ConfigureProject::getVersionProject()const
+    {
+        return projectVersion;
+    }
+    ConfigureProject::ConfigureProject()
+    {
+        conectordb = NULL;
+    }
 	bool ConfigureProject::saveConfig(const std::string& filename)
 	{
-                //std::cout << "Saving to " << filename << std::endl;                
-                
+        //std::cout << "Saving to " << filename << std::endl;
 		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
 		xmlNodePtr root_node = xmlNewNode(NULL, (const xmlChar *)"project");
 		xmlDocSetRootElement(doc, root_node);

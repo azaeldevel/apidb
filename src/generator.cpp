@@ -117,13 +117,13 @@ namespace generators
 		cmakelists<<"IF(MySQL_FOUND)"<<std::endl;
 		cmakelists<<"INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
-		cmakelists<<"FIND_PACKAGE(octeos-toolkit-common-c++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
-		cmakelists<<"IF(OCTETOS_TOOLKIT_COMMON_CPP_FOUND)"<<std::endl;
-		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"FIND_PACKAGE(octeos-core-cc REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
+		cmakelists<<"IF(OCTETOS_CORE_CC_FOUND)"<<std::endl;
+		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_CORE_CC_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
-		cmakelists<<"FIND_PACKAGE(octetos-toolkit-clientdb-myc++ REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
-		cmakelists<<"IF(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)"<<std::endl;
-		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"FIND_PACKAGE(octetos-db-mysql-cc REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
+		cmakelists<<"IF(OCTETOS_CORE_DB_MYSQL_CC_FOUND)"<<std::endl;
+		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_CORE_DB_MYSQL_CC_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
 		cmakelists<<std::endl;
 		if(!configureProject.executable_target.empty() and configureProject.executable_target.compare("¿?") != 0)//la adicion de un ejecutable es opcional
@@ -139,7 +139,7 @@ namespace generators
 				cmakelists <<".cpp "; 
 			}
 			cmakelists <<")"<<std::endl;
-			cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
+			cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_CORE_DB_MYSQL_CC_LIBRARIES} ${OCTETOS_CORE_CC_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
 		}
 		cmakelists<<"ADD_LIBRARY(${PROJECT_NAME} ";
         if(configureProject.compiled == apidb::Compiled::SHARED)
@@ -151,7 +151,7 @@ namespace generators
             cmakelists  << " STATIC ";
         }                
         cmakelists << "${PROJECT_NAME}.cpp )"<<std::endl;
-		cmakelists<<"TARGET_LINK_LIBRARIES(${PROJECT_NAME}  ${MYSQL_LIBRARIES} ${OCTETOS_TOOLKIT_COMMON_LIBRARIES}  ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES} )"<<std::endl;
+		cmakelists<<"TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${MYSQL_LIBRARIES} ${OCTETOS_CORE_DB_MYSQL_CC_LIBRARIES} ${OCTETOS_CORE_CC_LIBRARIES})"<<std::endl;
         cmakelists<<"if(APIDBLIB)\n";
         cmakelists<<"set(APIDBLIB ${PROJECT_NAME} PARENT_SCOPE)\n";
         cmakelists<<"endif()\n";
@@ -175,7 +175,7 @@ namespace generators
 		
 	
 		//std::cout<<"Creating toolkit-commonConfig.cmake..."<<std::endl;
-		namefile = "octeos-toolkit-common-c++Config.cmake";
+		namefile = "octeos-core-ccConfig.cmake";
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
                         std::string file = "cmake.modules/";
@@ -186,52 +186,52 @@ namespace generators
 		{
 			toolkitcommonconifg.open(configureProject.builDirectory + "/cmake.modules/" + namefile);
 		}
-		toolkitcommonconifg<<"IF(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)"<<std::endl;
-		  toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_FIND_QUIETLY TRUE)"<<std::endl;
-		toolkitcommonconifg<<"ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR)"<<std::endl;
+		toolkitcommonconifg<<"IF(OCTETOS_CORE_CC_INCLUDE_DIR)"<<std::endl;
+		  toolkitcommonconifg<<"SET(OCTETOS_CORE_CC_FIND_QUIETLY TRUE)"<<std::endl;
+		toolkitcommonconifg<<"ENDIF (OCTETOS_CORE_CC_INCLUDE_DIR)"<<std::endl;
 
-		toolkitcommonconifg<<"FIND_PATH(OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR toolkit/common/common.hpp"<<std::endl;
+		toolkitcommonconifg<<"FIND_PATH(OCTETOS_CORE_CC_INCLUDE_DIR core/common.hh"<<std::endl;
 		  toolkitcommonconifg<<"/include/octetos"<<std::endl;
 		  toolkitcommonconifg<<"/usr/include/octetos"<<std::endl;
 		  toolkitcommonconifg<<"/usr/local/include/octetos"<<std::endl;
 		toolkitcommonconifg<<")"<<std::endl;
 
-		toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_NAMES octetos-toolkit-common-c++)"<<std::endl;
-		toolkitcommonconifg<<"FIND_LIBRARY(OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY"<<std::endl;
-		  toolkitcommonconifg<<"NAMES ${OCTETOS_TOOLKIT_COMMON_CPP_NAMES}"<<std::endl;
-		  toolkitcommonconifg<<"PATHS  /lib /lib32 /lib64 /usr/lib /usr/local/lib"<<std::endl;
-		  toolkitcommonconifg<<"PATH_SUFFIXES octetos-toolkit-common-c++"<<std::endl;
+		toolkitcommonconifg<<"SET(OCTETOS_CORE_CC_NAMES octetos-core-cc)"<< std::endl;
+		toolkitcommonconifg<<"FIND_LIBRARY(OCTETOS_CORE_CC_LIBRARY"<< std::endl;
+		  toolkitcommonconifg<<"NAMES ${OCTETOS_CORE_CC_NAMES}" << std::endl;
+		  toolkitcommonconifg<<"PATHS  /lib /lib64 /lib32 /usr/lib /usr/local/lib/ /usr/lib/octetos/core /usr/local/lib/octetos/core /usr/lib/x86_64-linux-gnu/octetos/core" << std::endl;
+		  toolkitcommonconifg<<"PATH_SUFFIXES octetos-core-cc"<< std::endl;
 		toolkitcommonconifg<<")"<<std::endl;
 
-		toolkitcommonconifg<<"IF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY)"<<std::endl;
-		  toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_FOUND TRUE)"<<std::endl;
-		  toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY} )"<<std::endl;
-		toolkitcommonconifg<<"ELSE (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY)"<<std::endl;
-		  toolkitcommonconifg<<"SET(OCTETOS_TOOLKIT_COMMON_CPP_FOUND FALSE)"<<std::endl;
-		  toolkitcommonconifg<<"SET( OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES )"<<std::endl;
-		toolkitcommonconifg<<"ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY)"<<std::endl;
+		toolkitcommonconifg<<"IF (OCTETOS_CORE_CC_INCLUDE_DIR AND OCTETOS_CORE_CC_LIBRARY)" << std::endl;
+		  toolkitcommonconifg<<"SET(OCTETOS_CORE_CC_FOUND TRUE)" << std::endl;
+		  toolkitcommonconifg<<"SET(OCTETOS_CORE_CC_LIBRARIES ${OCTETOS_CORE_CC_LIBRARY} )" << std::endl;
+		toolkitcommonconifg<<"ELSE (OCTETOS_CORE_CC_INCLUDE_DIR AND OCTETOS_CORE_CC_LIBRARY)" << std::endl;
+		  toolkitcommonconifg<<"SET(OCTETOS_CORE_CC_FOUND FALSE)" << std::endl;
+		  toolkitcommonconifg<<"SET( OCTETOS_CORE_CC_LIBRARIES )" << std::endl;
+		toolkitcommonconifg<<"ENDIF (OCTETOS_CORE_CC_INCLUDE_DIR AND OCTETOS_CORE_CC_LIBRARY)" << std::endl;
 
-		toolkitcommonconifg<<"IF (OCTETOS_TOOLKIT_COMMON_CPP_FOUND)"<<std::endl;
-		  toolkitcommonconifg<<"IF (NOT OCTETOS_TOOLKIT_COMMON_CPP_FIND_QUIETLY)"<<std::endl;
-			toolkitcommonconifg<<"MESSAGE(STATUS \"Found toolkit-common: ${OCTETOS_TOOLKIT_COMMON_CPP_LIBRARY}\")"<<std::endl;
-		  toolkitcommonconifg<<"ENDIF (NOT OCTETOS_TOOLKIT_COMMON_CPP_FIND_QUIETLY)"<<std::endl;
-		toolkitcommonconifg<<"ELSE (OCTETOS_TOOLKIT_COMMON_CPP_FOUND)"<<std::endl;
-		  toolkitcommonconifg<<"IF (OCTETOS_TOOLKIT_COMMON_CPP_FIND_REQUIRED)"<<std::endl;
-			toolkitcommonconifg<<"MESSAGE(STATUS \"Looked for toolkit-common libraries named ${OCTETOS_TOOLKIT_COMMON_CPP_NAMES}.\")"<<std::endl;
-			toolkitcommonconifg<<"MESSAGE(FATAL_ERROR \"Could NOT find toolkit-common library\")"<<std::endl;
-		  toolkitcommonconifg<<"ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_FIND_REQUIRED)"<<std::endl;
-		toolkitcommonconifg<<"ENDIF (OCTETOS_TOOLKIT_COMMON_CPP_FOUND)"<<std::endl;
+		toolkitcommonconifg<<"IF (OCTETOS_CORE_CC_FOUND)" << std::endl;
+		  toolkitcommonconifg<<"IF (NOT OCTETOS_CORE_CC_FIND_QUIETLY)" << std::endl;
+			toolkitcommonconifg<<"MESSAGE(STATUS \"Found Octetos Core: ${OCTETOS_CORE_CC_LIBRARY}\")" << std::endl;
+		  toolkitcommonconifg<<"ENDIF (NOT OCTETOS_CORE_CC_FIND_QUIETLY)" << std::endl;
+		toolkitcommonconifg<<"ELSE (OCTETOS_CORE_CC_FOUND)" << std::endl;
+		  toolkitcommonconifg<<"IF (OCTETOS_CORE_CC_FIND_REQUIRED)"<<std::endl;
+			toolkitcommonconifg<<"MESSAGE(STATUS \"Looked for Octetos Core libraries named ${OCTETOS_CORE_CC_NAMES}.\")" << std::endl;
+			toolkitcommonconifg<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos Core library\")" << std::endl;
+		  toolkitcommonconifg<<"ENDIF (OCTETOS_CORE_CC_FIND_REQUIRED)" << std::endl;
+		toolkitcommonconifg<<"ENDIF (OCTETOS_CORE_CC_FOUND)" << std::endl;
 
 		toolkitcommonconifg<<"MARK_AS_ADVANCED("<<std::endl;
-		  toolkitcommonconifg<<"OCTETOS_TOOLKIT_COMMON_CPP_LIBRARIES"<<std::endl;
-		  toolkitcommonconifg<<"OCTETOS_TOOLKIT_COMMON_CPP_INCLUDE_DIR"<<std::endl;
+		  toolkitcommonconifg<<"OCTETOS_CORE_CC_LIBRARIES"<<std::endl;
+		  toolkitcommonconifg<<"OCTETOS_CORE_CC_INCLUDE_DIR"<<std::endl;
 		  toolkitcommonconifg<<")"<<std::endl;
 		toolkitcommonconifg.close();
                 
         if(configureProject.inputLenguaje  == InputLenguajes::MySQL)
         {
 		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
-		namefile = "octetos-toolkit-clientdb-myc++Config.cmake";
+		namefile = "octetos-db-mysql-ccConfig.cmake";
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
                         std::string file = "cmake.modules/";
@@ -243,45 +243,45 @@ namespace generators
 			toolkitclientdbConfig.open(configureProject.builDirectory + "/cmake.modules/" + namefile);
 		}	
 		
-		toolkitclientdbConfig<<"IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR)"<<std::endl;
-		  toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_QUIETLY TRUE)"<<std::endl;
-		toolkitclientdbConfig<<"ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR)"<<std::endl;
+		toolkitclientdbConfig<<"IF (OCTETOS_CORE_DB_MYSQL_CC_INCLUDE_DIR)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(OCTETOS_CORE_DB_MYSQL_CC_FIND_QUIETLY TRUE)"<<std::endl;
+		toolkitclientdbConfig<<"ENDIF (OCTETOS_CORE_DB_MYSQL_CC_INCLUDE_DIR)"<<std::endl;
 
-		toolkitclientdbConfig<<"FIND_PATH(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR toolkit/clientdb/clientdb.hpp"<<std::endl;
+		toolkitclientdbConfig<<"FIND_PATH(OCTETOS_CORE_DB_MYSQL_CC_INCLUDE_DIR db/clientdb.hh"<<std::endl;
 		  toolkitclientdbConfig<<"/include/octetos"<<std::endl;
 		  toolkitclientdbConfig<<"/usr/include/octetos"<<std::endl;
 		  toolkitclientdbConfig<<"/usr/local/include/octetos"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
-		toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES octetos-toolkit-clientdb-myc++)"<<std::endl;
-		toolkitclientdbConfig<<"FIND_LIBRARY(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY"<<std::endl;
-		  toolkitclientdbConfig<<"NAMES ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES}"<<std::endl;
-		  toolkitclientdbConfig<<"PATHS /lib /lib32 /lib64 /usr/lib /usr/local/lib "<<std::endl;
-		  toolkitclientdbConfig<<"PATH_SUFFIXES octetos-toolkit-clientdb-myc++"<<std::endl;
+		toolkitclientdbConfig<<"SET(OCTETOS_CORE_DB_MYSQL_CC_NAMES octetos-db-mysql-cc)"<<std::endl;
+		toolkitclientdbConfig<<"FIND_LIBRARY(OCTETOS_CORE_DB_MYSQL_CC_LIBRARY"<<std::endl;
+		  toolkitclientdbConfig<<"NAMES ${OCTETOS_CORE_DB_MYSQL_CC_NAMES}"<<std::endl;
+		  toolkitclientdbConfig<<"PATHS /lib /lib64 /lib32 /usr/lib /usr/local/lib/ /usr/lib/octetos/core /usr/local/lib/octetos/core /usr/lib/x86_64-linux-gnu/octetos/core"<<std::endl;
+		  toolkitclientdbConfig<<"PATH_SUFFIXES octetos-db-mysql-cc"<<std::endl;
 		toolkitclientdbConfig<<")"<<std::endl;
 
-		toolkitclientdbConfig<<"IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY)"<<std::endl;
-		  toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND TRUE)"<<std::endl;
-		  toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY} )"<<std::endl;
-		toolkitclientdbConfig<<"ELSE (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY)"<<std::endl;
-		  toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND FALSE)"<<std::endl;
-		  toolkitclientdbConfig<<"SET(OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARIES )"<<std::endl;
-		toolkitclientdbConfig<<"ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR AND OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY)"<<std::endl;
+		toolkitclientdbConfig<<"IF (OCTETOS_CORE_DB_MYSQL_CC_INCLUDE_DIR AND OCTETOS_CORE_DB_MYSQL_CC_LIBRARY)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(OCTETOS_CORE_DB_MYSQL_CC_FOUND TRUE)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(OCTETOS_CORE_DB_MYSQL_CC_LIBRARIES ${OCTETOS_CORE_DB_MYSQL_CC_LIBRARY} )"<<std::endl;
+		toolkitclientdbConfig<<"ELSE (OCTETOS_CORE_DB_MYSQL_CC_INCLUDE_DIR AND OCTETOS_CORE_DB_MYSQL_CC_LIBRARY)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(OCTETOS_CORE_DB_MYSQL_CC_FOUND FALSE)"<<std::endl;
+		  toolkitclientdbConfig<<"SET(OCTETOS_CORE_DB_MYSQL_CC_LIBRARIES )"<<std::endl;
+		toolkitclientdbConfig<<"ENDIF (OCTETOS_CORE_DB_MYSQL_CC_INCLUDE_DIR AND OCTETOS_CORE_DB_MYSQL_CC_LIBRARY)"<<std::endl;
 
-		toolkitclientdbConfig<<"IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)"<<std::endl;
-		  toolkitclientdbConfig<<"IF (NOT OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_QUIETLY)"<<std::endl;
-			toolkitclientdbConfig<<"MESSAGE(STATUS \"Found toolkit-cliendb: ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY}\")"<<std::endl;
-		  toolkitclientdbConfig<<"ENDIF (NOT OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_QUIETLY)"<<std::endl;
-		toolkitclientdbConfig<<"ELSE (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)"<<std::endl;
-		  toolkitclientdbConfig<<"IF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_REQUIRED)"<<std::endl;
-			toolkitclientdbConfig<<"MESSAGE(STATUS \"Looked for toolkit-client libraries named ${OCTETOS_TOOLKIT_CLIENTDB_MYCPP_NAMES}.\")"<<std::endl;
-			toolkitclientdbConfig<<"MESSAGE(FATAL_ERROR \"Could NOT find toolkit-client library\")"<<std::endl;
-		  toolkitclientdbConfig<<"ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FIND_REQUIRED)"<<std::endl;
-		toolkitclientdbConfig<<"ENDIF (OCTETOS_TOOLKIT_CLIENTDB_MYCPP_FOUND)"<<std::endl;
+		toolkitclientdbConfig<<"IF (OCTETOS_CORE_DB_MYSQL_CC_FOUND)"<<std::endl;
+		  toolkitclientdbConfig<<"IF (NOT OCTETOS_CORE_DB_MYSQL_CC_FIND_QUIETLY)"<<std::endl;
+			toolkitclientdbConfig<<"MESSAGE(STATUS \"Found Octetos MySQL C++: ${OCTETOS_CORE_DB_MYSQL_CC_LIBRARY}\")"<<std::endl;
+		  toolkitclientdbConfig<<"ENDIF (NOT OCTETOS_CORE_DB_MYSQL_CC_FIND_QUIETLY)"<<std::endl;
+		toolkitclientdbConfig<<"ELSE (OCTETOS_CORE_DB_MYSQL_CC_FOUND)"<<std::endl;
+		  toolkitclientdbConfig<<"IF (OCTETOS_CORE_DB_MYSQL_CC_FIND_REQUIRED)"<<std::endl;
+			toolkitclientdbConfig<<"MESSAGE(STATUS \"Looked for Octetos MySQL C++ libraries named ${OCTETOS_CORE_DB_MYSQL_CC_NAMES}.\")"<<std::endl;
+			toolkitclientdbConfig<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos MySQL C++ library\")"<<std::endl;
+		  toolkitclientdbConfig<<"ENDIF (OCTETOS_CORE_DB_MYSQL_CC_FIND_REQUIRED)"<<std::endl;
+		toolkitclientdbConfig<<"ENDIF (OCTETOS_CORE_DB_MYSQL_CC_FOUND)"<<std::endl;
 
 		toolkitclientdbConfig<<"MARK_AS_ADVANCED("<<std::endl;
-		  toolkitclientdbConfig<<"OCTETOS_TOOLKIT_CLIENTDB_MYCPP_LIBRARY"<<std::endl;
-		  toolkitclientdbConfig<<"OCTETOS_TOOLKIT_CLIENTDB_MYCPP_INCLUDE_DIR"<<std::endl;
+		  toolkitclientdbConfig<<"OCTETOS_CORE_DB_MYSQL_CC_LIBRARY"<<std::endl;
+		  toolkitclientdbConfig<<"OCTETOS_CORE_DB_MYSQL_CC_INCLUDE_DIR"<<std::endl;
 		  toolkitclientdbConfig<<")"<<std::endl;
 		toolkitclientdbConfig.close();
         }                
@@ -456,7 +456,7 @@ namespace generators
 		//inlcudes in source file
 		getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl;
 		getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
-		getHeaderOutput()<< "#include <toolkit/clientdb/clientdb-mysql.hpp>"<<std::endl<<std::endl;
+		getHeaderOutput()<< "#include <db/clientdb-mysql.hh>"<<std::endl<<std::endl;
 			
 		
 		//writing code				
