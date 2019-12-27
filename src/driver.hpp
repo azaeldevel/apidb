@@ -86,7 +86,7 @@ namespace apidb
 				bool getFiledsName(std::list<std::string>& retList,const std::string& table)const;
 				
 	private:
-		octetos::db::clientdb::Connector* connector;		
+		octetos::db::Connector* connector;		
                 apidb::Analyzer* analyzer;
 		const ConfigureProject& configureProject;
 	};

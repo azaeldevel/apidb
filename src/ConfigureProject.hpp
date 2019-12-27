@@ -40,7 +40,7 @@ namespace apidb
                 /**
                  * \brief la version del archivo de proyecto.
                  * */
-                octetos::core::Version projectVersion;
+                octetos::core::Semver projectVersion;
                 
         public:      
                 /**
@@ -143,11 +143,11 @@ namespace apidb
                 /**
                  * \brief La version del proyecto resultado.
                  * */
-                octetos::core::Version versionResult;
+                octetos::core::Semver versionResult;
                 /**
                  * \brief Información de conexión a la base de datos
                  * */
-                octetos::db::clientdb::Datconnect* conectordb;
+                octetos::db::Datconnect* conectordb;
                 /**
                  * \brief Identifica el tipo del Servidor de base de datos
                  * */

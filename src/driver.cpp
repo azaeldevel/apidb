@@ -128,7 +128,7 @@ namespace apidb
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
 			//std::cout <<"Creando conector." <<std::endl;
-			connector = new octetos::db::clientdb::mysql::Connector();
+			connector = new octetos::db::mysql::Connector();
 			try
 			{
 				bool flag = connector->connect(config.conectordb);
@@ -138,7 +138,7 @@ namespace apidb
 					connector = NULL;
 				}
 			}
-			catch(octetos::db::clientdb::SQLException ex)
+			catch(octetos::db::SQLException ex)
 			{
 				//std::cout <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
 				core::Error err(ex.what(), ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
@@ -366,7 +366,7 @@ namespace apidb
 		{
 			flagAnalyzer = analyzer->analyze(progress);
 		}
-		catch(db::clientdb::SQLException e)
+		catch(db::SQLException e)
 		{
 			core::Error err(e.what(),ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
 			core::Error::write(err);

@@ -39,7 +39,7 @@ namespace mysql
         public:            
             virtual bool analyze(core::ActivityProgress* progress);
             //Analyzer();
-            Analyzer(const ConfigureProject&,octetos::db::clientdb::Connector*,core::ActivityProgress* progress);		
+            Analyzer(const ConfigureProject&,octetos::db::Connector*,core::ActivityProgress* progress);		
             virtual ~Analyzer();         	
             std::ostream& print(std::ostream &stream);
             

@@ -33,7 +33,7 @@ std::string random_string( size_t length )
 
 static std::string filename;
 static std::string filename_nlst;
-static octetos::db::clientdb::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
+static octetos::db::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 //static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 static std::string sysappv1Filename = "sysappv1-alpha.apidb";
 static std::string sysappv20Filename = "sysappv20-alpha.apidb";
@@ -63,9 +63,9 @@ int clean_apidb(void)
 
 void testCreateProject_nlst()
 {
-	octetos::core::Version version;
+	octetos::core::Semver version;
 	version.setNumbers(0,1,0);
-        version.setStage(octetos::core::Version::Stage::alpha);
+    version.setStage(octetos::core::Semver::Stage::alpha);
         
 	octetos::apidb::ConfigureProject configProject_nls;
         configProject_nls.name = "sysapp";
@@ -97,9 +97,9 @@ void testConecction()
 
 void testCreateProject()
 {
-	octetos::core::Version version;
+	octetos::core::Semver version;
 	version.setNumbers(0,1,0);
-	version.setStage(octetos::core::Version::Stage::alpha);
+	version.setStage(octetos::core::Semver::Stage::alpha);
 	octetos::apidb::ConfigureProject configProject;
 	configProject.name = "sysapp";
 	configProject.builDirectory  = "apidb";
@@ -129,7 +129,7 @@ void testCreateProject()
 	tbUsers->insert(std::make_pair(byUsername->getName().c_str(), byUsername));
 	configProject.selects.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
 	configProject.downloads.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));
-    octetos::core::Version ver = octetos::apidb::getPakageVersion();
+    octetos::core::Semver ver = octetos::apidb::getPakageVersion();
     std::string strdevtaget = "developing";
 	configProject.executable_target  = strdevtaget + std::to_string(ver.getMajor());
 	configProject.namespace_detect = "emulate";
@@ -249,7 +249,7 @@ void testCompile()
 	{
 
                 int ret = 0;
-		octetos::core::Version ver = octetos::apidb::getPakageVersion();
+		octetos::core::Semver ver = octetos::apidb::getPakageVersion();
                 std::string cmd = "cp ../tests/developing";
 				cmd += std::to_string(ver.getMajor());
 				cmd += ".cpp ";
@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
 	/* initialize the CUnit test registry */
 	if (CUE_SUCCESS != CU_initialize_registry()) return CU_get_error();
 
-	octetos::core::Version ver = octetos::apidb::getPakageVersion();
+	octetos::core::Semver ver = octetos::apidb::getPakageVersion();
 	std::string pkName = octetos::apidb::getPakageName();
 	std::string classVersionString = std::string("Probando ") + pkName + " " + ver.toString();
 	pSuite = CU_add_suite(classVersionString.c_str(), init_apidb, clean_apidb);

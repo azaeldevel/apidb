@@ -91,7 +91,7 @@ namespace apidb
                 if(inVerEdited)
                 {
                         std::string verstr = gtk_entry_get_text(GTK_ENTRY(inVer));
-                        if(!config->versionResult.from(verstr))
+                        if(!config->versionResult.set(verstr))
                         {                                       
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -181,7 +181,7 @@ namespace apidb
                 {
                         if(config->inputLenguaje == InputLenguajes::MySQL)
                         {
-                                        config->conectordb = new octetos::db::clientdb::mysql::Datconnect();
+                                        config->conectordb = new octetos::db::mysql::Datconnect();
                         }
                         else
                         {
@@ -211,15 +211,15 @@ namespace apidb
                                 gtk_widget_destroy (msg);
                                 return false;
                         }
-                        if(octetos::db::clientdb::Connector::is_ipv4_address(loc))
+                        if(octetos::db::Connector::is_ipv4_address(loc))
                         {
                                 config->conectordb->setHost(loc);                                
                         }
-                        else if(octetos::db::clientdb::Connector::is_ipv6_address(loc))
+                        else if(octetos::db::Connector::is_ipv6_address(loc))
                         {
                                 config->conectordb->setHost(loc);    
                         }
-                        else if(octetos::db::clientdb::Connector::is_valid_domain_name(loc))
+                        else if(octetos::db::Connector::is_valid_domain_name(loc))
                         {
                                 config->conectordb->setHost(loc);    
                         }
@@ -897,7 +897,7 @@ namespace apidb
 				gtk_widget_destroy (msg);
 			}
 		}
-		catch(octetos::db::clientdb::SQLException e)
+		catch(octetos::db::SQLException e)
 		{
 			std::string strmsg = ">>";
 			strmsg += e.what();
@@ -1511,7 +1511,7 @@ namespace apidb
 						return;
 					}
 				}
-				catch(octetos::db::clientdb::SQLException e)
+				catch(octetos::db::SQLException e)
 				{
 					GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,e.what());
 					gtk_dialog_run (GTK_DIALOG (msg)); 

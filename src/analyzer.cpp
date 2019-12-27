@@ -36,7 +36,7 @@ namespace apidb
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
-				if((((symbols::Table*)ispace)->fillKeyType(*(octetos::db::clientdb::mysql::Connector*)connector,symbolsTable)) == false) return false;
+				if((((symbols::Table*)ispace)->fillKeyType(*(octetos::db::mysql::Connector*)connector,symbolsTable)) == false) return false;
 			}
 			else if(ispace->what() == symbols::SpaceType::SPACE)
 			{
@@ -73,7 +73,7 @@ namespace apidb
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
 				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
-				if(((symbols::Table*)ispace)->basicSymbols(*(octetos::db::clientdb::mysql::Connector*)connector) == false) return false;
+				if(((symbols::Table*)ispace)->basicSymbols(*(octetos::db::mysql::Connector*)connector) == false) return false;
 			}
 			else if(ispace->what() == symbols::SpaceType::SPACE)
 			{
@@ -106,7 +106,7 @@ namespace apidb
 	Analyzer::~Analyzer()
 	{
 	}
-	Analyzer::Analyzer(const ConfigureProject& config,octetos::db::clientdb::Connector* conn,core::ActivityProgress* p) : configureProject(config), connector(conn),progress(p),symbolsTable(config)
+	Analyzer::Analyzer(const ConfigureProject& config,octetos::db::Connector* conn,core::ActivityProgress* p) : configureProject(config), connector(conn),progress(p),symbolsTable(config)
 	{
 	}
 	

@@ -39,6 +39,5 @@ En tiempo de construcion
                 ¿?..
                 Saying no will install in: X
                 n
-    Si '/usr/local/lib' no esta en la variable LD_LIBRARY_PATH
-    7.- Agregé el directorio /usr/local/lib a la varaible LD_LIBRARY_PATH
-    8.- a run ldconfig como usuario root
+    Si '/usr/local/lib' no esta en la variable LD_LIBRARY_PATH o en /etc/environment agregelo
+    7.- a run ldconfig como usuario root

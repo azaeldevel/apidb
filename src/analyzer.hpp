@@ -68,7 +68,7 @@ namespace generators
                 /**
                  * \brief Requiere la configuracion del proyecto y un conector la base de datos valido.
                  * */
-		Analyzer(const ConfigureProject&, octetos::db::clientdb::Connector*,core::ActivityProgress* progress);
+		Analyzer(const ConfigureProject&, octetos::db::Connector*,core::ActivityProgress* progress);
                 /**
                  * \brief Destructor
                  * */
@@ -90,7 +90,7 @@ namespace generators
                 /**
                  * \brief COnector a la base de datos.
                  * */
-		octetos::db::clientdb::Connector* connector;
+		octetos::db::Connector* connector;
 		/**
                  * \brief Esta funcion es la encarga de resolver cada simbolo encontrado en la base de datos.
                  * */

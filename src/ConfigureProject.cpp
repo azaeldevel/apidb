@@ -160,7 +160,7 @@ namespace apidb
         bool ret = false;
         if(inputLenguaje == apidb::InputLenguajes::MySQL)
         {
-            octetos::db::clientdb::mysql::Connector  connector;
+            octetos::db::mysql::Connector  connector;
             ret = connector.connect(conectordb);
             connector.close();
         }

@@ -36,7 +36,7 @@ namespace apidb
     /**
     * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
     */
-    bool symbols::Table::fillKeyType(octetos::db::clientdb::mysql::Connector& connect,const SymbolsTable& symbolsTable)
+    bool symbols::Table::fillKeyType(octetos::db::mysql::Connector& connect,const SymbolsTable& symbolsTable)
 	{
         /**
         * Lista las relaciones de llaves foraneas para la tabla actual
@@ -45,11 +45,11 @@ namespace apidb
         fks += "'";
 		fks += fullname;
         fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
-		fks += ((octetos::db::clientdb::Datconnect*)(connect.getDatconection()))->getDatabase();
+		fks += ((octetos::db::Datconnect*)(connect.getDatconection()))->getDatabase();
 		fks += "'";
 		//std::cout<<fks<<std::endl;
 		//std::cout<< "In table: " <<fullname<<std::endl;
-        octetos::db::clientdb::Datresult* dt = connect.query(fks.c_str());
+        octetos::db::Datresult* dt = connect.query(fks.c_str());
         if(dt != NULL)
         {                      
 			symbols::SymbolsTable::const_iterator itGlobal = symbolsTable.find(symbolsTable.getConfigureProject().name.c_str());
@@ -101,7 +101,7 @@ namespace apidb
 		return true;
     }
 	
-        bool symbols::Table::basicSymbols(octetos::db::clientdb::mysql::Connector& connect)
+        bool symbols::Table::basicSymbols(octetos::db::mysql::Connector& connect)
         {
 			std::string str = "DESCRIBE ";
 			if(space.compare("") != 0)
@@ -112,7 +112,7 @@ namespace apidb
                 {
                         str += name;
                 }
-                octetos::db::clientdb::Datresult* dt = connect.query(str.c_str());
+                octetos::db::Datresult* dt = connect.query(str.c_str());
 		if(dt != NULL) 
 		{
 			//std::cout<<str<<std::endl;
@@ -194,7 +194,7 @@ namespace apidb
 		std::string db = connector->getDatconection()->getDatabase();
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
 		str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
-		octetos::db::clientdb::Datresult* dt = connector->query(str.c_str());
+		octetos::db::Datresult* dt = connector->query(str.c_str());
 		//std::cout << str  <<std::endl;
 		if(dt != NULL) 
 		{

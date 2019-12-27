@@ -51,9 +51,9 @@ namespace apidb
         }
         class ConfigureProject;
         
-        typedef octetos::db::clientdb::Datconnect::ServerType InputLenguajes;
-	std::string getInputLenguaje(InputLenguajes);	
-        InputLenguajes getInputLenguaje(const std::string&);	
+    typedef octetos::db::Driver InputLenguajes;
+    std::string getInputLenguaje(InputLenguajes);	
+    InputLenguajes getInputLenguaje(const std::string&);	
         
         /**
          * \brief Identifica los gentores de paquetes disponibles.
@@ -318,11 +318,11 @@ namespace apidb
                         /**
                          * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
                          * */
-			bool basicSymbols(octetos::db::clientdb::mysql::Connector& connect);
+			bool basicSymbols(octetos::db::mysql::Connector& connect);
                         /**
                          * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
                          * */			
-			bool fillKeyType(octetos::db::clientdb::mysql::Connector& connect, const SymbolsTable&);
+			bool fillKeyType(octetos::db::mysql::Connector& connect, const SymbolsTable&);
 
 			short countRef;
                 public:

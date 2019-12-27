@@ -121,7 +121,7 @@ namespace apidb
                     strver = line_buf;
                 }
                 fclose(apidbFilecheck2);
-                if(!projectVersion.from(strver)) 
+                if(!projectVersion.set(strver)) 
                 {              
                         std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.";
                         core::Error::write(core::Error(msg,ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
@@ -411,7 +411,7 @@ namespace apidb
                         return false;
                 }
                 
-                conectordb = new octetos::db::clientdb::mysql::Datconnect(host,port,database,user,password);
+                conectordb = new octetos::db::mysql::Datconnect(host,port,database,user,password);
                 }
         
                 /******************************************************************************************

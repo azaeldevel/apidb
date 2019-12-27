@@ -102,7 +102,7 @@ namespace mysql
 		
 		return true;
 	}
-	Analyzer::Analyzer(const ConfigureProject& config,octetos::db::clientdb::Connector* conn,core::ActivityProgress* p) : apidb::Analyzer(config,conn,p)
+	Analyzer::Analyzer(const ConfigureProject& config,octetos::db::Connector* conn,core::ActivityProgress* p) : apidb::Analyzer(config,conn,p)
 	{
 	}
 	
