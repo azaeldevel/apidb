@@ -123,7 +123,8 @@ namespace apidb
                 fclose(apidbFilecheck2);
                 if(!projectVersion.set(strver)) 
                 {              
-                        std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.";
+                        std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.'";
+                        msg += strver + "'";
                         core::Error::write(core::Error(msg,ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
                         return false;
                 }

@@ -65,7 +65,7 @@ void testCreateProject_nlst()
 {
 	octetos::core::Semver version;
 	version.setNumbers(0,1,0);
-    version.setStage(octetos::core::Semver::Stage::alpha);
+    version.setStage(octetos::core::semver::Stage::alpha);
         
 	octetos::apidb::ConfigureProject configProject_nls;
         configProject_nls.name = "sysapp";
@@ -99,7 +99,7 @@ void testCreateProject()
 {
 	octetos::core::Semver version;
 	version.setNumbers(0,1,0);
-	version.setStage(octetos::core::Semver::Stage::alpha);
+	version.setStage(octetos::core::semver::Stage::alpha);
 	octetos::apidb::ConfigureProject configProject;
 	configProject.name = "sysapp";
 	configProject.builDirectory  = "apidb";

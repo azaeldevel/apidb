@@ -7,8 +7,8 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 
 	- CMake 3.5
 	- GCC 8.2
-	- toolkit-common 5.0
-	- toolkit-clientdb 5.4
+	- octetos-core v0
+	- octetos-db v0
 	- MySQL Client 5.7
 	- libxml2 2
 	- Boost 1.67
