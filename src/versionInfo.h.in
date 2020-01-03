@@ -22,9 +22,9 @@
 #define VERSION_MINOR @apidb_VERSION_MINOR@
 #define VERSION_PATCH @apidb_VERSION_PATCH@
 #ifdef __cplusplus
-#define VERSION_STAGE octetos::core::semver::Stage::@APIDB_VERSION_STAGE@
+#define VERSION_PRERELEASE "@APIDB_VERSION_STAGE@"
 #else
-#define VERSION_STAGE @apidb_VERSION_STAGE@
+#define VERSION_PRERELEASE "@apidb_VERSION_STAGE@"
 #endif
 #define PAKAGENAME "@PROJECT_NAME@"
 #define VERSION_NAME "@apidb_VERSION_NAME@"

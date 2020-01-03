@@ -36,7 +36,7 @@ namespace apidb
 	{
         octetos::core::Semver v;
         v.setNumbers(VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH);
-        v.setStage(VERSION_STAGE);
+        v.setPrerelease(VERSION_PRERELEASE);
 		return v;		
 	}
 	

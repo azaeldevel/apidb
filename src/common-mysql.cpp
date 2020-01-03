@@ -49,7 +49,7 @@ namespace apidb
 		fks += "'";
 		//std::cout<<fks<<std::endl;
 		//std::cout<< "In table: " <<fullname<<std::endl;
-        octetos::db::Datresult* dt = connect.query(fks.c_str());
+        octetos::db::Datresult* dt = connect.execute(fks.c_str());
         if(dt != NULL)
         {                      
 			symbols::SymbolsTable::const_iterator itGlobal = symbolsTable.find(symbolsTable.getConfigureProject().name.c_str());
@@ -112,7 +112,7 @@ namespace apidb
                 {
                         str += name;
                 }
-                octetos::db::Datresult* dt = connect.query(str.c_str());
+                octetos::db::Datresult* dt = connect.execute(str.c_str());
 		if(dt != NULL) 
 		{
 			//std::cout<<str<<std::endl;
@@ -194,7 +194,7 @@ namespace apidb
 		std::string db = connector->getDatconection()->getDatabase();
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
 		str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
-		octetos::db::Datresult* dt = connector->query(str.c_str());
+		octetos::db::Datresult* dt = connector->execute(str.c_str());
 		//std::cout << str  <<std::endl;
 		if(dt != NULL) 
 		{
@@ -281,9 +281,9 @@ namespace apidb
 		{
 			std::string msg = "";
 			msg = msg + " MySQL Server Error No. : '";
-			msg = msg + std::to_string(mysql_errno((MYSQL*)connector->getServerConnector()));
+			msg = msg + std::to_string(mysql_errno((MYSQL*)connector->getConnection()));
 			msg = msg + "' ";
-			msg = msg + mysql_error((MYSQL*)connector->getServerConnector());
+			msg = msg + mysql_error((MYSQL*)connector->getConnection());
 			core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 			return false;
 		}	
