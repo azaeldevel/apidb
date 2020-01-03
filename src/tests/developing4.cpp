@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 	}
     if(flag)
     {
-        if(verbose)  printf("SQL Server version: %s\n", connector.serverDescription());
+        if(verbose)  printf("SQL Server version: %s\n", connector.getVerionServer().toString().c_str());
     }
     else
     {

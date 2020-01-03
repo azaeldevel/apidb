@@ -58,7 +58,7 @@ namespace generators
         ofile << "\t\t{"  << std::endl;
         ofile << "\t\t\tsqlString += \" LIMIT  \"  + std::to_string(leng);"  << std::endl;
         ofile << "\t\t}"  << std::endl;
-        ofile << "\t\toctetos::db::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
+        ofile << "\t\toctetos::db::Datresult* dt = connector.execute(sqlString.c_str());"  << std::endl;
         ofile << "\t\tif(dt!=NULL)"  << std::endl;
         ofile << "\t\t{" << std::endl;
         ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
@@ -207,7 +207,7 @@ namespace generators
 					ofile << "\t\t{"  << std::endl;
 					ofile << "\t\t\tsqlString += \" LIMIT  \" + std::to_string(leng);"  << std::endl;
 					ofile << "\t\t}"  << std::endl;
-					ofile << "\t\toctetos::db::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
+					ofile << "\t\toctetos::db::Datresult* dt = connector.execute(sqlString.c_str());"  << std::endl;
 					ofile << "\t\tif(dt!=NULL)"  << std::endl;
 					ofile << "\t\t{" << std::endl;
                     ofile << "\t\t\tstd::vector<"<< table.getName() << "*>* tmpVc = new std::vector<" << table.getName() << "*>;" << std::endl;
@@ -307,7 +307,7 @@ namespace generators
                                         }
                                 }
                                 ofile << ";" << std::endl;
-                                ofile << "\t\toctetos::db::Datresult* dt = connector.query(sqlString.c_str());"  << std::endl;
+                                ofile << "\t\toctetos::db::Datresult* dt = connector.execute(sqlString.c_str());"  << std::endl;
                                 ofile << "\t\tif(dt!=NULL)"  << std::endl;
                                 ofile << "\t\t{" << std::endl;
                                 ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
@@ -458,7 +458,7 @@ namespace generators
             }            
             else if(table.getKey().size() > 1)
             {
-                ofile << "\t\tif(connector.query(sqlString.c_str()))" << std::endl;
+                ofile << "\t\tif(connector.execute(sqlString.c_str()))" << std::endl;
                 ofile << "\t\t{" << std::endl;
                 for(std::list<symbols::Symbol*>::const_iterator i = table.getRequired().begin(); i != table.getRequired().end(); ++i)
                 {
@@ -471,7 +471,7 @@ namespace generators
         else if(table.getKey().size() == 0)
         {
             ofile << "\t\tthis->" << table.getKey().at(0)->getName() ;
-            ofile << " = connector.query(sqlString.c_str());"<< std::endl;
+            ofile << " = connector.execute(sqlString.c_str());"<< std::endl;
             ofile << "\t\tif(this->" << table.getKey()[0]->getName()  << " > 0) return true;"<< std::endl;
             ofile << "\t\telse return false;"<< std::endl;   
         }
@@ -720,7 +720,7 @@ namespace generators
                                 throw BuildException("No hay soporte para table sin llave");
                         }
 			
-			ofile <<"\t\treturn connector.query(sqlString.c_str());"<<std::endl;
+			ofile <<"\t\treturn connector.execute(sqlString.c_str());"<<std::endl;
 			ofile << "\t}"<<std::endl;	
                 postUpdatePosition:;
                 

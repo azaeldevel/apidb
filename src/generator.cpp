@@ -206,9 +206,15 @@ namespace generators
 		  toolkitcommonconifg<<"PATH_SUFFIXES octetos-core"<< std::endl;
 		toolkitcommonconifg<<")"<<std::endl;
 
+		toolkitcommonconifg<<"FIND_LIBRARY(OCTETOS_SEMVER_100_LIBRARY"<< std::endl;
+		  toolkitcommonconifg<<"NAMES liboctetos-semver-100.so" << std::endl;
+		  toolkitcommonconifg<<"PATHS  /lib /lib64 /lib32 /usr/lib /usr/local/lib/ /usr/lib/octetos/core /usr/local/lib/octetos/core /usr/lib/x86_64-linux-gnu/octetos/core" << std::endl;
+		  toolkitcommonconifg<<"PATH_SUFFIXES octetos-semver-100"<< std::endl;
+		toolkitcommonconifg<<")"<<std::endl;
+
 		toolkitcommonconifg<<"IF (OCTETOS_CORE_INCLUDE_DIR AND OCTETOS_CORE_LIBRARY)" << std::endl;
 		  toolkitcommonconifg<<"SET(OCTETOS_CORE_FOUND TRUE)" << std::endl;
-		  toolkitcommonconifg<<"SET(OCTETOS_CORE_LIBRARIES ${OCTETOS_CORE_LIBRARY} )" << std::endl;
+		  toolkitcommonconifg<<"SET(OCTETOS_CORE_LIBRARIES ${OCTETOS_SEMVER_100_LIBRARY}  ${OCTETOS_CORE_LIBRARY} )" << std::endl;
 		toolkitcommonconifg<<"ELSE (OCTETOS_CORE_INCLUDE_DIR AND OCTETOS_CORE_LIBRARY)" << std::endl;
 		  toolkitcommonconifg<<"SET(OCTETOS_CORE_FOUND FALSE)" << std::endl;
 		  toolkitcommonconifg<<"SET( OCTETOS_CORE_LIBRARIES )" << std::endl;
