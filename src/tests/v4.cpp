@@ -188,7 +188,7 @@ void testBuild()
 		
         octetos::apidb::Driver driver(configProject);
         octetos::apidb::Tracer tracer(0);
-        if(driver.driving(NULL) == false)
+        if(driver.driving(&tracer) == false)
         {
 			std::cout << "Fail  -> "<< std::endl;
                 if(octetos::core::Error::check())
@@ -377,6 +377,16 @@ void testBackwardCompatiblev20()
 
 int main(int argc, char *argv[])
 {
+    bool runAll = false;
+    int runTest = 0;
+    if(argc == 1)
+    {
+        runAll = true;        
+    }
+    else if(strcmp(argv[1],"--run") == 0)
+    {        
+        runTest = std::stoi(argv[2]);
+    }
 	CU_pSuite pSuite = NULL;
 	
 	/* initialize the CUnit test registry */
@@ -392,24 +402,32 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
+	if(runTest == 1 or runAll)
+    {
+        if ((NULL == CU_add_test(pSuite, "Pruebas temporales.", testTemp)))
+        {
+            CU_cleanup_registry();
+            return CU_get_error();
+        }
+    }
 	
-	if ((NULL == CU_add_test(pSuite, "Pruebas temporales.", testTemp)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}
-	
-	if ((NULL == CU_add_test(pSuite, "Verificando la conectividad del componente.", testConecction)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}
+	if(runTest == 2 or runAll)
+    {
+        if ((NULL == CU_add_test(pSuite, "Verificando la conectividad del componente.", testConecction)))
+        {
+            CU_cleanup_registry();
+            return CU_get_error();
+        }
+    }
 	////////////////////////////////////////////////////////// SIN LISTAS
-	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}	
+	if(runTest == 3 or runAll)
+    {
+        if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
+        {
+            CU_cleanup_registry();
+            return CU_get_error();
+        }	
+    }
 	/*if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.", testBuild_nlst)))
 	{
 		CU_cleanup_registry();
@@ -433,23 +451,32 @@ int main(int argc, char *argv[])
 	
 	
 	///////////////////////////////////////////////////////////CON LISTAS
-	if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica.", testCreateProject)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}
+	if(runTest == 5 or runAll)
+    {
+        if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica.", testCreateProject)))
+        {
+            CU_cleanup_registry();
+            return CU_get_error();
+        }
+    }
 	
-	if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion.", testBuild)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}
+	if(runTest == 5 or runAll)
+    {
+        if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion.", testBuild)))
+        {
+            CU_cleanup_registry();
+            return CU_get_error();
+        }
+    }
 	
-	if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}
+	if(runTest == 6 or runAll)
+    {
+        if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
+        {
+            CU_cleanup_registry();
+            return CU_get_error();
+        }
+    }
 		
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);

@@ -17,22 +17,21 @@ int main(int argc, char **argv)
 	octetos::db::mysql::Datconnect mysqlConnector("192.168.0.101",3306,"sysappv2.alpha","develop","123456");
     octetos::db::mysql::Connector connector; 
     bool flag = false;  
-    try
-    {
-		flag = connector.connect(&mysqlConnector);
-	}
-	catch(octetos::db::SQLException& ex)
-	{
-		std::cerr<<ex.what()<< std::endl;
-		return EXIT_FAILURE;
-	}
+	flag = connector.connect(&mysqlConnector);
     if(flag)
     {
         if(verbose)  printf("SQL Server version: %s\n", connector.getVerionServer().toString().c_str());
     }
     else
     {
-        printf("Fallo la conexion el servidor.\n");
+        if(octetos::core::Error::check())
+        {
+            std::cout << octetos::core::Error::get().what() << "\n";
+        }
+        else
+        {
+            printf("Fallo la conexion el servidor.\n");
+        }
         return EXIT_FAILURE;
     }
     

@@ -26,7 +26,6 @@
 #include <core/common.hh>
 
 #include "driver.hpp"
-#include "../common.hpp"
 #include "mysql-reader-c++/analyzer.hpp"
 #include "Errors.hpp"
 

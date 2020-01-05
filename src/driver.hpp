@@ -22,8 +22,8 @@
 #ifndef APIDB_DRIVER_HPP
 #define APIDB_DRIVER_HPP
 
-#include "../analyzer.hpp"
-#include "../generator.hpp"
+#include "analyzer.hpp"
+#include "generator.hpp"
 
 namespace octetos
 {

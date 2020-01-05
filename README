@@ -7,8 +7,8 @@ Vea el archivo INSTALL para informacion especifica
 * Crear proyecto
 
 Hay dos formas:
-	1- Creando un proyecto desde la interface grafica, esta es la opcion recomendad por su servidor. (https://youtu.be/9O6aDedacRE)
-	2- Utilizando la API de APIDB, no es complicado, la API es muy amigable con los programadores C++(esta escrita en C++).
+	1- Creando un proyecto desde la interface grafica, esta es la opcion edecuadas para su servidor. (https://youtu.be/9O6aDedacRE)
+	2- Utilizando apidb-build(lineas de comando), sin embargo, este comando solo genera el proyecto, no el archivo de poyecto..
 
-Adicionalmente para la etapa final de generacionde de los archivos de código fuente puede usar(en linea de comando) apidb-build, le seá muy util para automatizar 
+Adicionalmente para la etapa final de generacionde de los archivos de código fuente puede usar(en linea de comando) apidb-build, le será muy util para automatizar 
 la actualizacion de su proyecto aplicacion.
