@@ -27,6 +27,7 @@
 
 #include "driver.hpp"
 #include "mysql-reader-c++/analyzer.hpp"
+#include "analyzer-postgresql.hpp"
 #include "Errors.hpp"
 
 
@@ -45,8 +46,6 @@ namespace apidb
 			core::Error::write(core::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
 			return false;
 		}
-		
-		
 		
 		symbols::Table* tb = global->findTable(table);
 		if(tb != NULL)
@@ -144,6 +143,25 @@ namespace apidb
 				core::Error::write(err);
 			}
 		}
+		else if(configureProject.inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+        {
+			//std::cout <<"Creando conector PostgreSQL\n";
+			connector = new octetos::db::postgresql::Connector();
+			bool flag = connector->connect(config.conectordb);
+            if(!flag)
+            {
+                delete connector;
+                connector = NULL;
+                std::string msg = "Fallo al crear el conector para '";
+                msg += config.conectordb->toString() + "':";
+                if(core::Error::check())
+                {
+                    msg += core::Error::get().what();
+                }
+                core::Error err(msg, ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
+                core::Error::write(err);
+            }
+        }
 		else
 		{
 			//std::cout <<"Lenguaje de entrada desconocido."<<std::endl;
@@ -162,10 +180,10 @@ namespace apidb
 	{
 		if(connector == NULL) 
 		{
-			std::cout<<"El conector es NULL." << std::endl;
+			//std::cout<<"El conector es NULL." << std::endl;
 			return false;
 		}
-
+        
 		if(analyze(progress))
 		{
 			if(generate(progress))
@@ -174,13 +192,12 @@ namespace apidb
 			}
 			else
 			{
-				std::cout<<"Fallo la etapa de generacion" << std::endl;  
 				return false;
 			}
 		}
 		else
 		{
-			std::cout<<"Fallo la etapa de analisis." << std::endl;   
+			//std::cout<<"Fallo la etapa de analisis." << std::endl;   
 			return false;
 		}
 		
@@ -214,7 +231,7 @@ namespace apidb
 	}*/
 	
 	bool Driver::generate(core::ActivityProgress* progress)
-	{		
+	{
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
 			
@@ -228,17 +245,16 @@ namespace apidb
 				std::string cmd = "mkdir ";
 				cmd = cmd + direct;
 				system(cmd.c_str());
-			}			
-		}		
+			}
+		}
 		
 		bool flagCPP,flagCMAKE;
 		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
-			
 			//std::cout<<"apidb::generators::CPP cpp(*analyzer);..."<<std::endl;
 			apidb::generators::CPP cpp(*analyzer,configureProject);
 			if(progress != NULL)flagCPP = cpp.generate(true);	
-                        else flagCPP = cpp.generate(false);	
+            else flagCPP = cpp.generate(false);	
 			//std::cout<<"apidb::generators::CMake cmake(*analyzer);..."<<std::endl;                        
 		}
 		else
@@ -246,16 +262,16 @@ namespace apidb
 			return false;
 		}
 		
-                if(configureProject.packing == PackingLenguajes::CMake)
-                {
+        if(configureProject.packing == PackingLenguajes::CMake)
+        {
 			apidb::generators::CMake cmake(*analyzer,configureProject);			
 			if(progress != NULL)flagCMAKE = cmake.generate(true);
-                        else flagCMAKE = cmake.generate(false);
-                }
-                else
-                {
-                        return false;
-                }
+            else flagCMAKE = cmake.generate(false);
+        }
+        else
+        {
+            return false;
+        }
 			
                 ///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
                 if(flagCPP && flagCMAKE)
@@ -271,7 +287,7 @@ namespace apidb
                         analyzer->getOutput().add(fail);
                         return false;
                 }
-	}
+    }
 	
 	/*bool Driver::generate(bool log)
 	{		
@@ -350,16 +366,37 @@ namespace apidb
 				analyzer = new mysql::Analyzer(configureProject,connector,progress);
 			}
 		}
+		else if(configureProject.inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+        {
+			if(analyzer != NULL)
+			{
+				delete analyzer;
+				analyzer = NULL;
+				analyzer = new postgresql::Analyzer(configureProject,connector,progress);		
+			}
+			else
+			{
+				analyzer = new postgresql::Analyzer(configureProject,connector,progress);
+			}            
+        }
+        else
+        {
+			std::string msgErr ="\tLengueje de Entrada desconocido." ;
+			core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+            core::Error::write(err);
+            return false;
+        }
                 
-                if(progress != NULL)
-                {
-                        core::Confirmation conf1("\n\tAnalisis de codigo...");
-                        progress->add(conf1);
-                        std::string msg ="\n\tLenguaje de entrada: " ;
-                        msg+= getInputLenguaje(configureProject.inputLenguaje) + "\n";
-                        core::Confirmation conf2(msg);
-                        progress->add(conf2);
-                }
+        if(progress != NULL)
+        {
+            core::Confirmation conf1("\n\tAnalisis de Base de Datos..");
+            progress->add(conf1);
+            
+            std::string msg ="\n\tLenguaje de entrada: " ;
+            msg+= getInputLenguaje(configureProject.inputLenguaje) + "\n";
+            core::Confirmation conf2(msg);
+            progress->add(conf2);
+        }
 		bool flagAnalyzer = false;
 		try
 		{

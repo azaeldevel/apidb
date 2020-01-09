@@ -319,6 +319,8 @@ namespace apidb
 		{
 			case InputLenguajes::MySQL:
 				return "MySQL";
+			case InputLenguajes::PostgreSQL:
+				return "PostgreSQL";
 			default:
 				return "Unknow";
 		}

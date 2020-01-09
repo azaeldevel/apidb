@@ -34,6 +34,7 @@ std::string random_string( size_t length )
 static std::string filename;
 static std::string filename_nlst;
 static octetos::db::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
+static octetos::db::postgresql::Datconnect postgresqlSource("192.168.0.101",5432,"sysapp_v0001","sysapp","123456"); 
 //static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 static std::string sysappv1Filename = "sysappv1-alpha.apidb";
 static std::string sysappv20Filename = "sysappv20-alpha.apidb";
@@ -93,6 +94,53 @@ void testConecction()
         configProject.conectordb = &mysqlSource;
         configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
         CU_ASSERT(configProject.testConexion());
+}
+
+void testCreateProjectPostgreSQL()
+{
+	octetos::core::Semver version;
+	version.setNumbers(0,1,0);
+	version.setPrerelease("alpha");
+	octetos::apidb::ConfigureProject configProject;
+	configProject.name = "sysapp";
+	configProject.builDirectory  = "apidb";
+	configProject.conectordb = &postgresqlSource;
+	configProject.versionResult = version;
+	configProject.inputLenguaje = octetos::apidb::InputLenguajes::PostgreSQL;
+	configProject.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
+	configProject.packing = octetos::apidb::PackingLenguajes::CMake;
+	configProject.compiled = octetos::apidb::Compiled::STATIC;
+	octetos::apidb::ConfigureProject::Table* tbP = new octetos::apidb::ConfigureProject::Table("Persons");
+	octetos::apidb::ConfigureProject::Function* dwFullName = new octetos::apidb::ConfigureProject::Function("fullname");
+	dwFullName->addParam(std::string("name1"));
+	dwFullName->addParam(std::string("name2"));
+	dwFullName->addParam(std::string("name3"));
+	dwFullName->addParam(std::string("name4"));
+	tbP->insert(std::make_pair(dwFullName->getName().c_str(), dwFullName));
+	octetos::apidb::ConfigureProject::Function* dwShortName = new octetos::apidb::ConfigureProject::Function("shortname");
+	dwShortName->addParam(std::string("name1"));
+	dwShortName->addParam(std::string("name3"));
+	tbP->insert(std::make_pair(dwShortName->getName().c_str(), dwShortName));
+	configProject.downloads.insert(std::make_pair(tbP->getName().c_str(),tbP));
+	configProject.selects.insert(std::make_pair(tbP->getName().c_str(),tbP));
+    octetos::core::Semver ver = octetos::apidb::getPakageVersion();
+    std::string strdevtaget = "developing";
+	configProject.executable_target  = strdevtaget + std::to_string(ver.getMajor());
+	configProject.namespace_detect = "emulate";
+	configProject.writeDatconnect = "conector";
+	//std::cout << std::endl << "Testing 1" << std::endl;
+	if(configProject.saveConfig(filename))
+	{
+                CU_ASSERT(true);
+	}
+	else
+	{
+        if(octetos::core::Error::check())
+        {
+            std::cout << std::endl << "Error: " << octetos::core::Error::get().what() << "\n";
+        }
+        CU_ASSERT(false);
+	}
 }
 
 void testCreateProject()
@@ -208,26 +256,87 @@ void testBuild()
 			std::cout << "\nError  -> "<< octetos::core::Error::get().describe() << std::endl;
 		}
 		CU_ASSERT(false);
+        return;
 	}
-	/*for(std::list<std::string>::iterator it = listName.begin(); it != listName.end(); it++)
-	{
-		std::cout << "Tabla : " << *it << std::endl;
-	}*/
-	//std::cout << "Total de tablas : " << listName.size() << std::endl;
+	
 	std::list<std::string> listFields;
 	if(driver.getFiledsName(listFields,"Persons") == false)
 	{
 		if(octetos::core::Error::check())
 		{
-			std::cout << "\nError  -> "<< octetos::core::Error::get().describe() << std::endl;
+			std::cout << octetos::core::Error::get().describe() << std::endl;
 		}
 		CU_ASSERT(false);
+        return;
 	}
-	/*for(std::list<std::string>::iterator it = listFields.begin(); it != listFields.end(); it++)
-	{
-		std::cout << "\nField : " << *it;
-	}*/
 }
+
+
+void testBuildPostgreSQL()
+{   
+    octetos::apidb::ConfigureProject configProject;
+    //octetos::core::Error::write(octetos::core::Error("Teste error",1,__FILE__,__LINE__));
+    if(!configProject.readConfig(filename))
+    {                
+        if(octetos::core::Error::check())
+        {
+            std::cout << octetos::core::Error::get().what() << std::endl;
+        }
+        CU_ASSERT(false);
+        return;
+    }
+    //configProject.executable_target = "developing2";
+		
+    octetos::apidb::Driver driver(configProject);
+    octetos::apidb::Tracer tracer(0);
+    if(driver.driving(&tracer) == false)
+    {
+        if(octetos::core::Error::check())
+        {
+            std::cout << octetos::core::Error::get().what() << std::endl;
+        }
+        CU_ASSERT(false);
+        return;
+    }
+    else
+    {
+        CU_ASSERT(true);
+        return;
+    }
+    
+	std::list<std::string> listName;
+	if(driver.getTablesName(listName) == false)
+	{
+		if(octetos::core::Error::check())
+		{
+			std::cout << octetos::core::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+        return;
+	}
+    else
+    {
+        CU_ASSERT(true);
+        return;
+    }
+	
+	std::list<std::string> listFields;
+	if(driver.getFiledsName(listFields,"Persons") == false)
+	{
+		if(octetos::core::Error::check())
+		{
+			std::cout << octetos::core::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+        return;
+	}
+    else
+    {
+        CU_ASSERT(true);
+        return;
+    }
+}
+
 
 void testCompile()
 {
@@ -355,7 +464,7 @@ void testBackwardCompatiblev20()
 	{                
 		if(octetos::core::Error::check())
 		{
-			std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
+			std::cout << octetos::core::Error::get().describe() << std::endl;
 		}
 		CU_ASSERT(false);
 		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
@@ -364,29 +473,45 @@ void testBackwardCompatiblev20()
 	octetos::apidb::Tracer tracer(0);
 	if(driver.driving(NULL) == false)
 	{
-		std::cout << "Fail  -> "<< std::endl;
+		//std::cout << "Fail  -> "<< std::endl;
 		if(octetos::core::Error::check())
 		{
-			std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
+			std::cout << octetos::core::Error::get().what() << std::endl;
 		}
 		CU_ASSERT(false);
-		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
 	}
 	CU_ASSERT(true);	
 }
 
 int main(int argc, char *argv[])
 {
-    bool runAll = false;
+    bool runAll = false, enableMySQL = false,enablePostgreSQL = false;
     int runTest = 0;
-    if(argc == 1)
+    
+    for(int i = 1; i < argc; i++)
     {
-        runAll = true;        
+        if(strcmp(argv[i],"--run") == 0)
+        {
+            //std::cout << argv[i] << ";\n";
+            runTest = std::stoi(argv[i + 1]);
+        }
+        else if(strcmp(argv[i],"--run-all") == 0)
+        {
+            //std::cout << argv[i] << ";\n";
+            runAll = true;
+        }
+        else if(strcmp(argv[i],"--enable-mysql") == 0)
+        {
+            //std::cout << argv[i] << ";\n";
+            enableMySQL = true;
+        }
+        else if(strcmp(argv[i],"--enable-postgresql") == 0)
+        {
+            //std::cout << argv[i] << ";\n";
+            enablePostgreSQL = true;
+        }
     }
-    else if(strcmp(argv[1],"--run") == 0)
-    {        
-        runTest = std::stoi(argv[2]);
-    }
+    
 	CU_pSuite pSuite = NULL;
 	
 	/* initialize the CUnit test registry */
@@ -401,82 +526,82 @@ int main(int argc, char *argv[])
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
-	
-	if(runTest == 1 or runAll)
-    {
-        if ((NULL == CU_add_test(pSuite, "Pruebas temporales.", testTemp)))
-        {
-            CU_cleanup_registry();
-            return CU_get_error();
-        }
-    }
-	
-	if(runTest == 2 or runAll)
-    {
-        if ((NULL == CU_add_test(pSuite, "Verificando la conectividad del componente.", testConecction)))
-        {
-            CU_cleanup_registry();
-            return CU_get_error();
-        }
-    }
-	////////////////////////////////////////////////////////// SIN LISTAS
-	if(runTest == 3 or runAll)
-    {
-        if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
-        {
-            CU_cleanup_registry();
-            return CU_get_error();
-        }	
-    }
-	/*if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion para no-list.", testBuild_nlst)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}*/
-
-	
-	
-	/*if ((NULL == CU_add_test(pSuite, "Verificando compatibilidad con Archivo de Proyecto v1", testBackwardCompatiblev1)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}
-	
-	if ((NULL == CU_add_test(pSuite, "Verificando compatibilidad con Archivo de Proyecto v2.0", testBackwardCompatiblev20)))
-	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}*/
-	
-	
+    
 	
 	///////////////////////////////////////////////////////////CON LISTAS
-	if(runTest == 5 or runAll)
+	if(enableMySQL)
     {
-        if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica.", testCreateProject)))
+        if(runTest == 1 or runAll)
         {
-            CU_cleanup_registry();
-            return CU_get_error();
+            if ((NULL == CU_add_test(pSuite, "Pruebas temporales.", testTemp)))
+            {
+                CU_cleanup_registry();
+                return CU_get_error();
+            }
+        }        
+        if(runTest == 2 or runAll)
+        {
+            if ((NULL == CU_add_test(pSuite, "Verificando la conectividad del componente.", testConecction)))
+            {
+                CU_cleanup_registry();
+                return CU_get_error();
+            }
+        }
+        ////////////////////////////////////////////////////////// SIN LISTAS
+        if(runTest == 3 or runAll)
+        {
+            if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica para no-list.", testCreateProject_nlst)))
+            {
+                CU_cleanup_registry();
+                return CU_get_error();
+            }	
+        }
+        if(runTest == 5 or runAll)
+        {
+            if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica.", testCreateProject)))
+            {
+                CU_cleanup_registry();
+                return CU_get_error();
+            }
+        }
+        if(runTest == 5 or runAll)
+        {
+            if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion.", testBuild)))
+            {
+                CU_cleanup_registry();
+                return CU_get_error();
+            }
+        }
+        if(runTest == 6 or runAll)
+        {
+            if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
+            {
+                CU_cleanup_registry();
+                return CU_get_error();
+            }
+        }
+    }
+    else if(enablePostgreSQL)
+    {
+        //std::cout <<"Iniciando pruebas de PostgreSQL\n";
+        if(runTest == 5 or runAll)
+        {
+            if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica (PostgreSQL).", testCreateProjectPostgreSQL)))
+            {
+                CU_cleanup_registry();
+                return CU_get_error();
+            }
+        }
+        if(runTest == 5 or runAll)
+        {
+            if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion (PostgreSQL).", testBuildPostgreSQL)))
+            {
+                CU_cleanup_registry();
+                return CU_get_error();
+            }
         }
     }
 	
-	if(runTest == 5 or runAll)
-    {
-        if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contruccion.", testBuild)))
-        {
-            CU_cleanup_registry();
-            return CU_get_error();
-        }
-    }
-	
-	if(runTest == 6 or runAll)
-    {
-        if ((NULL == CU_add_test(pSuite, "Compilacion de proyecto generado.", testCompile)))
-        {
-            CU_cleanup_registry();
-            return CU_get_error();
-        }
-    }
 		
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);

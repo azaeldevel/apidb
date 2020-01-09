@@ -173,8 +173,10 @@ namespace apidb
                 
                 const xmlChar *name;
                 
-                if(projectVersion >= ver100)
-                {
+        std::string password,user,host,database;
+        int port;
+        if(projectVersion >= ver100)
+        {
                 
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -292,7 +294,7 @@ namespace apidb
                         return false;
                 }
                 name = xmlTextReaderConstName(reader);
-                std::string host = "";
+                host = "";
                 if(strcmp((const char*)name,"#text") == 0)
                 {
                 host = (const char*)xmlTextReaderConstValue(reader);
@@ -319,7 +321,7 @@ namespace apidb
                         return false;
                 }
                 name = xmlTextReaderConstName(reader);
-                int port = 0;
+                port = 0;
                 if(strcmp((const char*)name,"#text") == 0)
                 {
                 port = atoi((const char*)xmlTextReaderConstValue(reader));
@@ -346,7 +348,7 @@ namespace apidb
                         return false;
                 }
                 name = xmlTextReaderConstName(reader);
-                std::string database = "";
+                database = "";
                 if(strcmp((const char*)name,"#text") == 0)
                 {
                 database = (const char*)xmlTextReaderConstValue(reader);
@@ -373,7 +375,7 @@ namespace apidb
                         return false;
                 }
                 name = xmlTextReaderConstName(reader);
-                std::string user = "";
+                user = "";
                 if(strcmp((const char*)name,"#text") == 0)
                 {
                 user = (const char*)xmlTextReaderConstValue(reader);
@@ -400,10 +402,10 @@ namespace apidb
                         return false;
                 }
                 name = xmlTextReaderConstName(reader);
-                std::string password = "";
+                password = "";
                 if(strcmp((const char*)name,"#text") == 0)
                 {
-                password = (const char*)xmlTextReaderConstValue(reader);
+                    password = (const char*)xmlTextReaderConstValue(reader);
                 }
                 else
                 {
@@ -412,8 +414,7 @@ namespace apidb
                         return false;
                 }
                 
-                conectordb = new octetos::db::mysql::Datconnect(host,port,database,user,password);
-                }
+        }
         
                 /******************************************************************************************
                 * Version 1.1.0
@@ -434,7 +435,13 @@ namespace apidb
                 std::string inL = (const char*)xmlTextReaderConstValue(reader);
                 if(inL.compare("MySQL") == 0)
                 {
-                        inputLenguaje = InputLenguajes::MySQL;
+                    inputLenguaje = InputLenguajes::MySQL;
+                    conectordb = new octetos::db::mysql::Datconnect(host,port,database,user,password);
+                }
+                else if(inL.compare("PostgreSQL") == 0)
+                {
+                    inputLenguaje = InputLenguajes::PostgreSQL;
+                    conectordb = new octetos::db::postgresql::Datconnect(host,port,database,user,password);
                 }
                 else
                 {

@@ -198,22 +198,34 @@ namespace apidb
 			xmlNewChild(db_node, NULL, (const xmlChar *)"user", (const xmlChar *)conectordb->getUser().c_str());
 			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb->getPassword().c_str());
 		}
+		else if(inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+		{
+			xmlNewChild(db_node, NULL, (const xmlChar *)"host", (const xmlChar *)conectordb->getHost().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"port", (const xmlChar *)std::to_string(conectordb->getPort()).c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"nameDB", (const xmlChar *)conectordb->getDatabase().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"user", (const xmlChar *)conectordb->getUser().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb->getPassword().c_str());
+		}
 		else
 		{
+            core::Error::write(core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
 			return false;
 		}
                                 
-                //
-                xmlNodePtr inL_node = xmlNewChild(root_node, NULL, (const xmlChar *)"inputLenguaje", NULL);
-                switch(inputLenguaje)
-                {
-                        case InputLenguajes::MySQL:
-                                xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"MySQL");
-                                break;
-                        default:
-                                core::Error::write(core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
-                                return false;                                
-                }
+        //
+        xmlNodePtr inL_node = xmlNewChild(root_node, NULL, (const xmlChar *)"inputLenguaje", NULL);
+        switch(inputLenguaje)
+        {
+            case InputLenguajes::MySQL:
+                xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"MySQL");
+                break;
+            case InputLenguajes::PostgreSQL:
+                xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"PostgreSQL");
+                break;
+            default:
+                core::Error::write(core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
+                return false;                                
+        }
                 
                 //
                 xmlNodePtr outL_node = xmlNewChild(root_node, NULL, (const xmlChar *)"outputLenguaje", NULL);

@@ -27,6 +27,7 @@
 #include <vector>
 #include <map>
 #include <db/clientdb-mysql.hh>
+#include <db/clientdb-postgresql.hh>
 #include <libxml/xmlreader.h>
 #include <iostream>
 #include <cstring>
