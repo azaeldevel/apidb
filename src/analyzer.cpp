@@ -65,7 +65,7 @@ namespace apidb
 				std::string msg =  "\tCreating simbolos basicos para " ;
 				msg +=  ((symbols::Table*)ispace)->getName() + "\n";
 				progress->add(msg);
-			}			
+			}
 		}
 		
 		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
@@ -74,6 +74,23 @@ namespace apidb
 			{
 				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
 				if(((symbols::Table*)ispace)->basicSymbols(*(octetos::db::mysql::Connector*)connector) == false) return false;
+			}
+			else if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				symbols::Space* space = (symbols::Space*) ispace;
+				//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+				{
+					if(basicSymbols(it->second,progress) == false) return false;
+				}
+			}
+		}
+		else if(configureProject.inputLenguaje == InputLenguajes::PostgreSQL)
+		{
+			if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
+				if(((symbols::Table*)ispace)->basicSymbols(*(octetos::db::postgresql::Connector*)connector) == false) return false;
 			}
 			else if(ispace->what() == symbols::SpaceType::SPACE)
 			{

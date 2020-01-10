@@ -25,6 +25,8 @@
 
 #include "common.hpp"
 #include "ConfigureProject.hpp"
+#include "Errors.hpp"
+
 
 namespace octetos
 {
@@ -91,10 +93,7 @@ namespace generators
                  * \brief COnector a la base de datos.
                  * */
 		octetos::db::Connector* connector;
-		/**
-                 * \brief Esta funcion es la encarga de resolver cada simbolo encontrado en la base de datos.
-                 * */
-		bool listing();  
+		  
         /**
         * \brief Indica la configuracion del proyecto.
         * */

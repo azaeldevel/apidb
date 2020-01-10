@@ -55,7 +55,7 @@ ELSEIF(OCTETOS_DB_MYSQL_FOUND)
 ENDIF(OCTETOS_DB_MYSQL_FOUND)
 FIND_PACKAGE(octetos-db-postgresql REQUIRED PATHS ${PROJECT_SOURCE_DIR}/../cmake/Modules)
 IF(OCTETOS_DB_POSTGRESQL_FOUND)
-	INCLUDE_DIRECTORIES(${OCTETOS_DB_POSTGRESQL_INCLUDE_DIR})
+	INCLUDE_DIRECTORIES(${OCTETOS_DB_POSTGRESQL_INCLUDE_DIR} ${POSTGRESQL_INCLUDE_DIR})
 ELSEIF(OCTETOS_DB_POSTGRESQL_FOUND)
 	MESSAGE(FATAL_ERROR "No se encontro la octetos-db-postgresql.")
 ENDIF(OCTETOS_DB_POSTGRESQL_FOUND)
@@ -106,7 +106,7 @@ SET(LIBREADER "NULL")
 SET(LIBPARTIAL1 ${PROJECT_NAME}-partial1)
 ADD_SUBDIRECTORY(mysql-reader-c++)
 
-SET(SOURCES_BUILDING common-mysql.cpp  apidb.cpp analyzer.cpp generator.cpp generator-c++.cpp common.cpp  Errors.cpp driver.cpp analyzer-postgresql.cpp)
+SET(SOURCES_BUILDING common-mysql.cpp common-postgresql.cpp apidb.cpp analyzer.cpp generator.cpp generator-c++.cpp common.cpp  Errors.cpp driver.cpp analyzer-postgresql.cpp)
 SET(LIBRARIES ${OCTETOS_DB_POSTGRESQL_LIBRARIES} ${OCTETOS_DB_MYSQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${MYSQL_LIBRARY} ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${TAR_LIBRARIES} ${GTK3_LIBRARIES} ${CUNIT_LIBRARY})
 
 

@@ -70,7 +70,11 @@ namespace mysql
             * parse - parse from a file
             * @param filename - valid string with input file
             */
-            void parse(const char * const filename);
+            void parse(const char * const filename);          
+            /**
+            * \brief Esta funcion es la encarga de resolver cada simbolo encontrado en la base de datos.
+            * */
+            bool listing();
         };        
 }
 }

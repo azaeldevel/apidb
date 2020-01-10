@@ -422,8 +422,8 @@ namespace apidb
 					std::string msgErr ="\tFallo al leer durante la fase de analisis." ;
 					core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
 					progress->add(err);
-					return false;
 				}
+                return false;
 			}
 		}
 		

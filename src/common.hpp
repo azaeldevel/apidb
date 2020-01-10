@@ -50,7 +50,13 @@ namespace apidb
         {
                 class Analyzer;
         }
+        namespace postgresql
+        {
+                class Analyzer;
+        }
         class ConfigureProject;
+        
+        
         
     typedef octetos::db::Driver InputLenguajes;
     std::string getInputLenguaje(InputLenguajes);	
@@ -156,6 +162,7 @@ namespace apidb
 		{
                         friend class Analyzer;
                         friend class mysql::Analyzer;
+                        friend class postgresql::Analyzer;
                         friend class Table;
                         
                 public:
@@ -292,6 +299,7 @@ namespace apidb
 		{
                         friend class octetos::apidb::Analyzer;
                         friend class octetos::apidb::mysql::Analyzer;
+                        friend class octetos::apidb::postgresql::Analyzer;
                         /**
                          * \brief Nombre de la tabla
                          * */
@@ -316,13 +324,18 @@ namespace apidb
                          * \brief Nombre completa de la tabla
                          * */
                         std::string fullname;                        
-                        /**
-                         * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
-                         * */
+            /**
+            * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
+            * */
 			bool basicSymbols(octetos::db::mysql::Connector& connect);
-                        /**
-                         * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
-                         * */			
+            /**
+            /**
+            * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
+            * */
+			bool basicSymbols(octetos::db::postgresql::Connector& connect);
+            /**
+            * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
+            * */			
 			bool fillKeyType(octetos::db::mysql::Connector& connect, const SymbolsTable&);
 
 			short countRef;

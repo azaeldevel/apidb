@@ -234,19 +234,21 @@ void testBuild()
         }
 		//configProject.executable_target = "developing2";
 		
-        octetos::apidb::Driver driver(configProject);
-        octetos::apidb::Tracer tracer(0);
-        if(driver.driving(&tracer) == false)
+    octetos::apidb::Driver driver(configProject);
+    octetos::apidb::Tracer tracer(0);
+    if(driver.driving(NULL) == false)
+    {
+        std::cout << "Fail  -> "<< std::endl;
+        if(octetos::core::Error::check())
         {
-			std::cout << "Fail  -> "<< std::endl;
-                if(octetos::core::Error::check())
-                {
-                        std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
-                }
-                CU_ASSERT(false);
-                exit(EXIT_FAILURE);// hay pruebas que depende de esta.
+            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
         }
+        CU_ASSERT(false);
+    }
+    else
+    {
         CU_ASSERT(true);
+    }
 			
 	std::list<std::string> listName;
 	if(driver.getTablesName(listName) == false)
