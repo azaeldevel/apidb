@@ -14,26 +14,25 @@ int main(int argc, char **argv)
         }
     }
         
-	//octetos::toolkit::clientdb::mysql::Datconnect mysqlConnector("192.168.0.101",3306,"sysappv2.alpha","develop","123456");  
-    octetos::toolkit::clientdb::mysql::Connector connector; 
+	octetos::db::mysql::Datconnect mysqlConnector("192.168.0.101",3306,"sysappv2.alpha","develop","123456");
+    octetos::db::mysql::Connector connector; 
     bool flag = false;  
-    try
-    {
-		flag = connector.connect(&sysapp::datConect);
-	}
-	catch(octetos::toolkit::clientdb::SQLException& ex)
-	{
-		std::cerr<<ex.what()<< std::endl;
-		return EXIT_FAILURE;
-	}
+	flag = connector.connect(&mysqlConnector);
     if(flag)
     {
-        if(verbose)  printf("SQL Server version: %s\n", connector.serverDescription());
+        if(verbose)  printf("SQL Server version: %s\n", connector.getVerionServer().toString().c_str());
     }
     else
     {
-        printf("Fallo la conexion el servidor.\n");
-                        return EXIT_FAILURE;
+        if(octetos::core::Error::check())
+        {
+            std::cout << octetos::core::Error::get().what() << "\n";
+        }
+        else
+        {
+            printf("Fallo la conexion el servidor.\n");
+        }
+        return EXIT_FAILURE;
     }
     
     srand (time(NULL));
@@ -42,15 +41,15 @@ int main(int argc, char **argv)
     sysapp::Persons person1;
     std::string n1 = "n1-";
     n1 += std::to_string(random);
-    std::string ap = "ap-";
-    ap += std::to_string(random);
-    if(person1.insert(connector,n1,"MEX"))
+    std::string country = "MEX";
+    //ap += std::to_string(random);
+    if(person1.insert(connector,n1,country))
     {
-		if(verbose)   std::cout << "Inserted "<< n1 << " " << ap << " de Mexico." << std::endl;
+		if(verbose)   std::cout << "Inserted "<< n1 << " " << country << " de Mexico." << std::endl;
 	}
 	else
 	{
-		std::cerr << "Fail 1 "<< n1 << std::endl;
+		std::cerr << "Fail "<< n1 << std::endl;
 		return EXIT_FAILURE;
 	}
     
@@ -64,7 +63,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 	
-    if(person1.downShortname(connector))
+    if(person1.shortname(connector))
     {
                 if(verbose)   std::cout << ""<< person1.getName1() << " " << person1.getName3() << std::endl;
     }
@@ -80,7 +79,7 @@ int main(int argc, char **argv)
     {
         for(auto p : *lst)
         {
-            if(p->downShortname(connector) and verbose)
+            if(p->shortname(connector) and verbose)
             {
                 if(verbose)  std::cout << ""<< p->getName1() << " " << p->getName3() << std::endl;
             }

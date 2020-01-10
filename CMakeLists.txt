@@ -1,4 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+PROJECT(apidb VERSION 4.0.0.9 LANGUAGES CXX)
 
 add_subdirectory(src)
 
