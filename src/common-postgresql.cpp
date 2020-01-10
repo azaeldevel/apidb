@@ -36,8 +36,8 @@ namespace apidb
 				}
 				attrribute->get = "get"; attrribute->get += strName; attrribute->get += "()";
 				attrribute->upperName = strName;
-				attrribute->inType = dt->getString(1);
-				std::string requiered = dt->getString(2);
+				attrribute->inType = dt->getString(1);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				std::string requiered = dt->getString(2);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 				if(requiered.compare("NO") == 0)//NULL permited in DB?
 				{
 					attrribute->required = true;

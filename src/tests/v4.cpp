@@ -361,7 +361,7 @@ void testCompile()
 
                 int ret = 0;
 		octetos::core::Semver ver = octetos::apidb::getPakageVersion();
-                std::string cmd = "cp ../tests/developing";
+                std::string cmd = "cp ../../src/tests/developing";
 				cmd += std::to_string(ver.getMajor());
 				cmd += ".cpp ";
                 cmd += " apidb/ ";
