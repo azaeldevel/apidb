@@ -8,7 +8,7 @@ SET(DDM_PIXMAPS_DIR "/usr/share/icons/")
 SET(${CMAKE_PROJECT_NAME}_PAKAGENAME_DECORED "APIDB")
 
 
-EXECUTE_PROCESS(COMMAND date +"%Y%m%d%H%M%S" OUTPUT_VARIABLE ${CMAKE_PROJECT_NAME}_VERSION_BUILD)
+#EXECUTE_PROCESS(COMMAND date +"%Y%m%d%H%M%S" OUTPUT_VARIABLE ${CMAKE_PROJECT_NAME}_VERSION_BUILD)
 
 if(NOT APIDB_VERSION_STAGE)
         MESSAGE(FATAL_ERROR "Es necesario que indique una etapa de desasorrollo, use -DAPIDB_VERSION_STAGE='etapa'.\nEn donde etapa puede ser .. snapshot,alpha,beta,rc,release.\nEn términos generales acepta cualquier miembro de la enumeración toolkit::Version::Stage para mas detalles vea la información de este paquete.")

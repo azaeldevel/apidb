@@ -38,5 +38,5 @@ En tiempo de construcion
                 ¿?..
                 Saying no will install in: X
                 n
-    Si '/usr/local/lib' no esta en la variable LD_LIBRARY_PATH o en /etc/environment agregelo
+    El directorio usado en prefix/lib deve estar en ld.so.conf si no es asi agregelo.
     7.- a run ldconfig como usuario root
