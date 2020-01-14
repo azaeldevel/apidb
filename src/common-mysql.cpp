@@ -22,6 +22,7 @@
 #include <iostream>
 #include <mysql/mysql.h>
 #include <string>
+#include <db/clientdb-mysql.hh>
 
 #include "apidb.hpp"
 #include "common.hpp"
@@ -33,10 +34,25 @@ namespace octetos
 {
 namespace apidb
 {
+    bool createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password, octetos::db::Datconnect** dat)
+    {
+        (*dat) = new octetos::db::mysql::Datconnect(host,port,database,usuario,password);
+        return true;
+    }
+    bool createDatconnect(octetos::db::Datconnect** dat)
+    {
+        (*dat) = new octetos::db::mysql::Datconnect();
+        return true;
+    }
+    bool createConnector(octetos::db::Connector** conn)
+    {
+        (*conn) = new octetos::db::mysql::Connector();
+        return true;
+    }
     /**
     * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
     */
-    bool symbols::Table::fillKeyType(octetos::db::mysql::Connector& connect,const SymbolsTable& symbolsTable)
+    bool symbols::Table::fillKeyType(octetos::db::Connector& connect,const SymbolsTable& symbolsTable)
 	{
         /**
         * Lista las relaciones de llaves foraneas para la tabla actual
@@ -102,7 +118,7 @@ namespace apidb
     }
 	
 	
-    bool symbols::Table::basicSymbols(octetos::db::mysql::Connector& connect)
+    bool symbols::Table::basicSymbols(octetos::db::Connector& connect)
     {
         std::string str = "DESCRIBE ";
         if(space.compare("") != 0)

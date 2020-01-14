@@ -26,8 +26,7 @@
 #include <list>
 #include <vector>
 #include <map>
-#include <db/clientdb-mysql.hh>
-#include <db/clientdb-postgresql.hh>
+#include <db/clientdb.hh>
 #include <libxml/xmlreader.h>
 #include <iostream>
 #include <cstring>
@@ -55,9 +54,11 @@ namespace apidb
                 class Analyzer;
         }
         class ConfigureProject;
-        
-        
-        
+
+    bool createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password, octetos::db::Datconnect**); 
+    bool createDatconnect(octetos::db::Datconnect**); 
+    bool createConnector(octetos::db::Connector**);
+    
     typedef octetos::db::Driver InputLenguajes;
     std::string getInputLenguaje(InputLenguajes);	
     InputLenguajes getInputLenguaje(const std::string&);	
@@ -161,8 +162,8 @@ namespace apidb
 		class Symbol 
 		{
                         friend class Analyzer;
-                        friend class mysql::Analyzer;
-                        friend class postgresql::Analyzer;
+                        //friend class mysql::Analyzer;
+                        //friend class postgresql::Analyzer;
                         friend class Table;
                         
                 public:
@@ -176,7 +177,7 @@ namespace apidb
 				UNIQUE,
 				FOREIGN_UNIQUE,
 			};
-                private:
+                //private:
 			/**
                          * \brief Tipo de dato en Bd para el campo
                          * */
@@ -297,9 +298,10 @@ namespace apidb
 		 **/
 		class Table : public ISpace, public std::map<const char*,Symbol*,cmp_str>
 		{
+        public:
                         friend class octetos::apidb::Analyzer;
-                        friend class octetos::apidb::mysql::Analyzer;
-                        friend class octetos::apidb::postgresql::Analyzer;
+                        //friend class octetos::apidb::mysql::Analyzer;
+                        //friend class octetos::apidb::postgresql::Analyzer;
                         /**
                          * \brief Nombre de la tabla
                          * */
@@ -327,16 +329,16 @@ namespace apidb
             /**
             * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
             * */
-			bool basicSymbols(octetos::db::mysql::Connector& connect);
+			virtual bool basicSymbols(octetos::db::Connector& connect);
             /**
             /**
             * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
             * */
-			bool basicSymbols(octetos::db::postgresql::Connector& connect);
+			//bool basicSymbols(octetos::db::postgresql::Connector& connect);
             /**
             * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
             * */			
-			bool fillKeyType(octetos::db::mysql::Connector& connect, const SymbolsTable&);
+			virtual bool fillKeyType(octetos::db::Connector& connect, const SymbolsTable&);
 
 			short countRef;
                 public:

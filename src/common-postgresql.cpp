@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <libpq-fe.h>
+#include <db/clientdb-postgresql.hh>
 
 #include "apidb.hpp"
 #include "common.hpp"
@@ -11,6 +12,23 @@ namespace octetos
 {
 namespace apidb
 {
+    bool createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password, octetos::db::Datconnect** dat)
+    {
+        (*dat) = new octetos::db::postgresql::Datconnect(host,port,database,usuario,password);
+        return true;
+    }
+    
+    bool createDatconnect(octetos::db::Datconnect** dat)
+    {
+        (*dat) = new octetos::db::postgresql::Datconnect();
+        return true;
+    }
+    bool createConnector(octetos::db::Connector** conn)
+    {
+        (*conn) = new octetos::db::postgresql::Connector();
+        return true;
+    }
+    
     bool symbols::Table::basicSymbols(octetos::db::postgresql::Connector& connect)
     {
         std::string str = "SELECT * from ";

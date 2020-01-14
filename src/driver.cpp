@@ -24,10 +24,11 @@
 #include <stdio.h>
 #include <exception>
 #include <core/common.hh>
+#include <dlfcn.h>
 
 #include "driver.hpp"
-#include "mysql-reader-c++/analyzer.hpp"
-#include "analyzer-postgresql.hpp"
+//#include "mysql-reader-c++/analyzer.hpp"
+//#include "analyzer-postgresql.hpp"
 #include "Errors.hpp"
 
 
@@ -126,7 +127,7 @@ namespace apidb
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
 			//std::cout <<"Creando conector." <<std::endl;
-			connector = new octetos::db::mysql::Connector();
+            createConnector(&connector);
 			try
 			{
 				bool flag = connector->connect(config.conectordb);
@@ -146,7 +147,7 @@ namespace apidb
 		else if(configureProject.inputLenguaje == apidb::InputLenguajes::PostgreSQL)
         {
 			//std::cout <<"Creando conector PostgreSQL\n";
-			connector = new octetos::db::postgresql::Connector();
+			createConnector(&connector);
 			bool flag = connector->connect(config.conectordb);
             if(!flag)
             {
@@ -359,11 +360,49 @@ namespace apidb
 			{
 				delete analyzer;
 				analyzer = NULL;
-				analyzer = new mysql::Analyzer(configureProject,connector,progress);		
+				//analyzer = (apidb::Analyzer*)createAnalyzer((void*)&configureProject,connector,progress);		
+                void* handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
+                if(!handle)
+                {                    
+                    std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                apidb::Analyzer* (*create)(void*,void*,void*);
+                create = (apidb::Analyzer* (*)(void*,void*,void*))dlsym(handle, "createAnalyzer");
+                if(!create)
+                {                    
+                    std::string msgErr ="dlsym fallo con createAnalyzer:\n" ;
+                    msgErr = msgErr + "\t" + dlerror();
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                analyzer = (apidb::Analyzer*) create((void*)&configureProject,connector,progress);
 			}
 			else
 			{
-				analyzer = new mysql::Analyzer(configureProject,connector,progress);
+				//analyzer = (apidb::Analyzer*)createAnalyzer((void*)&configureProject,connector,progress);
+                void* handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
+                if(!handle)
+                {                    
+                    std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                apidb::Analyzer* (*create)(void*,void*,void*);
+                create = (apidb::Analyzer* (*)(void*,void*,void*))dlsym(handle, "createAnalyzer");
+                if(!create)
+                {                    
+                    std::string msgErr ="dlsym fallo con createAnalyzer:\n" ;
+                    msgErr = msgErr + "\t" + dlerror();
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                analyzer = (apidb::Analyzer*) create((void*)&configureProject,connector,progress);
 			}
 		}
 		else if(configureProject.inputLenguaje == apidb::InputLenguajes::PostgreSQL)
@@ -372,11 +411,49 @@ namespace apidb
 			{
 				delete analyzer;
 				analyzer = NULL;
-				analyzer = new postgresql::Analyzer(configureProject,connector,progress);		
+				//analyzer = (apidb::Analyzer*)createAnalyzer((void*)&configureProject,connector,progress);		
+                void* handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
+                if(!handle)
+                {                    
+                    std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                apidb::Analyzer* (*create)(void*,void*,void*);
+                create = (apidb::Analyzer* (*)(void*,void*,void*))dlsym(handle, "createAnalyzer");
+                if(!create)
+                {                    
+                    std::string msgErr ="dlsym fallo con createAnalyzer:\n" ;
+                    msgErr = msgErr + "\t" + dlerror();
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                analyzer = (apidb::Analyzer*) create((void*)&configureProject,connector,progress);
 			}
 			else
 			{
-				analyzer = new postgresql::Analyzer(configureProject,connector,progress);
+				//analyzer = (apidb::Analyzer*)createAnalyzer((void*)&configureProject,connector,progress);
+                void* handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
+                if(!handle)
+                {                    
+                    std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                apidb::Analyzer* (*create)(void*,void*,void*);
+                create = (apidb::Analyzer* (*)(void*,void*,void*))dlsym(handle, "createAnalyzer");
+                if(!create)
+                {                    
+                    std::string msgErr ="dlsym fallo con createAnalyzer:\n" ;
+                    msgErr = msgErr + "\t" + dlerror();
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                analyzer = (apidb::Analyzer*) create((void*)&configureProject,connector,progress);
 			}            
         }
         else

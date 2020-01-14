@@ -10,6 +10,8 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	- octetos-core >= v0.16
 	- octetos-db >= v0.13
 	- MySQL Client 5.7
+	- libpq
+    - 
 	- libxml2 2
 	- Boost 1.67
 	- Bison 3.2
@@ -23,15 +25,12 @@ En tiempo de construcion
 -------------
 - Instalación
 -------------
-	Toolkit Common para C++
-	Este componete tien instrucciones completas en su archivo INSTALL, puede descargarlo desde 'https://github.com/azaeldevel/toolkit.git' en el subdirectorio common.
-	Toolkit Client DB
-	Este componete tien instrucciones completas en su archivo INSTALL, puede descargarlo desde 'https://github.com/azaelrmartz/toolkit.git'  en el subdirectorio clientdb.
+    Instale octetos-core(https://github.com/azaeldevel/octetos-core.git) y octetos-db(https://github.com/azaeldevel/octetos-db.git)
 
 	Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
 	1.- unzip apidb-master.zip //Descomprimir archivo
 	2.- cd apidb-master/src/build // entrar en el directorio
-	3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease ..
+	3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease -DAPIDB_MYSQL=Y ..
 	4.- make
 	5.- sudo cpack --config CPackConfig.cmake
 	6.- sudo ./apidb-*-Linux.sh  --prefix=/usr/local

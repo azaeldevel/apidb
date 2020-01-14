@@ -36,7 +36,7 @@ namespace apidb
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
-				if((((symbols::Table*)ispace)->fillKeyType(*(octetos::db::mysql::Connector*)connector,symbolsTable)) == false) return false;
+				if((((symbols::Table*)ispace)->fillKeyType(*connector,symbolsTable)) == false) return false;
 			}
 			else if(ispace->what() == symbols::SpaceType::SPACE)
 			{
@@ -73,7 +73,7 @@ namespace apidb
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
 				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
-				if(((symbols::Table*)ispace)->basicSymbols(*(octetos::db::mysql::Connector*)connector) == false) return false;
+				if(((symbols::Table*)ispace)->basicSymbols(*connector) == false) return false;
 			}
 			else if(ispace->what() == symbols::SpaceType::SPACE)
 			{
@@ -90,7 +90,7 @@ namespace apidb
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
 				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
-				if(((symbols::Table*)ispace)->basicSymbols(*(octetos::db::postgresql::Connector*)connector) == false) return false;
+				if(((symbols::Table*)ispace)->basicSymbols(*connector) == false) return false;
 			}
 			else if(ispace->what() == symbols::SpaceType::SPACE)
 			{

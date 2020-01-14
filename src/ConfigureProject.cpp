@@ -155,17 +155,17 @@ namespace apidb
                 executable_target = str;
         }*/
                 
-	bool ConfigureProject::testConexion()
+	/*bool ConfigureProject::testConexion()
     {
         bool ret = false;
         if(inputLenguaje == apidb::InputLenguajes::MySQL)
         {
-            octetos::db::mysql::Connector  connector;
+            octetos::db::Connector  connector;
             ret = connector.connect(conectordb);
             connector.close();
         }
         return ret;
-    }
+    }*/
     const octetos::core::Version& ConfigureProject::getVersionProject()const
     {
         return projectVersion;

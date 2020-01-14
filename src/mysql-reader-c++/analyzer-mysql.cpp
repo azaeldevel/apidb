@@ -26,6 +26,17 @@
 #include "analyzer.hpp"
 
 
+extern "C" void* createAnalyzer(void* config,void* connector,void* progress)
+{
+    return new octetos::apidb::mysql::Analyzer(*(octetos::apidb::ConfigureProject*)config,(octetos::db::Connector*)connector,(octetos::core::ActivityProgress*)progress);
+}
+
+extern "C" void destroyAnalyzer(void* object)
+{
+    delete (octetos::apidb::mysql::Analyzer*)object;
+}
+
+
 namespace octetos
 {
 namespace apidb

@@ -181,7 +181,7 @@ namespace apidb
                 {
                         if(config->inputLenguaje == InputLenguajes::MySQL)
                         {
-                                        config->conectordb = new octetos::db::mysql::Datconnect();
+                                        createDatconnect(&(config->conectordb));
                         }
                         else
                         {
@@ -889,13 +889,13 @@ namespace apidb
 		//std::cout << "Step 3.5 : " << app->config->conectordb->getHost() << std::endl;
 		try
 		{
-			if(!app->config->testConexion())
+			/*if(!app->config->testConexion())
 			{
 				std::string msgstr = "Fallo prueba de conexion a la base de datos.";
 				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
 				gtk_dialog_run (GTK_DIALOG (msg));
 				gtk_widget_destroy (msg);
-			}
+			}*/
 		}
 		catch(octetos::db::SQLException e)
 		{
@@ -1503,13 +1503,13 @@ namespace apidb
 					//std::cout << app->config->conectordb->getDatabase() << std::endl;
 					//std::cout << app->config->conectordb->getPort() << std::endl;
 					//std::cout << app->config->conectordb->getPassword() << std::endl;
-					if(!app->config->testConexion())
+					/*if(!app->config->testConexion())
 					{                                        
 						GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Fallo la conexion a la Base de datos revise sus parametros de conexion.");
 						gtk_dialog_run (GTK_DIALOG (msg)); 
 						gtk_widget_destroy (msg);
 						return;
-					}
+					}*/
 				}
 				catch(octetos::db::SQLException e)
 				{
@@ -1552,13 +1552,13 @@ namespace apidb
 			}
 			else
 			{
-				if(!app->config->testConexion())
+				/*if(!app->config->testConexion())
 				{                                        
 					GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Fallo la conexion a la Base de datos revise sus parametros de conexion.");
 					gtk_dialog_run (GTK_DIALOG (msg)); 
 					gtk_widget_destroy (msg);
 					return;
-				}
+				}*/
 				
 			}
 		}

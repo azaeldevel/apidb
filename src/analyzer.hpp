@@ -28,6 +28,9 @@
 #include "Errors.hpp"
 
 
+extern "C" void* createAnalyzer(void*,void*,void*);
+extern "C" void destroyAnalyzer(void*);
+
 namespace octetos
 {
 namespace apidb

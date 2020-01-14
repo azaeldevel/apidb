@@ -436,12 +436,12 @@ namespace apidb
                 if(inL.compare("MySQL") == 0)
                 {
                     inputLenguaje = InputLenguajes::MySQL;
-                    conectordb = new octetos::db::mysql::Datconnect(host,port,database,user,password);
+                    if(!createDatconnect(host,port,database,user,password,&conectordb)) return false;
                 }
                 else if(inL.compare("PostgreSQL") == 0)
                 {
                     inputLenguaje = InputLenguajes::PostgreSQL;
-                    conectordb = new octetos::db::postgresql::Datconnect(host,port,database,user,password);
+                    if(!createDatconnect(host,port,database,user,password,&conectordb)) return false;
                 }
                 else
                 {

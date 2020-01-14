@@ -9,7 +9,12 @@
 #include <algorithm>  //for std::generate_n
 #include <signal.h>
 #include <map>
-
+#ifdef APIDB_MYSQL
+    #include <db/clientdb-mysql.hh>
+#endif
+#ifdef APIDB_POSTGRESQL
+    #include <db/clientdb-postgresql.hh>
+#endif
 
 #include "../apidb.hpp"
 #include "../Errors.hpp"
@@ -33,8 +38,12 @@ std::string random_string( size_t length )
 
 static std::string filename;
 static std::string filename_nlst;
-static octetos::db::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
+#ifdef APIDB_MYSQL
+static octetos::db::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456");
+#endif
+#ifdef APIDB_POSTGRESQL
 static octetos::db::postgresql::Datconnect postgresqlSource("192.168.0.101",5432,"sysapp_v0001","sysapp","123456"); 
+#endif
 //static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 static std::string sysappv1Filename = "sysappv1-alpha.apidb";
 static std::string sysappv20Filename = "sysappv20-alpha.apidb";
@@ -62,6 +71,7 @@ int clean_apidb(void)
         return 0;
 }
 
+#ifdef APIDB_MYSQL
 void testCreateProject_nlst()
 {
 	octetos::core::Semver version;
@@ -93,54 +103,7 @@ void testConecction()
         octetos::apidb::ConfigureProject configProject;
         configProject.conectordb = &mysqlSource;
         configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
-        CU_ASSERT(configProject.testConexion());
-}
-
-void testCreateProjectPostgreSQL()
-{
-	octetos::core::Semver version;
-	version.setNumbers(0,1,0);
-	version.setPrerelease("alpha");
-	octetos::apidb::ConfigureProject configProject;
-	configProject.name = "sysapp";
-	configProject.builDirectory  = "apidb";
-	configProject.conectordb = &postgresqlSource;
-	configProject.versionResult = version;
-	configProject.inputLenguaje = octetos::apidb::InputLenguajes::PostgreSQL;
-	configProject.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
-	configProject.packing = octetos::apidb::PackingLenguajes::CMake;
-	configProject.compiled = octetos::apidb::Compiled::STATIC;
-	octetos::apidb::ConfigureProject::Table* tbP = new octetos::apidb::ConfigureProject::Table("Persons");
-	octetos::apidb::ConfigureProject::Function* dwFullName = new octetos::apidb::ConfigureProject::Function("fullname");
-	dwFullName->addParam(std::string("name1"));
-	dwFullName->addParam(std::string("name2"));
-	dwFullName->addParam(std::string("name3"));
-	dwFullName->addParam(std::string("name4"));
-	tbP->insert(std::make_pair(dwFullName->getName().c_str(), dwFullName));
-	octetos::apidb::ConfigureProject::Function* dwShortName = new octetos::apidb::ConfigureProject::Function("shortname");
-	dwShortName->addParam(std::string("name1"));
-	dwShortName->addParam(std::string("name3"));
-	tbP->insert(std::make_pair(dwShortName->getName().c_str(), dwShortName));
-	configProject.downloads.insert(std::make_pair(tbP->getName().c_str(),tbP));
-	configProject.selects.insert(std::make_pair(tbP->getName().c_str(),tbP));
-    octetos::core::Semver ver = octetos::apidb::getPakageVersion();
-    std::string strdevtaget = "developing";
-	configProject.executable_target  = strdevtaget + std::to_string(ver.getMajor());
-	configProject.namespace_detect = "emulate";
-	configProject.writeDatconnect = "conector";
-	//std::cout << std::endl << "Testing 1" << std::endl;
-	if(configProject.saveConfig(filename))
-	{
-                CU_ASSERT(true);
-	}
-	else
-	{
-        if(octetos::core::Error::check())
-        {
-            std::cout << std::endl << "Error: " << octetos::core::Error::get().what() << "\n";
-        }
-        CU_ASSERT(false);
-	}
+        //CU_ASSERT(configProject.testConexion());
 }
 
 void testCreateProject()
@@ -221,18 +184,18 @@ void testBuild_nlst()
 
 void testBuild()
 {   
-		octetos::apidb::ConfigureProject configProject;
-		//octetos::core::Error::write(octetos::core::Error("Teste error",1,__FILE__,__LINE__));
-        if(!configProject.readConfig(filename))
-        {                
-                if(octetos::core::Error::check())
-                {
-                        std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
-                }
-                CU_ASSERT(false);
-                exit(EXIT_FAILURE);// hay pruebas que depende de esta.
+    octetos::apidb::ConfigureProject configProject;
+    //octetos::core::Error::write(octetos::core::Error("Teste error",1,__FILE__,__LINE__));
+    if(!configProject.readConfig(filename))
+    {                
+        if(octetos::core::Error::check())
+        {
+            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
         }
-		//configProject.executable_target = "developing2";
+        CU_ASSERT(false);
+        return;
+    }
+    //configProject.executable_target = "developing2";
 		
     octetos::apidb::Driver driver(configProject);
     octetos::apidb::Tracer tracer(0);
@@ -250,7 +213,7 @@ void testBuild()
         CU_ASSERT(true);
     }
 			
-	std::list<std::string> listName;
+	/*std::list<std::string> listName;
 	if(driver.getTablesName(listName) == false)
 	{
 		if(octetos::core::Error::check())
@@ -270,74 +233,9 @@ void testBuild()
 		}
 		CU_ASSERT(false);
         return;
-	}
+	}*/
 }
 
-
-void testBuildPostgreSQL()
-{   
-    octetos::apidb::ConfigureProject configProject;
-    //octetos::core::Error::write(octetos::core::Error("Teste error",1,__FILE__,__LINE__));
-    if(!configProject.readConfig(filename))
-    {                
-        if(octetos::core::Error::check())
-        {
-            std::cout << octetos::core::Error::get().what() << std::endl;
-        }
-        CU_ASSERT(false);
-        return;
-    }
-    //configProject.executable_target = "developing2";
-		
-    octetos::apidb::Driver driver(configProject);
-    octetos::apidb::Tracer tracer(0);
-    if(driver.driving(&tracer) == false)
-    {
-        if(octetos::core::Error::check())
-        {
-            std::cout << octetos::core::Error::get().what() << std::endl;
-        }
-        CU_ASSERT(false);
-        return;
-    }
-    else
-    {
-        CU_ASSERT(true);
-        return;
-    }
-    
-	std::list<std::string> listName;
-	if(driver.getTablesName(listName) == false)
-	{
-		if(octetos::core::Error::check())
-		{
-			std::cout << octetos::core::Error::get().describe() << std::endl;
-		}
-		CU_ASSERT(false);
-        return;
-	}
-    else
-    {
-        CU_ASSERT(true);
-        return;
-    }
-	
-	std::list<std::string> listFields;
-	if(driver.getFiledsName(listFields,"Persons") == false)
-	{
-		if(octetos::core::Error::check())
-		{
-			std::cout << octetos::core::Error::get().describe() << std::endl;
-		}
-		CU_ASSERT(false);
-        return;
-	}
-    else
-    {
-        CU_ASSERT(true);
-        return;
-    }
-}
 
 
 void testCompile()
@@ -484,6 +382,123 @@ void testBackwardCompatiblev20()
 	}
 	CU_ASSERT(true);	
 }
+#endif
+
+
+#ifdef APIDB_POSTGRESQL
+void testCreateProjectPostgreSQL()
+{
+	octetos::core::Semver version;
+	version.setNumbers(0,1,0);
+	version.setPrerelease("alpha");
+	octetos::apidb::ConfigureProject configProject;
+	configProject.name = "sysapp";
+	configProject.builDirectory  = "apidb";
+	configProject.conectordb = &postgresqlSource;
+	configProject.versionResult = version;
+	configProject.inputLenguaje = octetos::apidb::InputLenguajes::PostgreSQL;
+	configProject.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
+	configProject.packing = octetos::apidb::PackingLenguajes::CMake;
+	configProject.compiled = octetos::apidb::Compiled::STATIC;
+	octetos::apidb::ConfigureProject::Table* tbP = new octetos::apidb::ConfigureProject::Table("Persons");
+	octetos::apidb::ConfigureProject::Function* dwFullName = new octetos::apidb::ConfigureProject::Function("fullname");
+	dwFullName->addParam(std::string("name1"));
+	dwFullName->addParam(std::string("name2"));
+	dwFullName->addParam(std::string("name3"));
+	dwFullName->addParam(std::string("name4"));
+	tbP->insert(std::make_pair(dwFullName->getName().c_str(), dwFullName));
+	octetos::apidb::ConfigureProject::Function* dwShortName = new octetos::apidb::ConfigureProject::Function("shortname");
+	dwShortName->addParam(std::string("name1"));
+	dwShortName->addParam(std::string("name3"));
+	tbP->insert(std::make_pair(dwShortName->getName().c_str(), dwShortName));
+	configProject.downloads.insert(std::make_pair(tbP->getName().c_str(),tbP));
+	configProject.selects.insert(std::make_pair(tbP->getName().c_str(),tbP));
+    octetos::core::Semver ver = octetos::apidb::getPakageVersion();
+    std::string strdevtaget = "developing";
+	configProject.executable_target  = strdevtaget + std::to_string(ver.getMajor());
+	configProject.namespace_detect = "emulate";
+	configProject.writeDatconnect = "conector";
+	//std::cout << std::endl << "Testing 1" << std::endl;
+	if(configProject.saveConfig(filename))
+	{
+                CU_ASSERT(true);
+	}
+	else
+	{
+        if(octetos::core::Error::check())
+        {
+            std::cout << std::endl << "Error: " << octetos::core::Error::get().what() << "\n";
+        }
+        CU_ASSERT(false);
+	}
+}
+
+
+void testBuildPostgreSQL()
+{   
+    octetos::apidb::ConfigureProject configProject;
+    //octetos::core::Error::write(octetos::core::Error("Teste error",1,__FILE__,__LINE__));
+    if(!configProject.readConfig(filename))
+    {                
+        if(octetos::core::Error::check())
+        {
+            std::cout << octetos::core::Error::get().what() << std::endl;
+        }
+        CU_ASSERT(false);
+        return;
+    }
+    //configProject.executable_target = "developing2";
+		
+    octetos::apidb::Driver driver(configProject);
+    octetos::apidb::Tracer tracer(0);
+    if(driver.driving(&tracer) == false)
+    {
+        if(octetos::core::Error::check())
+        {
+            std::cout << octetos::core::Error::get().what() << std::endl;
+        }
+        CU_ASSERT(false);
+        return;
+    }
+    else
+    {
+        CU_ASSERT(true);
+        return;
+    }
+    
+	std::list<std::string> listName;
+	if(driver.getTablesName(listName) == false)
+	{
+		if(octetos::core::Error::check())
+		{
+			std::cout << octetos::core::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+        return;
+	}
+    else
+    {
+        CU_ASSERT(true);
+        return;
+    }
+	
+	std::list<std::string> listFields;
+	if(driver.getFiledsName(listFields,"Persons") == false)
+	{
+		if(octetos::core::Error::check())
+		{
+			std::cout << octetos::core::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+        return;
+	}
+    else
+    {
+        CU_ASSERT(true);
+        return;
+    }
+}
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -502,14 +517,27 @@ int main(int argc, char *argv[])
             //std::cout << argv[i] << ";\n";
             runAll = true;
         }
-        else if(strcmp(argv[i],"--enable-mysql") == 0)
+        
+        if(strcmp(argv[i],"--enable-mysql") == 0)
         {
             //std::cout << argv[i] << ";\n";
+#ifndef APIDB_MYSQL
+            std::cerr << "No hay soporta para MySQL.\n";
+            return EXIT_FAILURE;
+#endif
             enableMySQL = true;
         }
-        else if(strcmp(argv[i],"--enable-postgresql") == 0)
+        else 
+        {
+            
+        }    
+        if(strcmp(argv[i],"--enable-postgresql") == 0)
         {
             //std::cout << argv[i] << ";\n";
+#ifndef APIDB_POSTGRESQL
+            std::cerr << "No hay soporta para PostgreSQL.\n";
+            return EXIT_FAILURE;
+#endif
             enablePostgreSQL = true;
         }
     }
@@ -531,6 +559,7 @@ int main(int argc, char *argv[])
     
 	
 	///////////////////////////////////////////////////////////CON LISTAS
+#ifdef APIDB_MYSQL
 	if(enableMySQL)
     {
         if(runTest == 1 or runAll)
@@ -583,7 +612,9 @@ int main(int argc, char *argv[])
             }
         }
     }
-    else if(enablePostgreSQL)
+#endif
+#ifdef APIDB_POSTGRESQL
+    if(enablePostgreSQL)
     {
         //std::cout <<"Iniciando pruebas de PostgreSQL\n";
         if(runTest == 5 or runAll)
@@ -603,7 +634,7 @@ int main(int argc, char *argv[])
             }
         }
     }
-	
+#endif
 		
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);
