@@ -102,20 +102,38 @@ namespace apidb
 		}
 		return true;
 	}
-        Driver::~Driver()
+    Driver::~Driver()
+    {
+        if(analyzer)
         {
-                if(analyzer != NULL)
-                {
-                        delete analyzer;
-                        analyzer = NULL;
+            //delete analyzer;
+            if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
+            {
+                void* handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
+                if(!handle)
+                {                    
+                    std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
                 }
-                if(connector != NULL)
-                {
-                        connector->close();
-                        delete connector;
-                        connector = NULL;
+                void (*destroy)(octetos::apidb::Analyzer*);
+                destroy = (void (*)(octetos::apidb::Analyzer*))dlsym(handle, "destroyAnalyzer");
+                if(!destroy)
+                {                    
+                    std::string msgErr ="dlsym fallo con destroyAnalyzer:\n" ;
+                    msgErr = msgErr + "\t" + dlerror();
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
                 }
+                destroy(analyzer);
+            }
         }
+        if(connector)
+        {
+            connector->close();
+            delete connector;
+        }
+    }
         const Analyzer&  Driver::getAnalyzer() const
         {
                 return *analyzer;
@@ -363,14 +381,14 @@ namespace apidb
 				//analyzer = (apidb::Analyzer*)createAnalyzer((void*)&configureProject,connector,progress);		
                 void* handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
                 if(!handle)
-                {                    
+                {
                     std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
                     core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
                     core::Error::write(err);
                     return false;
                 }
-                apidb::Analyzer* (*create)(void*,void*,void*);
-                create = (apidb::Analyzer* (*)(void*,void*,void*))dlsym(handle, "createAnalyzer");
+                apidb::Analyzer* (*create)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
+                create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
                 if(!create)
                 {                    
                     std::string msgErr ="dlsym fallo con createAnalyzer:\n" ;
@@ -379,7 +397,7 @@ namespace apidb
                     core::Error::write(err);
                     return false;
                 }
-                analyzer = (apidb::Analyzer*) create((void*)&configureProject,connector,progress);
+                analyzer = (apidb::Analyzer*) create(&configureProject,connector,progress);
 			}
 			else
 			{
@@ -392,8 +410,8 @@ namespace apidb
                     core::Error::write(err);
                     return false;
                 }
-                apidb::Analyzer* (*create)(void*,void*,void*);
-                create = (apidb::Analyzer* (*)(void*,void*,void*))dlsym(handle, "createAnalyzer");
+                apidb::Analyzer* (*create)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
+                create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
                 if(!create)
                 {                    
                     std::string msgErr ="dlsym fallo con createAnalyzer:\n" ;
@@ -402,7 +420,7 @@ namespace apidb
                     core::Error::write(err);
                     return false;
                 }
-                analyzer = (apidb::Analyzer*) create((void*)&configureProject,connector,progress);
+                analyzer = (apidb::Analyzer*) create(&configureProject,connector,progress);
 			}
 		}
 		else if(configureProject.inputLenguaje == apidb::InputLenguajes::PostgreSQL)
@@ -420,8 +438,8 @@ namespace apidb
                     core::Error::write(err);
                     return false;
                 }
-                apidb::Analyzer* (*create)(void*,void*,void*);
-                create = (apidb::Analyzer* (*)(void*,void*,void*))dlsym(handle, "createAnalyzer");
+                apidb::Analyzer* (*create)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
+                create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
                 if(!create)
                 {                    
                     std::string msgErr ="dlsym fallo con createAnalyzer:\n" ;
@@ -430,7 +448,7 @@ namespace apidb
                     core::Error::write(err);
                     return false;
                 }
-                analyzer = (apidb::Analyzer*) create((void*)&configureProject,connector,progress);
+                analyzer = (apidb::Analyzer*) create(&configureProject,connector,progress);
 			}
 			else
 			{
@@ -443,8 +461,8 @@ namespace apidb
                     core::Error::write(err);
                     return false;
                 }
-                apidb::Analyzer* (*create)(void*,void*,void*);
-                create = (apidb::Analyzer* (*)(void*,void*,void*))dlsym(handle, "createAnalyzer");
+                apidb::Analyzer* (*create)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
+                create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
                 if(!create)
                 {                    
                     std::string msgErr ="dlsym fallo con createAnalyzer:\n" ;
@@ -453,7 +471,7 @@ namespace apidb
                     core::Error::write(err);
                     return false;
                 }
-                analyzer = (apidb::Analyzer*) create((void*)&configureProject,connector,progress);
+                analyzer = (apidb::Analyzer*) create(&configureProject,connector,progress);
 			}            
         }
         else

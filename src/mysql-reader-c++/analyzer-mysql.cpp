@@ -26,14 +26,14 @@
 #include "analyzer.hpp"
 
 
-extern "C" void* createAnalyzer(void* config,void* connector,void* progress)
+extern "C" octetos::apidb::mysql::Analyzer* createAnalyzer(const octetos::apidb::ConfigureProject* config,octetos::db::Connector* connector,octetos::core::ActivityProgress* progress)
 {
-    return new octetos::apidb::mysql::Analyzer(*(octetos::apidb::ConfigureProject*)config,(octetos::db::Connector*)connector,(octetos::core::ActivityProgress*)progress);
+    return new octetos::apidb::mysql::Analyzer(*config,connector,progress);
 }
 
-extern "C" void destroyAnalyzer(void* object)
+extern "C" void destroyAnalyzer(octetos::apidb::mysql::Analyzer* object)
 {
-    delete (octetos::apidb::mysql::Analyzer*)object;
+    delete object;
 }
 
 

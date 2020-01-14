@@ -28,8 +28,8 @@
 #include "Errors.hpp"
 
 
-extern "C" void* createAnalyzer(void*,void*,void*);
-extern "C" void destroyAnalyzer(void*);
+extern "C" octetos::apidb::mysql::Analyzer* createAnalyzer(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
+extern "C" void destroyAnalyzer(octetos::apidb::mysql::Analyzer*);
 
 namespace octetos
 {
