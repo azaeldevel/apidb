@@ -23,7 +23,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <exception>
-#include <core/common.hh>
+#include <core/Message.hh>
 #include <dlfcn.h>
 
 #include "driver.hpp"
@@ -382,7 +382,8 @@ namespace apidb
                 void* handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
                 if(!handle)
                 {
-                    std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
+                    std::string msgErr ="dlopen fallo con libapidb-MySQL.so : " ;
+                    msgErr = msgErr + dlerror();
                     core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
                     core::Error::write(err);
                     return false;

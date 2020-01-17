@@ -22,7 +22,7 @@
 #ifndef APIDB_ERRORS_HPP
 #define APIDB_ERRORS_HPP
 
-#include <core/common.hh>
+#include <core/Error.hh>
 
 namespace octetos
 {

@@ -23,6 +23,8 @@
 #ifndef APIDB_ANALYZER_HPP
 #define APIDB_ANALYZER_HPP
 
+#include <core/Message.hh>
+
 #include "common.hpp"
 #include "ConfigureProject.hpp"
 #include "Errors.hpp"

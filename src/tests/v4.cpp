@@ -436,7 +436,11 @@ void testCreateProjectPostgreSQL()
 
 void testBuildPostgreSQL()
 {   
-    octetos::apidb::ConfigureProject configProject;
+    octetos::apidb::ConfigureProject configProject;           
+        if(octetos::core::Error::check())
+        {
+            std::cout << octetos::core::Error::get().what() << std::endl;
+        }
     //octetos::core::Error::write(octetos::core::Error("Teste error",1,__FILE__,__LINE__));
     if(!configProject.readConfig(filename))
     {                

@@ -30,6 +30,8 @@
 #include <libxml/xmlreader.h>
 #include <iostream>
 #include <cstring>
+#include <core/Message.hh>
+
 
 namespace octetos
 {
