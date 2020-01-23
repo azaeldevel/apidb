@@ -140,7 +140,11 @@ namespace apidb
                 
                 void setSaved(bool);
                 
-        private:                
+        private:  
+                void* handle;
+                octetos::db::Connector* (*createConnector)();
+                octetos::db::Datconnect* (*createDatconnect)();
+                
                 void createWindow();
                 void createNotebookInfo(GtkWidget *boxInfo);
                 void createNotebookConexion(GtkWidget *boxConex);

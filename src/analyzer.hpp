@@ -30,8 +30,7 @@
 #include "Errors.hpp"
 
 
-extern "C" octetos::apidb::mysql::Analyzer* createAnalyzer(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
-extern "C" void destroyAnalyzer(octetos::apidb::mysql::Analyzer*);
+
 
 namespace octetos
 {
@@ -47,20 +46,22 @@ namespace generators
          **/
 	class Analyzer
 	{
+    private:
 		friend class generators::Generator;
 		friend class Driver;
-		
+		void* handle;
+        
 	public:
-                /**
-                 * \brief Realiza una llamada al parser interno que realiza el analisis de cadana pasada
-                 * \private no llame directame solo es para el uso del parser interno
-                 * */
+        /**
+        * \brief Realiza una llamada al parser interno que realiza el analisis de cadana pasada
+        * \private no llame directame solo es para el uso del parser interno
+        * */
 		virtual std::string parse(const std::string& line) = 0;
-                /**
-                 * \brief Simplemete analiza la base de datos y genera la informacion de la tabla de simbolos
-                 * \param progress Use NULL para especificar que no desea log o una instacia valida de toolkit::ActivityProgress para generarlos.
-                 * */
-                virtual bool analyze(core::ActivityProgress* progress) = 0;
+        /**
+        * \brief Simplemete analiza la base de datos y genera la informacion de la tabla de simbolos
+        * \param progress Use NULL para especificar que no desea log o una instacia valida de toolkit::ActivityProgress para generarlos.
+        * */
+        virtual bool analyze(core::ActivityProgress* progress) = 0;
                 
                 /**
                  * \brief Retorna un referancia a la tabla de simbolos, no es modificable si necesita poder modicar 

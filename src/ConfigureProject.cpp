@@ -22,6 +22,7 @@
 
 #include <fstream>
 #include <map>
+#include <dlfcn.h>
 
 //Tar>>>>>>>>>>
 #include <stdlib.h>
@@ -154,25 +155,101 @@ namespace apidb
         {
                 executable_target = str;
         }*/
+    ConfigureProject::~ConfigureProject()
+    {
+        if(!handle) dlclose(handle);        
+    }
                 
-	/*bool ConfigureProject::testConexion()
+	bool ConfigureProject::testConexion()
     {
         bool ret = false;
         if(inputLenguaje == apidb::InputLenguajes::MySQL)
         {
-            octetos::db::Connector  connector;
-            ret = connector.connect(conectordb);
-            connector.close();
+            octetos::db::Connector*  connector = createConnector();
+            ret = connector->connect(conectordb);
+            connector->close();
+        }
+        else if(inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+        {
+            octetos::db::Connector*  connector = createConnector();
+            ret = connector->connect(conectordb);
+            connector->close();
         }
         return ret;
-    }*/
-    const octetos::core::Version& ConfigureProject::getVersionProject()const
+    }
+    const core::Semver& ConfigureProject::getVersionProject()const
     {
         return projectVersion;
     }
     ConfigureProject::ConfigureProject()
     {
-        conectordb = NULL;
+        conectordb = NULL;        
+        if(inputLenguaje == apidb::InputLenguajes::MySQL)
+        {
+            handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
+            if(!handle)
+            {
+                std::string msgErr ="dlopen fallo con 'libapidb-MySQL.so' : ";
+                msgErr = msgErr + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return;
+            }
+            createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+            if(!createConnector)
+            {                    
+                std::string msgErr ="dlsym fallo con parse_string:\n" ;
+                msgErr = msgErr + "\t" + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return;
+            }
+            createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
+            if(!createDatconnect)
+            {                    
+                std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
+                msgErr = msgErr + "\t" + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return;
+            }
+        }
+        else if(inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+        {
+            handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
+            if(!handle)
+            {
+                std::string msgErr ="dlopen fallo con 'libapidb-MySQL.so' : ";
+                msgErr = msgErr + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return;
+            }
+            createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+            if(!createConnector)
+            {                    
+                std::string msgErr ="dlsym fallo con parse_string:\n" ;
+                msgErr = msgErr + "\t" + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return;
+            }
+            createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
+            if(!createDatconnect)
+            {                    
+                std::string msgErr ="dlsym fallo con parse_string:\n" ;
+                msgErr = msgErr + "\t" + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return;
+            }
+        }
+        else
+        {
+            handle = NULL;
+            createConnector = NULL;
+            createDatconnect = NULL;
+        }
     }
 	bool ConfigureProject::saveConfig(const std::string& filename)
 	{

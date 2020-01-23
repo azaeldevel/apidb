@@ -43,6 +43,11 @@ namespace octetos
 {
 namespace apidb
 {
+    db::Connector* createConnector(InputLenguajes)
+    {
+        
+        
+    }
 	/*symbols::ISpace* symbols::SymbolsTable::search(const std::string& str)const
 	{
 		const_iterator it = find(str.c_str());

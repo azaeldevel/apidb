@@ -65,15 +65,15 @@ namespace apidb
 			throw core::Error("Hay un error pendiente de atender",core::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
 		}
                 
-                //std::cout << "Reading : " << filename << std::endl;
-                FILE *apidbFilecheck = fopen(filename.c_str(), "r");
-                if (apidbFilecheck == NULL )
-                {
-                        std::string msg = "La dirección especificada '";
-                        msg += filename + "' no indica un archivo válido.";
-                        core::Error::write(core::Error(msg,ErrorCodes::READFILE_INVALIDPATH,__FILE__,__LINE__));
-                        return false;
-                }
+        //std::cout << "Reading : " << filename << std::endl;
+        FILE *apidbFilecheck = fopen(filename.c_str(), "r");
+        if (apidbFilecheck == NULL )
+        {
+            std::string msg = "La dirección especificada '";
+            msg += filename + "' no indica un archivo válido.";
+            core::Error::write(core::Error(msg,ErrorCodes::READFILE_INVALIDPATH,__FILE__,__LINE__));
+            return false;
+        }
                 fclose(apidbFilecheck);
                 //std::cout << "Step 2." << std::endl;
                 char tmp_filepath[] =  "/tmp/XXXXXXXXX";
@@ -436,12 +436,14 @@ namespace apidb
                 if(inL.compare("MySQL") == 0)
                 {
                     inputLenguaje = InputLenguajes::MySQL;
-                    if(!createDatconnect(host,port,database,user,password,&conectordb)) return false;
+                    conectordb = createDatconnect();
+                    conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);
                 }
                 else if(inL.compare("PostgreSQL") == 0)
                 {
                     inputLenguaje = InputLenguajes::PostgreSQL;
-                    if(!createDatconnect(host,port,database,user,password,&conectordb)) return false;
+                    conectordb = createDatconnect();
+                    conectordb->set(InputLenguajes::PostgreSQL,host,port,database,user,password);
                 }
                 else
                 {

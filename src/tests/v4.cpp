@@ -77,33 +77,41 @@ void testCreateProject_nlst()
 	octetos::core::Semver version;
 	version.setNumbers(0,1,0);
     version.setPrerelease("alpha");
-        
+    
 	octetos::apidb::ConfigureProject configProject_nls;
-        configProject_nls.name = "sysapp";
-        configProject_nls.builDirectory = "apidb";
-        configProject_nls.conectordb = &mysqlSource;
-        configProject_nls.versionResult = version;
-        configProject_nls.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
-        configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
-        configProject_nls.packing = octetos::apidb::PackingLenguajes::CMake;
-        configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
-        
-        if(configProject_nls.saveConfig(filename_nlst))
+    configProject_nls.name = "sysapp";
+    configProject_nls.builDirectory = "apidb";
+    configProject_nls.conectordb = &mysqlSource;
+    configProject_nls.versionResult = version;
+    configProject_nls.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
+    configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
+    configProject_nls.packing = octetos::apidb::PackingLenguajes::CMake;
+    configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
+    
+    if(configProject_nls.saveConfig(filename_nlst))
+    {
+        CU_ASSERT(true);
+    }
+    else
+    {
+        if(octetos::core::Error::check())
         {
-                CU_ASSERT(true);
+            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
         }
-        else
-        {
-                CU_ASSERT(false);
-        }
+        CU_ASSERT(false);        
+    }
 }
 
 void testConecction()
 {
-        octetos::apidb::ConfigureProject configProject;
-        configProject.conectordb = &mysqlSource;
-        configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
-        //CU_ASSERT(configProject.testConexion());
+    octetos::apidb::ConfigureProject configProject;
+    if(octetos::core::Error::check())
+    {
+            std::cout << "\n"<< octetos::core::Error::get().describe() << std::endl;
+    }
+    configProject.conectordb = &mysqlSource;
+    configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
+    CU_ASSERT(configProject.testConexion());
 }
 
 void testCreateProject()
@@ -148,26 +156,30 @@ void testCreateProject()
 	//std::cout << std::endl << "Testing 1" << std::endl;
 	if(configProject.saveConfig(filename))
 	{
-                CU_ASSERT(true);
+        CU_ASSERT(true);
 	}
 	else
 	{
-                CU_ASSERT(false);
+        if(octetos::core::Error::check())
+        {
+            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
+        }
+        CU_ASSERT(false);
 	}
 }
 
 void testBuild_nlst()
 {
 	octetos::apidb::ConfigureProject configProject_nls;
-        if(!configProject_nls.readConfig(filename_nlst))
+    if(!configProject_nls.readConfig(filename_nlst))
+    {
+        if(octetos::core::Error::check())
         {
-                if(octetos::core::Error::check())
-                {
-                        std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
-                }
-                CU_ASSERT(false);
-                return;
+            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
         }
+        CU_ASSERT(false);
+        return;
+    }
         octetos::apidb::Driver driver(configProject_nls);
         octetos::apidb::Tracer tracer(0);
         if(!driver.driving((octetos::apidb::Tracer*)NULL))
@@ -186,6 +198,10 @@ void testBuild()
 {   
     octetos::apidb::ConfigureProject configProject;
     //octetos::core::Error::write(octetos::core::Error("Teste error",1,__FILE__,__LINE__));
+        if(octetos::core::Error::check())
+        {
+            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
+        }
     if(!configProject.readConfig(filename))
     {                
         if(octetos::core::Error::check())
@@ -207,6 +223,7 @@ void testBuild()
             std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
         }
         CU_ASSERT(false);
+        return;
     }
     else
     {

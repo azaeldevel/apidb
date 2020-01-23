@@ -34,7 +34,7 @@ namespace octetos
 {
 namespace apidb
 {
-    bool createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password, octetos::db::Datconnect** dat)
+    /*bool createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password, octetos::db::Datconnect** dat)
     {
         (*dat) = new octetos::db::mysql::Datconnect(host,port,database,usuario,password);
         return true;
@@ -48,7 +48,16 @@ namespace apidb
     {
         (*conn) = new octetos::db::mysql::Connector();
         return true;
+    }*/
+
+    bool symbols::Table::basicSymbolsPostgreSQL(octetos::db::Connector& connect)
+    {
+        std::string msg = "No se ha activado el soporte para PostgreSQL.";
+        core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+        
+        return false;
     }
+
     /**
     * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
     */
@@ -118,7 +127,7 @@ namespace apidb
     }
 	
 	
-    bool symbols::Table::basicSymbols(octetos::db::Connector& connect)
+    bool symbols::Table::basicSymbolsMySQL(octetos::db::Connector& connect)
     {
         std::string str = "DESCRIBE ";
         if(space.compare("") != 0)

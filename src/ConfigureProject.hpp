@@ -29,20 +29,25 @@ namespace octetos
 {
 namespace apidb
 {
-        /**
-         * \brief Encargada de interactuar con el archivo de proyecto
-         * */
-        class ConfigureProject
-        {
-        private:
+    /**
+    * \brief Encargada de interactuar con el archivo de proyecto
+    * */
+    class ConfigureProject
+    {
+    private:
                 bool processNode(xmlTextReaderPtr);
                 bool getProjectNodes(xmlTextReaderPtr);
                 /**
                  * \brief la version del archivo de proyecto.
                  * */
-                octetos::core::Semver projectVersion;
+                core::Semver projectVersion;
                 
-        public:      
+                void* handle;
+                octetos::db::Connector* (*createConnector)();
+                octetos::db::Datconnect* (*createDatconnect)();
+                
+        public:  
+            ~ConfigureProject();
                 /**
                  * \brief Almacena la lista de parametros que le corresponde a una Funcion
                  */
@@ -57,14 +62,14 @@ namespace apidb
                 class Function
                 {
                 public:
-                        /**
-                         * \brief Nombre de la funcion
-                         * */
-                        const std::string& getName() const;
-                        /**
-                         * \brief Simplementa contrulle la funcion con su nombre
-                         * */
-                        Function(const std::string&);
+                    /**
+                    * \brief Nombre de la funcion
+                    * */
+                    const std::string& getName() const;
+                    /**
+                    * \brief Simplementa contrulle la funcion con su nombre
+                    * */
+                    Function(const std::string&);
                         /**
                          * \brief Simplemente limpia los parametros
                          * */
@@ -143,7 +148,7 @@ namespace apidb
                 /**
                  * \brief La version del proyecto resultado.
                  * */
-                octetos::core::Semver versionResult;
+                core::Semver versionResult;
                 /**
                  * \brief Información de conexión a la base de datos
                  * */
@@ -202,12 +207,11 @@ namespace apidb
                  **/
                 bool testConexion();
                         
-                /**
-                 * \brief Version del archivo de proyecto.
-                 * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
-                 **/
-                const octetos::core::Version& getVersionProject()const;
-                
+        /**
+        * \brief Version del archivo de proyecto.
+        * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
+        **/
+        const core::Semver& getVersionProject()const;
     };
 }
 }

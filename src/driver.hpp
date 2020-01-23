@@ -75,20 +75,20 @@ namespace apidb
                 /**
                  * \brief Unico contructor 
                  * */
-                Driver(const ConfigureProject&);
-                /**
-                 * \brief Retorna el obejeto Analyzer utilizado.
-                 * */
-                const Analyzer& getAnalyzer() const;
-                virtual ~Driver();
-                
-				bool getTablesName(std::list<std::string>& retList,symbols::Space* space = NULL)const;
-				bool getFiledsName(std::list<std::string>& retList,const std::string& table)const;
-				
+        Driver(const ConfigureProject&);
+        /**
+        * \brief Retorna el obejeto Analyzer utilizado.
+        * */
+        const Analyzer& getAnalyzer() const;
+        virtual ~Driver();                
+        bool getTablesName(std::list<std::string>& retList,symbols::Space* space = NULL)const;
+        bool getFiledsName(std::list<std::string>& retList,const std::string& table)const;
 	private:
 		octetos::db::Connector* connector;		
-                apidb::Analyzer* analyzer;
+        apidb::Analyzer* analyzer;
 		const ConfigureProject& configureProject;
+        void* handle;
+        octetos::db::Connector* (*createConnector)();
 	};
 }
 }

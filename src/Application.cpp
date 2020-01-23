@@ -18,11 +18,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * */
+#include <dlfcn.h>
+
 
 #include "Application.hpp"
 #include "Errors.hpp"
 #include "apidb.hpp"
 #include "versionInfo.h"
+
 
 namespace octetos
 {
@@ -177,11 +180,15 @@ namespace apidb
         }
                 
                 
-                if(config->conectordb == NULL)
-                {
+        if(config->conectordb == NULL)
+        {
                         if(config->inputLenguaje == InputLenguajes::MySQL)
                         {
-                                        createDatconnect(&(config->conectordb));
+                                        config->conectordb = createDatconnect();
+                        }
+                        else if(config->inputLenguaje == InputLenguajes::PostgreSQL)
+                        {
+                                        config->conectordb = createDatconnect();
                         }
                         else
                         {
@@ -195,7 +202,20 @@ namespace apidb
                                 gtk_widget_destroy (msg);
                                 return false;
                         }
-                }
+ 
+            if(config->inputLenguaje == apidb::InputLenguajes::MySQL)
+            {
+                handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
+                createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+                createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
+            }
+            else if(config->inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+            {
+                handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
+                createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+                createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
+            }
+        }
                 if(inLocEdited)
                 {
                         std::string loc = gtk_entry_get_text(GTK_ENTRY(inLoc));
@@ -758,6 +778,7 @@ namespace apidb
                         delete config;
                         config = NULL;
                 }
+        if(!handle) dlclose(handle); 
         }
         Application::Application()
         {
@@ -779,7 +800,10 @@ namespace apidb
                 inOutLEdited=false;
                 inPkLEdited = false;
                 inCmplEdited = false;
-                isNew = false;
+                isNew = false; 
+                handle = NULL;
+                createConnector = NULL;
+                createDatconnect = NULL;
         }   
         
         void Application::loadConfig()

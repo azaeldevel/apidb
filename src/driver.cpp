@@ -133,19 +133,37 @@ namespace apidb
             connector->close();
             delete connector;
         }
+        if(!handle) dlclose(handle); 
     }
         const Analyzer&  Driver::getAnalyzer() const
         {
                 return *analyzer;
         }
 	Driver::Driver(const ConfigureProject& config) : configureProject(config)
-	{
+	{ 
+        if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
+        {
+            handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
+            createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+        }
+        else if(configureProject.inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+        {
+            handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
+            createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+        }
+		else
+		{
+			//std::cout <<"Lenguaje de entrada desconocido."<<std::endl;
+			core::Error err("Lenguaje no soportado", ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
+			core::Error::write(err);
+		}
+        
 		analyzer = NULL;                
 		//std::cout <<"Iniciando contruccion." <<std::endl;
 		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
 			//std::cout <<"Creando conector." <<std::endl;
-            createConnector(&connector);
+            connector = createConnector();
 			try
 			{
 				bool flag = connector->connect(config.conectordb);
@@ -165,7 +183,7 @@ namespace apidb
 		else if(configureProject.inputLenguaje == apidb::InputLenguajes::PostgreSQL)
         {
 			//std::cout <<"Creando conector PostgreSQL\n";
-			createConnector(&connector);
+			connector = createConnector();
 			bool flag = connector->connect(config.conectordb);
             if(!flag)
             {

@@ -7,7 +7,7 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 
 	- CMake 3.5
 	- GCC 8.2
-	- octetos-core >= v0.16
+	- octetos-core >= v1.0
 	- octetos-db >= v0.13
 	- MySQL Client 5.7
 	- libpq
