@@ -64,7 +64,7 @@ namespace apidb
 		{
 			throw core::Error("Hay un error pendiente de atender",core::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
 		}
-                
+        
         //std::cout << "Reading : " << filename << std::endl;
         FILE *apidbFilecheck = fopen(filename.c_str(), "r");
         if (apidbFilecheck == NULL )
@@ -122,14 +122,16 @@ namespace apidb
                 }
                 fclose(apidbFilecheck2);
                 if(!projectVersion.set(strver)) 
-                {              
+                {
+                    //if(!projectVersion.extractNumbers(strver))
+                    {
                         std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.'";
                         msg += strver + "'";
                         core::Error::write(core::Error(msg,ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
                         return false;
+                    }
                 }
                 
-                //leer xml
                 //std::cout << "Leyendo XML." << std::endl;  
                 xmlTextReaderPtr reader;
                 int ret;                

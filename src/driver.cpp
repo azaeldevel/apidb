@@ -111,7 +111,7 @@ namespace apidb
             {
                 void* handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
                 if(!handle)
-                {                    
+                {
                     std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
                     core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
                     core::Error::write(err);
@@ -119,11 +119,12 @@ namespace apidb
                 void (*destroy)(octetos::apidb::Analyzer*);
                 destroy = (void (*)(octetos::apidb::Analyzer*))dlsym(handle, "destroyAnalyzer");
                 if(!destroy)
-                {                    
+                {
                     std::string msgErr ="dlsym fallo con destroyAnalyzer:\n" ;
                     msgErr = msgErr + "\t" + dlerror();
                     core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
                     core::Error::write(err);
+                    return;
                 }
                 destroy(analyzer);
             }
@@ -145,11 +146,27 @@ namespace apidb
         {
             handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
             createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+            if(!createConnector)
+            {                    
+                std::string msgErr ="dlsym fallo con parse_string:\n" ;
+                msgErr = msgErr + "\t" + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return;
+            }
         }
         else if(configureProject.inputLenguaje == apidb::InputLenguajes::PostgreSQL)
         {
             handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
             createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+            if(!createConnector)
+            {                    
+                std::string msgErr ="dlsym fallo con parse_string:\n" ;
+                msgErr = msgErr + "\t" + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return;
+            }
         }
 		else
 		{

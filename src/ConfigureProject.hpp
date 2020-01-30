@@ -35,33 +35,33 @@ namespace apidb
     class ConfigureProject
     {
     private:
-                bool processNode(xmlTextReaderPtr);
-                bool getProjectNodes(xmlTextReaderPtr);
-                /**
-                 * \brief la version del archivo de proyecto.
-                 * */
-                core::Semver projectVersion;
+        bool processNode(xmlTextReaderPtr);
+        bool getProjectNodes(xmlTextReaderPtr);
+        /**
+        * \brief la version del archivo de proyecto.
+        * */
+        core::Semver projectVersion;
                 
-                void* handle;
-                octetos::db::Connector* (*createConnector)();
-                octetos::db::Datconnect* (*createDatconnect)();
-                
+        void* handle;
+        octetos::db::Connector* (*createConnector)();
+        octetos::db::Datconnect* (*createDatconnect)();
+        
         public:  
             ~ConfigureProject();
                 /**
                  * \brief Almacena la lista de parametros que le corresponde a una Funcion
                  */
-                class Parameters : public std::vector<std::string>
-                {
-                public:
-                        ~Parameters();
-                };        
-                /**
-                 * \brief Almacena de descripcion de una funcion
-                 * */
-                class Function
-                {
-                public:
+            class Parameters : public std::vector<std::string>
+            {
+            public:
+                ~Parameters();
+            };        
+            /**
+            * \brief Almacena de descripcion de una funcion
+            * */
+            class Function
+            {
+            public:
                     /**
                     * \brief Nombre de la funcion
                     * */

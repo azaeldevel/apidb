@@ -1,5 +1,4 @@
 /**
- * 
  *  This file is part of apidb.
  *  APIDB do Make easy to connect your Database
  *  Copyright (C) 2018  Azael Reyes
@@ -16,7 +15,6 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
  * */
 
 #include <cctype>
@@ -43,45 +41,6 @@ namespace octetos
 {
 namespace apidb
 {
-    db::Connector* createConnector(InputLenguajes)
-    {
-        
-        
-    }
-	/*symbols::ISpace* symbols::SymbolsTable::search(const std::string& str)const
-	{
-		const_iterator it = find(str.c_str());
-		if(it != end())
-		{
-			return it->second;
-		}
-		
-		
-		if(hasChild(str))
-		{
-			std::string top = getTopName(str);
-			const_iterator it = find(top.c_str());
-			if(it != end())
-			{
-				std::string sub = getChilFullName(str);				
-				if(it->second->what() == symbols::SpaceType::SPACE)
-				{
-					Space* space = (Space*) it->second;
-					return space->findSpace(sub);
-				}
-				else
-				{
-					return it->second;
-				}
-			}
-			else
-			{
-				return NULL;
-			}
-		}
-		
-		return NULL;
-	}*/
 	symbols::Space* symbols::SymbolsTable::findSpace(const std::string& str)
 	{
 			//std::cout << "Buscando '" << str << "' en '" << name << "' Space::findSpace" << std::endl;
@@ -132,11 +91,6 @@ namespace apidb
 			
 			return NULL;
 	}
-	/*symbols::Table* symbols::SymbolsTable::addTable(const std::string& str)
-	{
-		
-		return NULL;
-	}*/
 	symbols::Space* symbols::SymbolsTable::addSpace(const std::string& str)
 	{
 		if(hasChild(str))
@@ -189,28 +143,26 @@ namespace apidb
 			return NULL;
 		}
 	}
-        symbols::SymbolsTable::SymbolsTable(const ConfigureProject& config):configureProject(&config)
+    symbols::SymbolsTable::SymbolsTable(const ConfigureProject& config):configureProject(&config)
+    {
+        Space* sapce = new symbols::Space(configureProject->name.c_str());
+        std::pair<const char*, symbols::ISpace*> newInser(configureProject->name.c_str(),sapce);
+        insert(newInser);//aseguira que sea el primer en ser creado.                
+    }
+    symbols::SymbolsTable::~SymbolsTable()
+    {
+        for(SymbolsTable::iterator it = begin(); it != end(); it++)
         {
-			Space* sapce = new symbols::Space(configureProject->name.c_str());
-			std::pair<const char*, symbols::ISpace*> newInser(configureProject->name.c_str(),sapce);
-			insert(newInser);//aseguira que sea el primer en ser creado.                
+            delete it->second;
         }
-        symbols::SymbolsTable::~SymbolsTable()
-        {
-                for(SymbolsTable::iterator it = begin(); it != end(); it++)
-                {
-                        delete it->second;
-                }
-                clear();
-        }
-        const ConfigureProject& symbols::SymbolsTable::getConfigureProject()const
-        {
-			return *configureProject;
-		}
+        clear();
+    }
+    const ConfigureProject& symbols::SymbolsTable::getConfigureProject()const
+    {
+        return *configureProject;
+    }
         
-        
-        
-        
+
         
         void Tracer::add(const std::string& str)
         {
@@ -250,9 +202,9 @@ namespace apidb
 	{
 		switch(cmpl)
 		{
-                        case Compiled::SHARED:
+            case Compiled::SHARED:
 				return "SHARED";
-                        case Compiled::STATIC:
+            case Compiled::STATIC:
 				return "STATIC";
 			default:
 				return "Unknow";
@@ -260,63 +212,63 @@ namespace apidb
 	}
 	Compiled getCompiled(const std::string& str)
 	{
-                if(str.compare("static") == 0 or str.compare("STATIC") == 0)
-                {
-                        return Compiled::STATIC;
-                }
-                else if(str.compare("shared") == 0 or str.compare("SHARED") == 0)
-                {
-                        return Compiled::SHARED;
-                }                
-                
-                return Compiled::NoCompile;
+        if(str.compare("static") == 0 or str.compare("STATIC") == 0)
+        {
+            return Compiled::STATIC;
+        }
+        else if(str.compare("shared") == 0 or str.compare("SHARED") == 0)
+        {
+            return Compiled::SHARED;
+        }           
+        
+        return Compiled::NoCompile;
 	}
                
 	std::string getPackingLenguajes(PackingLenguajes pack )
 	{
 		switch(pack)
 		{
-                        case PackingLenguajes::CMake:
+            case PackingLenguajes::CMake:
 				return "CMake";
 			default:
 				return "Unknow";
 		}
 	}
 	PackingLenguajes getPackingLenguajes(const std::string& str)
+    {
+        if(str.compare("cmake") == 0 or str.compare("CMake") == 0)
         {
-                if(str.compare("cmake") == 0 or str.compare("CMake") == 0)
-                {
-                        return PackingLenguajes::CMake;
-                }
-                
-                return PackingLenguajes::NoPack;
+            return PackingLenguajes::CMake;
         }
+                
+        return PackingLenguajes::NoPack;
+    }
                
 	std::string getOutputLenguajes(OutputLenguajes o )
 	{
 		switch(o)
 		{
-                        case OutputLenguajes::CPP:
+            case OutputLenguajes::CPP:
 				return "C++";
-                        case OutputLenguajes::C:
+            case OutputLenguajes::C:
 				return "C";
 			default:
 				return "Unknow";
 		}
 	}
 	OutputLenguajes getOutputLenguajes(const std::string& str)
+    {
+        if(str.compare("c++") == 0 or str.compare("C++") == 0)
         {
-                if(str.compare("c++") == 0 or str.compare("C++") == 0)
-                {
-                        return OutputLenguajes::CPP;
-                }
-                else if(str.compare("c") == 0 or str.compare("C") == 0)
-                {
-                        return OutputLenguajes::C;
-                }
-                
-                return OutputLenguajes::NoLang;
+            return OutputLenguajes::CPP;
         }
+        else if(str.compare("c") == 0 or str.compare("C") == 0)
+        {
+            return OutputLenguajes::C;
+        }
+                
+        return OutputLenguajes::NoLang;
+    }
         
 	std::string getInputLenguaje(InputLenguajes inputLenguaje )
 	{
@@ -331,40 +283,18 @@ namespace apidb
 		}
 	}
 	InputLenguajes getInputLenguaje(const std::string& str)
+    {
+        if(str.compare("mysql") == 0 or str.compare("MySQL") == 0)
         {
-                if(str.compare("mysql") == 0 or str.compare("MySQL") == 0)
-                {
-                        return InputLenguajes::MySQL;
-                }
-                
-                return InputLenguajes::Unknow;
+            return InputLenguajes::MySQL;
         }
+                
+        return InputLenguajes::Unknow;
+    }
     
     
 	namespace symbols
 	{
-		/**
-		* \private
-		* */
-		/*std::string getExcludeChilName(const std::string& fullname)
-		{
-			std::vector<std::string> comps;
-			std::string str;
-			boost::split(comps, fullname, boost::is_any_of( "." ) );
-			if(comps.size() == 1) 
-			{
-                                return "";
-			}
-			else if(comps.size() > 1) 
-			{
-				for(int i = 1; i < comps.size(); i++)
-				{
-					if( i != 0) str += "." ;
-					str += comps[i];
-				}
-			}
-			return str;
-		}*/
                 
                 /**
                  * \private
@@ -533,21 +463,21 @@ namespace apidb
                 {
                         
                 }
-                Symbol::Symbol()
-                {
-                        counter++;
-                        id = counter;
-                        classReferenced = NULL;
-                        classParent = NULL;
-                        symbolReferenced = NULL;
-                        inType = "";
-                        outType = "";
-                        get = "";
-                        upperName = "";
-                        keyType = NOKEY;
-                        isPK = false;
-                        isFK = false;
-                }
+        Symbol::Symbol()
+        {
+            counter++;
+            id = counter;
+            classReferenced = NULL;
+            classParent = NULL;
+            symbolReferenced = NULL;
+            inType = "";
+            outType = "";
+            get = "";
+            upperName = "";
+            keyType = NOKEY;
+            isPK = false;
+            isFK = false;
+        }
 		int Symbol::counter = 0;	
 		
         
@@ -595,10 +525,10 @@ namespace apidb
 			
 			return m;
 		}*/
-                const std::string& Table::getUpperName()const
-                {
-                        return upperName;
-                }
+        const std::string& Table::getUpperName()const
+        {
+            return upperName;
+        }
 		short Table::getCountRefereces()const 
 		{
 			return countRef;
@@ -619,21 +549,21 @@ namespace apidb
 			clear();
 		}
 		const std::string& Table::getName()const
-                {
-                        return name;
-                }
-                const std::list<Symbol*>& Table::getRequired()const  
-                {
-                        return required;
-                }
-                const std::string& Table::getSpace()const           
-                {
-                        return space;
-                }
-                const std::string& Table::getFullName()const   
-                {
-                        return fullname;
-                }
+        {
+            return name;
+        }
+        const std::list<Symbol*>& Table::getRequired()const  
+        {
+            return required;
+        }
+        const std::string& Table::getSpace()const           
+        {
+            return space;
+        }
+        const std::string& Table::getFullName()const   
+        {
+            return fullname;
+        }
 		const Key& Table::getKey()const
 		{
 			return key;
@@ -784,14 +714,16 @@ namespace apidb
 		{
                         return name;
                 }*/
-                const std::string& Space::getName()const
-                {
+        const std::string& Space::getName()const
+        {
+            return name;
+        }
+        /*
+        const std::string& Space::getMiddleName()const
+        {
                         return name;
-                }
-                /*const std::string& Space::getMiddleName()const
-                {
-                        return name;
-                }*/		
+        }
+        */
 		Space::~Space()
 		{
 			for (iterator it = begin(); it != end(); it++)
