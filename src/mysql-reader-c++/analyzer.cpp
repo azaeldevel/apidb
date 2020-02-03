@@ -21,7 +21,7 @@ namespace mysql
 	}
 	bool Analyzer::parse(symbols::ISpace* ispace)
 	{
-		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+		if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{

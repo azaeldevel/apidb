@@ -32,7 +32,7 @@ namespace apidb
 {	
 	bool Analyzer::fillKeyType(symbols::ISpace* ispace,core::ActivityProgress* progress)
 	{		
-		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+		if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
@@ -68,7 +68,7 @@ namespace apidb
 			}
 		}
 		
-		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+		if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
@@ -85,7 +85,7 @@ namespace apidb
 				}
 			}
 		}
-		else if(configureProject.inputLenguaje == InputLenguajes::PostgreSQL)
+		else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{

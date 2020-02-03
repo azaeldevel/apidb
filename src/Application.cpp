@@ -72,7 +72,7 @@ namespace apidb
                                 gtk_widget_destroy (msg);
                                 return false;
                         }
-                        config->inputLenguaje = getInputLenguaje(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inInL)));
+                        config->setInputLenguaje(getInputLenguaje(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inInL))));
                 }
                 if(inOutLEdited)
                 {
@@ -182,17 +182,17 @@ namespace apidb
                 
         if(config->conectordb == NULL)
         {
-                        if(config->inputLenguaje == InputLenguajes::MySQL)
-                        {
-                                        config->conectordb = createDatconnect();
-                        }
-                        else if(config->inputLenguaje == InputLenguajes::PostgreSQL)
-                        {
-                                        config->conectordb = createDatconnect();
-                        }
-                        else
-                        {
-                                GtkWidget *msg = gtk_message_dialog_new (NULL,
+            if(config->getInputLenguaje() == InputLenguajes::MySQL)
+            {
+                config->conectordb = createDatconnect();
+            }
+            else if(config->getInputLenguaje() == InputLenguajes::PostgreSQL)
+            {
+                config->conectordb = createDatconnect();
+            }
+            else
+            {
+                    GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                         GTK_MESSAGE_ERROR,
                                                                         GTK_BUTTONS_CLOSE,
@@ -201,15 +201,15 @@ namespace apidb
                                 gtk_dialog_run (GTK_DIALOG (msg));    
                                 gtk_widget_destroy (msg);
                                 return false;
-                        }
+            }
  
-            if(config->inputLenguaje == apidb::InputLenguajes::MySQL)
+            if(config->getInputLenguaje() == apidb::InputLenguajes::MySQL)
             {
                 handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
                 createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
                 createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
             }
-            else if(config->inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+            else if(config->getInputLenguaje() == apidb::InputLenguajes::PostgreSQL)
             {
                 handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
                 createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
@@ -810,7 +810,7 @@ namespace apidb
         {
                 gtk_entry_set_text (GTK_ENTRY(inName),config->name.c_str());
                 gtk_entry_set_text (GTK_ENTRY(inVer),config->versionResult.toString().c_str());
-                gtk_combo_box_set_active(GTK_COMBO_BOX(inInL),(gint)config->inputLenguaje);
+                gtk_combo_box_set_active(GTK_COMBO_BOX(inInL),(gint)config->getInputLenguaje());
                 gtk_combo_box_set_active(GTK_COMBO_BOX(inOutL),(gint)config->outputLenguaje);
                 gtk_combo_box_set_active(GTK_COMBO_BOX(inPkL),(gint)config->packing);
                 gtk_combo_box_set_active(GTK_COMBO_BOX(inCmpl),(gint)config->compiled);

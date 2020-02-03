@@ -40,6 +40,15 @@ namespace octetos
 {
 namespace apidb
 {
+    void ConfigureProject::setInputLenguaje(InputLenguajes in)
+    {
+        inputLenguaje = in;
+        loadLibrary();
+    }
+    InputLenguajes ConfigureProject::getInputLenguaje()const
+    {
+        return inputLenguaje;
+    }
 	const ConfigureProject::Table* ConfigureProject::findSelectTable(const std::string& str)const
 	{	
 		//std::cout << "Buscar '" << str << "' en lista de select." << std::endl;
@@ -165,14 +174,15 @@ namespace apidb
         bool ret = false;
         if(inputLenguaje == apidb::InputLenguajes::MySQL)
         {
-            octetos::db::Connector*  connector = createConnector();
-            ret = connector->connect(conectordb);
+            //std::cout << "2 - createConnection:" << createConnection << "\n";
+            octetos::db::Connector*  connector = createConnection();
+            ret = connector->connect(*conectordb);
             connector->close();
         }
         else if(inputLenguaje == apidb::InputLenguajes::PostgreSQL)
         {
-            octetos::db::Connector*  connector = createConnector();
-            ret = connector->connect(conectordb);
+            octetos::db::Connector*  connector = createConnection();
+            ret = connector->connect(*conectordb);
             connector->close();
         }
         return ret;
@@ -181,37 +191,40 @@ namespace apidb
     {
         return projectVersion;
     }
-    ConfigureProject::ConfigureProject()
+    bool ConfigureProject::loadLibrary()
     {
-        conectordb = NULL;        
+        //std::cout << "Step 0\n";
         if(inputLenguaje == apidb::InputLenguajes::MySQL)
         {
             handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
+            //std::cout << "Step 1\n";
             if(!handle)
             {
                 std::string msgErr ="dlopen fallo con 'libapidb-MySQL.so' : ";
                 msgErr = msgErr + dlerror();
                 core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
                 core::Error::write(err);
-                return;
+                return false;
             }
-            createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
-            if(!createConnector)
-            {                    
+            //std::cout << "Step 2\n";
+            createConnection = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+            //std::cout << "Step 3\n";
+            if(!createConnection)
+            {
                 std::string msgErr ="dlsym fallo con parse_string:\n" ;
                 msgErr = msgErr + "\t" + dlerror();
                 core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
                 core::Error::write(err);
-                return;
+                return false;
             }
-            createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
-            if(!createDatconnect)
-            {                    
+            createDatConnection = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
+            if(!createDatConnection)
+            {
                 std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
                 msgErr = msgErr + "\t" + dlerror();
                 core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
                 core::Error::write(err);
-                return;
+                return false;
             }
         }
         else if(inputLenguaje == apidb::InputLenguajes::PostgreSQL)
@@ -223,33 +236,44 @@ namespace apidb
                 msgErr = msgErr + dlerror();
                 core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
                 core::Error::write(err);
-                return;
+                return false;
             }
-            createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
-            if(!createConnector)
+            createConnection = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+            if(!createConnection)
             {                    
                 std::string msgErr ="dlsym fallo con parse_string:\n" ;
                 msgErr = msgErr + "\t" + dlerror();
                 core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
                 core::Error::write(err);
-                return;
+                return false;
             }
-            createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
-            if(!createDatconnect)
+            createDatConnection = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
+            if(!createDatConnection)
             {                    
                 std::string msgErr ="dlsym fallo con parse_string:\n" ;
                 msgErr = msgErr + "\t" + dlerror();
                 core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
                 core::Error::write(err);
-                return;
+                return false;
             }
         }
         else
-        {
-            handle = NULL;
-            createConnector = NULL;
-            createDatconnect = NULL;
+        {      
+            std::string msgErr ="dlsym fallo con parse_string:\n" ;
+            msgErr = msgErr + "\t" + dlerror();
+            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+            core::Error::write(err);
+            return false;
         }
+        
+        return true;
+    }
+    ConfigureProject::ConfigureProject()
+    {
+        handle = NULL;
+        createConnection = NULL;
+        createDatConnection = NULL;
+        conectordb = NULL;
     }
 	bool ConfigureProject::saveConfig(const std::string& filename)
 	{

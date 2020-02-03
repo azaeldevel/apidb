@@ -22,7 +22,7 @@
 #include <iostream>
 #include <mysql/mysql.h>
 #include <string>
-#include <db/clientdb-mysql.hh>
+#include <octetos/db/clientdb-mysql.hh>
 
 #include "apidb.hpp"
 #include "common.hpp"
@@ -74,13 +74,14 @@ namespace apidb
 		fks += "'";
 		//std::cout<<fks<<std::endl;
 		//std::cout<< "In table: " <<fullname<<std::endl;
-        octetos::db::Datresult* dt = connect.execute(fks.c_str());
-        if(dt != NULL)
+        octetos::db::mysql::Datresult dt;
+        bool flag = connect.execute(fks,dt);
+        if(flag)
         {                      
 			symbols::SymbolsTable::const_iterator itGlobal = symbolsTable.find(symbolsTable.getConfigureProject().name.c_str());
 			symbols::Space* global = ((symbols::Space*)itGlobal->second);
             MYSQL_ROW row;
-            while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
+            while ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))
             {
 				//std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType Find" << std::endl;			
 				symbols::Table* table = global->findTable(row[1]);
@@ -120,9 +121,7 @@ namespace apidb
 		{
 			//std::cout << "No retorno resultado la consulta" << std::endl;
 		}
-			
-                
-		delete dt;                
+        
 		return true;
     }
 	
@@ -138,14 +137,15 @@ namespace apidb
         {
             str += name;
         }
-        octetos::db::Datresult* dt = connect.execute(str.c_str());
-		if(dt != NULL) 
+        octetos::db::mysql::Datresult dt;
+        bool flag = connect.execute(str,dt);
+		if(flag) 
 		{
 			//std::cout<<str<<std::endl;
 			//MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());
 			MYSQL_ROW row;
 			bool setkey = false;
-			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
+			while ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))
 			{
 				Symbol* attrribute = new Symbol();
 				attrribute->classParent = this;
@@ -203,13 +203,13 @@ namespace apidb
 				}
 				//std::cout<<"Termitade with:" << attrribute->name << "(" << attrribute->upperName << ")" <<std::endl;
 			}
-			delete dt;//mysql_free_result(result);
+			
 			return true;			
 		}
 		else
 		{
 			std::cout<<"Faill on basicSymbols  : "<< str <<std::endl;
-			delete dt;//mysql_free_result(result);
+            
 			return false;
 		}
 	}

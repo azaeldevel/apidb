@@ -29,50 +29,50 @@
 
 int main(int argc, char *argv[])
 {
-        std::string copyright = "APIDB  Copyright (C) 2018  Azael Reyes \nThis program comes with ABSOLUTELY NO WARRANTY.\n    Contacto: azael.devel@gmail.com";
+    std::string copyright = "APIDB  Copyright (C) 2018  Azael Reyes \nThis program comes with ABSOLUTELY NO WARRANTY.\n    Contacto: azael.devel@gmail.com";
         
-        const char* file;
-        const char* dir;
+    const char* file;
+    const char* dir;
 	if(argc > 0)
 	{
 		if(strcmp(argv[1],"-v") ==0 || strcmp(argv[1],"--version") == 0)
 		{
 			std::cout<<"Version: " << octetos::apidb::getPakageVersion().toString()<<std::endl;
-                        std::cout<<std::endl;
-                        std::cout<< copyright<<std::endl;
+            std::cout<<std::endl;
+            std::cout<< copyright<<std::endl;
                         
 			return EXIT_SUCCESS;
 		}
 		else if((strcmp(argv[1],"-p") ==0 || strcmp(argv[1],"--project-file") == 0) && (strcmp(argv[3],"-o") ==0 || strcmp(argv[3],"--out-build") == 0) )
-                {
-                        file = argv[2];
-                        dir = argv[4];
-                }
-                else
+        {
+            file = argv[2];
+            dir = argv[4];
+        }
+        else
 		{
 			std::cerr<<"Opciónes desconocida "<<std::endl;
 			return EXIT_FAILURE;
 		}
 	}
 	else
-        {
-                std::cerr<<"Deve indicar el archivo de prjecto y el directorio de generacion, use las opciones -p 'file' -o 'dir'."<<std::endl;
-                return EXIT_FAILURE;
-        }
+    {
+        std::cerr<<"Deve indicar el archivo de prjecto y el directorio de generacion, use las opciones -p 'file' -o 'dir'."<<std::endl;
+        return EXIT_FAILURE;
+    }
 		
 	std::ifstream fin(file);
 	if(fin) 
 	{
 		std::cout<<"Cargando '" << file << "' ..." <<std::endl;
 		octetos::apidb::ConfigureProject config;
-                config.builDirectory = dir;
-                if(config.readConfig(file))
-                {
+        config.builDirectory = dir;
+        if(config.readConfig(file))
+        {
 			std::cerr<<"Fallo la lectura del archivo."<<std::endl;
 			return EXIT_FAILURE;                        
-                }
-        	octetos::apidb::Driver driver(config);
-                octetos::apidb::Tracer tr(0);
+        }
+        octetos::apidb::Driver driver(config);
+        octetos::apidb::Tracer tr(0);
 		if(!driver.driving(&tr))
 		{
 			std::cerr<<"Fallo la generacion."<<std::endl;

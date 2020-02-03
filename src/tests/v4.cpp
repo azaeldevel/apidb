@@ -10,10 +10,10 @@
 #include <signal.h>
 #include <map>
 #ifdef APIDB_MYSQL
-    #include <db/clientdb-mysql.hh>
+    #include <octetos/db/clientdb-mysql.hh>
 #endif
 #ifdef APIDB_POSTGRESQL
-    #include <db/clientdb-postgresql.hh>
+    #include <octetos/db/clientdb-postgresql.hh>
 #endif
 
 #include "../apidb.hpp"
@@ -83,7 +83,7 @@ void testCreateProject_nlst()
     configProject_nls.builDirectory = "apidb";
     configProject_nls.conectordb = &mysqlSource;
     configProject_nls.versionResult = version;
-    configProject_nls.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
+    configProject_nls.setInputLenguaje(octetos::apidb::InputLenguajes::MySQL);
     configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
     configProject_nls.packing = octetos::apidb::PackingLenguajes::CMake;
     configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
@@ -107,11 +107,18 @@ void testConecction()
     octetos::apidb::ConfigureProject configProject;
     if(octetos::core::Error::check())
     {
-            std::cout << "\n"<< octetos::core::Error::get().describe() << std::endl;
+        std::cout << "\n"<< octetos::core::Error::get().describe() << std::endl;
     }
     configProject.conectordb = &mysqlSource;
-    configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
-    CU_ASSERT(configProject.testConexion());
+    configProject.setInputLenguaje(octetos::apidb::InputLenguajes::MySQL);
+    if(configProject.testConexion())
+    {
+        CU_ASSERT(true);
+    }
+    else
+    {
+        CU_ASSERT(false);
+    }
 }
 
 void testCreateProject()
@@ -124,7 +131,7 @@ void testCreateProject()
 	configProject.builDirectory  = "apidb";
 	configProject.conectordb = &mysqlSource;
 	configProject.versionResult = version;
-	configProject.inputLenguaje = octetos::apidb::InputLenguajes::MySQL;
+	configProject.setInputLenguaje(octetos::apidb::InputLenguajes::MySQL);
 	configProject.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
 	configProject.packing = octetos::apidb::PackingLenguajes::CMake;
 	configProject.compiled = octetos::apidb::Compiled::STATIC;
@@ -198,10 +205,10 @@ void testBuild()
 {   
     octetos::apidb::ConfigureProject configProject;
     //octetos::core::Error::write(octetos::core::Error("Teste error",1,__FILE__,__LINE__));
-        if(octetos::core::Error::check())
-        {
-            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
-        }
+    if(octetos::core::Error::check())
+    {
+        std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
+    }
     if(!configProject.readConfig(filename))
     {                
         if(octetos::core::Error::check())

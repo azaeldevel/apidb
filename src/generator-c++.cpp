@@ -743,7 +743,7 @@ namespace generators
     }
     bool CPP::createCPP(std::ofstream& file,bool log,const symbols::ISpace* ispace)
 	{
-		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+		if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
@@ -787,7 +787,7 @@ namespace generators
 		for(symbols::SymbolsTable::const_iterator it = stb.begin(); it != stb.end(); it++)
 		{
 			symbols::ISpace* ispace = it->second;
-			if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+			if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
 			{
 				if(ispace->what() == symbols::SpaceType::TABLE)
 				{					
@@ -1113,7 +1113,7 @@ namespace generators
     }
     bool CPP::createH(std::ofstream& file,bool log,const symbols::ISpace* ispace)
 	{
-		if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+		if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
@@ -1153,7 +1153,7 @@ namespace generators
 	{
 		if(!configureProject.writeDatconnect.empty() and configureProject.writeDatconnect.compare("¿?") != 0)
 		{
-			if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+			if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
 			{
 				file << "\tstatic const octetos::db::mysql::Datconnect " << configureProject.writeDatconnect  << "(";
 			}
@@ -1176,7 +1176,7 @@ namespace generators
 		for(symbols::SymbolsTable::const_iterator it = stb.begin(); it != stb.end(); it++)
 		{			
 			symbols::ISpace* ispace = it->second;
-			if(configureProject.inputLenguaje == InputLenguajes::MySQL)
+			if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
 			{
 				if(ispace->what() == symbols::SpaceType::TABLE)
 				{					
@@ -1207,7 +1207,7 @@ namespace generators
 					file << std::endl;
 				}
 			}
-			else if(configureProject.inputLenguaje == InputLenguajes::PostgreSQL)
+			else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
             {
                 core::Error::write(core::Error("Este módulo esta en Desarrollo.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
                 return false;

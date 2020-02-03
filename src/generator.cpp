@@ -237,7 +237,7 @@ namespace generators
 		  toolkitcommonconifg<<")"<<std::endl;
 		toolkitcommonconifg.close();
                 
-        if(configureProject.inputLenguaje  == InputLenguajes::MySQL)
+        if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
         {
 		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
 		namefile = "octetos-db-mysqlConfig.cmake";

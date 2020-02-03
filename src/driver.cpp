@@ -23,7 +23,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <exception>
-#include <core/Message.hh>
+#include <octetos/core/Message.hh>
 #include <dlfcn.h>
 
 #include "driver.hpp"
@@ -107,7 +107,7 @@ namespace apidb
         if(analyzer)
         {
             //delete analyzer;
-            if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
+            if(configureProject.getInputLenguaje() == apidb::InputLenguajes::MySQL)
             {
                 void* handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
                 if(!handle)
@@ -142,7 +142,7 @@ namespace apidb
         }
 	Driver::Driver(const ConfigureProject& config) : configureProject(config)
 	{ 
-        if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
+        if(configureProject.getInputLenguaje() == apidb::InputLenguajes::MySQL)
         {
             handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
             createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
@@ -155,7 +155,7 @@ namespace apidb
                 return;
             }
         }
-        else if(configureProject.inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+        else if(configureProject.getInputLenguaje() == apidb::InputLenguajes::PostgreSQL)
         {
             handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
             createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
@@ -177,13 +177,13 @@ namespace apidb
         
 		analyzer = NULL;                
 		//std::cout <<"Iniciando contruccion." <<std::endl;
-		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
+		if(configureProject.getInputLenguaje() == apidb::InputLenguajes::MySQL)
 		{
 			//std::cout <<"Creando conector." <<std::endl;
             connector = createConnector();
 			try
 			{
-				bool flag = connector->connect(config.conectordb);
+				bool flag = connector->connect(*(config.conectordb));
 				if(!flag)
 				{
 					delete connector;
@@ -197,11 +197,11 @@ namespace apidb
 				core::Error::write(err);
 			}
 		}
-		else if(configureProject.inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+		else if(configureProject.getInputLenguaje() == apidb::InputLenguajes::PostgreSQL)
         {
 			//std::cout <<"Creando conector PostgreSQL\n";
 			connector = createConnector();
-			bool flag = connector->connect(config.conectordb);
+			bool flag = connector->connect(*(config.conectordb));
             if(!flag)
             {
                 delete connector;
@@ -407,7 +407,7 @@ namespace apidb
 	
 	bool Driver::analyze(core::ActivityProgress* progress)
 	{
-		if(configureProject.inputLenguaje == apidb::InputLenguajes::MySQL)
+		if(configureProject.getInputLenguaje() == apidb::InputLenguajes::MySQL)
 		{
 			if(analyzer != NULL)
 			{
@@ -459,7 +459,7 @@ namespace apidb
                 analyzer = (apidb::Analyzer*) create(&configureProject,connector,progress);
 			}
 		}
-		else if(configureProject.inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+		else if(configureProject.getInputLenguaje() == apidb::InputLenguajes::PostgreSQL)
         {
 			if(analyzer != NULL)
 			{
@@ -524,7 +524,7 @@ namespace apidb
             progress->add(conf1);
             
             std::string msg ="\n\tLenguaje de entrada: " ;
-            msg+= getInputLenguaje(configureProject.inputLenguaje) + "\n";
+            msg+= getInputLenguaje(configureProject.getInputLenguaje()) + "\n";
             core::Confirmation conf2(msg);
             progress->add(conf2);
         }

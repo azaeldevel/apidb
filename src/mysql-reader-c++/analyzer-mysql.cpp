@@ -22,7 +22,7 @@
 #include <iostream>
 #include <mysql/mysql.h>
 #include <string>
-
+#include <octetos/db/clientdb-mysql.hh>
 #include "analyzer.hpp"
 
 
@@ -48,9 +48,10 @@ namespace mysql
 		std::string db = connector->getDatconection()->getDatabase();
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
 		str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
-		octetos::db::Datresult* dt = connector->execute(str.c_str());
+		octetos::db::mysql::Datresult dt;
+        bool flag = connector->execute(str,dt);
 		//std::cout << str  <<std::endl;
-		if(dt != NULL) 
+		if(flag) 
 		{
 			symbols::SymbolsTable::iterator itGlobal = symbolsTable.find(configureProject.name.c_str());
 			if(itGlobal == symbolsTable.end())
@@ -66,7 +67,7 @@ namespace mysql
 				return false;
 			}
 			MYSQL_ROW row;
-			while ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))
+			while ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))
 			{
 				symbols::Table* prw = new symbols::Table(symbols::getFirstName(row[0]));
 				std::string upper = row[0];
@@ -128,7 +129,7 @@ namespace mysql
 					return false;
 				}
 			}
-			delete dt;
+			
 			return true;
 		}
 		else

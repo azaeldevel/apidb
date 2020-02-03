@@ -25,6 +25,7 @@
  
 #include "common.hpp"
 
+
 namespace octetos
 {
 namespace apidb
@@ -43,14 +44,21 @@ namespace apidb
         core::Semver projectVersion;
                 
         void* handle;
-        octetos::db::Connector* (*createConnector)();
-        octetos::db::Datconnect* (*createDatconnect)();
+        octetos::db::Connector* (*createConnection)();
+        octetos::db::Datconnect* (*createDatConnection)();
+        bool loadLibrary();
+        /**
+        * \brief Identifica el tipo del Servidor de base de datos
+        * */
+        InputLenguajes inputLenguaje;
         
-        public:  
-            ~ConfigureProject();
-                /**
-                 * \brief Almacena la lista de parametros que le corresponde a una Funcion
-                 */
+    public:  
+        void setInputLenguaje(InputLenguajes);
+        InputLenguajes getInputLenguaje()const;
+        ~ConfigureProject();
+        /**
+        * \brief Almacena la lista de parametros que le corresponde a una Funcion
+        */
             class Parameters : public std::vector<std::string>
             {
             public:
@@ -153,10 +161,6 @@ namespace apidb
                  * \brief Información de conexión a la base de datos
                  * */
                 octetos::db::Datconnect* conectordb;
-                /**
-                 * \brief Identifica el tipo del Servidor de base de datos
-                 * */
-                InputLenguajes inputLenguaje;
                 /**
                  * \brief Identifica El lenguaje en que se genera el codigo fuente.
                  * */

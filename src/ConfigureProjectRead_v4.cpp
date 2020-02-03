@@ -437,14 +437,14 @@ namespace apidb
                 std::string inL = (const char*)xmlTextReaderConstValue(reader);
                 if(inL.compare("MySQL") == 0)
                 {
-                    inputLenguaje = InputLenguajes::MySQL;
-                    conectordb = createDatconnect();
+                    setInputLenguaje(InputLenguajes::MySQL);
+                    conectordb = createDatConnection();
                     conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);
                 }
                 else if(inL.compare("PostgreSQL") == 0)
                 {
-                    inputLenguaje = InputLenguajes::PostgreSQL;
-                    conectordb = createDatconnect();
+                    setInputLenguaje(InputLenguajes::PostgreSQL);
+                    conectordb = createDatConnection();
                     conectordb->set(InputLenguajes::PostgreSQL,host,port,database,user,password);
                 }
                 else
