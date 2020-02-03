@@ -123,12 +123,17 @@ namespace apidb
                 fclose(apidbFilecheck2);
                 if(!projectVersion.set(strver)) 
                 {
-                    //if(!projectVersion.extractNumbers(strver))
+                    core::Semver ver;
+                    if(!ver.extractNumbers(strver))
                     {
                         std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.'";
                         msg += strver + "'";
                         core::Error::write(core::Error(msg,ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
                         return false;
+                    }
+                    else
+                    {
+                        projectVersion = ver;
                     }
                 }
                 
@@ -449,9 +454,9 @@ namespace apidb
                 }
                 else
                 {
-                        std::string msgstr = "Fallo durante el parseo XML.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                        return false;
+                    std::string msgstr = "Fallo durante el parseo XML.";
+                    core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                    return false;
                 }
                 
                 //
