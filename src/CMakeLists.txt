@@ -170,8 +170,10 @@ TARGET_LINK_LIBRARIES(${CMAKE_PROJECT_NAME}-gtk3 ${CMAKE_PROJECT_NAME} ${LIBRARI
 
 
 
-execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb-128x128.png" -h 128 -w 128)
-execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb-256x256.png" -h 256 -w 256)
+#execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb-128x128.png" -h 128 -w 128)
+#execute_process(COMMAND inkscape --file "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" --export-png "${CMAKE_CURRENT_BINARY_DIR}/apidb-256x256.png" -h 256 -w 256)
+execute_process(COMMAND convert -background none -size 128x128 "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" "${CMAKE_CURRENT_BINARY_DIR}/apidb-128x128.png")
+execute_process(COMMAND convert -background none -size 256x256 "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" "${CMAKE_CURRENT_BINARY_DIR}/apidb-256x256.png")
 
 IF(Doxygen_FOUND AND APIDB_DOC)
 	add_custom_target(

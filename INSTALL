@@ -19,8 +19,7 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	- GTK 3 library
 	- Tar library
 	- Doxygen (opcional)
-En tiempo de construcion
-	-Inkscape  solo como herramienta para generar el icono
+	- ImageMagicK <= 7
 
 -------------
 - Instalación
@@ -38,5 +37,5 @@ En tiempo de construcion
                 ¿?..
                 Saying no will install in: X
                 n
-    El directorio usado en prefix/lib deve estar en ld.so.conf si no es asi agregelo.
+    El directorio usado en prefix/lib deve estar en ld.so.conf o en /etc/environment si no es asi agregelo.
     7.- a run ldconfig como usuario root
