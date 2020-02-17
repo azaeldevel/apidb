@@ -58,12 +58,13 @@ namespace generators
         ofile << "\t\t{"  << std::endl;
         ofile << "\t\t\tsqlString += \" LIMIT  \"  + std::to_string(leng);"  << std::endl;
         ofile << "\t\t}"  << std::endl;
-        ofile << "\t\toctetos::db::Datresult* dt = connector.execute(sqlString.c_str());"  << std::endl;
-        ofile << "\t\tif(dt!=NULL)"  << std::endl;
+        ofile << "\t\toctetos::db::mysql::Datresult dt;"  << std::endl;
+        ofile << "\t\tbool flag = connector.execute(sqlString,dt);"  << std::endl;
+        ofile << "\t\tif(flag)"  << std::endl;
         ofile << "\t\t{" << std::endl;
         ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
         ofile << "\t\t\tstd::vector<"<< table.getName() << "*>* tmpVc = new std::vector<" << table.getName() << "*>;" << std::endl;
-        ofile << "\t\t\twhile((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult()))))" << std::endl;
+        ofile << "\t\t\twhile((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))" << std::endl;
         ofile << "\t\t\t{"<< std::endl;
         ofile << "\t\t\t\t"<< table.getName() << "* tmp = NULL;" << std::endl;            
         ofile << "\t\t\t\ttmp = new " << table.getName() << "(";
@@ -94,10 +95,8 @@ namespace generators
         ofile << "\t\t\t\ttmpVc->push_back(tmp);" << std::endl;
         
         ofile << "\t\t\t}"<< std::endl;
-        ofile << "\t\t\tdelete dt;" << std::endl;
         ofile << "\t\t\treturn tmpVc;" << std::endl;
         ofile << "\t\t}" << std::endl;
-        ofile << "\t\tdelete dt;" << std::endl;
         ofile << "\t\treturn NULL;" << std::endl;
         
         ofile << "\t}" <<std::endl;
@@ -207,12 +206,13 @@ namespace generators
 					ofile << "\t\t{"  << std::endl;
 					ofile << "\t\t\tsqlString += \" LIMIT  \" + std::to_string(leng);"  << std::endl;
 					ofile << "\t\t}"  << std::endl;
-					ofile << "\t\toctetos::db::Datresult* dt = connector.execute(sqlString.c_str());"  << std::endl;
-					ofile << "\t\tif(dt!=NULL)"  << std::endl;
+					ofile << "\t\toctetos::db::mysql::Datresult dt;"  << std::endl;
+					ofile << "\t\tbool flag = connector.execute(sqlString,dt);"  << std::endl;
+					ofile << "\t\tif(flag)"  << std::endl;
 					ofile << "\t\t{" << std::endl;
                     ofile << "\t\t\tstd::vector<"<< table.getName() << "*>* tmpVc = new std::vector<" << table.getName() << "*>;" << std::endl;
                     ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
-                    ofile << "\t\t\twhile((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult())))) "<< std::endl;
+                    ofile << "\t\t\twhile((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult())))) "<< std::endl;
                     ofile << "\t\t\t{"<< std::endl;     
                     ofile << "\t\t\t\t"<< table.getName() << "* tmp = NULL;" << std::endl;             
                     ofile << "\t\t\t\ttmp = new " << table.getName() << "(";              
@@ -242,12 +242,10 @@ namespace generators
                     ofile << ")" << ";" << std::endl;
                     ofile << "\t\t\t\ttmpVc->push_back(tmp);" << std::endl;
                     ofile << "\t\t\t}"<< std::endl;
-                        ofile << "\t\t\tdelete dt;" << std::endl;
                     ofile << "\t\t\treturn tmpVc;"<< std::endl;
                     ofile << "\t\t}" << std::endl;
                     ofile << "\t\telse" << std::endl;
                     ofile << "\t\t{" << std::endl;
-                        ofile << "\t\tdelete dt;" << std::endl;
                     ofile << "\t\t\treturn NULL;" << std::endl;
                     ofile << "\t\t}" << std::endl;
                 }
@@ -307,11 +305,12 @@ namespace generators
                                         }
                                 }
                                 ofile << ";" << std::endl;
-                                ofile << "\t\toctetos::db::Datresult* dt = connector.execute(sqlString.c_str());"  << std::endl;
-                                ofile << "\t\tif(dt!=NULL)"  << std::endl;
+                                ofile << "\t\toctetos::db::mysql::Datresult dt;"  << std::endl;
+                                ofile << "\t\tbool flag = connector.execute(sqlString,dt);"  << std::endl;
+                                ofile << "\t\tif(flag)"  << std::endl;
                                 ofile << "\t\t{" << std::endl;
                                 ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
-                                ofile << "\t\t\twhile ((row = mysql_fetch_row((MYSQL_RES*)(dt->getResult())))) "<< std::endl;
+                                ofile << "\t\t\twhile ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult())))) "<< std::endl;
                                 ofile << "\t\t\t{"<< std::endl;
                                 //ofile << "\t\t\t\tfor(int i = 0; i < num_fields; i++)"<< std::endl;
                                 //ofile << "\t\t\t\t{"<< std::endl;
@@ -360,12 +359,10 @@ namespace generators
                                 //ofile << "\t\t\t;"<< std::endl;
                                 //ofile << "\t\t\t\t}"<< std::endl;
                                 ofile << "\t\t\t}"<< std::endl;
-                                ofile << "\t\t\tdelete dt;" << std::endl;
                                 ofile << "\t\t\treturn true;" << std::endl;
                                 ofile << "\t\t}" << std::endl;
                                 ofile << "\t\telse" << std::endl;
                                 ofile << "\t\t{" << std::endl;
-                                ofile << "\t\t\tdelete dt;" << std::endl;
                                 ofile << "\t\t\treturn false;" << std::endl;
                                 ofile << "\t\t}" << std::endl;
                                 }
@@ -399,6 +396,7 @@ namespace generators
         }
         ofile << ")"<<std::endl;
         ofile << "\t{"<<std::endl;
+        ofile << "\t\toctetos::db::mysql::Datresult dt;" << std::endl;
         ofile << "\t\t"<<"std::string sqlString = \"\";"<<std::endl;
         ofile << "\t\t"<<"sqlString = sqlString + \"INSERT INTO \" + TABLE_NAME; "<<std::endl;
         ofile << "\t\t"<<"sqlString = sqlString + \"(";
@@ -444,7 +442,7 @@ namespace generators
             if(table.getKey().size() == 1 && table.getKey().at(0)->getOutType().compare("int") == 0 && table.getKey().at(0)->getClassReferenced() != NULL)
             {
                 ofile << "\t\tthis->" << table.getKey().at(0)->getName() << " = new " << table.getKey().at(0)->getClassReferenced()->getName() << "(";
-                ofile << " connector.insert(sqlString.c_str()));" << std::endl;
+                ofile << " connector.insert(sqlString,dt));" << std::endl;
                 ofile << "\t\tif(this->" << table.getKey().at(0)->getName() << " != NULL) return true;"<< std::endl;
                 ofile << "\t\telse return false;"<< std::endl;                 
                     
@@ -452,13 +450,14 @@ namespace generators
             else if(table.getKey().size() == 1 && table.getKey().at(0)->getOutType().compare("int") == 0)
             {
                 ofile << "\t\tthis->" << table.getKey().at(0)->getName() << " = ";
-                ofile << " connector.insert(sqlString.c_str());" << std::endl;
+                ofile << " connector.insert(sqlString,dt);" << std::endl;
                 ofile << "\t\tif(this->" << table.getKey().at(0)->getName() << " > 0) return true;"<< std::endl;
                 ofile << "\t\telse return false;"<< std::endl;                
             }            
             else if(table.getKey().size() > 1)
             {
-                ofile << "\t\tif(connector.execute(sqlString.c_str()))" << std::endl;
+                ofile << "\t\tif(connector.execute(sqlString,dt))" << std::endl;
+                ofile << "\t\tif(connector.execute(sqlString,dt))" << std::endl;
                 ofile << "\t\t{" << std::endl;
                 for(std::list<symbols::Symbol*>::const_iterator i = table.getRequired().begin(); i != table.getRequired().end(); ++i)
                 {
@@ -471,7 +470,8 @@ namespace generators
         else if(table.getKey().size() == 0)
         {
             ofile << "\t\tthis->" << table.getKey().at(0)->getName() ;
-            ofile << " = connector.execute(sqlString.c_str());"<< std::endl;
+                ofile << "\t\toctetos::db::mysql::Datresult dt;" << std::endl;
+            ofile << " = connector.execute(sqlString,dt);"<< std::endl;
             ofile << "\t\tif(this->" << table.getKey()[0]->getName()  << " > 0) return true;"<< std::endl;
             ofile << "\t\telse return false;"<< std::endl;   
         }
@@ -720,7 +720,8 @@ namespace generators
                                 throw BuildException("No hay soporte para table sin llave");
                         }
 			
-			ofile <<"\t\treturn connector.execute(sqlString.c_str());"<<std::endl;
+                ofile << "\t\toctetos::db::mysql::Datresult dt56239;" << std::endl;
+			ofile <<"\t\treturn connector.execute(sqlString,dt56239);"<<std::endl;
 			ofile << "\t}"<<std::endl;	
                 postUpdatePosition:;
                 

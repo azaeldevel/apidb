@@ -113,17 +113,18 @@ namespace generators
 		cmakelists<<"SET(" << configureProject.name << "_VERSION_STAGE \"alpha\")"<<std::endl;
 		cmakelists<<"CONFIGURE_FILE(\"${PROJECT_SOURCE_DIR}/config.h.in\" \"${PROJECT_SOURCE_DIR}/config.h\")"<<std::endl;
 		cmakelists<<std::endl;
-		cmakelists<<"FIND_PACKAGE(MySQL REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
-		cmakelists<<"IF(MySQL_FOUND)"<<std::endl;
+		cmakelists<<"FIND_PACKAGE(PkgConfig REQUIRED)"<<std::endl;
+		cmakelists<<"PKG_CHECK_MODULES(MYSQL REQUIRED libmariadb)"<<std::endl;
+		cmakelists<<"IF(MYSQL_FOUND)"<<std::endl;
 		cmakelists<<"INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
-		cmakelists<<"FIND_PACKAGE(octetos-core REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
+		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_CORE REQUIRED octetos-core)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_CORE_FOUND)"<<std::endl;
 		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_CORE_INCLUDE_DIR})"<<std::endl;
         cmakelists<<"ELSE(OCTETOS_CORE_FOUND)\n";
         cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos Core library\")\n";
 		cmakelists<<"ENDIF()"<<std::endl;
-		cmakelists<<"FIND_PACKAGE(octetos-db-mysql REQUIRED PATHS ${PROJECT_SOURCE_DIR}/cmake.modules/)"<<std::endl;
+		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_MYSQL REQUIRED octetos-db-mysql)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_DB_MYSQL_FOUND)"<<std::endl;
 		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_DB_MYSQL_INCLUDE_DIR})"<<std::endl;
         cmakelists<<"ELSE(OCTETOS_CORE_FOUND)\n";
@@ -434,12 +435,12 @@ namespace generators
 	
 	CPP::CPP(apidb::Analyzer& d,const ConfigureProject& config) : apidb::generators::Generator(config,d)
 	{                
-                if(config.outputLenguaje != OutputLenguajes::CPP)
-                {
-                        std::string msg = "La configuracion indica '" ;
-                        msg = msg + getOutputLenguajeString()+ "', pero el componente es CMake.";
-                        throw BuildException(msg);
-                }
+        if(config.outputLenguaje != OutputLenguajes::CPP)
+        {
+            std::string msg = "La configuracion indica '" ;
+            msg = msg + getOutputLenguajeString()+ "', pero el componente es CMake.";
+            throw BuildException(msg);
+        }
                 
 		//outputLenguaje = d.getOutputLenguaje();
 		writeResults = new std::ofstream[2];
@@ -465,13 +466,13 @@ namespace generators
 		msg1 += getOutputLenguajeString() ;
 		if(log)analyzer.getOutput().add(msg1);;
 		//includes in header file
-		std::string headers = "";
+		std::string headers = "";        
+		getHeaderOutput()<< "#include <octetos/db/clientdb-mysql.hh>"<<std::endl<<std::endl;
 		getHeaderOutput()<< "#include <string>" <<std::endl;
-                
+        
 		//inlcudes in source file
 		getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl;
 		getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
-		getHeaderOutput()<< "#include <db/clientdb-mysql.hh>"<<std::endl<<std::endl;
 			
 		
 		//writing code				

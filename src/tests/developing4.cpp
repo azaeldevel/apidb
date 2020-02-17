@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 	octetos::db::mysql::Datconnect mysqlConnector("192.168.0.101",3306,"sysappv2.alpha","develop","123456");
     octetos::db::mysql::Connector connector; 
     bool flag = false;  
-	flag = connector.connect(&mysqlConnector);
+	flag = connector.connect(mysqlConnector);
     if(flag)
     {
         if(verbose)  printf("SQL Server version: %s\n", connector.getVerionServer().toString().c_str());

@@ -11,7 +11,6 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	- octetos-db >= v0.13
 	- MySQL Client 5.7
 	- libpq
-    - 
 	- libxml2 2
 	- Boost 1.67
 	- Bison 3.2

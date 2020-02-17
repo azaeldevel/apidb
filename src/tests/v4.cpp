@@ -280,39 +280,37 @@ void testCompile()
 	}
 	if(configProject.packing == octetos::apidb::PackingLenguajes::CMake)
 	{
-
-                int ret = 0;
+        int ret = 0;
 		octetos::core::Semver ver = octetos::apidb::getPakageVersion();
-                std::string cmd = "cp ../../src/tests/developing";
-				cmd += std::to_string(ver.getMajor());
-				cmd += ".cpp ";
-                cmd += " apidb/ ";
-                if(system(cmd.c_str()) < 0)
-                {
-                        std::cout << "Fallo al copiar el archivo developing.cpp\n";
-                        CU_ASSERT(false);
-                }
-
-                cmd  = " cd apidb && cmake . &> /dev/null";
-                if(system(cmd.c_str()) < 0)
-                {
-                        std::cout << "Fallo al realizar la compialcion.\n";
-                        CU_ASSERT(false);
-                }
-                cmd  = " cd apidb &&  make &> /dev/null";
-                if(system(cmd.c_str()) < 0)
-                {
-                        std::cout << "Fallo al realizar la compialcion.\n";
-                        CU_ASSERT(false);
-                }
-                /*cmd  = "./apidb/developing";
-                ret = system(cmd.c_str()) ;
-                if (WIFSIGNALED(ret) && (WTERMSIG(ret) == SIGINT || WTERMSIG(ret) == SIGQUIT) || ret < 0)
-                {
-                        std::cout << "Fallo al realizar la compialcion.\n";
-                        CU_ASSERT(false);
-                }*/
-
+        std::string cmd = "cp ../../src/tests/developing";
+        cmd += std::to_string(ver.getMajor());
+        cmd += ".cpp ";
+        cmd += " apidb/ ";
+        if(system(cmd.c_str()) < 0)
+        {
+            std::cout << "Fallo al copiar el archivo developing.cpp\n";
+            CU_ASSERT(false);
+        }
+        cmd  = " cd apidb && cmake . &> /dev/null";
+        if(system(cmd.c_str()) < 0)
+        {
+            std::cout << "Fallo al realizar la compialcion.\n";
+            CU_ASSERT(false);
+        }
+        cmd  = " cd apidb &&  make &> /dev/null";
+        if(system(cmd.c_str()) < 0)
+        {
+            std::cout << "Fallo al realizar la compialcion.\n";
+            CU_ASSERT(false);
+        }
+        /*cmd  = "apidb/developing";
+        cmd += std::to_string(ver.getMajor());
+        ret = system(cmd.c_str()) ;
+        if(WIFSIGNALED(ret) && (WTERMSIG(ret) == SIGINT || WTERMSIG(ret) == SIGQUIT) || ret < 0)
+        {
+            std::cout << "Fallo al realizar la compialcion.\n";
+            CU_ASSERT(false);
+        }*/
 	}
 	else
 	{
