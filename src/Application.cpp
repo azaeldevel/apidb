@@ -163,20 +163,8 @@ namespace apidb
 		
 		if(inExeEdited)
         {
-                        std::string exe = gtk_entry_get_text(GTK_ENTRY(inExe));
-                        if(exe.empty())
-                        {
-                                        GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                        GTK_MESSAGE_ERROR,
-                                                                        GTK_BUTTONS_CLOSE,
-                                                                        "El nombre del proyecto no puede estar vacio",
-                                                                        "Error", g_strerror (errno));
-                                        gtk_dialog_run (GTK_DIALOG (msg));       
-                                        gtk_widget_destroy (msg);                          
-                                return false;
-                        }
-                        config->executable_target = exe;
+            std::string exe = gtk_entry_get_text(GTK_ENTRY(inExe));
+            config->executable_target = exe;
         }
                 
                 
