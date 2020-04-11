@@ -51,19 +51,23 @@ namespace apidb
         * \brief Identifica el tipo del Servidor de base de datos
         * */
         InputLenguajes inputLenguaje;
+        bool enabledMySQL;
+        bool enabledMariaDB;
+        bool enabledPostgreSQL;
         
     public:  
-        void setInputLenguaje(InputLenguajes);
+        void setInputLenguaje(InputLenguajes) __attribute__ ((deprecated));
+        void setInputs(InputLenguajes,octetos::db::Datconnect&);
         InputLenguajes getInputLenguaje()const;
         ~ConfigureProject();
         /**
         * \brief Almacena la lista de parametros que le corresponde a una Funcion
         */
-            class Parameters : public std::vector<std::string>
-            {
-            public:
-                ~Parameters();
-            };        
+        class Parameters : public std::vector<std::string>
+        {
+        public:
+            ~Parameters();
+        };        
             /**
             * \brief Almacena de descripcion de una funcion
             * */
@@ -158,9 +162,10 @@ namespace apidb
                  * */
                 core::Semver versionResult;
                 /**
-                 * \brief Información de conexión a la base de datos
+                 * \brief Información de conexión a la base de datos, esta opcion sera removida en v5
+                 * \deprecated Sera removido de la interface publica en v5, usar setInputs() en su lugar.
                  * */
-                octetos::db::Datconnect* conectordb;
+                octetos::db::Datconnect* conectordb __attribute__ ((deprecated));
                 /**
                  * \brief Identifica El lenguaje en que se genera el codigo fuente.
                  * */

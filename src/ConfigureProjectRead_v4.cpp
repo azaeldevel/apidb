@@ -62,7 +62,7 @@ namespace apidb
 	{
 		if(core::Error::check())
 		{
-			throw core::Error("Hay un error pendiente de atender",core::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
+			//throw core::Error("Hay un error pendiente de atender",core::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
 		}
         
         //std::cout << "Reading : " << filename << std::endl;
@@ -440,21 +440,27 @@ namespace apidb
                 xmlTextReaderRead(reader);
                 name = xmlTextReaderConstName(reader);
                 std::string inL = (const char*)xmlTextReaderConstValue(reader);
-                if(inL.compare("MySQL") == 0)
+                if(inL.compare("MySQL") == 0 and enabledMySQL)
                 {
                     setInputLenguaje(InputLenguajes::MySQL);
                     conectordb = createDatConnection();
                     conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);
                 }
-                else if(inL.compare("PostgreSQL") == 0)
+                else if(inL.compare("PostgreSQL") == 0 and enabledPostgreSQL)
                 {
                     setInputLenguaje(InputLenguajes::PostgreSQL);
                     conectordb = createDatConnection();
                     conectordb->set(InputLenguajes::PostgreSQL,host,port,database,user,password);
                 }
+                else if(inL.compare("MariaDB") == 0 and enabledMariaDB)
+                {
+                    setInputLenguaje(InputLenguajes::MariaDB);
+                    conectordb = createDatConnection();
+                    conectordb->set(InputLenguajes::MariaDB,host,port,database,user,password);
+                }
                 else
                 {
-                    std::string msgstr = "Fallo durante el parseo XML.";
+                    std::string msgstr = "Fallo durante el parseo XML. El driver solicitado no existe o no hay soporte activo para dicho driver.";
                     core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                     return false;
                 }

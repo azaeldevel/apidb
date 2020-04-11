@@ -9,14 +9,14 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	- GCC 8.2
 	- octetos-core >= v1.0
 	- octetos-db >= v0.13
-	- MySQL Client 5.7
+	- MySQL Client o MariaDB client
 	- libpq
 	- libxml2 2
 	- Boost 1.67
 	- Bison 3.2
-	- Flex 2.6
+	- Flex 2.6.4
 	- GTK 3 library
-	- Tar library
+	- Tar library 1.2
 	- Doxygen (opcional)
 	- ImageMagicK <= 7
 
@@ -28,7 +28,7 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
 	1.- unzip apidb-master.zip //Descomprimir archivo
 	2.- cd apidb-master/src/build // entrar en el directorio
-	3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease -DAPIDB_MYSQL=Y ..
+	3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease -DAPIDB_MARIADB=Y ..
 	4.- make
 	5.- sudo cpack --config CPackConfig.cmake
 	6.- sudo ./apidb-*-Linux.sh  --prefix=/usr/local

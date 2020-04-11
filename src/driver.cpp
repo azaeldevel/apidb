@@ -168,6 +168,19 @@ namespace apidb
                 return;
             }
         }
+        else if(configureProject.getInputLenguaje() == apidb::InputLenguajes::MariaDB)
+        {
+            handle = dlopen("libapidb-MariaDB.so", RTLD_LAZY);
+            createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+            if(!createConnector)
+            {                    
+                std::string msgErr ="dlsym fallo con parse_string:\n" ;
+                msgErr = msgErr + "\t" + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return;
+            }
+        }
 		else
 		{
 			//std::cout <<"Lenguaje de entrada desconocido."<<std::endl;
@@ -198,6 +211,25 @@ namespace apidb
 			}
 		}
 		else if(configureProject.getInputLenguaje() == apidb::InputLenguajes::PostgreSQL)
+        {
+			//std::cout <<"Creando conector PostgreSQL\n";
+			connector = createConnector();
+			bool flag = connector->connect(*(config.conectordb));
+            if(!flag)
+            {
+                delete connector;
+                connector = NULL;
+                std::string msg = "Fallo al crear el conector para '";
+                msg += config.conectordb->toString() + "':";
+                if(core::Error::check())
+                {
+                    msg += core::Error::get().what();
+                }
+                core::Error err(msg, ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
+                core::Error::write(err);
+            }
+        }
+		else if(configureProject.getInputLenguaje() == apidb::InputLenguajes::MariaDB)
         {
 			//std::cout <<"Creando conector PostgreSQL\n";
 			connector = createConnector();
@@ -414,7 +446,7 @@ namespace apidb
 				delete analyzer;
 				analyzer = NULL;
 				//analyzer = (apidb::Analyzer*)createAnalyzer((void*)&configureProject,connector,progress);		
-                void* handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
+                //handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
                 if(!handle)
                 {
                     std::string msgErr ="dlopen fallo con libapidb-MySQL.so : " ;
@@ -438,7 +470,7 @@ namespace apidb
 			else
 			{
 				//analyzer = (apidb::Analyzer*)createAnalyzer((void*)&configureProject,connector,progress);
-                void* handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
+                //void* handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
                 if(!handle)
                 {                    
                     std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
@@ -466,7 +498,7 @@ namespace apidb
 				delete analyzer;
 				analyzer = NULL;
 				//analyzer = (apidb::Analyzer*)createAnalyzer((void*)&configureProject,connector,progress);		
-                void* handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
+                //handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
                 if(!handle)
                 {                    
                     std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
@@ -489,7 +521,58 @@ namespace apidb
 			else
 			{
 				//analyzer = (apidb::Analyzer*)createAnalyzer((void*)&configureProject,connector,progress);
-                void* handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
+                //handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
+                if(!handle)
+                {                    
+                    std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                apidb::Analyzer* (*create)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
+                create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
+                if(!create)
+                {                    
+                    std::string msgErr ="dlsym fallo con createAnalyzer:\n" ;
+                    msgErr = msgErr + "\t" + dlerror();
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                analyzer = (apidb::Analyzer*) create(&configureProject,connector,progress);
+			}            
+        }
+		else if(configureProject.getInputLenguaje() == apidb::InputLenguajes::MariaDB)
+        {
+			if(analyzer != NULL)
+			{
+				delete analyzer;
+				analyzer = NULL;
+				//analyzer = (apidb::Analyzer*)createAnalyzer((void*)&configureProject,connector,progress);		
+                //handle = dlopen("libapidb-MariaDB.so", RTLD_LAZY);
+                if(!handle)
+                {                    
+                    std::string msgErr ="dlopen fallo con libapidb-MariaDB.so" ;
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                apidb::Analyzer* (*create)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
+                create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
+                if(!create)
+                {                    
+                    std::string msgErr ="dlsym fallo con createAnalyzer:\n" ;
+                    msgErr = msgErr + "\t" + dlerror();
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                analyzer = (apidb::Analyzer*) create(&configureProject,connector,progress);
+			}
+			else
+			{
+				//analyzer = (apidb::Analyzer*)createAnalyzer((void*)&configureProject,connector,progress);
+                //handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
                 if(!handle)
                 {                    
                     std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;

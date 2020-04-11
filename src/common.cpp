@@ -278,6 +278,8 @@ namespace apidb
 				return "MySQL";
 			case InputLenguajes::PostgreSQL:
 				return "PostgreSQL";
+			case InputLenguajes::MariaDB:
+				return "MariaDB";
 			default:
 				return "Unknow";
 		}
@@ -287,6 +289,10 @@ namespace apidb
         if(str.compare("mysql") == 0 or str.compare("MySQL") == 0)
         {
             return InputLenguajes::MySQL;
+        }
+        else if(str.compare("mariadb") == 0 or str.compare("MariaDB") == 0)
+        {
+            return InputLenguajes::MariaDB;
         }
                 
         return InputLenguajes::Unknow;

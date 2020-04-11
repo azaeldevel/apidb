@@ -818,6 +818,36 @@ namespace generators
 					file << std::endl;
 				}
 			}
+			else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+			{
+				if(ispace->what() == symbols::SpaceType::TABLE)
+				{					
+					symbols::Table* table = (symbols::Table*) ispace;
+					createClassCPP(*table,file,table->getName());
+				}
+				else if(ispace->what() == symbols::SpaceType::SPACE)
+				{
+					symbols::Space* space = (symbols::Space*) ispace;
+					file << "namespace " ;
+					if(space->getName().empty())
+					{
+							file << configureProject.name;
+					}
+					else
+					{
+							file << space->getName() << std::endl;
+					}
+					file << "{\n";
+					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+					file << "\n\n";
+					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+					{
+						createCPP(file,log,it->second);
+					}
+					file << "\n}\n";
+					file << std::endl;
+				}
+			}
 			else
 			{
 				core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
@@ -1142,6 +1172,34 @@ namespace generators
 				file << "\n}\n";
 			}
 		}
+		else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+		{
+			if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				symbols::Table* table = (symbols::Table*) ispace;
+				createClassH(*table,file,table->getName(),log);
+			}
+			else if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				symbols::Space* space = (symbols::Space*) ispace;
+				file << "namespace " ;
+				if(space->getName().empty())
+				{
+					file << configureProject.name;
+				}
+				else
+				{
+					file << space->getName() << std::endl;
+				}
+				file << "{\n";
+				//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+				{
+					createH(file,log,it->second);
+				}
+				file << "\n}\n";
+			}
+		}
 		else
 		{
 			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
@@ -1213,6 +1271,37 @@ namespace generators
                 core::Error::write(core::Error("Este módulo esta en Desarrollo.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
                 return false;
             }
+            else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+			{
+				if(ispace->what() == symbols::SpaceType::TABLE)
+				{					
+					symbols::Table* table = (symbols::Table*) ispace;
+					createClassH(*table,file,table->getName(),log);
+				}
+				else if(ispace->what() == symbols::SpaceType::SPACE)
+				{
+					symbols::Space* space = (symbols::Space*) ispace;
+					file << "namespace " ;
+					if(space->getName().empty())
+					{
+							file << configureProject.name;
+					}
+					else
+					{
+							file << space->getName() << std::endl;
+					}
+					file << "{\n";
+					createDatconnectHPP(file,log);
+					file << "\n\n";
+					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+					{
+						createH(file,log,it->second);
+					}
+					file << "\n}\n";
+					file << std::endl;
+				}
+			}
 			else
 			{
 				core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
