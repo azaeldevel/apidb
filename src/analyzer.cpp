@@ -48,6 +48,22 @@ namespace apidb
 				}				
 			}
 		}
+		else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+		{
+			if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				if((((symbols::Table*)ispace)->fillKeyType(*connector,symbolsTable)) == false) return false;
+			}
+			else if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				symbols::Space* space = (symbols::Space*) ispace;
+				//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+				{
+					if(fillKeyType(it->second,progress) == false) return false;
+				}				
+			}
+		}
 		else
 		{
 			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
@@ -73,7 +89,7 @@ namespace apidb
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
 				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
-				if(((symbols::Table*)ispace)->basicSymbolsMySQL(*connector) == false) return false;
+				if(((symbols::Table*)ispace)->basicSymbolsMariaDB(*connector) == false) return false;
 			}
 			else if(ispace->what() == symbols::SpaceType::SPACE)
 			{
@@ -85,6 +101,24 @@ namespace apidb
 				}
 			}
 		}
+		else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+		{
+			if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
+				if(((symbols::Table*)ispace)->basicSymbolsMariaDB(*connector) == false) return false;
+			}
+			else if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				symbols::Space* space = (symbols::Space*) ispace;
+				//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+				{
+					if(basicSymbols(it->second,progress) == false) return false;
+				}
+			}
+		}
+#ifdef APIDB_POSTGRESQL
 		else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
@@ -102,6 +136,7 @@ namespace apidb
 				}
 			}
 		}
+#endif
 		else
 		{
 			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));

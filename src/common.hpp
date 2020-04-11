@@ -55,6 +55,10 @@ namespace apidb
         {
                 class Analyzer;
         }
+        namespace mariadb
+        {
+                class Analyzer;
+        }
         class ConfigureProject;
 
     /*bool createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password, octetos::db::Datconnect**); 
@@ -327,15 +331,25 @@ namespace apidb
             /**
             * \brief Nombre completa de la tabla
             * */
-            std::string fullname;                        
+            std::string fullname; 
+#ifdef APIDB_MARIADB
+            /**
+            * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
+            * */
+            virtual bool basicSymbolsMariaDB(octetos::db::Connector& connect); 
+#endif
+#ifdef APIDB_MYSQL
             /**
             * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
             * */
             virtual bool basicSymbolsMySQL(octetos::db::Connector& connect);                        
+#endif
+#ifdef APIDB_POSTGRESQL
             /**
             * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
             * */
             virtual bool basicSymbolsPostgreSQL(octetos::db::Connector& connect);
+#endif
             /**
             * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
             * */			

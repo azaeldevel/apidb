@@ -66,7 +66,7 @@ namespace apidb
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                         GTK_MESSAGE_ERROR,
                                                                         GTK_BUTTONS_CLOSE,
-                                                                        "Selecione un lenguajde de entrada(MySQL por ejemplo) en la sección de información",
+                                                                        "Selecione un lenguajde de entrada(MariaDB por ejemplo) en la sección de información",
                                                                         "Error", g_strerror (errno));
                                 gtk_dialog_run (GTK_DIALOG (msg));                                  
                                 gtk_widget_destroy (msg);
@@ -178,16 +178,20 @@ namespace apidb
             {
                 config->conectordb = createDatconnect();
             }
+            else if(config->getInputLenguaje() == InputLenguajes::MariaDB)
+            {
+                config->conectordb = createDatconnect();
+            }
             else
             {
                     GtkWidget *msg = gtk_message_dialog_new (NULL,
-                                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                        GTK_MESSAGE_ERROR,
-                                                                        GTK_BUTTONS_CLOSE,
-                                                                        "Indique primero el lenguaje de la Base de Datos",
-                                                                        "Error", g_strerror (errno));
-                                gtk_dialog_run (GTK_DIALOG (msg));    
-                                gtk_widget_destroy (msg);
+                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                        GTK_MESSAGE_ERROR,
+                        GTK_BUTTONS_CLOSE,
+                        "Indique primero el lenguaje de la Base de Datos",
+                        "Error", g_strerror (errno));
+                        gtk_dialog_run (GTK_DIALOG (msg));    
+                        gtk_widget_destroy (msg);
                                 return false;
             }
  
@@ -735,63 +739,63 @@ namespace apidb
         
         Driver* Application::getDriver()
         {
-                return driver;
+            return driver;
         }
         TreeView* Application::getDownloadTreeView()
         {
-                return downsTree;
+            return downsTree;
         }
         TreeView* Application::getSelectTreeView()
         {
-                return selectsTree;
+            return selectsTree;
         }
         ConfigureProject* Application::getConfigure()const
         {
-                return config;
+            return config;
         }
         Application::~Application()
         {
-                if(downsTree != NULL)
-                {
-                        delete downsTree;
-                        downsTree = NULL;
-                }
-                if(selectsTree != NULL)
-                {
-                        delete selectsTree;
-                        selectsTree = NULL;
-                }
-                if(config != NULL)
-                {
-                        delete config;
-                        config = NULL;
-                }
-        if(!handle) dlclose(handle); 
+            if(downsTree != NULL)
+            {
+                delete downsTree;
+                downsTree = NULL;
+            }
+            if(selectsTree != NULL)
+            {
+                delete selectsTree;
+                selectsTree = NULL;
+            }
+            if(config != NULL)
+            {
+                delete config;
+                config = NULL;
+            }
+            if(handle) dlclose(handle); 
         }
         Application::Application()
         {
-                isSaved = false;
-                isOpen = false;
-                downsTree = NULL;
-                selectsTree = NULL;
-                config = NULL;
-                driver = NULL;
-                conexEdited = false;
-                inLocEdited = false;
-                inPortEdited = false;
-                inDBEdited = false;
-                inUserEdited = false;
-                inPwEdited = false;
-                inNameEdited = false;
-                inVerEdited = false;
-                inInLEdited = false;
-                inOutLEdited=false;
-                inPkLEdited = false;
-                inCmplEdited = false;
-                isNew = false; 
-                handle = NULL;
-                createConnector = NULL;
-                createDatconnect = NULL;
+            isSaved = false;
+            isOpen = false;
+            downsTree = NULL;
+            selectsTree = NULL;
+            config = NULL;
+            driver = NULL;
+            conexEdited = false;
+            inLocEdited = false;
+            inPortEdited = false;
+            inDBEdited = false;
+            inUserEdited = false;
+            inPwEdited = false;
+            inNameEdited = false;
+            inVerEdited = false;
+            inInLEdited = false;
+            inOutLEdited = false;
+            inPkLEdited = false;
+            inCmplEdited = false;
+            isNew = false; 
+            handle = NULL;
+            createConnector = NULL;
+            createDatconnect = NULL;
         }   
         
         void Application::loadConfig()
@@ -804,14 +808,14 @@ namespace apidb
                 gtk_combo_box_set_active(GTK_COMBO_BOX(inCmpl),(gint)config->compiled);
                 gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
                 gtk_combo_box_set_active(GTK_COMBO_BOX(inNameSpaceDetect),inNameSpaceDetect_comboxid(config->namespace_detect));
-				if(!config->writeDatconnect.empty() and config->writeDatconnect.compare("¿?") != 0) gtk_entry_set_text (GTK_ENTRY(inWConnName),config->writeDatconnect.c_str());
+				if(!config->writeDatconnect.empty() and config->writeDatconnect.compare("¿?") != 0) gtk_entry_set_text(GTK_ENTRY(inWConnName),config->writeDatconnect.c_str());
                 gtk_entry_set_text (GTK_ENTRY(inExe),config->executable_target.c_str());
                 
-                gtk_entry_set_text (GTK_ENTRY(inLoc),config->conectordb->getHost().c_str());
-                gtk_entry_set_text (GTK_ENTRY(inPort),std::to_string(config->conectordb->getPort()).c_str());
-                gtk_entry_set_text (GTK_ENTRY(inDB),config->conectordb->getDatabase().c_str());
-                gtk_entry_set_text (GTK_ENTRY(inUser),config->conectordb->getUser().c_str());
-                gtk_entry_set_text (GTK_ENTRY(inPw),config->conectordb->getPassword().c_str());
+                gtk_entry_set_text(GTK_ENTRY(inLoc),config->conectordb->getHost().c_str());
+                gtk_entry_set_text(GTK_ENTRY(inPort),std::to_string(config->conectordb->getPort()).c_str());
+                gtk_entry_set_text(GTK_ENTRY(inDB),config->conectordb->getDatabase().c_str());
+                gtk_entry_set_text(GTK_ENTRY(inUser),config->conectordb->getUser().c_str());
+                gtk_entry_set_text(GTK_ENTRY(inPw),config->conectordb->getPassword().c_str());
                                 
                 downsTree->fill();
                 
@@ -1197,6 +1201,7 @@ namespace apidb
                 gtk_combo_box_text_insert((GtkComboBoxText*)inInL,0,"selecione","Selecione..."); 
                 gtk_combo_box_set_active((GtkComboBox*)inInL,0);
                 gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,getInputLenguaje(InputLenguajes::MySQL).c_str(),getInputLenguaje(InputLenguajes::MySQL).c_str());
+                gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MariaDB,getInputLenguaje(InputLenguajes::MariaDB).c_str(),getInputLenguaje(InputLenguajes::MariaDB).c_str());
                 gtk_box_pack_start(GTK_BOX(boxInL), inInL, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxInL, FALSE, FALSE,0);
                 g_signal_connect(G_OBJECT(inInL), "changed", G_CALLBACK(inInL_changed), this);

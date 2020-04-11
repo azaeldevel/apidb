@@ -40,6 +40,12 @@ namespace octetos
 {
 namespace apidb
 {
+    void ConfigureProject::setInputs(InputLenguajes in,octetos::db::Datconnect& dat)
+    {
+        conectordb = & dat;
+        inputLenguaje = in;
+        loadLibrary();        
+    }
     void ConfigureProject::setInputLenguaje(InputLenguajes in)
     {
         inputLenguaje = in;
@@ -184,6 +190,12 @@ namespace apidb
             octetos::db::Connector*  connector = createConnection();
             ret = connector->connect(*conectordb);
             connector->close();
+        }        
+        else if(inputLenguaje == apidb::InputLenguajes::MariaDB)
+        {
+            octetos::db::Connector*  connector = createConnection();
+            ret = connector->connect(*conectordb);
+            connector->close();
         }
         return ret;
     }
@@ -201,6 +213,39 @@ namespace apidb
             if(!handle)
             {
                 std::string msgErr ="dlopen fallo con 'libapidb-MySQL.so' : ";
+                msgErr = msgErr + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return false;
+            }
+            //std::cout << "Step 2\n";
+            createConnection = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+            //std::cout << "Step 3\n";
+            if(!createConnection)
+            {
+                std::string msgErr ="dlsym fallo con parse_string:\n" ;
+                msgErr = msgErr + "\t" + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return false;
+            }
+            createDatConnection = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
+            if(!createDatConnection)
+            {
+                std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
+                msgErr = msgErr + "\t" + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return false;
+            }
+        }
+        else if(inputLenguaje == apidb::InputLenguajes::MariaDB)
+        {
+            handle = dlopen("libapidb-MariaDB.so", RTLD_LAZY);
+            //std::cout << "Step 1\n";
+            if(!handle)
+            {
+                std::string msgErr ="dlopen fallo con 'libapidb-MariaDB.so' : ";
                 msgErr = msgErr + dlerror();
                 core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
                 core::Error::write(err);
@@ -274,6 +319,21 @@ namespace apidb
         createConnection = NULL;
         createDatConnection = NULL;
         conectordb = NULL;
+#ifdef APIDB_MARIADB
+        enabledMariaDB = true;
+#else
+        enabledMariaDB = false;
+#endif
+#ifdef APIDB_MySQL
+        enabledMySQL = true;
+#else
+        enabledMySQL = false;
+#endif
+#ifdef APIDB_POSTGRESQL
+        enabledPostgreSQL = true;
+#else
+        enabledPostgreSQL = false;
+#endif
     }
 	bool ConfigureProject::saveConfig(const std::string& filename)
 	{
@@ -307,6 +367,14 @@ namespace apidb
 			xmlNewChild(db_node, NULL, (const xmlChar *)"user", (const xmlChar *)conectordb->getUser().c_str());
 			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb->getPassword().c_str());
 		}
+		else if(inputLenguaje == apidb::InputLenguajes::MariaDB)
+		{
+			xmlNewChild(db_node, NULL, (const xmlChar *)"host", (const xmlChar *)conectordb->getHost().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"port", (const xmlChar *)std::to_string(conectordb->getPort()).c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"nameDB", (const xmlChar *)conectordb->getDatabase().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"user", (const xmlChar *)conectordb->getUser().c_str());
+			xmlNewChild(db_node, NULL, (const xmlChar *)"pw", (const xmlChar *)conectordb->getPassword().c_str());
+		}
 		else
 		{
             core::Error::write(core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
@@ -319,6 +387,9 @@ namespace apidb
         {
             case InputLenguajes::MySQL:
                 xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"MySQL");
+                break;
+            case InputLenguajes::MariaDB:
+                xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"MariaDB");
                 break;
             case InputLenguajes::PostgreSQL:
                 xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"PostgreSQL");
