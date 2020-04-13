@@ -488,8 +488,27 @@ namespace generators
 		msg1 += getOutputLenguajeString() ;
 		if(log)analyzer.getOutput().add(msg1);;
 		//includes in header file
-		std::string headers = "";        
-		getHeaderOutput()<< "#include <octetos/db/clientdb-mysql.hh>"<<std::endl<<std::endl;
+		std::string headers = "";     
+        if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
+        {
+            getHeaderOutput()<< "#include <octetos/db/clientdb-mysql.hh>"<<std::endl<<std::endl;
+        }
+        else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+        {
+            getHeaderOutput()<< "#include <octetos/db/clientdb-maria.hh>"<<std::endl<<std::endl;
+        }
+        else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+        {
+            std::string msg = "Lenguaje no soportado " ;
+            throw BuildException(msg);
+            return false;
+        }
+        else
+        {
+            std::string msg = "Lenguaje no soportado " ;
+            throw BuildException(msg);
+            return false;
+        }
 		getHeaderOutput()<< "#include <string>" <<std::endl;
         
 		//inlcudes in source file
