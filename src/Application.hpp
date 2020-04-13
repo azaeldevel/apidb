@@ -142,7 +142,7 @@ namespace apidb
                 
         private:  
                 void* handle;
-                octetos::db::Connector* (*createConnector)();
+                //octetos::db::Connector* (*createConnector)();
                 octetos::db::Datconnect* (*createDatconnect)();
                 
                 void createWindow();

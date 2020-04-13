@@ -170,17 +170,40 @@ namespace apidb
                 
         if(config->conectordb == NULL)
         {
-            if(config->getInputLenguaje() == InputLenguajes::MySQL)
+ 
+            if(config->getInputLenguaje() == apidb::InputLenguajes::MySQL)
             {
-                config->conectordb = createDatconnect();
+                handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
+                //createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+                createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
             }
-            else if(config->getInputLenguaje() == InputLenguajes::PostgreSQL)
+            else if(config->getInputLenguaje() == apidb::InputLenguajes::PostgreSQL)
             {
-                config->conectordb = createDatconnect();
+                handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
+                //createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+                createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
             }
-            else if(config->getInputLenguaje() == InputLenguajes::MariaDB)
+            else if(config->getInputLenguaje() == apidb::InputLenguajes::MariaDB)
             {
-                config->conectordb = createDatconnect();
+                handle = dlopen("libapidb-MariaDB.so", RTLD_LAZY);
+                if(!handle)
+                {
+                    std::string msgErr ="dlopen fallo con 'libapidb-MySQL.so' : ";
+                    msgErr = msgErr + dlerror();
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
+                //createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+                createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
+                if(!createDatconnect)
+                {
+                    std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
+                    msgErr = msgErr + "\t" + dlerror();
+                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                    core::Error::write(err);
+                    return false;
+                }
             }
             else
             {
@@ -188,25 +211,14 @@ namespace apidb
                         GTK_DIALOG_DESTROY_WITH_PARENT,
                         GTK_MESSAGE_ERROR,
                         GTK_BUTTONS_CLOSE,
-                        "Indique primero el lenguaje de la Base de Datos",
+                        "El Driver soliciatodo no existe.",
                         "Error", g_strerror (errno));
                         gtk_dialog_run (GTK_DIALOG (msg));    
                         gtk_widget_destroy (msg);
-                                return false;
+                    return false;
             }
  
-            if(config->getInputLenguaje() == apidb::InputLenguajes::MySQL)
-            {
-                handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
-                createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
-                createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
-            }
-            else if(config->getInputLenguaje() == apidb::InputLenguajes::PostgreSQL)
-            {
-                handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
-                createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
-                createDatconnect = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
-            }
+            config->conectordb = createDatconnect();
         }
                 if(inLocEdited)
                 {
@@ -794,7 +806,7 @@ namespace apidb
             inCmplEdited = false;
             isNew = false; 
             handle = NULL;
-            createConnector = NULL;
+            //createConnector = NULL;
             createDatconnect = NULL;
         }   
         
