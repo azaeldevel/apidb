@@ -170,7 +170,6 @@ namespace apidb
                 
         if(config->conectordb == NULL)
         {
- 
             if(config->getInputLenguaje() == apidb::InputLenguajes::MySQL)
             {
                 handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
