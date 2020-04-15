@@ -10,21 +10,7 @@ SET(${PROJECT_NAME}_VERSION_NAME ${apidb_VERSION_NAME})
 
 
 ####################################################################################################
-IF(APIDB_MARIADB STREQUAL "Y")
-    PKG_CHECK_MODULES(LIBMARIADB REQUIRED libmariadb)
-    IF(LIBMARIADB)
-        INCLUDE_DIRECTORIES(${LIBMARIADB_INCLUDE_DIR})
-    ELSEIF()
-        MESSAGE(FATAL_ERROR "No se encontro la libmariadb")
-    ENDIF()
-    PKG_CHECK_MODULES(OCTETOS_DB_MARIA REQUIRED octetos-db-maria)
-    IF(OCTETOS_DB_MARIA_FOUND)
-        INCLUDE_DIRECTORIES(${OCTETOS_DB_MARIA_INCLUDE_DIR})
-    ELSEIF(OCTETOS_DB_MARIA_FOUND)
-        MESSAGE(FATAL_ERROR "No se encontro la octetos-db-mariadb.")
-    ENDIF()
-    add_definitions(-DAPIDB_MARIADB)
-ENDIF()
+
 
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)

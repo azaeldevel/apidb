@@ -9,6 +9,15 @@ SET(DDM_PIXMAPS_DIR "/usr/share/icons/")
 SET(${CMAKE_PROJECT_NAME}_PAKAGENAME_DECORED "APIDB")
 
 
+if(DISTRO STREQUAL "ArchLinux" )
+    add_definitions(-DDISTRO_ARCHLINUX)
+elseif(DISTRO STREQUAL "Gentoo" )
+    add_definitions(-DDISTRO_GENTOO)
+else()
+    #desconiconida
+endif()
+
+
 if(NOT APIDB_VERSION_STAGE)
         MESSAGE(FATAL_ERROR "Es necesario que indique una etapa de desasorrollo, use -DAPIDB_VERSION_STAGE='etapa'.\nEn donde etapa puede ser .. snapshot,alpha,beta,rc,release.\nEn términos generales acepta cualquier miembro de la enumeración toolkit::Version::Stage para mas detalles vea la información de este paquete.")
 elseif(${APIDB_VERSION_STAGE} STREQUAL "release")
@@ -21,7 +30,7 @@ if(NOT CMAKE_BUILD_TYPE)
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     if(NOT APIDB_VERSION_STAGE)
                 MESSAGE(FATAL_ERROR "Asigno CMAKE_BUILD_TYPE = Release para que los componentes de APIDB funcione correctamente es necesario que asigne APIDB_VERSION_STAGE = release")
-	elseif(NOT ${APIDB_VERSION_STAGE} STREQUAL "release")
+	elseif(NOT ${APIDB_VERSION_STAGE} STREQUAL "Release")
 		MESSAGE(FATAL_ERROR "Asigno CMAKE_BUILD_TYPE = Release para que los componentes de APIDB funcione correctamente es necesario que asigne APIDB_VERSION_STAGE = release")
     endif()
 endif()

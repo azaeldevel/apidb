@@ -20,7 +20,13 @@
  * */
 
 #include <iostream>
-#include <mariadb/mysql.h>
+#ifdef DISTRO_GENTOO
+    #include <mariadb/mysql.h>
+#elif defined DISTRO_ARCHLINUX
+    #include <mysql/mysql.h>
+#else
+    #include <mariadb/mysql.h>
+#endif
 #include <string>
 #include <octetos/db/clientdb-maria.hh>
 

@@ -1,4 +1,4 @@
-﻿
+﻿    
 
 --------------------
 - Requisitos mínimos
@@ -17,7 +17,7 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	- GTK 3 library
 	- Tar library 1.2
 	- Doxygen (opcional)
-	- ImageMagicK <= 7
+	- ImageMagicK >= 7
 
 -------------
 - Instalación
@@ -27,7 +27,7 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
 	1.- unzip apidb-master.zip //Descomprimir archivo
 	2.- cd apidb-master/src/build // entrar en el directorio
-	3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease -DAPIDB_MARIADB=Y ..
+	3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease -DAPIDB_MARIADB=Y -DBUILD_ARCHLINUX=Y ..
 	4.- make
 	5.- sudo cpack --config CPackConfig.cmake
 	6.- sudo ./apidb-*-Linux.sh  --prefix=/usr/local
