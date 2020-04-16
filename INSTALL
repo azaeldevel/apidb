@@ -22,18 +22,43 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 -------------
 - Instalación
 -------------
-    Instale octetos-core(https://github.com/azaeldevel/octetos-core.git) y octetos-db(https://github.com/azaeldevel/octetos-db.git)
+    ArchLinux Based
+        APIDB esta en el repositorio AUR como apidb
+        cd ~
+        mkdir aur-octetos
+        #contrullendo octetos-core
+        cd aur-octetos        
+        git clone https://aur.archlinux.org/octetos-core.git
+        cd octetos-core
+        makepkg -si
+        #contrullendo octetos-db-maria
+        cd ~/aur-octetos
+        git clone https://aur.archlinux.org/octetos-db-maria.git
+        cd octetos-db-maria
+        makepkg -si
+        #contrullendo apidb
+        cd ~/aur-octetos
+        git clone https://aur.archlinux.org/apidb.git
+        cd apidb
+        makepkg -si       
+        
+    Gentoo Based    
+        APIDB esta en el repositorio guru como apidb
+        
+        
+    Source code based
+        Instale octetos-core(https://github.com/azaeldevel/octetos-core.git) y octetos-db(https://github.com/azaeldevel/octetos-db.git)
 
-	Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
-	1.- unzip apidb-master.zip //Descomprimir archivo
-	2.- cd apidb-master/src/build // entrar en el directorio
-	3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease -DAPIDB_MARIADB=Y ..
-	4.- make
-	5.- sudo cpack --config CPackConfig.cmake
-	6.- sudo ./apidb-*-Linux.sh  --prefix=/usr/local
-                Do you accept the license? [yN]:
-                ¿?..
-                Saying no will install in: X
-                n
-    El directorio usado en prefix/lib deve estar en ld.so.conf o en /etc/environment si no es asi agregelo.
-    7.- a run ldconfig como usuario root
+        Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
+        1.- unzip apidb-master.zip //Descomprimir archivo
+        2.- cd apidb-master/src/build // entrar en el directorio
+        3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease -DAPIDB_MARIADB=Y ..
+        4.- make
+        5.- sudo cpack --config CPackConfig.cmake
+        6.- sudo ./apidb-*-Linux.sh  --prefix=/usr/local
+                    Do you accept the license? [yN]:
+                    ¿?..
+                    Saying no will install in: X
+                    n
+        El directorio usado en prefix/lib deve estar en ld.so.conf o en /etc/environment si no es asi agregelo.
+        7.- a run ldconfig como usuario root
