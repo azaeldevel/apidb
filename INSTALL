@@ -43,7 +43,15 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
         makepkg -si       
         
     Gentoo Based    
-        APIDB esta en el repositorio guru como apidb, unavez instalado ejecute, 
+        APIDB esta en el repositorio guru como apidb in dev branch, unavez instalado ejecute, 
+        #descargando el repositorio
+        cd ~
+        git clone https://anongit.gentoo.org/git/repo/proj/guru.git
+        git checkout dev
+        sudo nano /etc/portage/repos.conf/guru.conf
+        >> [guru]
+        >> location = /home/user/guru
+        
         emerge -a app-misc/apidb
         
     Source code based
