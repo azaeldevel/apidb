@@ -14,10 +14,10 @@
 #include "../common.hpp"
 
 #ifdef APIDB_MYSQL
-    #include <db/clientdb-mysql.hh>
+    #include <octetos/db/clientdb-mysql.hh>
 #endif
 #ifdef APIDB_POSTGRESQL
-    #include <db/clientdb-postgresql.hh>
+    #include <octetos/db/clientdb-postgresql.hh>
 #endif
 #ifdef APIDB_MARIADB
     #include <octetos/db/clientdb-maria.hh>
@@ -48,7 +48,7 @@ static octetos::db::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2
 static octetos::db::postgresql::Datconnect postgresqlSource("192.168.0.101",5432,"sysapp_v0001","sysapp","123456"); 
 #endif
 #ifdef APIDB_MARIADB
-static octetos::db::mariadb::Datconnect mariaSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456");
+static octetos::db::mariadb::Datconnect mariaSource("127.0.0.1",3306,"sysapp.alpha","sysapp","123456");
 #endif
 //static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 static std::string sysappv1Filename = "sysappv1-alpha.apidb";
@@ -123,9 +123,21 @@ void testConecction()
 #ifdef APIDB_MARIADB
 	configProject.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);    
 #endif
-        //CU_ASSERT(configProject.testConexion());
+    bool fl = configProject.testConexion();
+    if(fl)
+    {      
+        CU_ASSERT(true);        
+    }
+    else
+    {
+        if(octetos::core::Error::check())
+        {
+            std::cout << octetos::core::Error::get().describe() << std::endl;
+        } 
+        CU_ASSERT(false); 
+    }
 }
-
+/*
 void testCreateProject()
 {
 	octetos::core::Semver version;
@@ -207,8 +219,8 @@ void testBuild_nlst()
         }
         
         CU_ASSERT(true);
-}
-
+}*/
+/*
 void testBuild()
 {   
     octetos::apidb::ConfigureProject configProject;
@@ -240,31 +252,10 @@ void testBuild()
         CU_ASSERT(true);
     }
 	
-	/*std::list<std::string> listName;
-	if(driver.getTablesName(listName) == false)
-	{
-		if(octetos::core::Error::check())
-		{
-			std::cout << "\nError  -> "<< octetos::core::Error::get().describe() << std::endl;
-		}
-		CU_ASSERT(false);
-        return;
-	}
-	
-	std::list<std::string> listFields;
-	if(driver.getFiledsName(listFields,"Persons") == false)
-	{
-		if(octetos::core::Error::check())
-		{
-			std::cout << octetos::core::Error::get().describe() << std::endl;
-		}
-		CU_ASSERT(false);
-        return;
-	}*/
-}
+}*/
 
 
-
+/*
 void testCompile()
 {
 	octetos::apidb::ConfigureProject configProject;
@@ -308,13 +299,6 @@ void testCompile()
                         std::cout << "Fallo al realizar la compialcion.\n";
                         CU_ASSERT(false);
                 }
-                /*cmd  = "./apidb/developing";
-                ret = system(cmd.c_str()) ;
-                if (WIFSIGNALED(ret) && (WTERMSIG(ret) == SIGINT || WTERMSIG(ret) == SIGQUIT) || ret < 0)
-                {
-                        std::cout << "Fallo al realizar la compialcion.\n";
-                        CU_ASSERT(false);
-                }*/
 
 	}
 	else
@@ -322,7 +306,8 @@ void testCompile()
 		CU_ASSERT(false);
 	}
 }
-
+*/
+/*
 void testTemp()
 {
 	std::map<const char*,octetos::apidb::symbols::ISpace*,octetos::apidb::symbols::cmp_str> lst;
@@ -350,7 +335,8 @@ void testTemp()
 	if(it == lst.end()) CU_ASSERT(false);
 	CU_ASSERT(true);		
 }
-
+*/
+/*
 void testBackwardCompatiblev1()
 {
 	std::string cmd = "cp -f ../tests/";
@@ -380,7 +366,8 @@ void testBackwardCompatiblev1()
 	}
 	CU_ASSERT(true);	
 }
-
+*/
+/*
 void testBackwardCompatiblev20()
 {
 	std::string cmd = "cp -f ../tests/";
@@ -409,7 +396,7 @@ void testBackwardCompatiblev20()
 	}
 	CU_ASSERT(true);	
 }
-
+*/
 
 /*
 #ifdef APIDB_POSTGRESQL
@@ -459,8 +446,8 @@ void testCreateProjectPostgreSQL()
         CU_ASSERT(false);
 	}
 }
-
-
+*/
+/*
 void testBuildPostgreSQL()
 {   
     octetos::apidb::ConfigureProject configProject;
@@ -611,6 +598,7 @@ int main(int argc, char *argv[])
                 return CU_get_error();
             }	
         }
+        /*
         if(runTest == 3 or runAll)
         {
             if ((NULL == CU_add_test(pSuite, "Creación de proyectos a partir de descripcion statica.", testCreateProject)))
@@ -642,7 +630,7 @@ int main(int argc, char *argv[])
                 CU_cleanup_registry();
                 return CU_get_error();
             }
-        }
+        }*/
 
 #ifdef APIDB_POSTGRESQL
     if(enablePostgreSQL)
