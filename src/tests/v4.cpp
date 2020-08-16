@@ -636,7 +636,7 @@ int main(int argc, char *argv[])
     if(enablePostgreSQL)
     {
         //std::cout <<"Iniciando pruebas de PostgreSQL\n";
-        if(runTest == 5 or runAll)
+        /*if(runTest == 5 or runAll)
         {
             if ((NULL == CU_add_test(pSuite, "Creacion de proyeto a partir de descripcion statica (PostgreSQL).", testCreateProjectPostgreSQL)))
             {
@@ -651,7 +651,7 @@ int main(int argc, char *argv[])
                 CU_cleanup_registry();
                 return CU_get_error();
             }
-        }
+        }*/
     }
 #endif
 		

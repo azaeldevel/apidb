@@ -31,7 +31,7 @@
 #include <octetos/db/clientdb-maria.hh>
 
 #include "apidb.hpp"
-#include "common.hpp"
+#include "common-mariadb.hpp"
 #include "Errors.hpp"
 #include "analyzer.hpp"
 
@@ -40,7 +40,11 @@ namespace octetos
 {
 namespace apidb
 {
-
+    symbols::TableMariaDB::TableMariaDB(const std::string& s) : Table(s)
+    {
+        
+        
+    }
     /**
     * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
     */
@@ -109,7 +113,7 @@ namespace apidb
     }
 	
 	
-    bool symbols::Table::basicSymbolsMariaDB(octetos::db::Connector& connect)
+    bool symbols::TableMariaDB::basicSymbols(octetos::db::Connector& connect)
     {
         std::string str = "DESCRIBE ";
         if(space.compare("") != 0)

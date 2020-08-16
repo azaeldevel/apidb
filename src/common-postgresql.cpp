@@ -2,7 +2,7 @@
 #include <libpq-fe.h>
 #include <octetos/db/clientdb-postgresql.hh>
 
-#include "common.hpp"
+#include "common-postgresql.hpp"
 #include "apidb.hpp"
 #include "Errors.hpp"
 #include "analyzer.hpp"
@@ -11,6 +11,11 @@ namespace octetos
 {
 namespace apidb
 {
+    symbols::TablePostgreSQL::TablePostgreSQL(const std::string& s) : Table(s)
+    {
+        
+        
+    }
     /*bool createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password, octetos::db::Datconnect** dat)
     {
         (*dat) = new octetos::db::postgresql::Datconnect(host,port,database,usuario,password);
@@ -30,25 +35,19 @@ namespace apidb
     }*/
     
 
-    bool symbols::Table::basicSymbolsMySQL(octetos::db::Connector& connect)
-    {
-        std::string msg = "No se ha activado el soporte para MySQL.";
-        core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
-        
-        return false;
-    }
-    bool symbols::Table::basicSymbolsPostgreSQL(octetos::db::Connector& connect)
+    bool symbols::TablePostgreSQL::basicSymbols(octetos::db::Connector& connect)
     {
         std::string str = "SELECT * from ";
         str += name;
-        octetos::db::Datresult* dt = connect.execute(str);
-		if(dt != NULL) 
+        octetos::db::postgresql::Datresult dt;
+        bool fl = connect.execute(str,dt);
+		if(fl) 
 		{
-            for(int i = 0; i < PQntuples((const PGresult *)dt->getResult()); i++)
+            for(int i = 0; i < PQntuples((const PGresult *)dt.getResult()); i++)
 			{
 				Symbol* attrribute = new Symbol();
 				attrribute->classParent = this;
-				attrribute->name = PQfname((const PGresult *)dt->getResult(),i);
+				attrribute->name = PQfname((const PGresult *)dt.getResult(),i);
                 //std::cout<<attrribute->name<<std::endl;
 				std::string strName = attrribute->name;
 				if(strName.compare("id") == 0)
@@ -61,9 +60,9 @@ namespace apidb
 				}
 				attrribute->get = "get"; attrribute->get += strName; attrribute->get += "()";
 				attrribute->upperName = strName;
-                Oid type = PQparamtype((const PGresult*)dt->getResult(),i);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				attrribute->inType = dt->getString(i);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				std::string requiered = dt->getString(i);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                Oid type = PQparamtype((const PGresult*)dt.getResult(),i);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				attrribute->inType = dt.getString(i);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				std::string requiered = dt.getString(i);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 				if(requiered.compare("NO") == 0)//NULL permited in DB?
 				{
 					attrribute->required = true;
@@ -73,15 +72,15 @@ namespace apidb
 					attrribute->required = false;
 				}
 				//std::string keyType = row[3];
-				if(strcmp(dt->getString(i).c_str(),"PRI") == 0)
+				if(strcmp(dt.getString(i).c_str(),"PRI") == 0)
                 {
                     attrribute->keyType = Symbol::KeyType::PRIMARY;
                 }
-                else if(strcmp(dt->getString(i).c_str(),"MUL") == 0)
+                else if(strcmp(dt.getString(i).c_str(),"MUL") == 0)
                 {
                     attrribute->keyType = Symbol::KeyType::FOREIGN_UNIQUE;
                 }
-				std::string extra = dt->getString(i);
+				std::string extra = dt.getString(i);
                 
 				if(attrribute->required && attrribute->keyType == Symbol::KeyType::PRIMARY && extra.compare("auto_increment") == 0)//primary key
 				{
@@ -103,13 +102,13 @@ namespace apidb
 				}
 				//std::cout<<"Termitade with:" << attrribute->name << "(" << attrribute->upperName << ")" <<std::endl;
 			}
-			delete dt;//mysql_free_result(result);
+			//delete dt;//mysql_free_result(result);
 			return true;			
 		}
 		else
 		{
 			std::cout<<"Faill on basicSymbols  : "<< str <<std::endl;
-			delete dt;//mysql_free_result(result);
+			//delete dt;//mysql_free_result(result);
 			return false;
 		}
 	}

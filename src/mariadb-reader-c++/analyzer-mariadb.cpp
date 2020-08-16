@@ -30,7 +30,7 @@
 #include <string>
 #include <octetos/db/clientdb-maria.hh>
 #include "analyzer.hpp"
-
+#include "../common-mariadb.hpp"
 
 extern "C" octetos::apidb::mariadb::Analyzer* createAnalyzer(const octetos::apidb::ConfigureProject* config,octetos::db::Connector* connector,octetos::core::ActivityProgress* progress)
 {
@@ -75,7 +75,7 @@ namespace mariadb
 			MYSQL_ROW row;
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))
 			{
-				symbols::Table* prw = new symbols::Table(symbols::getFirstName(row[0]));
+				symbols::Table* prw = new symbols::TableMariaDB(symbols::getFirstName(row[0]));
 				std::string upper = row[0];
 				upper[0] = toupper(upper[0]);
 				prw->upperName = upper;

@@ -21,7 +21,7 @@ octetos::db::Connector* createConnector()
 }*/
 
 
-octetos::db::postgresql::Datconnect* createDatconnect()
+octetos::db::Datconnect* createDatconnect()
 {
     return new octetos::db::postgresql::Datconnect();
 }
