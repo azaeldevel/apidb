@@ -48,7 +48,7 @@ static octetos::db::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2
 static octetos::db::postgresql::Datconnect postgresqlSource("192.168.0.101",5432,"sysapp_v0001","sysapp","123456"); 
 #endif
 #ifdef APIDB_MARIADB
-static octetos::db::mariadb::Datconnect mariaSource("127.0.0.1",3306,"sysapp.alpha","sysapp","123456");
+static octetos::db::mariadb::Datconnect mariaSource("localhost",3306,"sysapp.alpha","sysapp","123456");
 #endif
 //static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 static std::string sysappv1Filename = "sysappv1-alpha.apidb";
@@ -72,8 +72,8 @@ int init_apidb(void)
  */
 int clean_apidb(void)
 {
-        remove(filename.c_str());
-        remove(filename_nlst.c_str());
+        //remove(filename.c_str());
+        //remove(filename_nlst.c_str());
         return 0;
 }
 
@@ -101,14 +101,14 @@ void testCreateProject_nlst()
     configProject_nls.packing = octetos::apidb::PackingLenguajes::CMake;
     configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
     
-    /*if(configProject_nls.saveConfig(filename_nlst))
+    if(configProject_nls.saveConfig(filename_nlst))
     {
         CU_ASSERT(true);
     }
     else
     {
         CU_ASSERT(false);
-    }*/
+    }
 }
 
 void testConecction()
@@ -125,7 +125,7 @@ void testConecction()
 #endif
     bool fl = configProject.testConexion();
     if(fl)
-    {      
+    {
         CU_ASSERT(true);        
     }
     else
