@@ -38,9 +38,9 @@ namespace apidb
     }
 	bool Application::downConf()
 	{
-        std::cout << "downConf : Step 1\n";
+        //std::cout << "downConf : Step 1\n";
         if(isSaved and !isOpen) return true;
-        std::cout << "downConf : Step 2\n";
+        //std::cout << "downConf : Step 2\n";
                 
         if(inNameEdited)
         {
@@ -60,7 +60,7 @@ namespace apidb
             config->name = name;
         }
         
-        std::cout << "downConf : Step 3\n";
+        //std::cout << "downConf : Step 3\n";
         
         if(inInLEdited)
         {
@@ -74,10 +74,10 @@ namespace apidb
                 return false;
             }
             const gchar* gcinl = gtk_combo_box_get_active_id(GTK_COMBO_BOX(inInL));
-            std::cout << "In Language : " << gcinl << "\n";
+            //std::cout << "In Language : " << gcinl << "\n";
             config->setInputLenguaje(getInputLenguaje(gcinl));
         }
-        std::cout << "downConf : Step 4\n";
+        //std::cout << "downConf : Step 4\n";
         if(inOutLEdited)
         {
             int intout = gtk_combo_box_get_active(GTK_COMBO_BOX(inOutL));
@@ -90,7 +90,7 @@ namespace apidb
             }
             config->outputLenguaje =  getOutputLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inOutL)));
         }
-        std::cout << "downConf : Step 4\n";
+        //std::cout << "downConf : Step 4\n";
         if(inVerEdited)
         {
                         std::string verstr = gtk_entry_get_text(GTK_ENTRY(inVer));
@@ -107,7 +107,7 @@ namespace apidb
                                 return false;
                         }                                
         }
-        std::cout << "downConf : Step 5\n";
+        //std::cout << "downConf : Step 5\n";
         if(inPkLEdited)
         {
             int intpkl = gtk_combo_box_get_active(GTK_COMBO_BOX(inPkL));
@@ -121,7 +121,7 @@ namespace apidb
             }
             config->packing = getPackingLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inPkL)));
         }
-        std::cout << "downConf : Step 6\n";
+        //std::cout << "downConf : Step 6\n";
         if(inCmplEdited)
         {
             int intcmpl = gtk_combo_box_get_active(GTK_COMBO_BOX(inCmpl));
@@ -135,7 +135,7 @@ namespace apidb
             }
             config->compiled = getCompiled(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inCmpl)));
         }
-        std::cout << "downConf : Step 7\n";
+        //std::cout << "downConf : Step 7\n";
 		if(inNameSpaceDetectEdited)
 		{
 			int intNameSpaceDetect = gtk_combo_box_get_active(GTK_COMBO_BOX(inNameSpaceDetect));
@@ -153,17 +153,12 @@ namespace apidb
 			config->namespace_detect = gtk_combo_box_get_active_id(GTK_COMBO_BOX(inNameSpaceDetect));
 		}
 		
-        std::cout << "downConf : Step 8\n";
+        //std::cout << "downConf : Step 8\n";
 		
 		if(inExeEdited)
         {
             std::string exe = gtk_entry_get_text(GTK_ENTRY(inExe));
             config->executable_target = exe;
-        }
-            
-        if(config->conectordb == NULL)
-        {
-            
         }
         
         if(config->conectordb == NULL)//si no se ha asignado el driver
@@ -217,7 +212,7 @@ namespace apidb
  
             config->conectordb = createDatconnect();
         }
-        std::cout << "downConf : Step 9\n";
+        //std::cout << "downConf : Step 9\n";
         if(inLocEdited)
         {
             std::string loc = gtk_entry_get_text(GTK_ENTRY(inLoc));
@@ -253,7 +248,7 @@ namespace apidb
                 gtk_widget_destroy (msg);
             }*/
         }
-        std::cout << "downConf : Step 10\n";
+        //std::cout << "downConf : Step 10\n";
         if(inPortEdited)
         {
             std::string strport = gtk_entry_get_text(GTK_ENTRY(inPort));
@@ -274,7 +269,7 @@ namespace apidb
             }
             config->conectordb->setPort(intport);
         }
-        std::cout << "downConf : Step 11\n";
+        //std::cout << "downConf : Step 11\n";
         if(inDBEdited)
         {
             std::string strdb = gtk_entry_get_text(GTK_ENTRY(inDB));
@@ -287,7 +282,7 @@ namespace apidb
             }
             config->conectordb->setDatabase(strdb);
         }
-        std::cout << "downConf : Step 12\n";
+        //std::cout << "downConf : Step 12\n";
         if(inUserEdited)
         {
             std::string struser = gtk_entry_get_text(GTK_ENTRY(inUser));
@@ -300,7 +295,7 @@ namespace apidb
             }
             config->conectordb->setUser(struser);
         }
-        std::cout << "downConf : Step 13\n";
+        //std::cout << "downConf : Step 13\n";
         if(inPwEdited)
         {
             std::string strpw = gtk_entry_get_text(GTK_ENTRY(inPw));   
@@ -312,7 +307,7 @@ namespace apidb
             }
             config->conectordb->setPassword(strpw);
         }
-        std::cout << "downConf : Step 14\n";
+        //std::cout << "downConf : Step 14\n";
         if(inWConnNameEdited)
         {
             std::string str = gtk_entry_get_text(GTK_ENTRY(inWConnName));
@@ -327,6 +322,7 @@ namespace apidb
 	
 	void Application::build(GtkWidget *widget, gpointer data) 
 	{
+        //std::cout << "build : Step 1\n";
         Application* app = (Application*)data;
         if(!app->isSaved)
         {
@@ -335,6 +331,7 @@ namespace apidb
             gtk_widget_destroy (msg);
             return;
         }
+        //std::cout << "build : Step 2\n";
                 
         if(app->config == NULL)
         {
@@ -373,22 +370,25 @@ namespace apidb
             gtk_widget_destroy (msg);
             return;
         }
+        
+        //std::cout << "build : Step 3\n";
+        
         bool flagDriver = false;
         try
         {
-            //std::cout << "Step 1\n";
+            //std::cout << "build : Step 3.1\n";
             if(app->driver != NULL) 
             {
                 delete (app->driver);
                 app->driver = NULL;
             }
-            //std::cout << "Step 2\n";
+            //std::cout << "build : Step 3.2\n";
             app->driver = new Driver(*(app->config));
-            //std::cout << "Step 3\n";
-            Tracer tr(0);  
-            //std::cout << "Step 4\n";
+            //std::cout << "build : Step 3.3\n";
+            Tracer tr(0);
+            //std::cout << "build : Step 3.4\n";
             flagDriver = app->driver->driving(&tr);
-            //std::cout << "Step 5\n";
+            //std::cout << "build : Step 3.5\n";
         }
         catch(BuildException e)
         {
@@ -397,6 +397,7 @@ namespace apidb
             gtk_widget_destroy (msg);
             return;
         }
+        //std::cout << "build : Step 4\n";
 		if(!flagDriver)
 		{
 			std::string msgstr = "";
@@ -429,7 +430,7 @@ namespace apidb
     void Application::document_saveas(GtkWidget *widget, gpointer data) 
     {
         Application* app = (Application*)data;
-        std::cout << "document_saveas : Step 1\n";
+        //std::cout << "document_saveas : Step 1\n";
         
         if(!app->downConf())
         {
@@ -439,19 +440,19 @@ namespace apidb
             gtk_widget_destroy (msg);
             return;
         }
-        std::cout << "document_saveas : Step 2\n";
+        //std::cout << "document_saveas : Step 2\n";
                 
         GtkWidget *dialog;
         GtkFileChooser *chooser;
         GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
         gint res;
-        std::cout << "document_saveas : Step 3\n";
+        //std::cout << "document_saveas : Step 3\n";
 
         dialog = gtk_file_chooser_dialog_new ("Save File", NULL,action,"_Cancel",GTK_RESPONSE_CANCEL,"_Save",GTK_RESPONSE_ACCEPT, NULL);
         chooser = GTK_FILE_CHOOSER (dialog);
         gtk_file_chooser_set_current_name (chooser,(app->config->name + ".apidb").c_str());
         res = gtk_dialog_run (GTK_DIALOG (dialog));
-        std::cout << "document_saveas : Step 4\n";
+        //std::cout << "document_saveas : Step 4\n";
         if (res == GTK_RESPONSE_ACCEPT)
         {
             char *filename;
@@ -468,7 +469,7 @@ namespace apidb
 	void Application::document_save(GtkWidget *widget, gpointer data) 
 	{
 		Application* app = (Application*)data;
-		std::cout << "document_save:Step 1" << std::endl;
+		//std::cout << "document_save:Step 1" << std::endl;
 		if(app->config == NULL)
 		{			
 			std::string msgstr;
@@ -1157,8 +1158,8 @@ namespace apidb
 			return;
 		}
 	}
-        void Application::createNotebookInfo(GtkWidget *boxInfo)
-        {
+    void Application::createNotebookInfo(GtkWidget *boxInfo)
+    {
                 GtkWidget *boxName = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget * lbName = gtk_label_new ("Nombre:");
                 gtk_box_pack_start(GTK_BOX(boxName), lbName, FALSE, FALSE,0); 
@@ -1182,12 +1183,18 @@ namespace apidb
                 inInL = gtk_combo_box_text_new();
                 gtk_combo_box_text_insert((GtkComboBoxText*)inInL,0,"selecione","Selecione..."); 
                 gtk_combo_box_set_active((GtkComboBox*)inInL,0);
-                gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,getInputLenguaje(InputLenguajes::MySQL).c_str(),getInputLenguaje(InputLenguajes::MySQL).c_str());
-                gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::PostgreSQL,getInputLenguaje(InputLenguajes::PostgreSQL).c_str(),getInputLenguaje(InputLenguajes::PostgreSQL).c_str());
-                gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MariaDB,getInputLenguaje(InputLenguajes::MariaDB).c_str(),getInputLenguaje(InputLenguajes::MariaDB).c_str());
-                gtk_box_pack_start(GTK_BOX(boxInL), inInL, FALSE, FALSE,0);
-                gtk_box_pack_start(GTK_BOX(boxInfo), boxInL, FALSE, FALSE,0);
-                g_signal_connect(G_OBJECT(inInL), "changed", G_CALLBACK(inInL_changed), this);
+#ifdef APIDB_MYSQL
+            gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,getInputLenguaje(InputLenguajes::MySQL).c_str(),getInputLenguaje(InputLenguajes::MySQL).c_str());
+#endif
+#ifdef APIDB_POSTGRESQL
+            gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::PostgreSQL,getInputLenguaje(InputLenguajes::PostgreSQL).c_str(),getInputLenguaje(InputLenguajes::PostgreSQL).c_str());
+#endif
+#ifdef APIDB_MARIADB
+            gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MariaDB,getInputLenguaje(InputLenguajes::MariaDB).c_str(),getInputLenguaje(InputLenguajes::MariaDB).c_str());
+#endif
+            gtk_box_pack_start(GTK_BOX(boxInL), inInL, FALSE, FALSE,0);
+            gtk_box_pack_start(GTK_BOX(boxInfo), boxInL, FALSE, FALSE,0);
+            g_signal_connect(G_OBJECT(inInL), "changed", G_CALLBACK(inInL_changed), this);
                 
                 GtkWidget *boxOutL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget * lbOutL = gtk_label_new ("Lenguaje de Salida:   ");

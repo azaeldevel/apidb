@@ -72,8 +72,8 @@ int init_apidb(void)
  */
 int clean_apidb(void)
 {
-        //remove(filename.c_str());
-        //remove(filename_nlst.c_str());
+        remove(filename.c_str());
+        remove(filename_nlst.c_str());
         return 0;
 }
 
@@ -193,33 +193,33 @@ void testCreateProject()
 	{
                 CU_ASSERT(false);
 	}
-}
+}*/
 
 void testBuild_nlst()
 {
 	octetos::apidb::ConfigureProject configProject_nls;
-        if(!configProject_nls.readConfig(filename_nlst))
+    if(!configProject_nls.readConfig(filename_nlst))
+    {
+        if(octetos::core::Error::check())
         {
-                if(octetos::core::Error::check())
-                {
-                        std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
-                }
-                CU_ASSERT(false);
-                return;
+            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
         }
-        octetos::apidb::Driver driver(configProject_nls);
-        octetos::apidb::Tracer tracer(0);
-        if(!driver.driving((octetos::apidb::Tracer*)NULL))
+        CU_ASSERT(false);
+                
+        return;
+    }
+    octetos::apidb::Driver driver(configProject_nls);octetos::apidb::Tracer tracer(0);
+    if(!driver.driving((octetos::apidb::Tracer*)NULL))
+    {
+        if(octetos::core::Error::check())
         {
-                if(octetos::core::Error::check())
-                {
-                        std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
-                }
-                CU_ASSERT(false);
+            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
         }
+        CU_ASSERT(false);
+    }
         
         CU_ASSERT(true);
-}*/
+}
 /*
 void testBuild()
 {   
