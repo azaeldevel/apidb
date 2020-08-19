@@ -83,12 +83,19 @@ namespace apidb
         virtual ~Driver();                
         bool getTablesName(std::list<std::string>& retList,symbols::Space* space = NULL)const;
         bool getFiledsName(std::list<std::string>& retList,const std::string& table)const;
+        
+        bool loadLibrary();
+        
 	private:
 		octetos::db::Connector* connector;		
         apidb::Analyzer* analyzer;
 		const ConfigureProject& configureProject;
         //void* handle;
         octetos::db::Connector* (*createConnector)();
+        
+        //>>>>
+        void (*destroy)(octetos::apidb::Analyzer*);
+        apidb::Analyzer* (*create)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
 	};
 }
 }

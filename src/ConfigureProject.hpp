@@ -49,7 +49,7 @@ namespace apidb
         * */
         class Function
         {
-            public:
+        public:
                     /**
                     * \brief Nombre de la funcion
                     * */
@@ -82,7 +82,7 @@ namespace apidb
                          * \brief Agrega un nuevo parametro a la funcion.
                          * */
                         void addParam(const std::string& p);
-                private:
+        private:
                         /**
                          * \brief Nombre de la funcion
                          * */
@@ -130,10 +130,14 @@ namespace apidb
         * \brief la version del archivo de proyecto.
         * */
         core::Semver projectVersion;
-                
+        
         void* handle;
-        octetos::db::Connector* (*createConnector)();
         octetos::db::Datconnect* (*createDatConnection)();
+        void (*destroyDatConnection)();
+        octetos::db::Connector* (*createConnector)();
+        void destroyConnector();
+        apidb::Analyzer* (*createAnalyzer)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
+        void (*destroyAnalyzer)(octetos::apidb::Analyzer*);
         bool loadLibrary();
         /**
         * \brief Identifica el tipo del Servidor de base de datos
@@ -141,12 +145,24 @@ namespace apidb
         InputLenguajes inputLenguaje;
         bool enabledMySQL;
         bool enabledMariaDB;
-        bool enabledPostgreSQL;
+        bool enabledPostgreSQL;  
+        /**
+        * \brief Información de conexión a la base de datos, esta opcion sera removida en v5
+        * \deprecated Sera removido de la interface publica en v5, usar getDatconnection() en su lugar.
+        **/
+        octetos::db::Datconnect* conectordb;
         
-    public:
         void* getfnDatConection();
         void* getfnCreateConector();
+        
+    public:
         void* getLibraryHandle() const;
+        octetos::db::Datconnect* newDatConnection();
+        void deleteDatConnection();
+        octetos::db::Connector* newConnector()const;
+        void deleteConnector();
+        apidb::Analyzer* newAnalyzer(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
+        void deleteAnalyzer(octetos::apidb::Analyzer*)const;
         void setInputLenguaje(InputLenguajes);
         void setInputs(InputLenguajes,octetos::db::Datconnect&);
         InputLenguajes getInputLenguaje()const;
@@ -154,11 +170,6 @@ namespace apidb
         
         const Table* findSelectTable(const std::string&)const;
         const Table* findDownloadTable(const std::string&)const;
-        /**
-        * \brief Información de conexión a la base de datos, esta opcion sera removida en v5
-        * \deprecated Sera removido de la interface publica en v5, usar getDatconnection() en su lugar.
-        * */
-        octetos::db::Datconnect* conectordb;
                 /**
                  * \brief El nombre del proyecto.
                  */

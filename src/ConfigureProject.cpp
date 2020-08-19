@@ -40,7 +40,27 @@ namespace octetos
 {
 namespace apidb
 {
-    
+    void ConfigureProject::deleteAnalyzer(octetos::apidb::Analyzer* a)const
+    {
+        destroyAnalyzer(a);
+    }
+    void ConfigureProject::destroyConnector()
+    {
+                
+    }
+    octetos::db::Connector* ConfigureProject::newConnector()const
+    {
+        return createConnector();
+    }
+    octetos::db::Datconnect* ConfigureProject::newDatConnection()
+    {
+        if(conectordb) 
+        {
+            //destroy conectordb
+            conectordb = NULL;
+        }
+        conectordb = createDatConnection();
+    }
     void* ConfigureProject::getfnDatConection()
     {
         return (void*) createDatConnection;
@@ -258,6 +278,9 @@ namespace apidb
             return false;
         }
         //std::cout << "Step 2\n";
+        
+        
+        /////>>>>>>>>>>>>>>>>>>>>>>>>>>>
         createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
         //std::cout << "Step 3\n";
         if(!createConnector)
@@ -268,6 +291,8 @@ namespace apidb
             core::Error::write(err);
             return false;
         }
+        
+        //>>>>>>>>>>>>>>>>>
         createDatConnection = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
         if(!createDatConnection)
         {
@@ -277,6 +302,17 @@ namespace apidb
             core::Error::write(err);
             return false;
         }
+        destroyDatConnection = (void (*)())dlsym(handle, "destroyDatconnect");
+        if(!createDatConnection)
+        {
+            std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
+                msgErr = msgErr + "\t" + dlerror();
+            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+            core::Error::write(err);
+            return false;
+        }
+        
+        
         
         return true;
     }

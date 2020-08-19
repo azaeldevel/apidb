@@ -36,6 +36,29 @@ namespace octetos
 {
 namespace apidb
 {
+    bool Driver::loadLibrary()
+    {
+        void* handle = configureProject.getLibraryHandle();
+        if(handle == NULL)
+        {
+			std::string msg = "Falla al intetar cargar la funcion de libreia 'destroyAnalyzer'";
+			core::Error::write(core::Error(msg,ErrorCodes::DRIVER_FAIL ,__FILE__,__LINE__));
+			return false;
+        }
+        destroy = (void (*)(octetos::apidb::Analyzer*))dlsym(handle, "destroyAnalyzer");
+            
+        create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
+        if(create == NULL)
+        {
+            std::string msgErr ="No se pudo cargar la funcion createAnalyzer :\n" ;
+            msgErr = msgErr + "\t" + dlerror();
+            core::Error err(msgErr,ErrorCodes::DRIVER_FAIL,__FILE__,__LINE__);            
+            core::Error::write(err);
+            return false;
+        }
+        
+        return true;
+    }
 	bool Driver::getFiledsName(std::list<std::string>& retList,const std::string& table)const
 	{
 		
@@ -44,7 +67,7 @@ namespace apidb
 		{
 			std::string msg = "No se encontro el espacio Global '";
 			msg += configureProject.name + "'";
-			core::Error::write(core::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
+			core::Error::write(core::Error(msg,ErrorCodes::DRIVER_FAIL,__FILE__,__LINE__));
 			return false;
 		}
 		
@@ -104,15 +127,8 @@ namespace apidb
 	}
     Driver::~Driver()
     {
-        if(analyzer)
+        if(analyzer and destroy)
         {
-            void* handle = configureProject.getLibraryHandle();
-            if(handle == NULL)
-            {
-                return;
-            }
-            void (*destroy)(octetos::apidb::Analyzer*);
-            destroy = (void (*)(octetos::apidb::Analyzer*))dlsym(handle, "destroyAnalyzer");
             destroy(analyzer);
         }
         if(connector)
@@ -128,59 +144,15 @@ namespace apidb
     }
 	Driver::Driver(const ConfigureProject& config) : configureProject(config)
 	{ 
-		analyzer = NULL;
-        void* handle = config.getLibraryHandle();
-        if(handle == NULL)
+        if(!loadLibrary())
         {
             return;
         }
-        if(configureProject.getInputLenguaje() == apidb::InputLenguajes::MySQL)
-        {
-            //handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
-            createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
-            if(!createConnector)
-            {                    
-                std::string msgErr ="dlsym fallo con parse_string:\n" ;
-                msgErr = msgErr + "\t" + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return;
-            }
-        }
-        else if(configureProject.getInputLenguaje() == apidb::InputLenguajes::PostgreSQL)
-        {
-            handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
-            createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
-            if(!createConnector)
-            {                    
-                std::string msgErr ="dlsym fallo con parse_string:\n" ;
-                msgErr = msgErr + "\t" + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return;
-            }
-        }
-        else if(configureProject.getInputLenguaje() == apidb::InputLenguajes::MariaDB)
-        {
-            handle = dlopen("libapidb-MariaDB.so", RTLD_LAZY);
-            createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
-            if(!createConnector)
-            {                    
-                std::string msgErr ="dlsym fallo con parse_string:\n" ;
-                msgErr = msgErr + "\t" + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return;
-            }
-        }
-		else
-		{
-			//std::cout <<"Lenguaje de entrada desconocido."<<std::endl;
-			core::Error err("Lenguaje no soportado", ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
-			core::Error::write(err);
-		}
-		
-        connector = createConnector();
+        
+		analyzer = NULL;
+        
+		connector = config.newConnector();
+        
         try
         {
             bool flag = connector->connect(*(config.getDatconnection()));
@@ -383,37 +355,13 @@ namespace apidb
 	bool Driver::analyze(core::ActivityProgress* progress)
 	{
         //std::cout << "Driver::analyze : Step 1\n";
-        void* handle = configureProject.getLibraryHandle();
-        if(handle == NULL)
-        {
-            std::string msgErr ="No se encontro el manejador de la libreria." ;
-            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-            core::Error::write(err);
-            return false;
-        }
-        //std::cout << "Driver::analyze : Step 1.1\n";
-        /*if(analyzer == NULL)
-        {
-            std::string msgErr ="No se ha creado el analizador correspndiente. :\n" ;
-            msgErr = msgErr + "\t" + dlerror();
-            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-            core::Error::write(err);
-            return false;
-        }*/
+
         
         //std::cout << "Driver::analyze : Step 2\n";
         
-        apidb::Analyzer* (*create)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
-        create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
-        if(create == NULL)
-        {
-            std::string msgErr ="No se pudo cargar la funcion createAnalyzer :\n" ;
-            msgErr = msgErr + "\t" + dlerror();
-            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-            core::Error::write(err);
-            return false;
-        }
-        analyzer = (apidb::Analyzer*) create(&configureProject,connector,progress);
+        
+
+        analyzer = create(&configureProject,connector,progress);
         
         //std::cout << "Driver::analyze : Step 3\n";        
         if(progress != NULL)

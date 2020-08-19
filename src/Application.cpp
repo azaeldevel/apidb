@@ -170,9 +170,14 @@ namespace apidb
             std::string exe = gtk_entry_get_text(GTK_ENTRY(inExe));
             config->executable_target = exe;
         }
-        
-        createDatconnect = (octetos::db::Datconnect* (*)())config->getfnDatConection();        
-        config->conectordb = createDatconnect();
+               
+        if(!config->newDatConnection())
+        {
+                GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Fallo al crear la estructura de Configuracion.","Error", g_strerror (errno));
+                gtk_dialog_run (GTK_DIALOG (msg));  
+                gtk_widget_destroy (msg);
+                return false;
+        }
         std::cout << "downConf : Step 10\n";
         
         if(inLocEdited)
