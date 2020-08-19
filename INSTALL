@@ -45,13 +45,7 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
     Gentoo Based    
         APIDB esta en el repositorio guru como apidb in dev branch, unavez instalado ejecute, 
         #descargando el repositorio
-        cd ~
-        git clone https://anongit.gentoo.org/git/repo/proj/guru.git
-        git checkout dev
-        sudo nano /etc/portage/repos.conf/guru.conf
-        >> [guru]
-        >> location = /home/user/guru
-        
+        sudo layman -a guru        
         emerge -a app-misc/apidb
         
     Source code based
@@ -60,7 +54,7 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
         Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
         1.- unzip apidb-master.zip //Descomprimir archivo
         2.- cd apidb-master/src/build // entrar en el directorio
-        3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease -DAPIDB_MARIADB=Y ..
+        3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease -DAPIDB_MARIADB=Y -DDISTRO=ArchLinux|Gentoo ..
         4.- make
         5.- sudo cpack --config CPackConfig.cmake
         6.- sudo ./apidb-*-Linux.sh  --prefix=/usr/local

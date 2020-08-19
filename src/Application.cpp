@@ -1181,17 +1181,11 @@ namespace apidb
                 GtkWidget * lbInL = gtk_label_new ("Lenguaje de Entrada:");
                 gtk_box_pack_start(GTK_BOX(boxInL), lbInL, FALSE, FALSE,0); 
                 inInL = gtk_combo_box_text_new();
-                gtk_combo_box_text_insert((GtkComboBoxText*)inInL,0,"selecione","Selecione..."); 
-                gtk_combo_box_set_active((GtkComboBox*)inInL,0);
-#ifdef APIDB_MYSQL
+            gtk_combo_box_text_insert((GtkComboBoxText*)inInL,0,"selecione","Selecione..."); 
+            gtk_combo_box_set_active((GtkComboBox*)inInL,0);
             gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,getInputLenguaje(InputLenguajes::MySQL).c_str(),getInputLenguaje(InputLenguajes::MySQL).c_str());
-#endif
-#ifdef APIDB_POSTGRESQL
             gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::PostgreSQL,getInputLenguaje(InputLenguajes::PostgreSQL).c_str(),getInputLenguaje(InputLenguajes::PostgreSQL).c_str());
-#endif
-#ifdef APIDB_MARIADB
             gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MariaDB,getInputLenguaje(InputLenguajes::MariaDB).c_str(),getInputLenguaje(InputLenguajes::MariaDB).c_str());
-#endif
             gtk_box_pack_start(GTK_BOX(boxInL), inInL, FALSE, FALSE,0);
             gtk_box_pack_start(GTK_BOX(boxInfo), boxInL, FALSE, FALSE,0);
             g_signal_connect(G_OBJECT(inInL), "changed", G_CALLBACK(inInL_changed), this);

@@ -48,7 +48,7 @@ namespace apidb
 				Symbol* attrribute = new Symbol();
 				attrribute->classParent = this;
 				attrribute->name = PQfname((const PGresult *)dt.getResult(),i);
-                //std::cout<<attrribute->name<<std::endl;
+                std::cout<<attrribute->name<<std::endl;
 				std::string strName = attrribute->name;
 				if(strName.compare("id") == 0)
 				{

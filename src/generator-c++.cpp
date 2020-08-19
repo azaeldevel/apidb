@@ -963,6 +963,37 @@ namespace generators
 					file << "\n}\n";
 					file << std::endl;				
 			}
+		} 
+		else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+		{
+			if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				symbols::Table* table = (symbols::Table*) ispace;
+				//std::cout << "Es table " << table->getName() << std::endl;
+				createClassCPP(*table,file,table->getName());
+			}
+			else if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				symbols::Space* space = (symbols::Space*) ispace;
+					//std::cout << "Es Espacio " << space->getFullName() << std::endl;
+					file << "namespace " ;
+					if(space->getName().empty())
+					{
+							file << configureProject.name;
+					}
+					else
+					{
+							file << space->getName() << std::endl;
+					}
+					file << "\n{\n";
+					//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+					for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+					{
+							createCPP(file,log,it->second);
+					}
+					file << "\n}\n";
+					file << std::endl;				
+			}
 		}
 		else
 		{

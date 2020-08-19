@@ -1,5 +1,5 @@
-#ifndef OCTETOS_APIDB_SCANNER_MARIADB_HPP
-#define OCTETOS_APIDB_SCANNER_MARIADB_HPP
+#ifndef OCTETOS_APIDB_SCANNER_POSTGRESQL_HPP
+#define OCTETOS_APIDB_SCANNER_POSTGRESQL_HPP
 
 #if ! defined(yyFlexLexerOnce)
 #include <FlexLexer.h>
@@ -12,7 +12,7 @@ namespace octetos
 {
 namespace apidb
 {
-	namespace mariadb
+	namespace postgresql
 	{
 		class Scanner : public yyFlexLexer
 		{
@@ -20,10 +20,10 @@ namespace apidb
 			Scanner(std::istream *in);
 			virtual ~Scanner();
 			using FlexLexer::yylex;
-			virtual int yylex( octetos::apidb::mariadb::Parser::semantic_type * const lval, octetos::apidb::mariadb::Parser::location_type *location);
+			virtual int yylex( Parser::semantic_type * const lval, Parser::location_type *location);
 
 		private:
-			octetos::apidb::mariadb::Parser::semantic_type *yylval = nullptr;
+			Parser::semantic_type *yylval = nullptr;
 		};
 	}
 

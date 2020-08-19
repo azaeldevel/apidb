@@ -19,23 +19,24 @@
  * 
  * */
 #if DISTRO_GENTOO
-    #include <mariadb/mysql.h>
+    #include <libpq-fe.h>
 #endif
 #if DISTRO_ARCHLINUX
-    #include <mysql/mysql.h>
+    #include <libpq-fe.h>
 #endif
+
 #include <iostream>
 #include <string>
-#include <octetos/db/clientdb-maria.hh>
+#include <octetos/db/clientdb-postgresql.hh>
 #include "analyzer.hpp"
-#include "../common-mariadb.hpp"
+#include "../common-postgresql.hpp"
 
-extern "C" octetos::apidb::mariadb::Analyzer* createAnalyzer(const octetos::apidb::ConfigureProject* config,octetos::db::Connector* connector,octetos::core::ActivityProgress* progress)
+extern "C" octetos::apidb::postgresql::Analyzer* createAnalyzer(const octetos::apidb::ConfigureProject* config,octetos::db::Connector* connector,octetos::core::ActivityProgress* progress)
 {
-    return new octetos::apidb::mariadb::Analyzer(*config,connector,progress);
+    return new octetos::apidb::postgresql::Analyzer(*config,connector,progress);
 }
 
-extern "C" void destroyAnalyzer(octetos::apidb::mariadb::Analyzer* object)
+extern "C" void destroyAnalyzer(octetos::apidb::postgresql::Analyzer* object)
 {
     delete object;
 }
@@ -45,14 +46,14 @@ namespace octetos
 {
 namespace apidb
 {
-namespace mariadb
+namespace postgresql
 {
 	bool Analyzer::listing()
 	{
 		std::string db = connector->getDatconection()->getDatabase();
 		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
 		str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
-		octetos::db::mariadb::Datresult dt;
+		octetos::db::postgresql::Datresult dt;
         bool flag = connector->execute(str,dt);
 		//std::cout << str  <<std::endl;
 		if(flag) 
@@ -70,10 +71,10 @@ namespace mariadb
 				core::Error::write(core::Error("No se encontró Espacion Global",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 				return false;
 			}
-			MYSQL_ROW row;
+			/*MYSQL_ROW row;
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))
 			{
-				symbols::Table* prw = new symbols::TableMariaDB(symbols::getFirstName(row[0]));
+				symbols::Table* prw = new symbols::TablePostgreSQL(symbols::getFirstName(row[0]));
 				std::string upper = row[0];
 				upper[0] = toupper(upper[0]);
 				prw->upperName = upper;
@@ -132,20 +133,19 @@ namespace mariadb
 					core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL_NAMESPCE_DETECTED,__FILE__,__LINE__));
 					return false;
 				}
-			}
+			}*/
 			
 			return true;
 		}
 		else
 		{
 			std::string msg = "";
-			msg = msg + " MariaDB Server Error No. : '";
-			msg = msg + std::to_string(mysql_errno((MYSQL*)connector->getConnection()));
+			msg = msg + " PostgreSQL Server Error : '";
+			msg = msg + PQerrorMessage((PGconn *)connector->getConnection());
 			msg = msg + "' ";
-			msg = msg + mysql_error((MYSQL*)connector->getConnection());
 			core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 			return false;
-		}	
+		}
 		return true;
 	}
 }

@@ -72,7 +72,7 @@ int init_apidb(void)
  */
 int clean_apidb(void)
 {
-        remove(filename.c_str());
+        //remove(filename.c_str());
         remove(filename_nlst.c_str());
         return 0;
 }
@@ -198,7 +198,13 @@ void testCreateProject()
 void testBuild_nlst()
 {
 	octetos::apidb::ConfigureProject configProject_nls;
-    if(!configProject_nls.readConfig(filename_nlst))
+    bool flerr = configProject_nls.readConfig(filename_nlst);
+    if(flerr)
+    {
+        //leyo corectamente
+        CU_ASSERT(true);
+    }
+    else
     {
         if(octetos::core::Error::check())
         {
@@ -220,6 +226,7 @@ void testBuild_nlst()
         
         CU_ASSERT(true);
 }
+
 /*
 void testBuild()
 {   
@@ -252,14 +259,14 @@ void testBuild()
         CU_ASSERT(true);
     }
 	
-}*/
+}
+*/
 
 
-/*
 void testCompile()
 {
 	octetos::apidb::ConfigureProject configProject;
-	if(!configProject.readConfig(filename))
+	if(!configProject.readConfig(filename_nlst))
 	{                
 		if(octetos::core::Error::check())
 		{
@@ -306,7 +313,6 @@ void testCompile()
 		CU_ASSERT(false);
 	}
 }
-*/
 /*
 void testTemp()
 {
@@ -606,16 +612,24 @@ int main(int argc, char *argv[])
                 CU_cleanup_registry();
                 return CU_get_error();
             }
-        }
-        if(runTest == 4 or runAll)
+        }*/
+        /*if(runTest == 4 or runAll)
         {
             if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción.", testBuild)))
             {
                 CU_cleanup_registry();
                 return CU_get_error();
             }
-        }
+        }*/
         if(runTest == 4 or runAll)
+        {
+            if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción(no-lists).", testBuild_nlst)))
+            {
+                CU_cleanup_registry();
+                return CU_get_error();
+            }
+        }
+        if(runTest == 5 or runAll)
         {
             if ((NULL == CU_add_test(pSuite, "Compilación de proyecto generado.", testCompile)))
             {
@@ -623,6 +637,7 @@ int main(int argc, char *argv[])
                 return CU_get_error();
             }
         }
+        /*
         if(runTest == 6 or runAll)
         {
             if ((NULL == CU_add_test(pSuite, "Pruebas temporales.", testTemp)))

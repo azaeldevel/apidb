@@ -18,6 +18,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * */
+#if DISTRO_GENTOO
+    #include <mysql/mysql.h>
+#endif
+#if DISTRO_ARCHLINUX
+    #include <mysql/mysql.h>
+#endif
 
 #include <iostream>
 #include <mysql/mysql.h>

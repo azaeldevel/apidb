@@ -206,106 +206,54 @@ namespace apidb
     bool ConfigureProject::loadLibrary()
     {
         //std::cout << "Step 0\n";
+        std::string libname = "";
         if(inputLenguaje == apidb::InputLenguajes::MySQL)
         {
-            handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
-            //std::cout << "Step 1\n";
-            if(!handle)
-            {
-                std::string msgErr ="dlopen fallo con 'libapidb-MySQL.so' : ";
-                msgErr = msgErr + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return false;
-            }
-            //std::cout << "Step 2\n";
-            createConnection = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
-            //std::cout << "Step 3\n";
-            if(!createConnection)
-            {
-                std::string msgErr ="dlsym fallo con parse_string:\n" ;
-                msgErr = msgErr + "\t" + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return false;
-            }
-            createDatConnection = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
-            if(!createDatConnection)
-            {
-                std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
-                msgErr = msgErr + "\t" + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return false;
-            }
+            libname = "libapidb-MySQL.so";
         }
         else if(inputLenguaje == apidb::InputLenguajes::MariaDB)
         {
-            handle = dlopen("libapidb-MariaDB.so", RTLD_LAZY);
-            //std::cout << "Step 1\n";
-            if(!handle)
-            {
-                std::string msgErr ="dlopen fallo con 'libapidb-MariaDB.so' : ";
-                msgErr = msgErr + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return false;
-            }
-            //std::cout << "Step 2\n";
-            createConnection = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
-            //std::cout << "Step 3\n";
-            if(!createConnection)
-            {
-                std::string msgErr ="dlsym fallo con parse_string:\n" ;
-                msgErr = msgErr + "\t" + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return false;
-            }
-            createDatConnection = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
-            if(!createDatConnection)
-            {
-                std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
-                msgErr = msgErr + "\t" + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return false;
-            }
+            libname ="libapidb-MariaDB.so";
         }
         else if(inputLenguaje == apidb::InputLenguajes::PostgreSQL)
         {
-            handle = dlopen("libapidb-PostgreSQL.so", RTLD_LAZY);
-            if(!handle)
-            {
-                std::string msgErr ="dlopen fallo con 'libapidb-MySQL.so' : ";
-                msgErr = msgErr + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return false;
-            }
-            createConnection = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
-            if(!createConnection)
-            {                    
-                std::string msgErr ="dlsym fallo con parse_string:\n" ;
-                msgErr = msgErr + "\t" + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return false;
-            }
-            createDatConnection = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
-            if(!createDatConnection)
-            {                    
-                std::string msgErr ="dlsym fallo con parse_string:\n" ;
-                msgErr = msgErr + "\t" + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return false;
-            }
+            libname = "libapidb-PostgreSQL.so";
         }
         else
         {      
             std::string msgErr ="dlsym fallo con parse_string:\n" ;
             msgErr = msgErr + "\t" + dlerror();
+            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+            core::Error::write(err);
+            return false;
+        }
+        
+        handle = dlopen(libname.c_str(), RTLD_LAZY);
+        //std::cout << "Step 1\n";
+        if(!handle)
+        {
+            std::string msgErr ="dlopen fallo con 'libapidb-MySQL.so' : ";
+            msgErr = msgErr + dlerror();
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+                core::Error::write(err);
+                return false;
+        }
+        //std::cout << "Step 2\n";
+        createConnection = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+        //std::cout << "Step 3\n";
+        if(!createConnection)
+        {
+            std::string msgErr ="dlsym fallo con parse_string:\n" ;
+            msgErr = msgErr + "\t" + dlerror();
+            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+            core::Error::write(err);
+            return false;
+        }
+        createDatConnection = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
+        if(!createDatConnection)
+        {
+            std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
+                msgErr = msgErr + "\t" + dlerror();
             core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
             core::Error::write(err);
             return false;

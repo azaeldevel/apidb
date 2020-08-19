@@ -8,7 +8,6 @@ void destroyConector(octetos::db::Connector* obj)
 {
     delete (octetos::db::postgresql::Datconnect*)obj;
 }
-
 octetos::db::Connector* createConnector()
 {
     octetos::db::postgresql::Connector* conn = new octetos::db::postgresql::Connector();

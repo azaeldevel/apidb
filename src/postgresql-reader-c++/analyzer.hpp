@@ -18,17 +18,18 @@
  *  author: Azael Reyes
  * */
 
-#ifndef APIDB_READER_ANALYZER_HPP
-#define APIDB_READER_ANALYZER_HPP
+#ifndef APIDB_READER_ANALYZER_POSTGRESQL_HPP
+#define APIDB_READER_ANALYZER_POSTGRESQL_HPP
 
-#include "analyzer.hpp"
-
+#include "../analyzer.hpp"
+#include "scanner.hpp"
+#include "parser.tab.hh"
 
 namespace octetos
 {
 namespace apidb
 {    
-namespace mysql
+namespace postgresql
 {
         /**
          * \private
@@ -39,8 +40,8 @@ namespace mysql
             virtual bool analyze(core::ActivityProgress* progress);
             //Analyzer();
             Analyzer(const ConfigureProject&,octetos::db::Connector*,core::ActivityProgress* progress);		
-            virtual ~Analyzer(){};         	
-            //std::ostream& print(std::ostream &stream);
+            virtual ~Analyzer();         	
+            std::ostream& print(std::ostream &stream);
             
             /**
              * \brief El parser coloca aqui su resultado.
@@ -50,35 +51,30 @@ namespace mysql
             
             
         private:
-            /*void parse_helper(std::istream &stream);
+            void parse_helper(std::istream &stream);
             Parser  *parser  = nullptr;
-            Scanner *scanner = nullptr;  */
-            struct types
-            {
-                const char* in;
-                const char* out_cpp;
-            };
-			std::vector<types> listtypes;
-            /**
-            * \brief Esta funcion es la encarga de resolver cada simbolo encontrado en la base de datos.
-            * */
-            bool listing();
+            Scanner *scanner = nullptr;  
+			
             /** 
             * parse - parse from a c++ input stream
             * @param is - std::istream&, valid input stream
             */            
-            //void parse(std::istream &iss);
+            void parse(std::istream &iss);
 			bool parse(symbols::ISpace*);
 			bool parse(symbols::Symbol*);
             /**
             * Parse desde una std::string
             **/
-            virtual std::string parse(const std::string& line){};
+            virtual std::string parse(const std::string& line);
             /** 
             * parse - parse from a file
             * @param filename - valid string with input file
             */
-            //void parse(const char * const filename);
+            void parse(const char * const filename);          
+            /**
+            * \brief Esta funcion es la encarga de resolver cada simbolo encontrado en la base de datos.
+            * */
+            bool listing();
         };        
 }
 }

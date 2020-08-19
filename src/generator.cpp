@@ -94,8 +94,7 @@ namespace generators
 		cmakelists<<configureProject.versionResult.getMinor();
 		cmakelists<<".";
 		cmakelists<<configureProject.versionResult.getPatch();
-		cmakelists<<".";
-		cmakelists<<"0 ";
+        
 		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
 			cmakelists<<" LANGUAGES CXX)"<<std::endl;

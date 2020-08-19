@@ -62,7 +62,7 @@ namespace apidb
 	{
 		if(core::Error::check())
 		{
-			//throw core::Error("Hay un error pendiente de atender",core::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
+			throw core::Error("Hay un error pendiente de atender",core::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
 		}
         
         //std::cout << "Reading : " << filename << std::endl;
@@ -427,8 +427,8 @@ namespace apidb
                 * Version 1.1.0
                 * 
                 * *//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                if(projectVersion >= ver110)//la lectura es compatible con versiones anteriores del projecto
-                {
+        if(projectVersion >= ver110)//la lectura es compatible con versiones anteriores del projecto
+        {
                 //
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -460,7 +460,9 @@ namespace apidb
                 }
                 else
                 {
-                    std::string msgstr = "Fallo durante el parseo XML. El driver solicitado no existe o no hay soporte activo para dicho driver.";
+                    std::string msgstr = "Fallo durante el parseo XML. El driver '";
+                    msgstr += inL;
+                    msgstr += "' solicitado no existe o no hay soporte activo para dicho driver.";
                     core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                     return false;
                 }

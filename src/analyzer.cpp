@@ -118,7 +118,6 @@ namespace apidb
 				}
 			}
 		}
-#ifdef APIDB_POSTGRESQL
 		else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
@@ -136,7 +135,6 @@ namespace apidb
 				}
 			}
 		}
-#endif
 		else
 		{
 			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
