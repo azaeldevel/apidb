@@ -197,8 +197,11 @@ void testCreateProject()
 
 void testBuild_nlst()
 {
+    //std::cout << "testBuild_nlst: Step 1\n";
 	octetos::apidb::ConfigureProject configProject_nls;
+    //std::cout << "testBuild_nlst: Step 1.1\n";
     bool flerr = configProject_nls.readConfig(filename_nlst);
+    //std::cout << "testBuild_nlst: Step 1.2\n";
     if(flerr)
     {
         //leyo corectamente
@@ -208,23 +211,29 @@ void testBuild_nlst()
     {
         if(octetos::core::Error::check())
         {
-            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
+            std::cout << "Error -> " << octetos::core::Error::get().describe() << std::endl;
         }
         CU_ASSERT(false);
                 
         return;
     }
-    octetos::apidb::Driver driver(configProject_nls);octetos::apidb::Tracer tracer(0);
-    if(!driver.driving((octetos::apidb::Tracer*)NULL))
+    //std::cout << "testBuild_nlst: Step 2\n";
+    octetos::apidb::Driver driver(configProject_nls);
+    octetos::apidb::Tracer tracer(0);
+    //std::cout << "testBuild_nlst: Step 3\n";
+    if(!driver.driving(0))
     {
         if(octetos::core::Error::check())
         {
-            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
+            std::cout << "Error  -> " << octetos::core::Error::get().describe() << std::endl;
         }
         CU_ASSERT(false);
+        return;
     }
+    
+    //std::cout << "testBuild_nlst: Step 4\n";
         
-        CU_ASSERT(true);
+    CU_ASSERT(true);
 }
 
 /*

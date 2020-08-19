@@ -87,7 +87,7 @@ namespace apidb
 		octetos::db::Connector* connector;		
         apidb::Analyzer* analyzer;
 		const ConfigureProject& configureProject;
-        void* handle;
+        //void* handle;
         octetos::db::Connector* (*createConnector)();
 	};
 }

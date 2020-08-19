@@ -60,11 +60,13 @@ namespace apidb
 {
 	bool ConfigureProject::readConfig(const std::string filename)
 	{
+        //std::cout << "ConfigureProject::readConfig: Step 1\n";
 		if(core::Error::check())
 		{
 			throw core::Error("Hay un error pendiente de atender",core::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
 		}
         
+        //std::cout << "ConfigureProject::readConfig: Step 2\n";
         //std::cout << "Reading : " << filename << std::endl;
         FILE *apidbFilecheck = fopen(filename.c_str(), "r");
         if (apidbFilecheck == NULL )
@@ -74,12 +76,15 @@ namespace apidb
             core::Error::write(core::Error(msg,ErrorCodes::READFILE_INVALIDPATH,__FILE__,__LINE__));
             return false;
         }
-                fclose(apidbFilecheck);
-                //std::cout << "Step 2." << std::endl;
-                char tmp_filepath[] =  "/tmp/XXXXXXXXX";
-                char * tmp_apidbDir  = mkdtemp(tmp_filepath);       
-                //Descomomprimiendo archivo
-                
+        //std::cout << "ConfigureProject::readConfig: Step 3\n";
+        
+        fclose(apidbFilecheck);
+        //std::cout << "Step 2." << std::endl;
+        char tmp_filepath[] =  "/tmp/XXXXXXXXX";
+        char * tmp_apidbDir  = mkdtemp(tmp_filepath);       
+        //Descomomprimiendo archivo
+        
+        //std::cout << "ConfigureProject::readConfig: Step 4\n";
                 //std::cout << "Descomprimiendo achivo." << std::endl;
                 TAR* tar_handle = NULL;
                 tar_open(&tar_handle, (char*) filename.c_str(), NULL,  O_RDONLY,  0644,  TAR_GNU);
@@ -89,6 +94,7 @@ namespace apidb
                         core::Error::write(core::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::READFILE_TEMPUNPACKFAIL,__FILE__,__LINE__));
                         return false;
                 }
+        //std::cout << "ConfigureProject::readConfig: Step 5\n";
                 //std::cout << "tar_handle is " << tmp_apidbDir << std::endl;
                 //std::cout << "tmp_filepath "<< tmp_filepath  << std::endl;
                 if(tar_extract_all(tar_handle, tmp_apidbDir) != 0)
@@ -97,7 +103,8 @@ namespace apidb
                         //std::cout << "Fallo duraten las descompresion del archivo." << std::endl;
                 }
                 tar_close(tar_handle);
-                                
+                   
+        //std::cout << "ConfigureProject::readConfig: Step 6\n";             
                 std::string tmVerFileName = tmp_apidbDir;
                 tmVerFileName += "/apidb/version";
                 //tmVerFileName="apidb/apidbcopy/version";
@@ -110,6 +117,7 @@ namespace apidb
                         core::Error::write(core::Error(msg,ErrorCodes::READFILE_INVALIDPATHVER,__FILE__,__LINE__));
                         return false;
                 }
+        //std::cout << "ConfigureProject::readConfig: Step 7\n";
                 char *line_buf = NULL;
                 size_t line_buf_size = 0;
                 int line_count = 0;
@@ -120,6 +128,7 @@ namespace apidb
                 {
                     strver = line_buf;
                 }
+        //std::cout << "ConfigureProject::readConfig: Step 8\n";
                 fclose(apidbFilecheck2);
                 if(!projectVersion.set(strver)) 
                 {
@@ -136,6 +145,7 @@ namespace apidb
                         projectVersion = ver;
                     }
                 }
+        //std::cout << "ConfigureProject::readConfig: Step 9\n";
                 
                 //std::cout << "Leyendo XML." << std::endl;  
                 xmlTextReaderPtr reader;
@@ -143,29 +153,35 @@ namespace apidb
                 std::string xmlfile = tmp_filepath;
                 xmlfile += "/apidb/main.xml";
                 //std::cout << "Parseando XML " << xmlfile << std::endl;  
-                reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);
-                if (reader != NULL) 
-                {
-                        ret = xmlTextReaderRead(reader);               
-                        if (!processNode(reader)) 
-                        {
-                                //fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
-                                 core::Error::write( core::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode,__FILE__,__LINE__));
-                                return false;
-                        }
-                        xmlFreeTextReader(reader);
-                }
-                else 
-                {
+        //std::cout << "ConfigureProject::readConfig: Step 9.1\n";
+        reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);                
+        //std::cout << "ConfigureProject::readConfig: Step 9.2\n";
+        if (reader != NULL) 
+        {
+            //std::cout << "ConfigureProject::readConfig: Step 9.2.1\n";
+            ret = xmlTextReaderRead(reader);               
+            if (!processNode(reader)) 
+            {
+                //fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
+                core::Error::write( core::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode,__FILE__,__LINE__));
+                return false;
+            }
+            //std::cout << "ConfigureProject::readConfig: Step 9.2.2\n";
+            xmlFreeTextReader(reader);
+            //std::cout << "ConfigureProject::readConfig: Step 9.2.3\n";
+        }
+        else 
+        {
                         //fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
                         std::string msg = "Fallo al abrir el archivo '";
                         msg += msg + xmlfile + "'";
                          core::Error::write( core::Error(msg,ErrorCodes::READFILE_OPENXMLFILE,__FILE__,__LINE__));
                         return false;
-                }
-                                
-                
-                return true;
+        }                 
+                 
+        //std::cout << "ConfigureProject::readConfig: Step 10\n";
+        //loadLibrary();
+        return true;
 	}
        
 	bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
@@ -427,9 +443,10 @@ namespace apidb
                 * Version 1.1.0
                 * 
                 * *//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //std::cout << "ConfigureProject::getProjectNodes : v1.1.0 update.\n";
         if(projectVersion >= ver110)//la lectura es compatible con versiones anteriores del projecto
         {
-                //
+            //std::cout << "ConfigureProject::getProjectNodes : v1.1.0 update - 1.\n";
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -440,6 +457,7 @@ namespace apidb
                 xmlTextReaderRead(reader);
                 name = xmlTextReaderConstName(reader);
                 std::string inL = (const char*)xmlTextReaderConstValue(reader);
+                //std::cout << "ConfigureProject::getProjectNodes : v1.1.0 update - 2.\n";
                 if(inL.compare("MySQL") == 0 and enabledMySQL)
                 {
                     setInputLenguaje(InputLenguajes::MySQL);
@@ -466,7 +484,7 @@ namespace apidb
                     core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                     return false;
                 }
-                
+                //std::cout << "ConfigureProject::getProjectNodes : v1.1.0 update - 3\n";
                 //
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -561,8 +579,10 @@ namespace apidb
                         std::string msgstr = "Fallo durante el parseo XML.";
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
-                }
-                
+        }
+              
+              
+        //std::cout << "ConfigureProject::getProjectNodes : v2.0.0 feactures.\n";
 		if(projectVersion >= ver200)
 		{
                 xmlTextReaderRead(reader);
@@ -699,14 +719,15 @@ namespace apidb
     }
 
 
-        bool ConfigureProject::processNode(xmlTextReaderPtr reader) 
-        {
-                //const xmlChar *name = xmlTextReaderConstName(reader);
-
-                if(xmlTextReaderNodeType(reader) == 1) //es d apertura?
-                {        	
-                        if(!getProjectNodes(reader))
-                        {
+    bool ConfigureProject::processNode(xmlTextReaderPtr reader) 
+    {
+        //const xmlChar *name = xmlTextReaderConstName(reader);
+        //std::cout << "ConfigureProject::processNode: Step 1\n";
+        if(xmlTextReaderNodeType(reader) == 1) //es d apertura?
+        {        	
+            ///std::cout << "ConfigureProject::processNode: Step 1.1\n";
+            if(!getProjectNodes(reader))
+            {
                                 if(core::Error::check())
                                 {
                                         return false;
@@ -717,15 +738,16 @@ namespace apidb
                                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                                         return false;
                                 }
-                        }
-                }
-                else if( xmlTextReaderNodeType(reader) == 15) //es d cerradura?
-                {
-                //stack.pop_front();
-                }
-        
-                return true;
+            }
         }
+        else if( xmlTextReaderNodeType(reader) == 15) //es d cerradura?
+        {
+                //stack.pop_front();
+        }
+        //std::cout << "ConfigureProject::processNode: Step 2\n";
+        
+        return true;
+    }
     
 }
 }

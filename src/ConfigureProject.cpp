@@ -40,6 +40,23 @@ namespace octetos
 {
 namespace apidb
 {
+    
+    void* ConfigureProject::getfnDatConection()
+    {
+        return (void*) createDatConnection;
+    }
+    void* ConfigureProject::getfnCreateConector()
+    {
+        return (void*) createConnector;
+    }
+    void* ConfigureProject::getLibraryHandle()const
+    {
+        return handle;        
+    }
+    octetos::db::Datconnect*  ConfigureProject::getDatconnection() const
+    {
+        return conectordb;
+    }
     void ConfigureProject::setInputs(InputLenguajes in,octetos::db::Datconnect& dat)
     {
         conectordb = & dat;
@@ -181,19 +198,19 @@ namespace apidb
         if(inputLenguaje == apidb::InputLenguajes::MySQL)
         {
             //std::cout << "2 - createConnection:" << createConnection << "\n";
-            octetos::db::Connector*  connector = createConnection();
+            octetos::db::Connector*  connector = createConnector();
             ret = connector->connect(*conectordb);
             connector->close();
         }
         else if(inputLenguaje == apidb::InputLenguajes::PostgreSQL)
         {
-            octetos::db::Connector*  connector = createConnection();
+            octetos::db::Connector*  connector = createConnector();
             ret = connector->connect(*conectordb);
             connector->close();
         }        
         else if(inputLenguaje == apidb::InputLenguajes::MariaDB)
         {
-            octetos::db::Connector*  connector = createConnection();
+            octetos::db::Connector*  connector = createConnector();
             ret = connector->connect(*conectordb);
             connector->close();
         }
@@ -232,16 +249,17 @@ namespace apidb
         //std::cout << "Step 1\n";
         if(!handle)
         {
-            std::string msgErr ="dlopen fallo con 'libapidb-MySQL.so' : ";
-            msgErr = msgErr + dlerror();
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                core::Error::write(err);
-                return false;
+            std::string msgErr ="dlopen fallo con '" ;
+            msgErr += libname + "' : ";
+            msgErr += + dlerror();
+            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+            core::Error::write(err);
+            return false;
         }
         //std::cout << "Step 2\n";
-        createConnection = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
+        createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
         //std::cout << "Step 3\n";
-        if(!createConnection)
+        if(!createConnector)
         {
             std::string msgErr ="dlsym fallo con parse_string:\n" ;
             msgErr = msgErr + "\t" + dlerror();
@@ -264,7 +282,7 @@ namespace apidb
     ConfigureProject::ConfigureProject()
     {
         handle = NULL;
-        createConnection = NULL;
+        createConnector = NULL;
         createDatConnection = NULL;
         conectordb = NULL;
 #ifdef APIDB_MARIADB

@@ -106,50 +106,37 @@ namespace apidb
     {
         if(analyzer)
         {
-            //delete analyzer;
-            if(configureProject.getInputLenguaje() == apidb::InputLenguajes::MySQL)
+            void* handle = configureProject.getLibraryHandle();
+            if(handle == NULL)
             {
-                void* handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
-                if(!handle)
-                {
-                    std::string msgErr ="dlopen fallo con libapidb-MySQL.so" ;
-                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                    core::Error::write(err);
-                }
-                void (*destroy)(octetos::apidb::Analyzer*);
-                destroy = (void (*)(octetos::apidb::Analyzer*))dlsym(handle, "destroyAnalyzer");
-                if(!destroy)
-                {
-                    std::string msgErr ="dlsym fallo con destroyAnalyzer:\n" ;
-                    msgErr = msgErr + "\t" + dlerror();
-                    core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-                    core::Error::write(err);
-                    return;
-                }
-                destroy(analyzer);
+                return;
             }
+            void (*destroy)(octetos::apidb::Analyzer*);
+            destroy = (void (*)(octetos::apidb::Analyzer*))dlsym(handle, "destroyAnalyzer");
+            destroy(analyzer);
         }
-        
-        
         if(connector)
         {
             connector->close();
             delete connector;
         }
-        if(!handle) dlclose(handle); 
+        //if(!handle) dlclose(handle); 
     }
-        const Analyzer&  Driver::getAnalyzer() const
-        {
-                return *analyzer;
-        }
+    const Analyzer&  Driver::getAnalyzer() const
+    {
+        return *analyzer;
+    }
 	Driver::Driver(const ConfigureProject& config) : configureProject(config)
 	{ 
 		analyzer = NULL;
-        handle = NULL;
-        
+        void* handle = config.getLibraryHandle();
+        if(handle == NULL)
+        {
+            return;
+        }
         if(configureProject.getInputLenguaje() == apidb::InputLenguajes::MySQL)
         {
-            handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
+            //handle = dlopen("libapidb-MySQL.so", RTLD_LAZY);
             createConnector = (octetos::db::Connector* (*)())dlsym(handle, "createConnector");
             if(!createConnector)
             {                    
@@ -196,7 +183,7 @@ namespace apidb
         connector = createConnector();
         try
         {
-            bool flag = connector->connect(*(config.conectordb));
+            bool flag = connector->connect(*(config.getDatconnection()));
             if(!flag)
             {
                 delete connector;
@@ -219,12 +206,13 @@ namespace apidb
 	
 	bool Driver::driving(core::ActivityProgress* progress)
 	{
+        //std::cout << "Driver::driving : Step 1\n";
 		if(connector == NULL) 
 		{
 			//std::cout<<"El conector es NULL." << std::endl;
 			return false;
 		}
-        
+        //std::cout << "Driver::driving : Step 2\n";        
 		if(analyze(progress))
 		{
 			if(generate(progress))
@@ -240,8 +228,8 @@ namespace apidb
 		{
 			//std::cout<<"Fallo la etapa de analisis." << std::endl;   
 			return false;
-		}
-		
+		}		
+        std::cout << "Driver::driving : Step 3\n";
 		return false;
 	}
 	/*bool Driver::driving(bool log)
@@ -395,10 +383,10 @@ namespace apidb
 	bool Driver::analyze(core::ActivityProgress* progress)
 	{
         //std::cout << "Driver::analyze : Step 1\n";
+        void* handle = configureProject.getLibraryHandle();
         if(handle == NULL)
         {
-            std::string msgErr ="No se ha cargado la libreia correspndiente para el analizador : " ;
-            msgErr = msgErr + dlerror();
+            std::string msgErr ="No se encontro el manejador de la libreria." ;
             core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
             core::Error::write(err);
             return false;
@@ -417,8 +405,15 @@ namespace apidb
         
         apidb::Analyzer* (*create)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
         create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
+        if(create == NULL)
+        {
+            std::string msgErr ="No se pudo cargar la funcion createAnalyzer :\n" ;
+            msgErr = msgErr + "\t" + dlerror();
+            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+            core::Error::write(err);
+            return false;
+        }
         analyzer = (apidb::Analyzer*) create(&configureProject,connector,progress);
-                
         
         //std::cout << "Driver::analyze : Step 3\n";        
         if(progress != NULL)

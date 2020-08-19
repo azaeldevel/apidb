@@ -35,31 +35,7 @@ namespace apidb
     * */
     class ConfigureProject
     {
-    private:
-        bool processNode(xmlTextReaderPtr);
-        bool getProjectNodes(xmlTextReaderPtr);
-        /**
-        * \brief la version del archivo de proyecto.
-        * */
-        core::Semver projectVersion;
-                
-        void* handle;
-        octetos::db::Connector* (*createConnection)();
-        octetos::db::Datconnect* (*createDatConnection)();
-        bool loadLibrary();
-        /**
-        * \brief Identifica el tipo del Servidor de base de datos
-        * */
-        InputLenguajes inputLenguaje;
-        bool enabledMySQL;
-        bool enabledMariaDB;
-        bool enabledPostgreSQL;
-        
-    public:  
-        void setInputLenguaje(InputLenguajes) __attribute__ ((deprecated));
-        void setInputs(InputLenguajes,octetos::db::Datconnect&);
-        InputLenguajes getInputLenguaje()const;
-        ~ConfigureProject();
+    public:
         /**
         * \brief Almacena la lista de parametros que le corresponde a una Funcion
         */
@@ -68,11 +44,11 @@ namespace apidb
         public:
             ~Parameters();
         };        
-            /**
-            * \brief Almacena de descripcion de una funcion
-            * */
-            class Function
-            {
+        /**
+        * \brief Almacena de descripcion de una funcion
+        * */
+        class Function
+        {
             public:
                     /**
                     * \brief Nombre de la funcion
@@ -123,12 +99,12 @@ namespace apidb
                          * \private en desarrollo.
                          * */
                         std::string body;
-                };
+            };
                 /**
                  * \brief Almacena la descripcion de una tabla
                  * */
-                class Table : public std::map<const char*, const Function*,symbols::cmp_str>
-                {
+            class Table : public std::map<const char*, const Function*,symbols::cmp_str>
+            {
                 private:
                         /**
                          * \brief Nombre completo de la tabla
@@ -144,11 +120,45 @@ namespace apidb
                          **/
                         Table(const std::string&);                        
                         ~Table();
-                };
+        };
         
-			const Table* findSelectTable(const std::string&)const;
-			const Table* findDownloadTable(const std::string&)const;
-        public:
+    ///>>>>>>>>>>>>>>>>>>>>>>>>>Owner mebers    
+    private:
+        bool processNode(xmlTextReaderPtr);
+        bool getProjectNodes(xmlTextReaderPtr);
+        /**
+        * \brief la version del archivo de proyecto.
+        * */
+        core::Semver projectVersion;
+                
+        void* handle;
+        octetos::db::Connector* (*createConnector)();
+        octetos::db::Datconnect* (*createDatConnection)();
+        bool loadLibrary();
+        /**
+        * \brief Identifica el tipo del Servidor de base de datos
+        * */
+        InputLenguajes inputLenguaje;
+        bool enabledMySQL;
+        bool enabledMariaDB;
+        bool enabledPostgreSQL;
+        
+    public:
+        void* getfnDatConection();
+        void* getfnCreateConector();
+        void* getLibraryHandle() const;
+        void setInputLenguaje(InputLenguajes);
+        void setInputs(InputLenguajes,octetos::db::Datconnect&);
+        InputLenguajes getInputLenguaje()const;
+        ~ConfigureProject();
+        
+        const Table* findSelectTable(const std::string&)const;
+        const Table* findDownloadTable(const std::string&)const;
+        /**
+        * \brief Información de conexión a la base de datos, esta opcion sera removida en v5
+        * \deprecated Sera removido de la interface publica en v5, usar getDatconnection() en su lugar.
+        * */
+        octetos::db::Datconnect* conectordb;
                 /**
                  * \brief El nombre del proyecto.
                  */
@@ -161,11 +171,6 @@ namespace apidb
                  * \brief La version del proyecto resultado.
                  * */
                 core::Semver versionResult;
-                /**
-                 * \brief Información de conexión a la base de datos, esta opcion sera removida en v5
-                 * \deprecated Sera removido de la interface publica en v5, usar setInputs() en su lugar.
-                 * */
-                octetos::db::Datconnect* conectordb __attribute__ ((deprecated));
                 /**
                  * \brief Identifica El lenguaje en que se genera el codigo fuente.
                  * */
@@ -221,6 +226,8 @@ namespace apidb
         * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
         **/
         const core::Semver& getVersionProject()const;
+        
+        octetos::db::Datconnect*  getDatconnection() const;
     };
 }
 }

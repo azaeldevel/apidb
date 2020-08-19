@@ -1544,11 +1544,11 @@ namespace generators
 			{
 				return false;
 			}
-			file << "\"" << configureProject.conectordb->getHost() << "\",";
-			file << configureProject.conectordb->getPort() << ",";
-			file << "\"" << configureProject.conectordb->getDatabase() << "\",";
-			file << "\"" << configureProject.conectordb->getUser() << "\",";
-			file << "\"" << configureProject.conectordb->getPassword() << "\"";
+			file << "\"" << configureProject.getDatconnection()->getHost() << "\",";
+			file << configureProject.getDatconnection()->getPort() << ",";
+			file << "\"" << configureProject.getDatconnection()->getDatabase() << "\",";
+			file << "\"" << configureProject.getDatconnection()->getUser() << "\",";
+			file << "\"" << configureProject.getDatconnection()->getPassword() << "\"";
 			file << ");\n";
 		}
 		
