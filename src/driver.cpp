@@ -134,7 +134,7 @@ namespace apidb
         if(connector)
         {
             connector->close();
-            delete connector;
+            configureProject.deleteConnector(connector);
         }
         //if(!handle) dlclose(handle); 
     }
@@ -355,12 +355,9 @@ namespace apidb
 	bool Driver::analyze(core::ActivityProgress* progress)
 	{
         //std::cout << "Driver::analyze : Step 1\n";
-
-        
+            
         //std::cout << "Driver::analyze : Step 2\n";
         
-        
-
         analyzer = create(&configureProject,connector,progress);
         
         //std::cout << "Driver::analyze : Step 3\n";        

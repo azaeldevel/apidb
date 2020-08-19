@@ -133,11 +133,9 @@ namespace apidb
         
         void* handle;
         octetos::db::Datconnect* (*createDatConnection)();
-        void (*destroyDatConnection)();
+        void (*destroyDatConnection)(octetos::db::Datconnect*);
         octetos::db::Connector* (*createConnector)();
-        void destroyConnector();
-        apidb::Analyzer* (*createAnalyzer)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
-        void (*destroyAnalyzer)(octetos::apidb::Analyzer*);
+        void (*destroyConnector)(octetos::db::Connector*);
         bool loadLibrary();
         /**
         * \brief Identifica el tipo del Servidor de base de datos
@@ -158,11 +156,9 @@ namespace apidb
     public:
         void* getLibraryHandle() const;
         octetos::db::Datconnect* newDatConnection();
-        void deleteDatConnection();
+        void deleteDatConnection(octetos::db::Datconnect*);
         octetos::db::Connector* newConnector()const;
-        void deleteConnector();
-        apidb::Analyzer* newAnalyzer(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
-        void deleteAnalyzer(octetos::apidb::Analyzer*)const;
+        void deleteConnector(octetos::db::Connector*)const;
         void setInputLenguaje(InputLenguajes);
         void setInputs(InputLenguajes,octetos::db::Datconnect&);
         InputLenguajes getInputLenguaje()const;

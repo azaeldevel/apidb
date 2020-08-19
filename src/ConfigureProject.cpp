@@ -40,13 +40,9 @@ namespace octetos
 {
 namespace apidb
 {
-    void ConfigureProject::deleteAnalyzer(octetos::apidb::Analyzer* a)const
+    void ConfigureProject::deleteConnector(octetos::db::Connector* c)const
     {
-        destroyAnalyzer(a);
-    }
-    void ConfigureProject::destroyConnector()
-    {
-                
+        destroyConnector(c);
     }
     octetos::db::Connector* ConfigureProject::newConnector()const
     {
@@ -291,6 +287,15 @@ namespace apidb
             core::Error::write(err);
             return false;
         }
+        destroyConnector = (void (*)(octetos::db::Connector*))dlsym(handle, "destroyConector");
+        if(!destroyConnector)
+        {
+            std::string msgErr ="dlsym fallo con destroyConnector:\n" ;
+            msgErr = msgErr + "\t" + dlerror();
+            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
+            core::Error::write(err);
+            return false;
+        }
         
         //>>>>>>>>>>>>>>>>>
         createDatConnection = (octetos::db::Datconnect* (*)())dlsym(handle, "createDatconnect");
@@ -302,7 +307,7 @@ namespace apidb
             core::Error::write(err);
             return false;
         }
-        destroyDatConnection = (void (*)())dlsym(handle, "destroyDatconnect");
+        destroyDatConnection = (void (*)(octetos::db::Datconnect*))dlsym(handle, "destroyDatconnect");
         if(!createDatConnection)
         {
             std::string msgErr ="dlsym fallo con createDatconnect:\n" ;

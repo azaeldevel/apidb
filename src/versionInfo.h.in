@@ -18,7 +18,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * */
- #define VERSION_MAJOR @apidb_VERSION_MAJOR@
+#define VERSION_MAJOR @apidb_VERSION_MAJOR@
 #define VERSION_MINOR @apidb_VERSION_MINOR@
 #define VERSION_PATCH @apidb_VERSION_PATCH@
 #ifdef __cplusplus
@@ -26,6 +26,6 @@
 #else
 #define VERSION_PRERELEASE "@apidb_VERSION_STAGE@"
 #endif
-#define PAKAGENAME "@PROJECT_NAME@"
+#define PAKAGENAME "@CMAKE_PROJECT_NAME@"
 #define VERSION_NAME "@apidb_VERSION_NAME@"
 #define PAKAGENAME_DECORED "@apidb_PAKAGENAME_DECORED@"
