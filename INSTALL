@@ -5,10 +5,20 @@
 --------------------
 Los siquientes requisitos expresan las versiones mas actuales en el momento de la generacion del codigo por lo que muy posiblemente versiones anteriores funcionen tambien.
 
+
+
+
+
+INSTALATION INSTRUCTIONS.
+========================
+
+Dependencies
+============
+Firts you need install all dependencies
+	- octetos-core >= v2.2         https://github.com/azaeldevel/octetos-core
+	- octetos-db-maria >= v1.2.2   https://github.com/azaeldevel/octetos-db
 	- CMake 3.5
 	- GCC 8.2
-	- octetos-core >= v2.2
-	- octetos-db-maria >= v1.2.2
 	- libpq
 	- libxml2 2
 	- Boost 1.67
@@ -19,36 +29,29 @@ Los siquientes requisitos expresan las versiones mas actuales en el momento de l
 	- Doxygen (opcional)
 	- ImageMagicK >= 7
 
--------------
-- Instalación
--------------
-    ArchLinux Based
-        APIDB esta en el repositorio AUR como apidb
-        cd ~
-        mkdir aur-octetos
-        #contrullendo octetos-core
-        cd aur-octetos        
-        git clone https://aur.archlinux.org/octetos-core.git
-        cd octetos-core
-        makepkg -si
-        #contrullendo octetos-db-maria
-        cd ~/aur-octetos
-        git clone https://aur.archlinux.org/octetos-db-maria.git
-        cd octetos-db-maria
-        makepkg -si
-        #contrullendo apidb
-        cd ~/aur-octetos
-        git clone https://aur.archlinux.org/apidb.git
-        cd apidb
-        makepkg -si       
-        
-    Gentoo Based    
-        APIDB esta en el repositorio guru como apidb in dev branch, unavez instalado ejecute, 
-        #descargando el repositorio
-        sudo layman -a guru        
-        emerge -a app-misc/apidb
-        
-    Source code based
+apidb could by instaled y three diferents way:
+	1.- Gentoo based metode
+	2.- Arch Linux base metode.
+	3.- Source base metode.
+
+Gentoo based metode
+===================
+You can install la guru repository then just installl the pakage like any oter pacakge.
+	sudo layman -a guru        
+    emerge -a app-misc/apidb
+
+Arch Linux base metode
+======================
+You can build app-misc/apidb from AUR repository, a posble way is:
+	cd ~
+    mkdir aur-octetos
+    cd aur-octetos        
+	git clone https://aur.archlinux.org/apidb.git
+    cd apidb
+    makepkg -si
+    
+Source base metode
+==================
         Instale octetos-core(https://github.com/azaeldevel/octetos-core.git) y octetos-db(https://github.com/azaeldevel/octetos-db.git)
 
         Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
