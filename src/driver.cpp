@@ -45,9 +45,11 @@ namespace apidb
 			core::Error::write(core::Error(msg,ErrorCodes::DRIVER_FAIL ,__FILE__,__LINE__));
 			return false;
         }
-        destroy = (void (*)(octetos::apidb::Analyzer*))dlsym(handle, "destroyAnalyzer");
-            
+        
+        
         create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
+        destroy = (void (*)(octetos::apidb::Analyzer*))dlsym(handle, "destroyAnalyzer");
+        
         if(create == NULL)
         {
             std::string msgErr ="No se pudo cargar la funcion createAnalyzer :\n" ;
@@ -144,12 +146,12 @@ namespace apidb
     }
 	Driver::Driver(const ConfigureProject& config) : configureProject(config)
 	{ 
+		analyzer = NULL;
+        
         if(!loadLibrary())
         {
             return;
         }
-        
-		analyzer = NULL;
         
 		connector = config.newConnector();
         
@@ -201,7 +203,7 @@ namespace apidb
 			//std::cout<<"Fallo la etapa de analisis." << std::endl;   
 			return false;
 		}		
-        std::cout << "Driver::driving : Step 3\n";
+        //std::cout << "Driver::driving : Step 3\n";
 		return false;
 	}
 	/*bool Driver::driving(bool log)
@@ -233,6 +235,7 @@ namespace apidb
 	
 	bool Driver::generate(core::ActivityProgress* progress)
 	{
+        //std::cout << "Driver::generate : Step 1 \n";
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
 			
@@ -249,13 +252,17 @@ namespace apidb
 			}
 		}
 		
+        //std::cout << "Driver::generate : Step 2\n";
+        
 		bool flagCPP,flagCMAKE;
 		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
-			//std::cout<<"apidb::generators::CPP cpp(*analyzer);..."<<std::endl;
+            //std::cout << "Driver::generate : Step 2.1\n";
 			apidb::generators::CPP cpp(*analyzer,configureProject);
+            //std::cout << "Driver::generate : Step 2.2\n";
 			if(progress != NULL)flagCPP = cpp.generate(true);	
             else flagCPP = cpp.generate(false);	
+            //std::cout << "Driver::generate : Step 2.3\n";
 			//std::cout<<"apidb::generators::CMake cmake(*analyzer);..."<<std::endl;                        
 		}
 		else
@@ -263,6 +270,8 @@ namespace apidb
 			return false;
 		}
 		
+        //std::cout << "Driver::generate : Step 3\n";
+        
         if(configureProject.packing == PackingLenguajes::CMake)
         {
 			apidb::generators::CMake cmake(*analyzer,configureProject);			
@@ -273,21 +282,23 @@ namespace apidb
         {
             return false;
         }
-			
-                ///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
-                if(flagCPP && flagCMAKE)
-                {
-                        std::string msg1 =  "Generacion completada.\n" ;
-                        core::Confirmation conf1(msg1);
-                        if(progress != NULL) progress->add(conf1);	
-                        return true;				
-                }
-                else
-                {
-                        BuildException fail("Fallo.");
-                        analyzer->getOutput().add(fail);
-                        return false;
-                }
+		
+        //std::cout << "Driver::generate : Step 4\n";
+        
+        ///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
+        if(flagCPP && flagCMAKE)
+        {
+            std::string msg1 =  "Generacion completada.\n" ;
+            core::Confirmation conf1(msg1);
+            if(progress != NULL) progress->add(conf1);	
+            return true;				
+        }
+        else
+        {
+            BuildException fail("Fallo.");
+            analyzer->getOutput().add(fail);
+            return false;
+        }
     }
 	
 	/*bool Driver::generate(bool log)
@@ -366,7 +377,7 @@ namespace apidb
             core::Confirmation conf1("\n\tAnalisis de Base de Datos..");
             progress->add(conf1);
             
-            std::string msg ="\n\tLenguaje de entrada: " ;
+            std::string msg ="\n\tLenguaje de entrada : " ;
             msg+= getInputLenguaje(configureProject.getInputLenguaje()) + "\n";
             core::Confirmation conf2(msg);
             progress->add(conf2);
@@ -392,7 +403,7 @@ namespace apidb
 				return false;
 			}
 			else
-			{           
+			{
 				if(progress != NULL)
 				{
 					std::string msgErr ="\tFallo al leer durante la fase de analisis." ;

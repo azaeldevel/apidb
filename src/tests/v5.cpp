@@ -45,7 +45,7 @@ static std::string filename_nlst;
 static octetos::db::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456");
 #endif
 #ifdef APIDB_POSTGRESQL
-static octetos::db::postgresql::Datconnect postgresqlSource("192.168.0.101",5432,"sysapp_v0001","sysapp","123456"); 
+static octetos::db::postgresql::Datconnect postgresqlSource("localhost",5432,"sysapp_alpha","sysapp","123456"); 
 #endif
 #ifdef APIDB_MARIADB
 static octetos::db::mariadb::Datconnect mariaSource("localhost",3306,"sysapp.alpha","sysapp","123456");
@@ -61,7 +61,7 @@ static std::string sysappv30Filename = "sysappv30-alpha.apidb";
  */
 int init_apidb(void)
 {
-        filename = random_string(50);
+        //filename = random_string(50);
         filename_nlst = random_string(50);
         return 0;
 }
@@ -83,7 +83,7 @@ void testCreateProject_nlst()
         
 	octetos::apidb::ConfigureProject configProject_nls;
     configProject_nls.name = "sysapp";
-    configProject_nls.builDirectory = "apidb";
+    configProject_nls.builDirectory = "apidb-nlst";
 #ifdef APIDB_MYSQL
 	configProject_nls.setInputs(octetos::apidb::InputLenguajes::MySQL,mysqlSource);    
 #endif
@@ -100,6 +100,10 @@ void testCreateProject_nlst()
     configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
     configProject_nls.packing = octetos::apidb::PackingLenguajes::CMake;
     configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
+	configProject_nls.writeDatconnect = "conector";
+    octetos::core::Semver ver = octetos::apidb::getPakageVersion();
+    std::string strdevtaget = "developing";
+	configProject_nls.executable_target  = strdevtaget + std::to_string(ver.getMajor());
     
     if(configProject_nls.saveConfig(filename_nlst))
     {
@@ -219,9 +223,14 @@ void testBuild_nlst()
     }
     //std::cout << "testBuild_nlst: Step 2\n";
     octetos::apidb::Driver driver(configProject_nls);
+    if(octetos::core::Error::check())
+    {
+        std::cout << "Error -> " << octetos::core::Error::get().describe() << std::endl;
+        CU_ASSERT(false);
+    }
     octetos::apidb::Tracer tracer(0);
     //std::cout << "testBuild_nlst: Step 3\n";
-    if(!driver.driving(0))
+    if(!driver.driving(NULL))
     {
         if(octetos::core::Error::check())
         {
@@ -236,8 +245,7 @@ void testBuild_nlst()
     CU_ASSERT(true);
 }
 
-/*
-void testBuild()
+/*void testBuild()
 {   
     octetos::apidb::ConfigureProject configProject;
     //octetos::core::Error::write(octetos::core::Error("Teste error",1,__FILE__,__LINE__));
@@ -268,11 +276,10 @@ void testBuild()
         CU_ASSERT(true);
     }
 	
-}
-*/
+}*/
 
 
-void testCompile()
+void testCompilen_nlst()
 {
 	octetos::apidb::ConfigureProject configProject;
 	if(!configProject.readConfig(filename_nlst))
@@ -291,31 +298,41 @@ void testCompile()
 	if(configProject.packing == octetos::apidb::PackingLenguajes::CMake)
 	{
 
-                int ret = 0;
+        int ret = 0;
 		octetos::core::Semver ver = octetos::apidb::getPakageVersion();
-                std::string cmd = "cp ../../src/tests/developing";
-				cmd += std::to_string(ver.getMajor());
-				cmd += ".cpp ";
-                cmd += " apidb/ ";
-                if(system(cmd.c_str()) < 0)
-                {
-                        std::cout << "Fallo al copiar el archivo developing.cpp\n";
-                        CU_ASSERT(false);
-                }
+        std::string cmd = "cp ../../src/tests/developing";
+        cmd += std::to_string(ver.getMajor());
+        if(configProject.getInputLenguaje() == octetos::apidb::InputLenguajes::MySQL)
+        {
+            cmd += "-mysql";
+        }
+        else if(configProject.getInputLenguaje() == octetos::apidb::InputLenguajes::PostgreSQL)
+        {
+            cmd += "-postgresql";
+        }
+        
+        cmd += ".cpp ";
+        cmd += " apidb-nlst/developing";
+        cmd += std::to_string(ver.getMajor());
+        cmd += ".cpp ";
+        if(system(cmd.c_str()) < 0)
+        {
+            std::cout << "Fallo al copiar el archivo developing.cpp\n";
+            CU_ASSERT(false);
+        }
 
-                cmd  = " cd apidb && cmake . &> /dev/null";
-                if(system(cmd.c_str()) < 0)
-                {
-                        std::cout << "Fallo al realizar la compialcion.\n";
-                        CU_ASSERT(false);
-                }
-                cmd  = " cd apidb &&  make &> /dev/null";
-                if(system(cmd.c_str()) < 0)
-                {
-                        std::cout << "Fallo al realizar la compialcion.\n";
-                        CU_ASSERT(false);
-                }
-
+        cmd  = " cd apidb-nlst && cmake . &> /dev/null";
+        if(system(cmd.c_str()) < 0)
+        {
+            std::cout << "Fallo al realizar la compialcion.\n";
+            CU_ASSERT(false);
+        }
+        cmd  = " cd apidb-nlst &&  make &> /dev/null";
+        if(system(cmd.c_str()) < 0)
+        {
+            std::cout << "Fallo al realizar la compialcion.\n";
+            CU_ASSERT(false);
+        }
 	}
 	else
 	{
@@ -640,7 +657,7 @@ int main(int argc, char *argv[])
         }
         if(runTest == 5 or runAll)
         {
-            if ((NULL == CU_add_test(pSuite, "Compilación de proyecto generado.", testCompile)))
+            if ((NULL == CU_add_test(pSuite, "Compilación de proyecto generado.", testCompilen_nlst)))
             {
                 CU_cleanup_registry();
                 return CU_get_error();

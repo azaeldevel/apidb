@@ -64,6 +64,22 @@ namespace apidb
 				}				
 			}
 		}
+		else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+		{
+			if(ispace->what() == symbols::SpaceType::TABLE)
+			{
+				if((((symbols::Table*)ispace)->fillKeyType(*connector,symbolsTable)) == false) return false;
+			}
+			else if(ispace->what() == symbols::SpaceType::SPACE)
+			{
+				symbols::Space* space = (symbols::Space*) ispace;
+				//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+				{
+					if(fillKeyType(it->second,progress) == false) return false;
+				}				
+			}
+		}
 		else
 		{
 			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
@@ -74,73 +90,32 @@ namespace apidb
 	}
 	bool Analyzer::basicSymbols(symbols::ISpace* ispace,core::ActivityProgress* progress)
 	{
+		//std::cout << "Analyzer::basicSymbols : Step 1\n";
 		if(progress != NULL)
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
-				std::string msg =  "\tCreating simbolos basicos para " ;
+				std::string msg =  "\tCreando simbolos basicos para " ;
 				msg +=  ((symbols::Table*)ispace)->getName() + "\n";
 				progress->add(msg);
 			}
 		}
-		
-		if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-		{
-			if(ispace->what() == symbols::SpaceType::TABLE)
-			{
-				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
-				if(((symbols::Table*)ispace)->basicSymbols(*connector) == false) return false;
-			}
-			else if(ispace->what() == symbols::SpaceType::SPACE)
-			{
-				symbols::Space* space = (symbols::Space*) ispace;
-				//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
-				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
-				{
-					if(basicSymbols(it->second,progress) == false) return false;
-				}
-			}
-		}
-		else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-		{
-			if(ispace->what() == symbols::SpaceType::TABLE)
-			{
-				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
-				if(((symbols::Table*)ispace)->basicSymbols(*connector) == false) return false;
-			}
-			else if(ispace->what() == symbols::SpaceType::SPACE)
-			{
-				symbols::Space* space = (symbols::Space*) ispace;
-				//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
-				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
-				{
-					if(basicSymbols(it->second,progress) == false) return false;
-				}
-			}
-		}
-		else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-		{
-			if(ispace->what() == symbols::SpaceType::TABLE)
-			{
-				//std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
-				if(((symbols::Table*)ispace)->basicSymbols(*connector) == false) return false;
-			}
-			else if(ispace->what() == symbols::SpaceType::SPACE)
-			{
-				symbols::Space* space = (symbols::Space*) ispace;
-				//std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
-				for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
-				{
-					if(basicSymbols(it->second,progress) == false) return false;
-				}
-			}
-		}
-		else
-		{
-			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
-			return false;
-		}
-		
+		//std::cout << "Analyzer::basicSymbols : Step 2\n";
+		if(ispace->what() == symbols::SpaceType::TABLE)
+        {
+            //std::cout << "Tabla " << ((symbols::Table*)ispace)->getName() << std::endl;
+            if(((symbols::Table*)ispace)->basicSymbols(*connector) == false) return false;
+        }
+        else if(ispace->what() == symbols::SpaceType::SPACE)
+        {
+            symbols::Space* space = (symbols::Space*) ispace;
+            //std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
+            for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+            {
+                if(basicSymbols(it->second,progress) == false) return false;
+            }
+        }
+        
 		return true;
 	}
 	

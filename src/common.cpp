@@ -194,8 +194,11 @@ namespace apidb
 	{
 		return core::Error::what();
 	}
-        BuildException::BuildException(const std::string &description) throw() : core::Error(description,core::Error::ERROR_UNKNOW)
-        {
+    BuildException::BuildException(const std::string &description) throw() : core::Error(description,core::Error::ERROR_UNKNOW)
+    {
+	}
+    BuildException::BuildException(const std::string &description,std::string filename,int lineNumber) throw() : core::Error(description,core::Error::ERROR_UNKNOW,filename,lineNumber)
+    {
 	}
                
 	std::string getCompiled(Compiled cmpl )

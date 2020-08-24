@@ -125,6 +125,7 @@ namespace apidb
                  * \brief Requerida por toolkit::Error
                  * */
 		BuildException(const std::string &description) throw();
+        BuildException(const std::string &description,std::string filename,int lineNumber) throw();
         //Exception()throw();
 	private:
 		//std::string description;

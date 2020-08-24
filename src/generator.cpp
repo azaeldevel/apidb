@@ -118,10 +118,18 @@ namespace generators
     cmakelists<<"PKG_CHECK_MODULES(OCTETOS_CORE REQUIRED octetos-core)"<<std::endl;
     cmakelists<<"IF(OCTETOS_CORE_FOUND)"<<std::endl;
     cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_CORE_INCLUDE_DIR})"<<std::endl;
-    cmakelists<<"ELSE(OCTETOS_CORE_FOUND)\n";
+    cmakelists<<"ELSE()\n";
     cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos Core library\")\n";
     cmakelists<<"ENDIF()"<<std::endl;
         
+    
+    cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_POSTGRESQL REQUIRED octetos-db-postgresql)"<<std::endl;
+    cmakelists<<"IF(OCTETOS_DB_POSTGRESQL_FOUND)"<<std::endl;
+    cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_DB_POSTGRESQL_INCLUDE_DIR})"<<std::endl;
+    cmakelists<<"ELSE()\n";
+    cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB library\")\n";
+    cmakelists<<"ENDIF()"<<std::endl;
+    
     if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
     {
 		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_MYSQL REQUIRED octetos-db-mysql)"<<std::endl;
@@ -140,7 +148,15 @@ namespace generators
     }
     else if(configureProject.getInputLenguaje()  == InputLenguajes::PostgreSQL)
     {
-        std::cerr << "No hay soporte para este lenguaje en cmake" << std::endl;
+		cmakelists<<"PKG_CHECK_MODULES(LIBPQ libpq)"<<std::endl;
+		cmakelists<<"IF(NOT LIBPQ_FOUND)"<<std::endl;
+		cmakelists<<"PKG_CHECK_MODULES(LIBPQ REQUIRED libpqxx)"<<std::endl;
+		cmakelists<<"ENDIF()"<<std::endl;
+		cmakelists<<"IF(LIBPQ_FOUND)"<<std::endl;
+		cmakelists<<"INCLUDE_DIRECTORIES(${LIBPQ_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"ELSE()"<<std::endl;
+         cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find libpq or libpqxx library\")\n";
+		cmakelists<<"ENDIF()"<<std::endl;
     }
     else
     {
@@ -161,7 +177,18 @@ namespace generators
 				cmakelists <<".cpp "; 
 			}
 			cmakelists <<")"<<std::endl;
-			cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_DB_MYSQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
+            if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
+            {
+                cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_DB_MYSQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${OCTETOS_CORE_LIBRARY} ${MYSQL_LIBRARIES})"<<std::endl;
+            }
+            else if(configureProject.getInputLenguaje()  == InputLenguajes::MariaDB)
+            {
+                cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_DB_MARIA_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${OCTETOS_CORE_LIBRARY} ${LIBMARIADB_LIBRARIES})"<<std::endl;
+            }
+            else if(configureProject.getInputLenguaje()  == InputLenguajes::PostgreSQL)
+            {
+                cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_DB_POSTGRESQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${LIBPQ_LIBRARIES})"<<std::endl;
+            }
 		}
 		cmakelists<<"ADD_LIBRARY(${PROJECT_NAME} ";
         if(configureProject.compiled == apidb::Compiled::SHARED)
@@ -173,7 +200,18 @@ namespace generators
             cmakelists  << " STATIC ";
         }                
         cmakelists << "${PROJECT_NAME}.cpp )"<<std::endl;
-		cmakelists<<"TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${MYSQL_LIBRARIES} ${OCTETOS_DB_MYSQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES})"<<std::endl;
+        if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
+        {
+            cmakelists<<"TARGET_LINK_LIBRARIES(${PROJECT_NAME}  ${OCTETOS_DB_MYSQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
+        }
+        else if(configureProject.getInputLenguaje()  == InputLenguajes::MariaDB)
+        {
+            cmakelists<<"TARGET_LINK_LIBRARIES(${PROJECT_NAME}   ${OCTETOS_DB_MARIA_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${LIBMARIADB_LIBRARIES})"<<std::endl;
+        }
+        else if(configureProject.getInputLenguaje()  == InputLenguajes::PostgreSQL)
+        {
+            cmakelists<<"TARGET_LINK_LIBRARIES(${PROJECT_NAME}   ${OCTETOS_DB_POSTGRESQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${LIBPQ_LIBRARIES})"<<std::endl;
+        }
         cmakelists<<"if(APIDBLIB)\n";
         cmakelists<<"set(APIDBLIB ${PROJECT_NAME} PARENT_SCOPE)\n";
         cmakelists<<"endif()\n";
@@ -317,15 +355,10 @@ namespace generators
 		  toolkitclientdbConfig<<"OCTETOS_DB_MYSQL_INCLUDE_DIR"<<std::endl;
 		  toolkitclientdbConfig<<")"<<std::endl;
 		toolkitclientdbConfig.close();
-    }                
-    else if(configureProject.getInputLenguaje()  == InputLenguajes::MariaDB)
-    {
-		//no se ocupa modulo make
     }
     else
     {
-            std::cerr << "No hay soporte para este lenguaje en cmake" << std::endl;
-            return false;
+        //ya no se construllen modules de coinfiguracion, se usa pkconfig en su lugar
     }
 		//std::cout<<"Creating MySQLConfig.cmake..."<<std::endl;
 		namefile = "MySQLConfig.cmake";
@@ -491,16 +524,15 @@ namespace generators
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
             getHeaderOutput()<< "#include <octetos/db/clientdb-mysql.hh>"<<std::endl<<std::endl;
+            getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
             getHeaderOutput()<< "#include <octetos/db/clientdb-maria.hh>"<<std::endl<<std::endl;
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-        {
-            std::string msg = "Lenguaje no soportado " ;
-            throw BuildException(msg);
-            return false;
+        {            
+            getHeaderOutput()<< "#include <octetos/db/clientdb-postgresql.hh>"<<std::endl<<std::endl;
         }
         else
         {
@@ -508,11 +540,9 @@ namespace generators
             throw BuildException(msg);
             return false;
         }
-		getHeaderOutput()<< "#include <string>" <<std::endl;
-        
+		getHeaderOutput()<< "#include <string>" <<std::endl;        
 		//inlcudes in source file
-		getSourceOutput()<< "#include \"" <<getHeaderName() <<"\""<<std::endl<<std::endl;
-		getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
+		getSourceOutput()<< "#include \"" << getHeaderName() <<"\""<<std::endl<<std::endl;
 			
 		
 		//writing code				

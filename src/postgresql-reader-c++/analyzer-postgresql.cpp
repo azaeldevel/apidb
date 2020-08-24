@@ -24,10 +24,12 @@
 #if DISTRO_ARCHLINUX
     #include <libpq-fe.h>
 #endif
-
+#include <cstring>
+#include <cstdio>
 #include <iostream>
 #include <string>
 #include <octetos/db/clientdb-postgresql.hh>
+
 #include "analyzer.hpp"
 #include "../common-postgresql.hpp"
 
@@ -50,20 +52,23 @@ namespace postgresql
 {
 	bool Analyzer::listing()
 	{
+        //std::cout << "Analyzer::listing : Step 1\n"  <<std::endl;
 		std::string db = connector->getDatconection()->getDatabase();
-		std::string str = "SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA = '";
-		str = str + db + "' and TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME ASC";
+		std::string str = "SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema' ";
+        //std::cout << str << "\n";
 		octetos::db::postgresql::Datresult dt;
         bool flag = connector->execute(str,dt);
-		//std::cout << str  <<std::endl;
+        //std::cout << "Analyzer::listing : Step 2\n"  <<std::endl;
 		if(flag) 
 		{
+            //std::cout << "Analyzer::listing : Step 2.1\n"  <<std::endl;
 			symbols::SymbolsTable::iterator itGlobal = symbolsTable.find(configureProject.name.c_str());
 			if(itGlobal == symbolsTable.end())
 			{
 				core::Error::write(core::Error("No se encontró Espacion Global",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 				return false;
 			}
+            //std::cout << "Analyzer::listing : Step 2.2\n"  <<std::endl;
 			symbols::Space* spaceGlobal = (symbols::Space*)(itGlobal->second);
 			spaceGlobal->clear();
 			if(spaceGlobal == NULL)
@@ -71,15 +76,17 @@ namespace postgresql
 				core::Error::write(core::Error("No se encontró Espacion Global",ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 				return false;
 			}
-			/*MYSQL_ROW row;
-			while ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))
+            //std::cout << "Analyzer::listing : Step 2.3\n"  <<std::endl;
+			//std::cout << str << "\n";
+			while (dt.nextRow())
 			{
-				symbols::Table* prw = new symbols::TablePostgreSQL(symbols::getFirstName(row[0]));
-				std::string upper = row[0];
-				upper[0] = toupper(upper[0]);
+                //std::cout << "Analyzer::listing : Step 2.3.1 : Tabla encontrada : " << dt.getString(1) << "\n";
+				symbols::Table* prw = new symbols::TablePostgreSQL(dt.getString(1));
+				std::string upper = dt.getString(1);
+				upper[0] = std::toupper(dt.getString(1).c_str()[0]);
 				prw->upperName = upper;
-				prw->space = symbols::getSpacePatch(row[0]);
-				prw->fullname = row[0];
+				prw->space = symbols::getSpacePatch(dt.getString(1));
+				prw->fullname = dt.getString(1);
 				int level = symbols::getSpaceLevel(prw->fullname);
 				//std::cout << "Presesando : "<< level  << " - " << prw->fullname << std::endl;
 				if(level == 0)
@@ -89,7 +96,7 @@ namespace postgresql
 				else if(level > 0 and configureProject.namespace_detect.compare("emulate") == 0)
 				{
 					//std::cout << "\nNested Tabla : " << prw->fullname << std::endl;
-					std::string spacePath = symbols::getSpacePatch(row[0]);
+					std::string spacePath = symbols::getSpacePatch(dt.getString(1));
 					//std::cout << "Space path : " << spacePath << std::endl;
 					symbols::Space* space = spaceGlobal->findSpace(spacePath);
 					if(space == NULL)
@@ -133,8 +140,8 @@ namespace postgresql
 					core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL_NAMESPCE_DETECTED,__FILE__,__LINE__));
 					return false;
 				}
-			}*/
-			
+			}
+            //std::cout << "Analyzer::listing : Step 2.4\n"  <<std::endl;
 			return true;
 		}
 		else
@@ -145,7 +152,8 @@ namespace postgresql
 			msg = msg + "' ";
 			core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 			return false;
-		}
+		}		
+        //std::cout << "Analyzer::listing : Step 3\n"  <<std::endl;
 		return true;
 	}
 }

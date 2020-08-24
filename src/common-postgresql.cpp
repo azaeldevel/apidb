@@ -37,19 +37,26 @@ namespace apidb
 
     bool symbols::TablePostgreSQL::basicSymbols(octetos::db::Connector& connect)
     {
-        std::string str = "SELECT * from ";
-        str += name;
+        //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 1\n";
+        std::string str = "SELECT table_name, column_name, data_type,is_nullable,column_default FROM information_schema.columns WHERE table_name   = ";
+        str += "'" + name + "'";
         octetos::db::postgresql::Datresult dt;
         bool fl = connect.execute(str,dt);
+        //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 2\n";
 		if(fl) 
-		{
-            for(int i = 0; i < PQntuples((const PGresult *)dt.getResult()); i++)
+		{            
+            //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 2.1\n";
+            while(dt.nextRow())
 			{
+                //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 2.1.1\n";
 				Symbol* attrribute = new Symbol();
-				attrribute->classParent = this;
-				attrribute->name = PQfname((const PGresult *)dt.getResult(),i);
-                std::cout<<attrribute->name<<std::endl;
+				attrribute->classParent = this;                
+                //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 2.1.1.1\n";
+				attrribute->name = dt.getString(1);
+                //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 2.1.1.2\n";
+                //std::cout << attrribute->name << std::endl;
 				std::string strName = attrribute->name;
+                //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 2.1.2\n";
 				if(strName.compare("id") == 0)
 				{
 					strName = "ID";
@@ -58,59 +65,120 @@ namespace apidb
 				{
 					strName[0] = toupper(strName[0]);	
 				}
+                //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 2.1.3\n";
 				attrribute->get = "get"; attrribute->get += strName; attrribute->get += "()";
 				attrribute->upperName = strName;
-                Oid type = PQparamtype((const PGresult*)dt.getResult(),i);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				attrribute->inType = dt.getString(i);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				std::string requiered = dt.getString(i);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				attrribute->inType = dt.getString(2);
+				std::string requiered = dt.getString(3);
 				if(requiered.compare("NO") == 0)//NULL permited in DB?
 				{
 					attrribute->required = true;
+                    required.push_back(attrribute);//si attrribute->required tambie se agrega a un lista especial
 				}
 				else if(requiered.compare("YES") == 0)//NULL permited in DB?
 				{
 					attrribute->required = false;
 				}
-				//std::string keyType = row[3];
-				if(strcmp(dt.getString(i).c_str(),"PRI") == 0)
-                {
-                    attrribute->keyType = Symbol::KeyType::PRIMARY;
-                }
-                else if(strcmp(dt.getString(i).c_str(),"MUL") == 0)
-                {
-                    attrribute->keyType = Symbol::KeyType::FOREIGN_UNIQUE;
-                }
-				std::string extra = dt.getString(i);
-                
-				if(attrribute->required && attrribute->keyType == Symbol::KeyType::PRIMARY && extra.compare("auto_increment") == 0)//primary key
-				{
-					key.push_back(attrribute);
-					attrribute->isPK = true;//attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
-                    attrribute->isAutoInc = true;
-				}
-				else if(attrribute->required && attrribute->keyType == Symbol::KeyType::PRIMARY)//unique constraing
-				{
-					key.push_back(attrribute);
-					attrribute->isPK = true;//attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
-                    attrribute->isAutoInc = false;
-				}
+								
 				
+                //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 2.1.4\n";
+                
                 insert(std::make_pair(attrribute->name.c_str(),attrribute));
-				if(attrribute->required)
-				{
-					required.push_back(attrribute);//si attrribute->required tambie se agrega a un lista especial
-				}
-				//std::cout<<"Termitade with:" << attrribute->name << "(" << attrribute->upperName << ")" <<std::endl;
+				
+                //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 2.1.5\n";
 			}
 			//delete dt;//mysql_free_result(result);
+			//return true;			
+		}
+		else
+		{
+			std::string msg = "";
+			msg = msg + " Fail on basicSymbols : '";
+            msg = msg +str;
+			core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+			return false;
+		}
+		
+		//second stage
+		//std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 3\n";
+        str = "SELECT a.attname FROM   pg_index i JOIN   pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE  i.indrelid = '";
+        str += name + "'::regclass AND i.indisprimary";
+        //std::cout << str << "\n";
+        octetos::db::postgresql::Datresult dt2;
+        fl = connect.execute(str,dt2);
+        //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 4\n";
+		if(fl) 
+		{
+            //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 4.1\n";
+            while(dt2.nextRow())
+			{
+                //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 4.1.1\n";
+                std::map<const char*,Symbol*,cmp_str>::iterator it = find(dt2.getString(0).c_str());
+                if(it == end())
+                {
+                    std::string msg = "";
+                    msg = msg + " No se encontró el campo : '";
+                    msg = msg + dt2.getString(0) + "'\n";
+                    core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+                    return false;
+                }
+                
+                it->second->keyType = Symbol::KeyType::PRIMARY;
+                if(it->second->required && it->second->keyType == Symbol::KeyType::PRIMARY)//primary key
+				{
+					key.push_back(it->second);
+					it->second->isPK = true;//attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
+                    it->second->isAutoInc = true;//TODO:Hay que averiguar si realmente es auto incremnto.
+				}
+			}
 			return true;			
 		}
 		else
 		{
-			std::cout<<"Faill on basicSymbols  : "<< str <<std::endl;
-			//delete dt;//mysql_free_result(result);
+			std::string msg = "";
+			msg = msg + " Fail on basicSymbols : '";
+            msg = msg +str;
+			core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 			return false;
 		}
+		
+		//third stage
+		str = "SELECT conname, pg_catalog.pg_get_constraintdef(r.oid, true) as condef FROM pg_catalog.pg_constraint r WHERE r.conrelid = '";
+        str += name + "'::regclass AND r.contype = 'f' ORDER BY 1";
+        octetos::db::postgresql::Datresult dt3;
+        fl = connect.execute(str,dt3);
+        if(fl) 
+		{
+            //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 4.1\n";
+            while(dt3.nextRow())
+			{
+                //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 4.1.1\n";
+                std::map<const char*,Symbol*,cmp_str>::iterator it = find(dt3.getString(1).c_str());
+                if(it == end())
+                {
+                    std::string msg = "";
+                    msg = msg + " No se encontró el campo : '";
+                    msg = msg + dt3.getString(1) + "'\n";
+                    core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+                    return false;
+                }
+
+                it->second->keyType = Symbol::KeyType::FOREIGN_UNIQUE;                
+                
+			}
+			
+			return true;			
+		}
+		else
+		{
+			std::string msg = "";
+			msg = msg + " Fail on basicSymbols : '";
+            msg = msg +str;
+			core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+			return false;
+		}
+            
+        return true;
 	}
  /**
     * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
@@ -176,8 +244,8 @@ namespace apidb
 		}
 			
                 
-		delete dt;                
-		return true;*/
+		delete dt;  */              
+		return true;
     }
 }
 }

@@ -329,6 +329,7 @@ namespace apidb
             msg += filename + "' no indica un archivo válido.";
             core::Error::write(core::Error(msg,ErrorCodes::READFILE_INVALIDPATH,__FILE__,__LINE__));
             return false;
+            
         }
         //std::cout << "ConfigureProject::readConfig: Step 3\n";
         

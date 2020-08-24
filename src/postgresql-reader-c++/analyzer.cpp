@@ -13,6 +13,7 @@ namespace apidb
 {	
 namespace postgresql
 {
+    
 	bool Analyzer::parse(symbols::Symbol* symbol)
 	{
 		symbol->outType = parse(symbol->inType);
@@ -62,10 +63,12 @@ namespace postgresql
 	}
 	bool Analyzer::analyze(core::ActivityProgress* progress)
 	{
+        //std::cout << "Analyzer::analyze : Step 1\n";
 		bool flag = listing();		
 		if(flag == false) return false;
+        //std::cout << "Analyzer::analyze : Step 2\n";
 		
-		for(symbols::SymbolsTable::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
+		/*for(symbols::SymbolsTable::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{
 			if(it->second->what() == symbols::SpaceType::SPACE)
 			{
@@ -75,33 +78,42 @@ namespace postgresql
 				{
 					if(subIt->second->what() == symbols::SpaceType::SPACE)
 					{
-						//std::cout << "\t" << ((symbols::Space*)subIt->second)->getName() << std::endl;
+						std::cout << "\t" << ((symbols::Space*)subIt->second)->getName() << std::endl;
 					}
 					else if(subIt->second->what() == symbols::SpaceType::TABLE)
 					{
-						//std::cout << "\t" << ((symbols::Table*)subIt->second)->getName() << std::endl;
+						std::cout << "\t" << ((symbols::Table*)subIt->second)->getName() << std::endl;
 					}
 				}
 			}
-		}
+		}*/
 		
+        //std::cout << "Analyzer::analyze : Step 3\n";
+        
 		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{
 			if(basicSymbols(it->second,progress) == false) return false;
 		}
                 
+        //std::cout << "Analyzer::analyze : Step 4\n";
+        
 		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{
 			if(fillKeyType(it->second,progress) == false) return false;
 		}
 		
+        //std::cout << "Analyzer::analyze : Step 5\n";
+        
 		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{
 			parse(it->second);
 		}
-		
+				
+        //std::cout << "Analyzer::analyze : Step 6\n";
+        
 		return true;
 	}
+
 	Analyzer::Analyzer(const ConfigureProject& config,octetos::db::Connector* conn,core::ActivityProgress* p) : apidb::Analyzer(config,conn,p)
 	{
 	}
@@ -109,11 +121,29 @@ namespace postgresql
 
 		
 	std::string Analyzer::parse(const std::string& line)
-	{
+    {
+        if(line.compare("character varying") == 0)
+        {
+            return "std::string";
+        }
+        else if(line.compare("integer") == 0)
+        {
+            return "int";
+        }
+        else if(line.compare("smallint") == 0)
+        {
+            return "int";
+        }
+        else
+        {
+            return "std::string";
+        }
+    }
+	/*{
 		std::istringstream text(line);
 		parse(text);
 		return oneLine;
-	}
+	}*/
 	Analyzer::~Analyzer()
 	{
 		delete(scanner);
