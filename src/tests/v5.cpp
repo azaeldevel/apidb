@@ -61,7 +61,7 @@ static std::string sysappv30Filename = "sysappv30-alpha.apidb";
  */
 int init_apidb(void)
 {
-        //filename = random_string(50);
+        filename = random_string(50);
         filename_nlst = random_string(50);
         return 0;
 }
@@ -72,48 +72,13 @@ int init_apidb(void)
  */
 int clean_apidb(void)
 {
-        //remove(filename.c_str());
+        remove(filename.c_str());
         remove(filename_nlst.c_str());
         return 0;
 }
 
 
-void testCreateProject_nlst()
-{
-        
-	octetos::apidb::ConfigureProject configProject_nls;
-    configProject_nls.name = "sysapp";
-    configProject_nls.builDirectory = "apidb-nlst";
-#ifdef APIDB_MYSQL
-	configProject_nls.setInputs(octetos::apidb::InputLenguajes::MySQL,mysqlSource);    
-#endif
-#ifdef APIDB_POSTGRESQL
-	configProject_nls.setInputs(octetos::apidb::InputLenguajes::PostgreSQL,postgresqlSource);    
-#endif
-#ifdef APIDB_MARIADB
-	configProject_nls.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);    
-#endif
-	octetos::core::Semver version;
-	version.setNumbers(0,1,0);
-    version.setPrerelease("alpha");    
-    configProject_nls.versionResult = version;
-    configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
-    configProject_nls.packing = octetos::apidb::PackingLenguajes::CMake;
-    configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
-	configProject_nls.writeDatconnect = "conector";
-    octetos::core::Semver ver = octetos::apidb::getPakageVersion();
-    std::string strdevtaget = "developing";
-	configProject_nls.executable_target  = strdevtaget + std::to_string(ver.getMajor());
-    
-    if(configProject_nls.saveConfig(filename_nlst))
-    {
-        CU_ASSERT(true);
-    }
-    else
-    {
-        CU_ASSERT(false);
-    }
-}
+
 
 void testConecction()
 {
@@ -141,9 +106,47 @@ void testConecction()
         CU_ASSERT(false); 
     }
 }
-/*
+
+void testCreateProject_nlst()
+{
+	octetos::apidb::ConfigureProject configProject_nls;
+    configProject_nls.name = "sysapp";
+    configProject_nls.builDirectory = "apidb-nlst";
+#ifdef APIDB_MYSQL
+	configProject_nls.setInputs(octetos::apidb::InputLenguajes::MySQL,mysqlSource);    
+#endif
+#ifdef APIDB_POSTGRESQL
+	configProject_nls.setInputs(octetos::apidb::InputLenguajes::PostgreSQL,postgresqlSource);    
+#endif
+#ifdef APIDB_MARIADB
+	configProject_nls.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);    
+#endif
+	octetos::core::Semver version;
+	version.setNumbers(0,1,0);
+    version.setPrerelease("alpha");    
+    configProject_nls.versionResult = version;
+    configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
+    configProject_nls.packing = octetos::apidb::PackingLenguajes::CMake;
+    configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
+	configProject_nls.writeDatconnect = "conector";
+    
+    if(configProject_nls.saveConfig(filename_nlst))
+    {
+        CU_ASSERT(true);
+    }
+    else
+    {
+        CU_ASSERT(false);
+    }
+}
 void testCreateProject()
 {
+	if(octetos::core::Error::check())
+	{
+		std::cout << octetos::core::Error::get().describe() << std::endl;
+		CU_ASSERT(false)
+		return;
+	}
 	octetos::core::Semver version;
 	version.setNumbers(0,1,0);
 	version.setPrerelease("alpha");
@@ -189,15 +192,21 @@ void testCreateProject()
 	configProject.namespace_detect = "emulate";
 	configProject.writeDatconnect = "conector";
 	//std::cout << std::endl << "Testing 1" << std::endl;
+	if(octetos::core::Error::check())
+	{
+		std::cout << octetos::core::Error::get().describe() << std::endl;
+		CU_ASSERT(false)
+		return;
+	}
 	if(configProject.saveConfig(filename))
 	{
-                CU_ASSERT(true);
+		CU_ASSERT(true);
 	}
 	else
 	{
-                CU_ASSERT(false);
+		CU_ASSERT(false);
 	}
-}*/
+}
 
 void testBuild_nlst()
 {
@@ -245,38 +254,53 @@ void testBuild_nlst()
     CU_ASSERT(true);
 }
 
-/*void testBuild()
-{   
-    octetos::apidb::ConfigureProject configProject;
-    //octetos::core::Error::write(octetos::core::Error("Teste error",1,__FILE__,__LINE__));
-    if(!configProject.readConfig(filename))
-    {                
+void testBuild()
+{
+    //std::cout << "testBuild: Step 1\n";
+	octetos::apidb::ConfigureProject configProject;
+    //std::cout << "testBuild: Step 1.1\n";
+    bool flerr = configProject.readConfig(filename);
+    //std::cout << "testBuild_nlst: Step 1.2\n";
+    if(flerr)
+    {
+        //leyo corectamente
+        CU_ASSERT(true);
+    }
+    else
+    {
         if(octetos::core::Error::check())
         {
-            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
+            std::cout << "Error -> " << octetos::core::Error::get().describe() << std::endl;
+        }
+        CU_ASSERT(false);
+                
+        return;
+    }
+    //std::cout << "testBuild: Step 2\n";
+    octetos::apidb::Driver driver(configProject);
+    if(octetos::core::Error::check())
+    {
+        std::cout << "Error -> " << octetos::core::Error::get().describe() << std::endl;
+        CU_ASSERT(false);
+    }
+    octetos::apidb::Tracer tracer(0);
+    //std::cout << "testBuild: Step 3\n";
+    if(!driver.driving(NULL))
+    {
+        if(octetos::core::Error::check())
+        {
+            std::cout << "Error  -> " << octetos::core::Error::get().describe() << std::endl;
         }
         CU_ASSERT(false);
         return;
     }
-    //configProject.executable_target = "developing2";
     
-    octetos::apidb::Driver driver(configProject);
-    octetos::apidb::Tracer tracer(0);
-    if(driver.driving(NULL) == false)
-    {
-        std::cout << "Fail  -> "<< std::endl;
-        if(octetos::core::Error::check())
-        {
-            std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
-        }
-        CU_ASSERT(false);
-    }
-    else
-    {
-        CU_ASSERT(true);
-    }
-	
-}*/
+    //std::cout << "testBuild: Step 4\n";
+        
+    CU_ASSERT(true);
+}
+
+
 
 
 void testCompilen_nlst()
@@ -298,6 +322,66 @@ void testCompilen_nlst()
 	if(configProject.packing == octetos::apidb::PackingLenguajes::CMake)
 	{
 
+        int ret = 0;
+		octetos::core::Semver ver = octetos::apidb::getPakageVersion();
+        std::string cmd ;
+        /*cmd = "cp ../../src/tests/developing";
+        cmd += std::to_string(ver.getMajor());
+        if(configProject.getInputLenguaje() == octetos::apidb::InputLenguajes::MySQL)
+        {
+            cmd += "-mysql";
+        }
+        else if(configProject.getInputLenguaje() == octetos::apidb::InputLenguajes::PostgreSQL)
+        {
+            cmd += "-postgresql";
+        }
+        
+        cmd += ".cpp ";
+        cmd += " apidb-nlst/developing";
+        cmd += std::to_string(ver.getMajor());
+        cmd += ".cpp ";
+        if(system(cmd.c_str()) < 0)
+        {
+            std::cout << "Fallo al copiar el archivo developing.cpp\n";
+            CU_ASSERT(false);
+        }*/
+
+        cmd  = " cd apidb-nlst && cmake . &> /dev/null";
+        if(system(cmd.c_str()) < 0)
+        {
+            std::cout << "Fallo al realizar la compialcion.\n";
+            CU_ASSERT(false);
+        }
+        cmd  = " cd apidb-nlst &&  make &> /dev/null";
+        if(system(cmd.c_str()) < 0)
+        {
+            std::cout << "Fallo al realizar la compialcion.\n";
+            CU_ASSERT(false);
+        }
+	}
+	else
+	{
+		CU_ASSERT(false);
+	}
+}
+void testCompilen()
+{
+	octetos::apidb::ConfigureProject configProject;
+	if(!configProject.readConfig(filename))
+	{                
+		if(octetos::core::Error::check())
+		{
+			std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
+		}
+		CU_ASSERT(false);
+		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
+	}
+	else
+	{
+		CU_ASSERT(true);
+	}
+	if(configProject.packing == octetos::apidb::PackingLenguajes::CMake)
+	{
         int ret = 0;
 		octetos::core::Semver ver = octetos::apidb::getPakageVersion();
         std::string cmd = "cp ../../src/tests/developing";
@@ -624,21 +708,20 @@ int main(int argc, char *argv[])
         ////////////////////////////////////////////////////////// SIN LISTAS
         if(runTest == 2 or runAll)
         {
-            if ((NULL == CU_add_test(pSuite, "Creación de proyecto a partir de descripción statica para no-list.", testCreateProject_nlst)))
+            if ((NULL == CU_add_test(pSuite, "Creación de proyecto a partir de descripción statica para (no-lists).", testCreateProject_nlst)))
             {
                 CU_cleanup_registry();
                 return CU_get_error();
             }	
-        }
-        /*
-        if(runTest == 3 or runAll)
+        }  
+        if(runTest == 2 or runAll)
         {
-            if ((NULL == CU_add_test(pSuite, "Creación de proyectos a partir de descripcion statica.", testCreateProject)))
+            if ((NULL == CU_add_test(pSuite, "Creación de proyecto a partir de descripción statica.", testCreateProject)))
             {
                 CU_cleanup_registry();
                 return CU_get_error();
-            }
-        }*/
+            }	
+        }   
         /*if(runTest == 4 or runAll)
         {
             if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción.", testBuild)))
@@ -655,9 +738,25 @@ int main(int argc, char *argv[])
                 return CU_get_error();
             }
         }
+        if(runTest == 4 or runAll)
+        {
+            if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción.", testBuild)))
+            {
+                CU_cleanup_registry();
+                return CU_get_error();
+			}
+		}
         if(runTest == 5 or runAll)
         {
-            if ((NULL == CU_add_test(pSuite, "Compilación de proyecto generado.", testCompilen_nlst)))
+            if ((NULL == CU_add_test(pSuite, "Compilación de proyecto generado (no-lists).", testCompilen_nlst)))
+            {
+                CU_cleanup_registry();
+                return CU_get_error();
+            }
+        }
+        if(runTest == 5 or runAll)
+        {
+            if ((NULL == CU_add_test(pSuite, "Compilación de proyecto generado.", testCompilen)))
             {
                 CU_cleanup_registry();
                 return CU_get_error();
