@@ -1,0 +1,5 @@
+ - Carga dinamica de Driver de Base de Datos.
+ - Mesnages de errore por excepciones
+ - Soporte para llave compuesta 
+ - Soporte para PHP
+ - Soporte para Java

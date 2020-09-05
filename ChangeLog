@@ -1,0 +1,13 @@
+2020-09-05 Azael Reyes <azael.devel@gmail.com>
+5.0.0-alpha
+	- Soporte para PostgreSQL
+
+4.3.0-alpha
+	- Soporte para MySQL
+	- Soporte para MariaDB
+	- GUI
+	- Lista de SELECT
+		- Eliminar
+		- Agrega
+
+

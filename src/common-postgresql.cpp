@@ -13,8 +13,7 @@ namespace apidb
 {
     symbols::TablePostgreSQL::TablePostgreSQL(const std::string& s) : Table(s)
     {
-        
-        
+		
     }
     /*bool createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password, octetos::db::Datconnect** dat)
     {
@@ -44,7 +43,7 @@ namespace apidb
         bool fl = connect.execute(str,dt);
         //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 2\n";
 		if(fl) 
-		{            
+		{
             //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 2.1\n";
             while(dt.nextRow())
 			{
