@@ -373,6 +373,14 @@ void testCompilen()
         {
             cmd += "-postgresql";
         }
+        else if(configProject.getInputLenguaje() == octetos::apidb::InputLenguajes::MariaDB)
+        {
+            cmd += "-mariadb";
+        }
+        else
+		{
+			throw octetos::apidb::BuildException("Lenguaje de entrada desconocido",__FILE__,__LINE__);
+		}
         
         cmd += ".cpp ";
         cmd += " apidb/developing";
