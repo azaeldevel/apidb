@@ -34,7 +34,8 @@ namespace symbols
     class TablePostgreSQL : public Table
     {
     public:
-        virtual bool basicSymbols(octetos::db::Connector& connect);  
+        virtual bool basicSymbols(octetos::db::Connector& connect);
+		virtual bool fillKeyType(octetos::db::Connector& connect, const SymbolsTable&);
         TablePostgreSQL(const std::string& );
     };
 }

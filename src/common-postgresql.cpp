@@ -182,7 +182,7 @@ namespace apidb
  /**
     * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
     */
-    bool symbols::Table::fillKeyType(octetos::db::Connector& connect,const SymbolsTable& symbolsTable)
+    bool symbols::TablePostgreSQL::fillKeyType(octetos::db::Connector& connect,const SymbolsTable& symbolsTable)
 	{
         /**
         * Lista las relaciones de llaves foraneas para la tabla actual

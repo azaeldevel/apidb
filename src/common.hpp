@@ -84,8 +84,8 @@ namespace apidb
          * */
         enum OutputLenguajes
         {
-                    NoLang,
-                    C,
+			NoLang,
+			C,
             CPP
             //JAVA,
             //CSHARP,
@@ -342,7 +342,7 @@ namespace apidb
             /**
             * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
             * */			
-			virtual bool fillKeyType(octetos::db::Connector& connect, const SymbolsTable&);
+			virtual bool fillKeyType(octetos::db::Connector& connect, const SymbolsTable&) = 0;
 
 			short countRef;
             /**
