@@ -56,6 +56,7 @@ namespace apidb
             conectordb = NULL;
         }
         conectordb = createDatConnection();
+		return conectordb;
     }
     void* ConfigureProject::getfnDatConection()
     {
