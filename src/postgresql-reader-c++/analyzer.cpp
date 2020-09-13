@@ -126,11 +126,35 @@ namespace postgresql
         {
             return "std::string";
         }
+        else if(line.compare("character") == 0)
+        {
+            return "std::string";
+        }
+        else if(line.compare("char") == 0)
+        {
+            return "std::string";
+        }
+        else if(line.compare("varchar") == 0)
+        {
+            return "std::string";
+        }
+        else if(line.compare("text") == 0)
+        {
+            return "std::string";
+        }
         else if(line.compare("integer") == 0)
         {
             return "int";
         }
+        else if(line.compare("bigint") == 0)
+        {
+            return "long long";
+        }
         else if(line.compare("smallint") == 0)
+        {
+            return "int";
+        }
+        else if(line.compare("boolean") == 0)
         {
             return "int";
         }
