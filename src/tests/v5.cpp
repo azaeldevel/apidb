@@ -416,6 +416,7 @@ int main(int argc, char *argv[])
 {
     bool runAll = false, enableMySQL = false,enablePostgreSQL = false,enableMariaDB = false;
     int runTest = 0;
+	int serverscount = 0;
     
     for(int i = 1; i < argc; i++)
     {
@@ -438,6 +439,7 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
 #endif
             enableMySQL = true;
+			serverscount++;
         }  
         if(strcmp(argv[i],"--enable-postgresql") == 0)
         {
@@ -447,6 +449,7 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
 #endif
             enablePostgreSQL = true;
+			serverscount++;
         }
         if(strcmp(argv[i],"--enable-mariadb") == 0)
         {
@@ -456,9 +459,16 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
 #endif
             enableMariaDB = true;
+			serverscount++;
         } 
     }
     
+    if(serverscount > 1)
+	{
+		std::cerr << "Solo se puer ejecutar un servidor a la vez.";
+		return EXIT_FAILURE;
+	}
+	
 	CU_pSuite pSuite = NULL;
 	
 	/* initialize the CUnit test registry */

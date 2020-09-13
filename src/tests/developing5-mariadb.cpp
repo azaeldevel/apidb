@@ -14,10 +14,10 @@ int main(int argc, char **argv)
         }
     }
         
-	octetos::db::mysql::Datconnect mysqlConnector("192.168.0.101",3306,"sysappv2.alpha","develop","123456");
-    octetos::db::mysql::Connector connector; 
+	octetos::db::maria::Datconnect mariaConnector("localhost",3306,"sysapp.alpha","sysapp","123456");
+    octetos::db::maria::Connector connector; 
     bool flag = false;  
-	flag = connector.connect(mysqlConnector);
+	flag = connector.connect(mariaConnector);
     if(flag)
     {
         if(verbose)  printf("SQL Server version: %s\n", connector.getVerionServer().toString().c_str());
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
     }
 
-    if(verbose) std::cout << "Listando los que tiene 8 con 5 registro maximo." << std::endl;
+    /*if(verbose) std::cout << "Listando los que tiene 8 con 5 registro maximo." << std::endl;
     static std::vector<sysapp::Persons*>* lst = sysapp::Persons::select(connector,"name1 like 'n1-%8'",5);
     if(lst != NULL)
     {
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
             }
         }
     }
-    delete lst;	
+    delete lst;	*/
 	
 	connector.close();
 	

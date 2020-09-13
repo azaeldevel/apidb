@@ -107,28 +107,26 @@ namespace generators
 		cmakelists<<"SET(CMAKE_CXX_STANDARD 14)"<<std::endl;
 		cmakelists<<"SET(CMAKE_CXX_STANDARD_REQUIRED ON)"<<std::endl;
 		cmakelists<<"SET(CMAKE_CXX_EXTENSIONS OFF)"<<std::endl;
-                cmakelists<<" SET(CMAKE_BUILD_TYPE Debug)"<<std::endl;
+		cmakelists<<"SET(CMAKE_BUILD_TYPE Debug)"<<std::endl;
 		cmakelists<<std::endl;
-		cmakelists<<"SET(" << configureProject.name << "_VERSION_STAGE \"alpha\")"<<std::endl;
-		cmakelists<<"CONFIGURE_FILE(\"${PROJECT_SOURCE_DIR}/config.h.in\" \"${PROJECT_SOURCE_DIR}/config.h\")"<<std::endl;
-		cmakelists<<std::endl;
+		
         
-    cmakelists<<"FIND_PACKAGE(PkgConfig REQUIRED)"<<std::endl;
+		cmakelists<<"FIND_PACKAGE(PkgConfig REQUIRED)"<<std::endl;
 
-    cmakelists<<"PKG_CHECK_MODULES(OCTETOS_CORE REQUIRED octetos-core)"<<std::endl;
-    cmakelists<<"IF(OCTETOS_CORE_FOUND)"<<std::endl;
-    cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_CORE_INCLUDE_DIR})"<<std::endl;
-    cmakelists<<"ELSE()\n";
-    cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos Core library\")\n";
-    cmakelists<<"ENDIF()"<<std::endl;
-        
+		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_CORE REQUIRED octetos-core)"<<std::endl;
+		cmakelists<<"IF(OCTETOS_CORE_FOUND)"<<std::endl;
+		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_CORE_INCLUDE_DIR})"<<std::endl;
+		cmakelists<<"ELSE()\n";
+		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos Core library\")\n";
+		cmakelists<<"ENDIF()"<<std::endl;
+        cmakelists<<std::endl;
     
-    cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_POSTGRESQL REQUIRED octetos-db-postgresql)"<<std::endl;
-    cmakelists<<"IF(OCTETOS_DB_POSTGRESQL_FOUND)"<<std::endl;
-    cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_DB_POSTGRESQL_INCLUDE_DIR})"<<std::endl;
-    cmakelists<<"ELSE()\n";
-    cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB library\")\n";
-    cmakelists<<"ENDIF()"<<std::endl;
+		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB REQUIRED octetos-db)"<<std::endl;
+		cmakelists<<"IF(OCTETOS_DB_FOUND)"<<std::endl;
+		cmakelists<<"ELSE()\n";
+		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB library\")\n";
+		cmakelists<<"ENDIF()"<<std::endl;
+		cmakelists<<std::endl;
     
     if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
     {
@@ -138,6 +136,13 @@ namespace generators
         cmakelists<<"ELSE(OCTETOS_CORE_FOUND)\n";
         cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB MySQL library\")\n";
 		cmakelists<<"ENDIF()"<<std::endl;
+		
+		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_MYSQL REQUIRED octetos-db-mysql)"<<std::endl;
+		cmakelists<<"IF(OCTETOS_DB_MYSQL_FOUND)"<<std::endl;
+		cmakelists<<"ELSE()\n";
+		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB PostgreSQL library\")\n";
+		cmakelists<<"ENDIF()"<<std::endl;
+		cmakelists<<std::endl;
     }
     else if(configureProject.getInputLenguaje()  == InputLenguajes::MariaDB)
     {
@@ -145,6 +150,13 @@ namespace generators
 		cmakelists<<"IF(MARIADB_FOUND)"<<std::endl;
 		cmakelists<<"INCLUDE_DIRECTORIES(${MARIADB_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
+		
+		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_POSTGRESQL REQUIRED octetos-db-maria)"<<std::endl;
+		cmakelists<<"IF(OCTETOS_DB_MARIA_FOUND)"<<std::endl;
+		cmakelists<<"ELSE()\n";
+		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB Maria library\")\n";
+		cmakelists<<"ENDIF()"<<std::endl;
+		cmakelists<<std::endl;
     }
     else if(configureProject.getInputLenguaje()  == InputLenguajes::PostgreSQL)
     {
@@ -155,8 +167,15 @@ namespace generators
 		cmakelists<<"IF(LIBPQ_FOUND)"<<std::endl;
 		cmakelists<<"INCLUDE_DIRECTORIES(${LIBPQ_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ELSE()"<<std::endl;
-         cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find libpq or libpqxx library\")\n";
+		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find libpq or libpqxx library\")\n";
 		cmakelists<<"ENDIF()"<<std::endl;
+		
+		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_POSTGRESQL REQUIRED octetos-db-postgresql)"<<std::endl;
+		cmakelists<<"IF(OCTETOS_DB_POSTGRESQL_FOUND)"<<std::endl;
+		cmakelists<<"ELSE()\n";
+		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB PostgreSQL library\")\n";
+		cmakelists<<"ENDIF()"<<std::endl;
+		cmakelists<<std::endl;
     }
     else
     {
