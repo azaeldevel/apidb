@@ -70,7 +70,7 @@ namespace generators
                 ofile << ",";
             }
         }
-        ofile << " FROM " << table.getName() << " WHERE \" + where ;"<< std::endl;
+        ofile << " FROM \\\"" << table.getName() << "\\\" WHERE \" + where ;"<< std::endl;
         ofile << "\t\tif(leng > 0)"  << std::endl;
         ofile << "\t\t{"  << std::endl;
         ofile << "\t\t\tsqlString += \" LIMIT  \"  + std::to_string(leng);"  << std::endl;
@@ -210,7 +210,7 @@ namespace generators
                 }
                 
                 const apidb::ConfigureProject::Parameters* params = itCfTb->second->getParameters();
-                {
+                
                     apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
                     itParamEnd--;
                     for(const std::string& param : *params)
@@ -239,12 +239,12 @@ namespace generators
                             ofile << ",";
                         }
                     }
-                }
+                
                 ofile << ", int leng)"<<std::endl;
                 ofile << "\t{"<<std::endl;
                 ofile << "\t\tstd::string sqlString = \"SELECT ";
                 //const apidb::ConfigureProject::Parameters& params = val->getParameters();
-                {
+                
                     auto endK = table.getKey().end();
                     endK--;
                     for(auto k : table.getKey())
@@ -255,8 +255,15 @@ namespace generators
                             ofile << ",";
                         }
                     }
-                    ofile << " FROM " << table.getName() << " WHERE \";"<< std::endl;                    
-                    apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
+				if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+				{
+                    ofile << " FROM \\\"" << table.getName() << "\\\" WHERE \";"<< std::endl;  
+				}
+				else
+				{
+					ofile << " FROM " << table.getName() << " WHERE \";"<< std::endl; 
+				}
+                itParamEnd = params->end();
                     --itParamEnd;
                     for(const std::string& param : *params)
                     {
@@ -355,7 +362,7 @@ namespace generators
                     ofile << "\t\t{" << std::endl;
                     ofile << "\t\t\treturn NULL;" << std::endl;
                     ofile << "\t\t}" << std::endl;
-                }
+                
                 ofile << "\t}"<<std::endl;
                 
             }
@@ -405,8 +412,15 @@ namespace generators
 					{
 						ofile << ",";
 					}
-                }                    
-                ofile << " FROM " << table.getName() << " WHERE " ;
+                }  
+                if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+				{
+					ofile << " FROM \\\"" << table.getName() << "\\\" WHERE " ;
+				}
+				else
+				{
+					ofile << " FROM " << table.getName() << " WHERE " ;
+				}
                 for(auto k : table.getKey())
                 {                        
 					if(k->getOutType().compare("std::string") == 0)
@@ -584,7 +598,14 @@ namespace generators
             throw BuildException(msg);
         }
         ofile << "\t\t"<<"std::string sqlString = \"\";"<<std::endl;
-        ofile << "\t\t"<<"sqlString = sqlString + \"INSERT INTO \" + TABLE_NAME; "<<std::endl;
+		if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+		{
+			ofile << "\t\t"<<"sqlString = sqlString + \"INSERT INTO \\\"\"  + TABLE_NAME + \"\\\"\" ; "<<std::endl;
+		}
+		else
+		{
+			ofile << "\t\t"<<"sqlString = sqlString + \"INSERT INTO \" + TABLE_NAME ; "<<std::endl;
+		}
         ofile << "\t\t"<<"sqlString = sqlString + \"(";
         for(std::list<symbols::Symbol*>::const_iterator i = table.getRequired().begin(); i != table.getRequired().end(); ++i)
         {
@@ -880,7 +901,14 @@ namespace generators
 			ofile <<")"<< std::endl;
 			ofile << "\t{"<<std::endl;
 			ofile << "\t\tstd::string sqlString = \"\";"<<std::endl;
-			ofile << "\t\tsqlString = \"UPDATE \" + TABLE_NAME;"<<std::endl;
+			if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+			{
+				ofile << "\t\tsqlString = \"UPDATE \\\"\" + TABLE_NAME + \"\\\"\";"<<std::endl;
+			}
+			else
+			{
+				ofile << "\t\tsqlString = \"UPDATE \" + TABLE_NAME;"<<std::endl;
+			}
 			ofile << "\t\tsqlString = sqlString + \" SET " ;
             
                         ofile << it->second->getName()  << " = " ;

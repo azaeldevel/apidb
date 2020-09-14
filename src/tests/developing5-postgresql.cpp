@@ -14,10 +14,10 @@ int main(int argc, char **argv)
         }
     }
         
-	octetos::db::postgresql::Datconnect mysqlConnector("localhost",5432,"sysapp_alpha","sysapp","123456");
+	octetos::db::postgresql::Datconnect postgresqlConnector("localhost",5432,"sysapp_alpha","sysapp","123456");
     octetos::db::postgresql::Connector connector; 
     bool flag = false;  
-	flag = connector.connect(mysqlConnector);
+	flag = connector.connect(postgresqlConnector);
     if(flag)
     {
         if(verbose)  printf("SQL Server version: %s\n", connector.getVerionServer().toString().c_str());
@@ -38,6 +38,8 @@ int main(int argc, char **argv)
     srand (time(NULL));
 	int random = rand() % 10000 + 1;
     
+	connector.begin();
+	
     sysapp::Persons person1;
     std::string n1 = "n1-";
     n1 += std::to_string(random);
@@ -49,7 +51,7 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		std::cerr << "Fail "<< n1 << std::endl;
+		std::cerr << "Fail :"<< n1 << std::endl;
 		return EXIT_FAILURE;
 	}
     
