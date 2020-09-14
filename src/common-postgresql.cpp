@@ -98,11 +98,10 @@ namespace apidb
 			return false;
 		}
 		
-		//second stage
+		//second stage::buscando llaves primarias
 		//std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 3\n";
-        str = "SELECT a.attname FROM   pg_index i JOIN   pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE  i.indrelid = '";
-        str += name + "'::regclass AND i.indisprimary";
-        //std::cout << str << "\n";
+        str = "select kcu.table_schema, kcu.table_name, tco.constraint_name, kcu.ordinal_position as position,kcu.column_name as key_column from information_schema.table_constraints tco join information_schema.key_column_usage kcu on kcu.constraint_name = tco.constraint_name and kcu.constraint_schema = tco.constraint_schema and kcu.constraint_name = tco.constraint_name where tco.constraint_type = 'PRIMARY KEY' and kcu.table_name = '" + name + "' order by kcu.table_schema, kcu.table_name,position";
+        //std::cout << "\n" << str << "\n";
         octetos::db::postgresql::Datresult dt2;
         fl = connect.execute(str,dt2);
         //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 4\n";
@@ -112,12 +111,12 @@ namespace apidb
             while(dt2.nextRow())
 			{
                 //std::cout << "symbols::TablePostgreSQL::basicSymbols : Step 4.1.1\n";
-                std::map<const char*,Symbol*,cmp_str>::iterator it = find(dt2.getString(0).c_str());
+                std::map<const char*,Symbol*,cmp_str>::iterator it = find(dt2.getString(4).c_str());
                 if(it == end())
                 {
                     std::string msg = "";
                     msg = msg + " No se encontró el campo : '";
-                    msg = msg + dt2.getString(0) + "'\n";
+                    msg = msg + dt2.getString(4) + "'\n";
                     core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
                     return false;
                 }
@@ -141,7 +140,7 @@ namespace apidb
 			return false;
 		}
 		
-		//third stage
+		//third stage::buscando llaves foraneas
 		str = "SELECT conname, pg_catalog.pg_get_constraintdef(r.oid, true) as condef FROM pg_catalog.pg_constraint r WHERE r.conrelid = '";
         str += name + "'::regclass AND r.contype = 'f' ORDER BY 1";
         octetos::db::postgresql::Datresult dt3;

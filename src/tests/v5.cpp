@@ -181,7 +181,7 @@ void testCreateProject()
 	configProject.selects.insert(std::make_pair(tbP->getName().c_str(),tbP));
 	octetos::apidb::ConfigureProject::Table* tbUsers = new octetos::apidb::ConfigureProject::Table("Users");
 	octetos::apidb::ConfigureProject::Function* byUsername = new octetos::apidb::ConfigureProject::Function("byUsername");    
-	byUsername->addParam(std::string("username"));
+	byUsername->addParam(std::string("name"));
 	byUsername->addParam(std::string("person"));
 	tbUsers->insert(std::make_pair(byUsername->getName().c_str(), byUsername));
 	configProject.selects.insert(std::make_pair(tbUsers->getName().c_str(),tbUsers));

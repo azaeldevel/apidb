@@ -38,14 +38,14 @@ int main(int argc, char **argv)
     srand (time(NULL));
 	int random = rand() % 10000 + 1;
     
-    sysapp::persons person1;
+    sysapp::Persons person1;
     std::string n1 = "n1-";
     n1 += std::to_string(random);
-    std::string country = "MEX";
+    //std::string country = "MEX";
     //ap += std::to_string(random);
     if(person1.insert(connector,n1))
     {
-		if(verbose)   std::cout << "Inserted "<< n1 << " " << country << " de Mexico." << std::endl;
+		if(verbose)   std::cout << "Inserted "<< n1 << std::endl;
 	}
 	else
 	{
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 	
-    /*if(person1.shortname(connector))
+    if(person1.shortname(connector))
     {
                 if(verbose)   std::cout << ""<< person1.getName1() << " " << person1.getName3() << std::endl;
     }
@@ -71,18 +71,18 @@ int main(int argc, char **argv)
     {
         std::cout << "Fallo la descarga de person1" << std::endl;
 		return EXIT_FAILURE;
-    }*/
+    }
 
     if(verbose) std::cout << "Listando los que tiene 8 con 5 registro maximo." << std::endl;
-    static std::vector<sysapp::persons*>* lst = sysapp::persons::select(connector,"name1 like 'n1-%8'",5);
+    static std::vector<sysapp::Persons*>* lst = sysapp::Persons::select(connector,"name1 like 'n1-%8'",5);
     if(lst != NULL)
     {
         for(auto p : *lst)
         {
-            /*if(p->shortname(connector) and verbose)
+            if(p->shortname(connector) and verbose)
             {
                 if(verbose)  std::cout << ""<< p->getName1() << " " << p->getName3() << std::endl;
-            }*/
+            }
         }
     }
     delete lst;	

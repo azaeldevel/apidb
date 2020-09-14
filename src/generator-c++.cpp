@@ -98,9 +98,8 @@ namespace generators
             ofile << "\t\tbool flag = connector.execute(sqlString,dt);"  << std::endl;
             ofile << "\t\tif(flag)"  << std::endl;
             ofile << "\t\t{" << std::endl;
-            ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
             ofile << "\t\t\tstd::vector<"<< table.getName() << "*>* tmpVc = new std::vector<" << table.getName() << "*>;" << std::endl;
-            ofile << "\t\t\twhile((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))" << std::endl;
+            ofile << "\t\t\twhile(dt.nextRow())" << std::endl;
             ofile << "\t\t\t{"<< std::endl;
             ofile << "\t\t\t\t"<< table.getName() << "* tmp = NULL;" << std::endl;            
             ofile << "\t\t\t\ttmp = new " << table.getName() << "(";
@@ -111,15 +110,15 @@ namespace generators
             {
                 if(k->getOutType().compare("std::string") == 0)
                 {
-                    ofile << "row[" << count2 << "]";
+                    ofile << "dt.getint(" << count2 << ")";
                 }
                 else if(k->getOutType().compare("int") == 0)
                 {
-                    ofile << "std::stoi(row[" << count2 << "])";
+                    ofile << "dt.getString(" << count2 << ")";
                 }
                 else
                 {
-                    ofile << "row[" << count2 << "]";                
+                    ofile << "dt.getString(" << count2 << ")";                
                 }
                 if(k != *endK2)
                 {
@@ -154,7 +153,7 @@ namespace generators
             {
                 if(k->getOutType().compare("std::string") == 0)
                 {
-                    ofile << "row[" << count2 << "]";
+                    ofile << "dt.getString(" << count2 << ")";
                 }
                 else if(k->getOutType().compare("int") == 0)
                 {
@@ -162,7 +161,7 @@ namespace generators
                 }
                 else
                 {
-                    ofile << "row[" << count2 << "]";                
+                    ofile << "dt.getString(" << count2 << ")";                
                 }
                 if(k != *endK2)
                 {
@@ -320,8 +319,7 @@ namespace generators
 					ofile << "\t\tif(flag)"  << std::endl;
 					ofile << "\t\t{" << std::endl;
                     ofile << "\t\t\tstd::vector<"<< table.getName() << "*>* tmpVc = new std::vector<" << table.getName() << "*>;" << std::endl;
-                    ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
-                    ofile << "\t\t\twhile((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult())))) "<< std::endl;
+                    ofile << "\t\t\twhile(dt.nextRow()) "<< std::endl;
                     ofile << "\t\t\t{"<< std::endl;     
                     ofile << "\t\t\t\t"<< table.getName() << "* tmp = NULL;" << std::endl;             
                     ofile << "\t\t\t\ttmp = new " << table.getName() << "(";              
@@ -332,15 +330,15 @@ namespace generators
                     {
                         if(k->getOutType().compare("std::string") == 0)
                         {
-                            ofile << "row[" << count2 << "]";
+                            ofile << "dt.getString(" << count2 << ")";
                         }
                         else if(k->getOutType().compare("int") == 0)
                         {
-                            ofile << "std::stoi(row[" << count2 << "])";
+                            ofile << "dt.getint(" << count2 << ")";
                         }
                         else
                         {
-                            ofile << "row[" << count2 << "]";                
+                            ofile << "dt.getString(" << count2 << ")";               
                         }
                         if(k != *endK2)
                         {
@@ -365,7 +363,6 @@ namespace generators
     }
 	void CPP::writeDownloadsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
     {        
-                
         for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
         {
             if(table.getName().compare(itT->second->getName()) != 0) 
@@ -403,29 +400,30 @@ namespace generators
                 itParamEnd--;
                 for(const std::string& param : *params)
                 {
-                                                ofile << param; 
-                                                if(param != *itParamEnd)
-                                                {
-                                                        ofile << ",";
-                                                }
+					ofile << param; 
+					if(param != *itParamEnd)
+					{
+						ofile << ",";
+					}
                 }                    
                 ofile << " FROM " << table.getName() << " WHERE " ;
                 for(auto k : table.getKey())
                 {                        
-                                        if(k->getOutType().compare("std::string") == 0)
-                                        {
-                                        ofile << k->getName() << " = '\" + " << k->getName() << " + \"'\"";
-                                        }
-                                        else
-                                        {
-                                        ofile << k->getName() << " = '\" + std::to_string(" << k->getName() << ") + \"'\"";
-                                        }
-                                        auto endK = table.getKey().end();
-                                        endK--;
-                                        if(*endK != k)
-                                        {
-                                        ofile << " \" and \" + ";
-                                        }
+					if(k->getOutType().compare("std::string") == 0)
+					{
+						ofile << k->getName() << " = '\" + " << k->getName() << " + \"'\"";
+					}
+					else
+					{
+						ofile << k->getName() << " = '\" + std::to_string(" << k->getName() << ") + \"'\"";
+					}
+					
+					auto endK = table.getKey().end();
+					endK--;
+					if(*endK != k)
+					{
+						ofile << " \" and \" + ";
+					}
                 }
                 ofile << ";" << std::endl;
                 if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
@@ -449,8 +447,8 @@ namespace generators
                 ofile << "\t\tbool flag = connector.execute(sqlString,dt);"  << std::endl;
                 ofile << "\t\tif(flag)"  << std::endl;
                 ofile << "\t\t{" << std::endl;
-                ofile << "\t\t\tMYSQL_ROW row;"<< std::endl;
-                ofile << "\t\t\twhile ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult())))) "<< std::endl;
+                ofile << ""<< std::endl;
+                ofile << "\t\t\twhile (dt.nextRow()) "<< std::endl;
                 ofile << "\t\t\t{"<< std::endl;
                 //ofile << "\t\t\t\tfor(int i = 0; i < num_fields; i++)"<< std::endl;
                 //ofile << "\t\t\t\t{"<< std::endl;
@@ -466,26 +464,41 @@ namespace generators
                         auto fl = table.find(param.c_str());
                         if(fl != table.end())
                         {
-                                                if((*fl).second->getClassReferenced() != NULL)
-                                                {
-                                                ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(row[" << countparam << "])" << ";" << std::endl ;
-                                                }
-                                                else if((*fl).second->getOutType().compare("int") == 0)
-                                                {
-                                                ofile << " std::stoi(row[" << countparam << "] ? row[" << countparam << "] : 0)" << ";"<< std::endl ;
-                                                }
-                                                else if((*fl).second->getOutType().compare("long") == 0)
-                                                {
-                                                ofile << " std::stol(row[" << countparam << "] ? row[" << countparam << "] : 0)" << ";"<< std::endl ;
-                                                }
-                                                else if((*fl).second->getOutType().compare("std::string") == 0 || (*fl).second->getOutType().compare("const char*") == 0)
-                                                {
-                                                ofile << " row[" << countparam << "] ? row[" << countparam << "] : \"NULL\"" << ";" << std::endl ;
-                                                }
-                                                else
-                                                {
-                                                ofile << " row[" << countparam << "] ? row[" << countparam << "] : \"NULL\"" << ";" << std::endl ;
-                                                }
+							if((*fl).second->getClassReferenced() != NULL)
+							{
+								if((*fl).second->outType.compare("int"))
+								{
+									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getint(" << countparam << ")" << ";" << std::endl ;
+								}
+								else if((*fl).second->outType.compare("long") or (*fl).second->outType.compare("long int"))
+								{
+									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getl(" << countparam << ")" << ";" << std::endl ;
+								}
+								else if((*fl).second->outType.compare("std::String"))
+								{
+									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getString(" << countparam << ")" << ";" << std::endl ;
+								}
+								else
+								{
+									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getString(" << countparam << ")" << ";" << std::endl ;
+								}
+							}
+							else if((*fl).second->getOutType().compare("int") == 0)
+							{
+								ofile << " dt.getint(" << countparam << ")" << ";"<< std::endl ;
+							}
+							else if((*fl).second->getOutType().compare("long") == 0)
+							{
+								ofile << " dt.getl(" << countparam << ")" << ";"<< std::endl ;
+							}
+							else if((*fl).second->getOutType().compare("std::string") == 0 || (*fl).second->getOutType().compare("const char*") == 0)
+							{
+								ofile << " dt.getString(" << countparam << ")" << ";" << std::endl ;
+							}
+							else
+							{
+								ofile << " dt.getString(" << countparam << ")" << ";" << std::endl ;
+							}
                         }
                         else
                         {
@@ -493,23 +506,23 @@ namespace generators
                             strmsg = strmsg + "'" + param + "' en la tabla '" + table.getName() + "' File : generator-c++";
                             throw BuildException(strmsg);
                         }
-                        }
-                            countparam++;
-                    }
+					}
+					countparam++;
+				}
                                 
-                    //ofile << "\t\t\t;"<< std::endl;
-                    //ofile << "\t\t\t\t}"<< std::endl;
-                    ofile << "\t\t\t}"<< std::endl;
-                    ofile << "\t\t\treturn true;" << std::endl;
-                    ofile << "\t\t}" << std::endl;
-                    ofile << "\t\telse" << std::endl;
-                    ofile << "\t\t{" << std::endl;
-                    ofile << "\t\t\treturn false;" << std::endl;
-                    ofile << "\t\t}" << std::endl;
-                    }
-                    ofile << "\t} " << std::endl;
-                }         
-                }        
+				//ofile << "\t\t\t;"<< std::endl;
+				//ofile << "\t\t\t\t}"<< std::endl;
+				ofile << "\t\t\t}"<< std::endl;
+				ofile << "\t\t\treturn true;" << std::endl;
+				ofile << "\t\t}" << std::endl;
+				ofile << "\t\telse" << std::endl;
+				ofile << "\t\t{" << std::endl;
+				ofile << "\t\t\treturn false;" << std::endl;
+				ofile << "\t\t}" << std::endl;
+				}
+			ofile << "\t} " << std::endl;
+			}         
+		}        
     }
     void CPP::writeInsertCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{        
