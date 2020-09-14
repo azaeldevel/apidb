@@ -151,8 +151,9 @@ namespace generators
 		cmakelists<<"INCLUDE_DIRECTORIES(${MARIADB_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
 		
-		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_POSTGRESQL REQUIRED octetos-db-maria)"<<std::endl;
+		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_MARIA REQUIRED octetos-db-maria)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_DB_MARIA_FOUND)"<<std::endl;
+		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_DB_MARIA_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ELSE()\n";
 		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB Maria library\")\n";
 		cmakelists<<"ENDIF()"<<std::endl;

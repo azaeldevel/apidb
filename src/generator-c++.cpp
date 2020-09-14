@@ -70,7 +70,14 @@ namespace generators
                 ofile << ",";
             }
         }
-        ofile << " FROM \\\"" << table.getName() << "\\\" WHERE \" + where ;"<< std::endl;
+        if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+		{
+			ofile << " FROM \\\"" << table.getName() << "\\\" WHERE \" + where ;"<< std::endl;
+		}
+		else
+		{
+			ofile << " FROM " << table.getName() << " WHERE \" + where ;"<< std::endl;
+		}
         ofile << "\t\tif(leng > 0)"  << std::endl;
         ofile << "\t\t{"  << std::endl;
         ofile << "\t\t\tsqlString += \" LIMIT  \"  + std::to_string(leng);"  << std::endl;
