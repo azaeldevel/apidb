@@ -1,5 +1,7 @@
- - Carga dinamica de Driver de Base de Datos.
+ - Hacer contruccion de Pruebas opcional
+ - Hacer contruccion de GUI opcional
  - Mesnages de errore por excepciones
  - Soporte para llave compuesta 
  - Soporte para PHP
  - Soporte para Java
+

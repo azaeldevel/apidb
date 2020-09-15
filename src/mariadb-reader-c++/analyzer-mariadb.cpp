@@ -18,7 +18,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * */
-#if DISTRO_GENTOO
+#ifdef DISTRO_GENTOO
     #include <mariadb/mysql.h>
 #endif
 #if DISTRO_ARCHLINUX

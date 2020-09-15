@@ -1,4 +1,6 @@
 2020-09-05 Azael Reyes <azael.devel@gmail.com>
+5.0.0-alpha9
+	- Carga dinamica de Driver de Base de Datos.
 5.0.0-alpha
 	- Soporte para PostgreSQL
 
