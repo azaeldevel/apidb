@@ -413,6 +413,7 @@ namespace apidb
 
             filename = gtk_file_chooser_get_filename (chooser);
             app->config->saveConfig(filename);
+			app->originFilename = filename;
             //delete app->config;
             app->isOpen = true;
             app->isNew = false;
@@ -453,7 +454,7 @@ namespace apidb
         
 		if(!app->originFilename.empty() and !app->isNew) //si fue cargado simplemete usa el mismo archivo
 		{
-			//std::cout << "Step 2.1" << std::endl;
+			std::cout << "Step 3.1" << std::endl;
 			//escribir en la estura de configuracion del proyecto.
 			if(!app->downConf())
 			{
@@ -472,7 +473,7 @@ namespace apidb
 				return;
 			}
 			//Guarda los datos en disco
-			//std::cout << "Step 2.2" << std::endl;
+			std::cout << "Step 3.2" << std::endl;
 			if(!app->config->saveConfig(app->originFilename))
 			{
 				//std::cout << "Step 2.3" << std::endl;
