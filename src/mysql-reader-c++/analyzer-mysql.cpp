@@ -18,11 +18,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * */
-#if DISTRO_GENTOO
+#if defined LINUX_GENTOO
     #include <mysql/mysql.h>
-#endif
-#if DISTRO_ARCHLINUX
+#elif defined LINUX_ARCH
     #include <mysql/mysql.h>
+#else 
+	#error "Plataforma desconocida."
 #endif
 
 #include <iostream>

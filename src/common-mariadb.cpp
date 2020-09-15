@@ -20,12 +20,12 @@
  * */
 
 #include <iostream>
-#ifdef DISTRO_GENTOO
+#if defined LINUX_GENTOO
     #include <mariadb/mysql.h>
-#elif defined DISTRO_ARCHLINUX
+#elif defined LINUX_ARCH
     #include <mysql/mysql.h>
 #else
-    #include <mariadb/mysql.h>
+    #error "Plataforma desconocida."
 #endif
 #include <string>
 #include <octetos/db/clientdb-maria.hh>
