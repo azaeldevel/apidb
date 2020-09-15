@@ -18,11 +18,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * */
-#if DISTRO_GENTOO
+#if defined LINUX_GENTOO
     #include <libpq-fe.h>
-#endif
-#if DISTRO_ARCHLINUX
+#elif defined LINUX_ARCH
     #include <libpq-fe.h>
+#else 
+	#error "Plataforma desconocida."
 #endif
 #include <cstring>
 #include <cstdio>
