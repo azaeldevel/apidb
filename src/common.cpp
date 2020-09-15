@@ -297,6 +297,10 @@ namespace apidb
         {
             return InputLenguajes::MariaDB;
         }
+        else if(str.compare("postgresql") == 0 or str.compare("PostgreSQL") == 0)
+        {
+            return InputLenguajes::PostgreSQL;
+        }
                 
         return InputLenguajes::Unknow;
     }

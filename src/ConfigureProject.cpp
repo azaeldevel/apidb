@@ -256,11 +256,10 @@ namespace apidb
         }
         else
         {      
-            std::string msgErr ="dlsym fallo con parse_string:\n" ;
+            std::string msgErr ="No se reconoce el driver solicitado :\n" ;
             msgErr = msgErr + "\t" + dlerror();
             core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-            core::Error::write(err);
-            return false;
+            throw (err);
         }
         
         handle = dlopen(libname.c_str(), RTLD_LAZY);

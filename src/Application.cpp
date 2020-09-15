@@ -60,7 +60,7 @@ namespace apidb
         if(inInLEdited)
         {
             int innIn = gtk_combo_box_get_active(GTK_COMBO_BOX(inInL));
-            if(innIn == 0)
+            if(innIn == -1)
             {
                 GtkWidget *msg = gtk_message_dialog_new (NULL,
                 GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Selecione un lenguajde de entrada(MariaDB por ejemplo) en la sección de información","Error", g_strerror (errno));
@@ -72,7 +72,7 @@ namespace apidb
             //std::cout << "In Language : " << gcinl << "\n";
             config->setInputLenguaje(getInputLenguaje(gcinl));
         }
-        
+        std::cout << "downConf : Step 3\n";
         if(inNameEdited)
         {
             std::string name = gtk_entry_get_text(GTK_ENTRY(inName));
@@ -91,8 +91,9 @@ namespace apidb
             config->name = name;
         }
         
-        std::cout << "downConf : Step 3\n";
         std::cout << "downConf : Step 4\n";
+		
+		
         if(inOutLEdited)
         {
             int intout = gtk_combo_box_get_active(GTK_COMBO_BOX(inOutL));
@@ -431,7 +432,7 @@ namespace apidb
         }
         
 		std::cout << "document_save:Step 2" << std::endl;   
-		if(!app->isOpen || !app->isSaved)
+		/*if(!app->isOpen || !app->isSaved)
         {//no esta abierto el proyecto.                                
             std::string msgstr;
             if(core::Error::check())
@@ -446,7 +447,7 @@ namespace apidb
             gtk_dialog_run (GTK_DIALOG (msg)); 
             gtk_widget_destroy (msg);
             return;
-        }
+        }*/
         
 		std::cout << "document_save:Step 3" << std::endl;
         
@@ -1079,14 +1080,14 @@ namespace apidb
 	}
     void Application::createNotebookInfo(GtkWidget *boxInfo)
     {
-                GtkWidget *boxName = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                GtkWidget * lbName = gtk_label_new ("Nombre:");
-                gtk_box_pack_start(GTK_BOX(boxName), lbName, FALSE, FALSE,0); 
-                inName = gtk_entry_new();
-                gtk_box_pack_start(GTK_BOX(boxName), inName, FALSE, FALSE,0);   
-                gtk_box_pack_start(GTK_BOX(boxInfo), boxName, FALSE, FALSE,0);
-                gtk_widget_set_events(inName,GDK_KEY_PRESS_MASK);
-                g_signal_connect(G_OBJECT(inName), "key-press-event", G_CALLBACK(inName_keypress), this);
+		GtkWidget *boxName = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+		GtkWidget * lbName = gtk_label_new ("Nombre:");
+		gtk_box_pack_start(GTK_BOX(boxName), lbName, FALSE, FALSE,0); 
+		inName = gtk_entry_new();
+		gtk_box_pack_start(GTK_BOX(boxName), inName, FALSE, FALSE,0);   
+		gtk_box_pack_start(GTK_BOX(boxInfo), boxName, FALSE, FALSE,0);
+		gtk_widget_set_events(inName,GDK_KEY_PRESS_MASK);
+		g_signal_connect(G_OBJECT(inName), "key-press-event", G_CALLBACK(inName_keypress), this);
                 
                 GtkWidget *boxVer = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget * lbVer = gtk_label_new ("Version: ");
@@ -1096,18 +1097,21 @@ namespace apidb
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxVer, FALSE, FALSE,0);
                 g_signal_connect(G_OBJECT(inVer), "key-press-event", G_CALLBACK(inVer_keypress), this);
                 
-                GtkWidget *boxInL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                GtkWidget * lbInL = gtk_label_new ("Lenguaje de Entrada:");
-                gtk_box_pack_start(GTK_BOX(boxInL), lbInL, FALSE, FALSE,0); 
-                inInL = gtk_combo_box_text_new();
-            gtk_combo_box_text_insert((GtkComboBoxText*)inInL,0,"selecione","Selecione..."); 
-            gtk_combo_box_set_active((GtkComboBox*)inInL,0);
-            gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,getInputLenguaje(InputLenguajes::MySQL).c_str(),getInputLenguaje(InputLenguajes::MySQL).c_str());
-            gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::PostgreSQL,getInputLenguaje(InputLenguajes::PostgreSQL).c_str(),getInputLenguaje(InputLenguajes::PostgreSQL).c_str());
-            gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MariaDB,getInputLenguaje(InputLenguajes::MariaDB).c_str(),getInputLenguaje(InputLenguajes::MariaDB).c_str());
-            gtk_box_pack_start(GTK_BOX(boxInL), inInL, FALSE, FALSE,0);
-            gtk_box_pack_start(GTK_BOX(boxInfo), boxInL, FALSE, FALSE,0);
-            g_signal_connect(G_OBJECT(inInL), "changed", G_CALLBACK(inInL_changed), this);
+		GtkWidget *boxInL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+		GtkWidget * lbInL = gtk_label_new ("Lenguaje de Entrada:");
+		gtk_box_pack_start(GTK_BOX(boxInL), lbInL, FALSE, FALSE,0); 
+		inInL = gtk_combo_box_text_new();
+		std::string namestr;
+		
+		gtk_combo_box_text_insert((GtkComboBoxText*)inInL,0,"selecione","Selecione..."); 
+		gtk_combo_box_set_active((GtkComboBox*)inInL,0);
+		
+		namestr = getInputLenguaje(InputLenguajes::MySQL);	gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,namestr.c_str(),namestr.c_str());
+		namestr = getInputLenguaje(InputLenguajes::PostgreSQL);		gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::PostgreSQL,namestr.c_str(),namestr.c_str());	
+		namestr = getInputLenguaje(InputLenguajes::MariaDB);	gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MariaDB,namestr.c_str(),namestr.c_str());
+		gtk_box_pack_start(GTK_BOX(boxInL), inInL, FALSE, FALSE,0);
+		gtk_box_pack_start(GTK_BOX(boxInfo), boxInL, FALSE, FALSE,0);
+		g_signal_connect(G_OBJECT(inInL), "changed", G_CALLBACK(inInL_changed), this);
                 
                 GtkWidget *boxOutL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget * lbOutL = gtk_label_new ("Lenguaje de Salida:   ");
