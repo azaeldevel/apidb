@@ -58,7 +58,7 @@ namespace octetos
 {
 namespace apidb
 {
-    bool ConfigureProject::saveConfig(const std::string& filename)
+    void ConfigureProject::saveConfig(const std::string& filename)
 	{
         //std::cout << "Saving to " << filename << std::endl;
 		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
@@ -100,8 +100,7 @@ namespace apidb
 		}
 		else
 		{
-            core::Error::write(core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
-			return false;
+            throw core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
 		}
                                 
         //
@@ -118,8 +117,7 @@ namespace apidb
                 xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"PostgreSQL");
                 break;
             default:
-                core::Error::write(core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
-                return false;                                
+                throw core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);                              
         }
                 
                 //
@@ -133,8 +131,7 @@ namespace apidb
                                 xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"C");
                                 break;
                         default:
-                                core::Error::write(core::Error("Lenguaje de salida desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
-                                return false;  
+                                throw core::Error("Lenguaje de salida desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__); 
                 }
                 
                 //
@@ -145,8 +142,7 @@ namespace apidb
                                 xmlNewChild(pk_node, NULL, (const xmlChar *)"name", (const xmlChar *)"CMake");
                                 break;
                         default:
-                                core::Error::write(core::Error("Opcion de enpaquetado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
-                                return false;  
+                                throw core::Error("Opcion de enpaquetado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
                 }
                 
                 //
@@ -160,8 +156,7 @@ namespace apidb
                                 xmlNewChild(cmpl_node, NULL, (const xmlChar *)"name", (const xmlChar *)"SHARED");
                                 break;
                         default:
-                                core::Error::write(core::Error("Opcion de compilado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__));
-                                return false;  
+                                throw core::Error("Opcion de compilado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
                 }
                 
                 //
@@ -279,7 +274,10 @@ namespace apidb
 		int ret = xmlSaveFormatFileEnc(xmlFile.c_str(), doc, "UTF-8", 1);	
 		xmlFreeDoc(doc);
 		xmlCleanupParser();
-		if( ret == -1) return false;  
+		if( ret == -1) 
+		{
+			throw core::Error("No se confirmo el guardado de archivo.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
+		}
                 
                 //comprimiendo archivo
                 //std::cout<< "Comprimiendo projecto." << std::endl;
@@ -297,22 +295,17 @@ namespace apidb
                     if(rename(tarFilename.c_str(),filename.c_str()) != 0)
                     {
                         std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,__FILE__,__LINE__));
-                        return false;
+                        throw core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,__FILE__,__LINE__);
                     }                        
                 }
                 else
                 {
                     std::string msgstr = "Especifique el nombre completo del archivo.";
-                    core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_NOFULL_PATCH_PROJECT,__FILE__,__LINE__));
-                    return false;
+                    throw core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_NOFULL_PATCH_PROJECT,__FILE__,__LINE__);
                 }
-                
-                //std::cout<< "Escritura de proyecto completada." << std::endl;
-		return true;
 	}
 	
-	bool ConfigureProject::readConfig(const std::string filename)
+	void ConfigureProject::readConfig(const std::string filename)
 	{
         //std::cout << "ConfigureProject::readConfig: Step 1\n";
 		if(core::Error::check())
@@ -327,9 +320,7 @@ namespace apidb
         {
             std::string msg = "La dirección especificada '";
             msg += filename + "' no indica un archivo válido.";
-            core::Error::write(core::Error(msg,ErrorCodes::READFILE_INVALIDPATH,__FILE__,__LINE__));
-            return false;
-            
+            throw core::Error(msg,ErrorCodes::READFILE_INVALIDPATH,__FILE__,__LINE__);
         }
         //std::cout << "ConfigureProject::readConfig: Step 3\n";
         
@@ -341,14 +332,14 @@ namespace apidb
         
         //std::cout << "ConfigureProject::readConfig: Step 4\n";
                 //std::cout << "Descomprimiendo achivo." << std::endl;
-                TAR* tar_handle = NULL;
-                tar_open(&tar_handle, (char*) filename.c_str(), NULL,  O_RDONLY,  0644,  TAR_GNU);
-                if (tmp_apidbDir == NULL) 
-                {
-                        //fprintf(stderr, "Failed to build temp file.\n");
-                        core::Error::write(core::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::READFILE_TEMPUNPACKFAIL,__FILE__,__LINE__));
-                        return false;
-                }
+		TAR* tar_handle = NULL;
+		tar_open(&tar_handle, (char*) filename.c_str(), NULL,  O_RDONLY,  0644,  TAR_GNU);
+		if (tmp_apidbDir == NULL) 
+		{
+			//fprintf(stderr, "Failed to build temp file.\n");
+				throw core::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::READFILE_TEMPUNPACKFAIL,__FILE__,__LINE__);
+
+		}
         //std::cout << "ConfigureProject::readConfig: Step 5\n";
                 //std::cout << "tar_handle is " << tmp_apidbDir << std::endl;
                 //std::cout << "tmp_filepath "<< tmp_filepath  << std::endl;
@@ -360,18 +351,17 @@ namespace apidb
                 tar_close(tar_handle);
                    
         //std::cout << "ConfigureProject::readConfig: Step 6\n";             
-                std::string tmVerFileName = tmp_apidbDir;
-                tmVerFileName += "/apidb/version";
-                //tmVerFileName="apidb/apidbcopy/version";
-                //std::cout << "Leyendo version de proyecto. from " << tmVerFileName << std::endl;                
-                FILE *apidbFilecheck2 = fopen(tmVerFileName.c_str(), "r");
-                if (apidbFilecheck2 == NULL )
-                {
-                        std::string msg = "La direecion especificada '";
-                        msg += tmVerFileName + "' no indica un archivo valido.";
-                        core::Error::write(core::Error(msg,ErrorCodes::READFILE_INVALIDPATHVER,__FILE__,__LINE__));
-                        return false;
-                }
+		std::string tmVerFileName = tmp_apidbDir;
+		tmVerFileName += "/apidb/version";
+		//tmVerFileName="apidb/apidbcopy/version";
+		//std::cout << "Leyendo version de proyecto. from " << tmVerFileName << std::endl;                
+		FILE *apidbFilecheck2 = fopen(tmVerFileName.c_str(), "r");
+		if (apidbFilecheck2 == NULL )
+		{
+			std::string msg = "La direecion especificada '";
+			msg += tmVerFileName + "' no indica un archivo valido.";
+			throw core::Error(msg,ErrorCodes::READFILE_INVALIDPATHVER,__FILE__,__LINE__);
+		}
         //std::cout << "ConfigureProject::readConfig: Step 7\n";
 		char *line_buf = NULL;
 		size_t line_buf_size = 0;
@@ -408,12 +398,15 @@ namespace apidb
         {
             //std::cout << "ConfigureProject::readConfig: Step 9.2.1\n";
             ret = xmlTextReaderRead(reader); 
-			if(ret == -1) return false;
+			if(ret == -1)
+			{
+				std::string msg = "Fallo en la lectura de los nodos XML.";
+				throw core::Error(msg,0,__FILE__,__LINE__);				
+			}
             if (!processNode(reader)) 
             {
                 //fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
-                core::Error::write( core::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode,__FILE__,__LINE__));
-                return false;
+                throw  core::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode,__FILE__,__LINE__);
             }
             //std::cout << "ConfigureProject::readConfig: Step 9.2.2\n";
             xmlFreeTextReader(reader);
@@ -421,16 +414,11 @@ namespace apidb
         }
         else 
         {
-                        //fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
-                        std::string msg = "Fallo al abrir el archivo '";
-                        msg += msg + xmlfile + "'";
-                         core::Error::write( core::Error(msg,ErrorCodes::READFILE_OPENXMLFILE,__FILE__,__LINE__));
-                        return false;
-        }                 
-                 
-        //std::cout << "ConfigureProject::readConfig: Step 10\n";
-        //loadLibrary();
-        return true;
+				//fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
+				std::string msg = "Fallo al abrir el archivo '";
+				msg += msg + xmlfile + "'";
+                throw core::Error(msg,ErrorCodes::READFILE_OPENXMLFILE,__FILE__,__LINE__);
+        }
 	}
        
 	bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)

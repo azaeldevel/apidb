@@ -473,21 +473,14 @@ namespace apidb
 				return;
 			}
 			//Guarda los datos en disco
-			std::cout << "Step 3.2" << std::endl;
-			if(!app->config->saveConfig(app->originFilename))
+			//std::cout << "Step 3.2" << std::endl;
+			try
 			{
-				//std::cout << "Step 2.3" << std::endl;
-				std::string msgstr;
-				if(core::Error::check())
-				{
-					msgstr = core::Error::get().what();
-				}
-				else
-				{
-					msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
-				}
-				//std::cout << "Step 2.4" << std::endl;
-				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
+				app->config->saveConfig(app->originFilename);
+			}
+			catch (std::exception e)
+			{
+				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,e.what());
 				gtk_dialog_run (GTK_DIALOG (msg)); 
 				gtk_widget_destroy (msg);
 				return;
@@ -806,30 +799,10 @@ namespace apidb
 		//std::cout << "Application::documen_open : Step 2" << std::endl;
 		try
 		{
-			//std::cout << "Application::documen_open : Step 2.1" << std::endl;
-            
+			//std::cout << "Application::documen_open : Step 2.1" << std::endl;            
 			//std::cout << "Application::documen_open : Step 2.2" << std::endl;
-			if(!app->config->readConfig(filename))
-			{
-				//std::cout << "Application::documen_open : Step 2.2.1" << std::endl;
-				std::string msgstr = "";
-				GtkWidget *msg;
-				if(core::Error::check())
-				{
-					core::Error e = core::Error::get();
-					msgstr = e.what();
-					msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
-				}
-				else
-				{
-					msgstr ="Fallo la lectura del archivo de proyecto";
-					msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
-				}
-				gtk_dialog_run (GTK_DIALOG (msg));
-				gtk_widget_destroy (msg);
-				return;
-			} 
-						
+			app->config->readConfig(filename);
+			
 		}
 		catch(std::exception e)
 		{

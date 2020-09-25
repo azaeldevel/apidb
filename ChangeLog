@@ -1,3 +1,7 @@
+2020-09-24 Azael Reyes <azael.devel@gmail.com>
+5.0.0-alpha19
+	- Mensages de errore por excepciones
+
 2020-09-05 Azael Reyes <azael.devel@gmail.com>
 5.0.0-alpha9
 	- Carga dinamica de Driver de Base de Datos.

@@ -173,11 +173,11 @@ namespace apidb
 		/**
 		* \brief Guarda el proyecto en el archivo especificado
 		* */
-		bool saveConfig(const std::string& filename);
+		void saveConfig(const std::string& filename);
 		/**
 		* \brief Lee el proyecto desde el archivo especificado
 		* */
-		bool readConfig(const std::string filename);
+		void readConfig(const std::string filename);
 		/**
 		* \brief Verica los datos de conexion al servidor
 		**/

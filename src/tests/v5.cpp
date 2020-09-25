@@ -130,14 +130,15 @@ void testCreateProject_nlst()
     configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
 	configProject_nls.writeDatconnect = "conector";
     
-    if(configProject_nls.saveConfig(filename_nlst))
-    {
-        CU_ASSERT(true);
-    }
-    else
-    {
-        CU_ASSERT(false);
-    }
+	try
+	{
+		configProject_nls.saveConfig(filename_nlst);
+		CU_ASSERT(true);
+	}
+	catch (std::exception e)
+	{
+		CU_ASSERT(false);
+	}
 }
 void testCreateProject()
 {
@@ -198,11 +199,12 @@ void testCreateProject()
 		CU_ASSERT(false)
 		return;
 	}
-	if(configProject.saveConfig(filename))
+	try
 	{
+		configProject.saveConfig(filename);
 		CU_ASSERT(true);
 	}
-	else
+	catch (std::exception e)
 	{
 		CU_ASSERT(false);
 	}
@@ -213,23 +215,17 @@ void testBuild_nlst()
     //std::cout << "testBuild_nlst: Step 1\n";
 	octetos::apidb::ConfigureProject configProject_nls;
     //std::cout << "testBuild_nlst: Step 1.1\n";
-    bool flerr = configProject_nls.readConfig(filename_nlst);
-    //std::cout << "testBuild_nlst: Step 1.2\n";
-    if(flerr)
-    {
-        //leyo corectamente
-        CU_ASSERT(true);
-    }
-    else
-    {
-        if(octetos::core::Error::check())
-        {
-            std::cout << "Error -> " << octetos::core::Error::get().describe() << std::endl;
-        }
-        CU_ASSERT(false);
-                
-        return;
-    }
+	try
+	{
+		configProject_nls.readConfig(filename_nlst);
+		CU_ASSERT(true);
+	}
+	catch(octetos::core::Error e)
+	{
+		CU_ASSERT(false);
+		return;
+	}
+
     //std::cout << "testBuild_nlst: Step 2\n";
     octetos::apidb::Driver driver(configProject_nls);
     if(octetos::core::Error::check())
@@ -259,23 +255,18 @@ void testBuild()
     //std::cout << "testBuild: Step 1\n";
 	octetos::apidb::ConfigureProject configProject;
     //std::cout << "testBuild: Step 1.1\n";
-    bool flerr = configProject.readConfig(filename);
-    //std::cout << "testBuild_nlst: Step 1.2\n";
-    if(flerr)
-    {
-        //leyo corectamente
-        CU_ASSERT(true);
-    }
-    else
-    {
-        if(octetos::core::Error::check())
-        {
-            std::cout << "Error -> " << octetos::core::Error::get().describe() << std::endl;
-        }
+	try
+	{
+		configProject.readConfig(filename);
+		CU_ASSERT(true);
+	}
+	catch(octetos::core::Error e)
+	{
         CU_ASSERT(false);
                 
-        return;
-    }
+        return;		
+	}
+
     //std::cout << "testBuild: Step 2\n";
     octetos::apidb::Driver driver(configProject);
     if(octetos::core::Error::check())
@@ -306,19 +297,17 @@ void testBuild()
 void testCompilen_nlst()
 {
 	octetos::apidb::ConfigureProject configProject;
-	if(!configProject.readConfig(filename_nlst))
-	{                
-		if(octetos::core::Error::check())
-		{
-			std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
-		}
-		CU_ASSERT(false);
-		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
-	}
-	else
+	try
 	{
+		configProject.readConfig(filename_nlst);
 		CU_ASSERT(true);
 	}
+	catch(octetos::core::Error e)
+	{
+		CU_ASSERT(false);
+		return;
+	}
+
 	if(configProject.packing == octetos::apidb::PackingLenguajes::CMake)
 	{
         //int ret = 0;
@@ -346,19 +335,17 @@ void testCompilen_nlst()
 void testCompilen()
 {
 	octetos::apidb::ConfigureProject configProject;
-	if(!configProject.readConfig(filename))
-	{                
-		if(octetos::core::Error::check())
-		{
-			std::cout << "Error  -> "<< octetos::core::Error::get().describe() << std::endl;
-		}
-		CU_ASSERT(false);
-		exit(EXIT_FAILURE);// hay pruebas que depende de esta.
-	}
-	else
+	try
 	{
+		configProject.readConfig(filename);
 		CU_ASSERT(true);
 	}
+	catch(octetos::core::Error e)
+	{
+		CU_ASSERT(false);
+		return;
+	}
+
 	if(configProject.packing == octetos::apidb::PackingLenguajes::CMake)
 	{
         int ret = 0;
