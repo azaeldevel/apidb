@@ -317,6 +317,9 @@ IF(APIDB_BUILD_GTK3 STREQUAL "Y")
 ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}-gtk3 apidb-gtk3.cpp Application.cpp Application-CaptureFuntion.cpp Application-CaptureParameter.cpp Application-CaptureTable.cpp Application-TreeView.cpp)
 ADD_DEPENDENCIES(${CMAKE_PROJECT_NAME}-gtk3 ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR})
 TARGET_LINK_LIBRARIES(${CMAKE_PROJECT_NAME}-gtk3 ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR})
+###>>>>>>>>>>>>>>>>>
+ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}-gdb-gtk3 apidb-gtk3.cpp Application.cpp Application-CaptureFuntion.cpp Application-CaptureParameter.cpp Application-CaptureTable.cpp Application-TreeView.cpp ConfigureProject.cpp ConfigureProject-xml.cpp)
+TARGET_LINK_LIBRARIES(${CMAKE_PROJECT_NAME}-gdb-gtk3 ${CMAKE_PROJECT_NAME} ${LIBRARIES})
 ENDIF()
 
 IF(APIDB_BUILD_TEST STREQUAL "Y")

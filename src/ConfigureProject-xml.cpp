@@ -269,7 +269,7 @@ namespace apidb
                 nameVerFile +=  "/version";
                 std::ofstream verF;
                 verF.open(nameVerFile);                
-                verF << apidb::getPakageVersion().toString()<< std::endl;
+                verF << (std::string)apidb::getPakageVersion();
                 verF.flush();
                 verF.close();
                 
@@ -373,48 +373,42 @@ namespace apidb
                         return false;
                 }
         //std::cout << "ConfigureProject::readConfig: Step 7\n";
-                char *line_buf = NULL;
-                size_t line_buf_size = 0;
-                int line_count = 0;
-                ssize_t line_size;
-                line_size = getline(&line_buf, &line_buf_size, apidbFilecheck2);
-                std::string strver;
-                if(line_size > 0)
-                {
-                    strver = line_buf;
-                }
+		char *line_buf = NULL;
+		size_t line_buf_size = 0;
+		int line_count = 0;
+		ssize_t line_size;
+		line_size = getline(&line_buf, &line_buf_size, apidbFilecheck2);
+		std::string strver;
+		if(line_size > 0)
+		{
+			strver = line_buf;
+		}
+		//std::cout << "ConfigureProject::readConfig: Step 8.1\n";
+		//std::cout << "strver : '"  << strver << "'";
+		//std::cout << "ConfigureProject::readConfig: Step 8.2\n";
+		projectVersion.set(strver);
+		//projectVersion.setNumbers(5,0,0);
+		//std::cout << "ConfigureProject::readConfig: Step 8.3\n";
+		//std::cout << "ConfigureProject::readConfig: Step 9\n";
+		
         //std::cout << "ConfigureProject::readConfig: Step 8\n";
-                fclose(apidbFilecheck2);
-                if(!projectVersion.set(strver)) 
-                {
-                    core::Semver ver;
-                    if(!ver.extractNumbers(strver))
-                    {
-                        std::string msg = "Fallo el parseo de la cadena de version en la llamada a Version::fromFile.'";
-                        msg += strver + "'";
-                        core::Error::write(core::Error(msg,ErrorCodes::READFILE_FAILPARSERVER,__FILE__,__LINE__));
-                        return false;
-                    }
-                    else
-                    {
-                        projectVersion = ver;
-                    }
-                }
-        //std::cout << "ConfigureProject::readConfig: Step 9\n";
-                
-                //std::cout << "Leyendo XML." << std::endl;  
-                xmlTextReaderPtr reader;
-                int ret;                
-                std::string xmlfile = tmp_filepath;
-                xmlfile += "/apidb/main.xml";
-                //std::cout << "Parseando XML " << xmlfile << std::endl;  
+		fclose(apidbFilecheck2);
+		
+		//std::cout << "Leyendo XML." << std::endl;  
+		xmlTextReaderPtr reader;
+		int ret;
+		std::string xmlfile = tmp_filepath;
+		xmlfile += "/apidb/main.xml";
+		//std::cout << "Parseando XML " << xmlfile << std::endl;  
         //std::cout << "ConfigureProject::readConfig: Step 9.1\n";
         reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);                
-        //std::cout << "ConfigureProject::readConfig: Step 9.2\n";
+        //std::cout << "ConfigureProject::readConfig: Step 9.2 " << xmlfile <<  "\n";
+		
         if (reader != NULL) 
         {
             //std::cout << "ConfigureProject::readConfig: Step 9.2.1\n";
-            ret = xmlTextReaderRead(reader);               
+            ret = xmlTextReaderRead(reader); 
+			if(ret == -1) return false;
             if (!processNode(reader)) 
             {
                 //fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
@@ -440,33 +434,38 @@ namespace apidb
 	}
        
 	bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
-	{         
-                if(projectVersion < ver100)
-                {
-                        std::string msgstr = "La version del proyecto es inferior a '";
-                        msgstr += ver100.toString() + "' por lo que no es posible abrir el archivo, se recomiend crear un nuevo proyecto con los mismo parametros.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_NOCOMPATIBLE_PROJECT,__FILE__,__LINE__));
-                        return false;
-                }
-                
-                const xmlChar *name;
-                
+	{
+		//std::cout << "ConfigureProject::getProjectNodes: Step 1\n";
+		if(projectVersion < ver100)
+		{
+			std::string msgstr = "La version del proyecto es inferior a '";
+			msgstr += ver100.toString() + "' por lo que no es posible abrir el archivo, se recomiend crear un nuevo proyecto con los mismo parametros.";
+			core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_NOCOMPATIBLE_PROJECT,__FILE__,__LINE__));
+			return false;
+		}
+		
+		const xmlChar *name;
+		
+		//std::cout << "ConfigureProject::getProjectNodes: Step 2\n";
         std::string password,user,host,database;
         int port;
         if(projectVersion >= ver100)
         {
-                
-                xmlTextReaderRead(reader);
-                xmlTextReaderRead(reader);
-                xmlTextReaderRead(reader);
-                name = xmlTextReaderConstName(reader);
-                if(strcmp((const char*)name,"#text") == 0)
-                {
-                //std::cout<<"Find text."<<std::endl;   
-                this->name = (const char*)xmlTextReaderConstValue(reader);
-                }
+			//std::cout << "ConfigureProject::getProjectNodes: Step 2.1\n";
+			xmlTextReaderRead(reader);
+			xmlTextReaderRead(reader);
+			xmlTextReaderRead(reader);
+			//std::cout << "ConfigureProject::getProjectNodes: Step 2.1.1\n";
+			name = xmlTextReaderConstName(reader);
+			//std::cout << "ConfigureProject::getProjectNodes: Step 2.1.2\n";
+			if(strcmp((const char*)name,"#text") == 0)
+			{
+				//std::cout << "ConfigureProject::getProjectNodes: Step 2.1.2.1\n";   
+				this->name = (const char*)xmlTextReaderConstValue(reader);
+				//std::cout << "ConfigureProject::getProjectNodes: Step 2.1.2.2\n";
+			}
                  
-        
+			//std::cout << "ConfigureProject::getProjectNodes: Step 2.2\n";
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -495,7 +494,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-
+		//std::cout << "ConfigureProject::getProjectNodes: Step 2.3\n";
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -510,6 +509,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
+		//std::cout << "ConfigureProject::getProjectNodes: Step 2.4\n";
                 name = xmlTextReaderConstName(reader);
                 short minor = 0;
                 if(strcmp((const char*)name,"#text") == 0)
@@ -522,7 +522,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-                
+		//std::cout << "ConfigureProject::getProjectNodes: Step 2.5\n";
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -537,6 +537,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
+		//std::cout << "ConfigureProject::getProjectNodes: Step 2.6\n";
                 name = xmlTextReaderConstName(reader);
                 short patch = 0;
                 if(strcmp((const char*)name,"#text") == 0)
@@ -549,8 +550,10 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
+		//std::cout << "ConfigureProject::getProjectNodes: Step 2.7\n";
                 //std::cout << "Numbers readed : " << major << "." << minor << "." << patch << std::endl;
                 this->versionResult.setNumbers(major,minor,patch);
+		//std::cout << "ConfigureProject::getProjectNodes: Step 2.8\n";
         // this->version.setStage(toolkit::Version::Stage::alpha);
                 
                 xmlTextReaderRead(reader);
@@ -694,6 +697,7 @@ namespace apidb
                 
         }
         
+        //std::cout << "ConfigureProject::getProjectNodes: Step 3\n";
                 /******************************************************************************************
                 * Version 1.1.0
                 * 
@@ -835,7 +839,8 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
         }
-              
+		
+		//std::cout << "ConfigureProject::getProjectNodes: Step 4\n";
               
         //std::cout << "ConfigureProject::getProjectNodes : v2.0.0 feactures.\n";
 		if(projectVersion >= ver200)
@@ -877,6 +882,8 @@ namespace apidb
                 }
 		}
 		
+		//std::cout << "ConfigureProject::getProjectNodes: Step 5\n";
+		
 		if(projectVersion >= ver220)
 		{
 			xmlTextReaderRead(reader);
@@ -897,6 +904,7 @@ namespace apidb
 					return false;
 			}
 		}
+		//std::cout << "ConfigureProject::getProjectNodes: Step 6\n";
 		
         //
         xmlTextReaderRead(reader);
@@ -969,6 +977,8 @@ namespace apidb
                 xmlTextReaderRead(reader);
         }
         }
+        
+        //std::cout << "ConfigureProject::getProjectNodes: Step 7\n";
         
         return true;
     }

@@ -167,6 +167,30 @@ namespace apidb
         
         const Table* findSelectTable(const std::string&)const;
         const Table* findDownloadTable(const std::string&)const;
+		
+		
+		ConfigureProject();
+		/**
+		* \brief Guarda el proyecto en el archivo especificado
+		* */
+		bool saveConfig(const std::string& filename);
+		/**
+		* \brief Lee el proyecto desde el archivo especificado
+		* */
+		bool readConfig(const std::string filename);
+		/**
+		* \brief Verica los datos de conexion al servidor
+		**/
+		bool testConexion();
+                        
+        /**
+        * \brief Version del archivo de proyecto.
+        * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
+        **/
+        const core::Semver& getVersionProject()const;
+        
+        octetos::db::Datconnect*  getDatconnection() const;
+		
 		/**
 		* \brief El nombre del proyecto.
 		*/
@@ -213,29 +237,6 @@ namespace apidb
 		* \brief Sí es true genera una variable statica global con los datos de conexión.
 		* */
 		std::string writeDatconnect;
-				
-                
-		ConfigureProject();
-		/**
-		* \brief Guarda el proyecto en el archivo especificado
-		* */
-		bool saveConfig(const std::string& filename);
-		/**
-		* \brief Lee el proyecto desde el archivo especificado
-		* */
-		bool readConfig(const std::string filename);
-		/**
-		* \brief Verica los datos de conexion al servidor
-		**/
-		bool testConexion();
-                        
-        /**
-        * \brief Version del archivo de proyecto.
-        * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
-        **/
-        const core::Semver& getVersionProject()const;
-        
-        octetos::db::Datconnect*  getDatconnection() const;
     };
 }
 }

@@ -741,27 +741,46 @@ namespace apidb
          * 
          */
         void Application::loadConfig()
-        {            
-                gtk_entry_set_text (GTK_ENTRY(inName),config->name.c_str());
-                gtk_entry_set_text (GTK_ENTRY(inVer),config->versionResult.toString().c_str());
-                gtk_combo_box_set_active(GTK_COMBO_BOX(inInL),(gint)config->getInputLenguaje());
-                gtk_combo_box_set_active(GTK_COMBO_BOX(inOutL),(gint)config->outputLenguaje);
-                gtk_combo_box_set_active(GTK_COMBO_BOX(inPkL),(gint)config->packing);
-                gtk_combo_box_set_active(GTK_COMBO_BOX(inCmpl),(gint)config->compiled);
-                gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
-                gtk_combo_box_set_active(GTK_COMBO_BOX(inNameSpaceDetect),inNameSpaceDetect_comboxid(config->namespace_detect));
-				if(!config->writeDatconnect.empty() and config->writeDatconnect.compare("¿?") != 0) gtk_entry_set_text(GTK_ENTRY(inWConnName),config->writeDatconnect.c_str());
-                gtk_entry_set_text (GTK_ENTRY(inExe),config->executable_target.c_str());
+        {         
+			//std::cout << "Application::loadConfig : Step  1"<< std::endl;
+			gtk_entry_set_text (GTK_ENTRY(inName),config->name.c_str());
+			//std::cout << "Application::loadConfig : Step  2"<< std::endl;
+			gtk_entry_set_text (GTK_ENTRY(inVer),config->versionResult.toString().c_str());
+			//std::cout << "Application::loadConfig : Step  3"<< std::endl;
+			gtk_combo_box_set_active(GTK_COMBO_BOX(inInL),(gint)config->getInputLenguaje());
+			//std::cout << "Application::loadConfig : Step  "<< std::endl;
+			gtk_combo_box_set_active(GTK_COMBO_BOX(inOutL),(gint)config->outputLenguaje);
+			//std::cout << "Application::loadConfig : Step  4"<< std::endl;
+			gtk_combo_box_set_active(GTK_COMBO_BOX(inPkL),(gint)config->packing);
+			//std::cout << "Application::loadConfig : Step  5"<< std::endl;
+			gtk_combo_box_set_active(GTK_COMBO_BOX(inCmpl),(gint)config->compiled);
+			//std::cout << "Application::loadConfig : Step  "<< std::endl;
+			gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
+			//std::cout << "Application::loadConfig : Step  6"<< std::endl;
+			gtk_combo_box_set_active(GTK_COMBO_BOX(inNameSpaceDetect),inNameSpaceDetect_comboxid(config->namespace_detect));
+			//std::cout << "Application::loadConfig : Step  7"<< std::endl;
+			if(!config->writeDatconnect.empty() or config->writeDatconnect.compare("¿?") != 0) gtk_entry_set_text(GTK_ENTRY(inWConnName),config->writeDatconnect.c_str());
+			//std::cout << "Application::loadConfig : Step  8"<< std::endl;
+			if(config->executable_target.empty() or config->executable_target.compare("¿?") != 0)gtk_entry_set_text (GTK_ENTRY(inExe),config->executable_target.c_str());
+			//std::cout << "Application::loadConfig : Step  9"<< std::endl;
                 
-                gtk_entry_set_text(GTK_ENTRY(inLoc),config->getDatconnection()->getHost().c_str());
-                gtk_entry_set_text(GTK_ENTRY(inPort),std::to_string(config->getDatconnection()->getPort()).c_str());
-                gtk_entry_set_text(GTK_ENTRY(inDB),config->getDatconnection()->getDatabase().c_str());
-                gtk_entry_set_text(GTK_ENTRY(inUser),config->getDatconnection()->getUser().c_str());
-                gtk_entry_set_text(GTK_ENTRY(inPw),config->getDatconnection()->getPassword().c_str());
-                                
-                downsTree->fill();
+			gtk_entry_set_text(GTK_ENTRY(inLoc),config->getDatconnection()->getHost().c_str());
+			//std::cout << "Application::loadConfig : Step  10"<< std::endl;
+			//std::cout << "Application::loadConfig : Step  10.1 : " << strport << std::endl;
+			gtk_entry_set_text(GTK_ENTRY(inPort),std::to_string(config->getDatconnection()->getPort()).c_str());
+			//std::cout << "Application::loadConfig : Step  11"<< std::endl;
+			gtk_entry_set_text(GTK_ENTRY(inDB),config->getDatconnection()->getDatabase().c_str());
+			//std::cout << "Application::loadConfig : Step  12"<< std::endl;
+			gtk_entry_set_text(GTK_ENTRY(inUser),config->getDatconnection()->getUser().c_str());
+			//std::cout << "Application::loadConfig : Step  13"<< std::endl;
+			gtk_entry_set_text(GTK_ENTRY(inPw),config->getDatconnection()->getPassword().c_str());
+			//std::cout << "Application::loadConfig : Step  14"<< std::endl;
+                               
+			//std::cout << "Application::loadConfig : Step  15"<< std::endl;
+			downsTree->fill();
                 
-                selectsTree->fill();
+			//std::cout << "Application::loadConfig : Step  16"<< std::endl;
+			selectsTree->fill();
                 
         }
         void Application::application_destroy (GtkWidget *object, gpointer   user_data)
@@ -777,34 +796,22 @@ namespace apidb
                 gtk_window_set_resizable(GTK_WINDOW (window),FALSE);
                 gtk_container_add (GTK_CONTAINER (window), vboxMain);       
         }  
-	void Application::documen_open(Application* app,const std::string& filefly)
+	void Application::documen_open(Application* app,const std::string& filename)
 	{
-		std::string filename;
-		
-		if(filefly.empty())
+		//std::cout << "Application::documen_open: Step 1 "<< std::endl;
+		if(app->config == NULL)
 		{
-			GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"_Cancel",GTK_RESPONSE_CANCEL,"_Open",GTK_RESPONSE_ACCEPT,NULL);   
-			if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-			{
-				char* tmpfilename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-				filename = tmpfilename;
-				gtk_widget_destroy (dialog);
-				g_free (tmpfilename);
-			}
-			gtk_widget_destroy (dialog);
+			app->config = new ConfigureProject();
 		}
-		else		
-		{
-			filename = filefly;
-		}
-		//std::cout << "Step 1 "<< std::endl;
-				
-		//std::cout << "Step 2" << std::endl;
+		//std::cout << "Application::documen_open : Step 2" << std::endl;
 		try
 		{
-            app->loadConfig();
-			if(!app->config->readConfig(std::string(filename)))
-			{                 
+			//std::cout << "Application::documen_open : Step 2.1" << std::endl;
+            
+			//std::cout << "Application::documen_open : Step 2.2" << std::endl;
+			if(!app->config->readConfig(filename))
+			{
+				//std::cout << "Application::documen_open : Step 2.2.1" << std::endl;
 				std::string msgstr = "";
 				GtkWidget *msg;
 				if(core::Error::check())
@@ -822,6 +829,7 @@ namespace apidb
 				gtk_widget_destroy (msg);
 				return;
 			} 
+						
 		}
 		catch(std::exception e)
 		{
@@ -830,13 +838,13 @@ namespace apidb
 			gtk_widget_destroy (msg);
 			return;
 		}
-		//std::cout << "Step 3" << std::endl;
+		//std::cout << "Application::documen_open : Step 3" << std::endl;
 		if(app->driver != NULL) 
 		{
 			delete (app->driver);
 			app->driver = NULL;
 		}
-		//std::cout << "Step 3.5 : " << app->config->conectordb->getHost() << std::endl;
+		//std::cout << "Application::documen_open : Step 3.5 : " << app->config->conectordb->getHost() << std::endl;
 
 		//std::cout << "Step 3.6" << std::endl;
 		app->driver = new Driver(*(app->config));
@@ -857,7 +865,7 @@ namespace apidb
 			gtk_widget_show_all(app->window);
 			return;
 		}
-		//std::cout << "Step 4" << std::endl;
+		//std::cout << "Application::documen_open : Step 4" << std::endl;
 		if(!app->driver->analyze(NULL))
 		{
 			std::string msgstr = "";
@@ -873,7 +881,7 @@ namespace apidb
 			gtk_dialog_run (GTK_DIALOG (msg)); 
 			gtk_widget_destroy (msg);                                
 		}
-		//std::cout << "Step 5" << std::endl;
+		//std::cout << "Application::documen_open : Step 5" << std::endl;
 		app->originFilename = filename;
 		app->createNotebook();
 		app->loadConfig();
@@ -881,11 +889,28 @@ namespace apidb
 		app->isOpen = true;
 		app->isNew = false;
 		gtk_widget_show_all(app->window);
+		//std::cout << "Application::documen_open : Step 6" << std::endl;
 	}
 	void Application::document_open (GtkWidget *widget, gpointer   data)
 	{
 		Application* app = (Application*)data;
-		documen_open(app);
+		std::string filename;
+		
+		GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"_Cancel",GTK_RESPONSE_CANCEL,"_Open",GTK_RESPONSE_ACCEPT,NULL);   
+		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+		{
+			char* tmpfilename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+			filename = tmpfilename;
+			gtk_widget_destroy (dialog);
+			g_free (tmpfilename);
+		}
+		gtk_widget_destroy (dialog);
+		
+		if(app->config == NULL)
+		{
+			app->config = new ConfigureProject();
+		}		
+		documen_open(app,filename);
 	}
         gboolean Application::inVer_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)
         {
@@ -1361,7 +1386,7 @@ namespace apidb
                 GtkWidget *boxPort = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
                 GtkWidget *lbPort = gtk_label_new ("Puerto:");
                 gtk_box_pack_start(GTK_BOX(boxPort), lbPort, FALSE, FALSE,0); 
-                inPort= gtk_entry_new();
+                inPort = gtk_entry_new();
                 gtk_box_pack_start(GTK_BOX(boxPort), inPort, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxConex), boxPort, FALSE, FALSE,0);
                 g_signal_connect(G_OBJECT(inPort), "key-press-event", G_CALLBACK(inPort_keypress), this);
