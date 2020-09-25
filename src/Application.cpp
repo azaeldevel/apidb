@@ -38,7 +38,7 @@ namespace apidb
     }
 	bool Application::downConf()
 	{
-        std::cout << "downConf : Step 1\n";
+        //std::cout << "downConf : Step 1\n";
         if(config == NULL)
         {
                 GtkWidget *msg = gtk_message_dialog_new (NULL,
@@ -54,7 +54,7 @@ namespace apidb
         }
         
         if(isSaved and !isOpen) return true;
-        std::cout << "downConf : Step 2\n";
+        //std::cout << "downConf : Step 2\n";
                 
         
         if(inInLEdited)
@@ -72,7 +72,7 @@ namespace apidb
             //std::cout << "In Language : " << gcinl << "\n";
             config->setInputLenguaje(getInputLenguaje(gcinl));
         }
-        std::cout << "downConf : Step 3\n";
+        //std::cout << "downConf : Step 3\n";
         if(inNameEdited)
         {
             std::string name = gtk_entry_get_text(GTK_ENTRY(inName));
@@ -91,7 +91,7 @@ namespace apidb
             config->name = name;
         }
         
-        std::cout << "downConf : Step 4\n";
+        //std::cout << "downConf : Step 4\n";
 		
 		
         if(inOutLEdited)
@@ -106,7 +106,7 @@ namespace apidb
             }
             config->outputLenguaje =  getOutputLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inOutL)));
         }
-        std::cout << "downConf : Step 5\n";
+        //std::cout << "downConf : Step 5\n";
         if(inVerEdited)
         {
             std::string verstr = gtk_entry_get_text(GTK_ENTRY(inVer));
@@ -118,7 +118,7 @@ namespace apidb
                                 return false;
             }                                
         }
-        std::cout << "downConf : Step 6\n";
+        //std::cout << "downConf : Step 6\n";
         if(inPkLEdited)
         {
             int intpkl = gtk_combo_box_get_active(GTK_COMBO_BOX(inPkL));
@@ -132,7 +132,7 @@ namespace apidb
             }
             config->packing = getPackingLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inPkL)));
         }
-        std::cout << "downConf : Step 7\n";
+        //std::cout << "downConf : Step 7\n";
         if(inCmplEdited)
         {
             int intcmpl = gtk_combo_box_get_active(GTK_COMBO_BOX(inCmpl));
@@ -146,7 +146,7 @@ namespace apidb
             }
             config->compiled = getCompiled(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inCmpl)));
         }
-        std::cout << "downConf : Step 8\n";
+        //std::cout << "downConf : Step 8\n";
 		if(inNameSpaceDetectEdited)
 		{
 			int intNameSpaceDetect = gtk_combo_box_get_active(GTK_COMBO_BOX(inNameSpaceDetect));
@@ -164,7 +164,7 @@ namespace apidb
 			config->namespace_detect = gtk_combo_box_get_active_id(GTK_COMBO_BOX(inNameSpaceDetect));
 		}
 		
-        std::cout << "downConf : Step 9\n";
+        //std::cout << "downConf : Step 9\n";
 		
 		if(inExeEdited)
         {
@@ -179,7 +179,7 @@ namespace apidb
                 gtk_widget_destroy (msg);
                 return false;
         }
-        std::cout << "downConf : Step 10\n";
+        //std::cout << "downConf : Step 10\n";
         
         if(inLocEdited)
         {
@@ -193,7 +193,7 @@ namespace apidb
             }
             config->getDatconnection()->setHost(loc);
         }
-        std::cout << "downConf : Step 11\n";
+        //std::cout << "downConf : Step 11\n";
         if(inPortEdited)
         {
             std::string strport = gtk_entry_get_text(GTK_ENTRY(inPort));
@@ -214,7 +214,7 @@ namespace apidb
             }
             config->getDatconnection()->setPort(intport);
         }
-        std::cout << "downConf : Step 11\n";
+        //std::cout << "downConf : Step 11\n";
         if(inDBEdited)
         {
             std::string strdb = gtk_entry_get_text(GTK_ENTRY(inDB));
@@ -227,7 +227,7 @@ namespace apidb
             }
             config->getDatconnection()->setDatabase(strdb);
         }
-        std::cout << "downConf : Step 12\n";
+        //std::cout << "downConf : Step 12\n";
         if(inUserEdited)
         {
             std::string struser = gtk_entry_get_text(GTK_ENTRY(inUser));
@@ -240,7 +240,7 @@ namespace apidb
             }
             config->getDatconnection()->setUser(struser);
         }
-        std::cout << "downConf : Step 13\n";
+        //std::cout << "downConf : Step 13\n";
         if(inPwEdited)
         {
             std::string strpw = gtk_entry_get_text(GTK_ENTRY(inPw));   
@@ -252,7 +252,7 @@ namespace apidb
             }
             config->getDatconnection()->setPassword(strpw);
         }
-        std::cout << "downConf : Step 14\n";
+        //std::cout << "downConf : Step 14\n";
         if(inWConnNameEdited)
         {
             std::string str = gtk_entry_get_text(GTK_ENTRY(inWConnName));
@@ -752,9 +752,9 @@ namespace apidb
 			//std::cout << "Application::loadConfig : Step  6"<< std::endl;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(inNameSpaceDetect),inNameSpaceDetect_comboxid(config->namespace_detect));
 			//std::cout << "Application::loadConfig : Step  7"<< std::endl;
-			if(!config->writeDatconnect.empty() or config->writeDatconnect.compare("¿?") != 0) gtk_entry_set_text(GTK_ENTRY(inWConnName),config->writeDatconnect.c_str());
+			if(!config->writeDatconnect.empty() and config->writeDatconnect.compare("¿?") != 0) gtk_entry_set_text(GTK_ENTRY(inWConnName),config->writeDatconnect.c_str());
 			//std::cout << "Application::loadConfig : Step  8"<< std::endl;
-			if(config->executable_target.empty() or config->executable_target.compare("¿?") != 0)gtk_entry_set_text (GTK_ENTRY(inExe),config->executable_target.c_str());
+			if(!config->executable_target.empty() and config->executable_target.compare("¿?") != 0)gtk_entry_set_text (GTK_ENTRY(inExe),config->executable_target.c_str());
 			//std::cout << "Application::loadConfig : Step  9"<< std::endl;
                 
 			gtk_entry_set_text(GTK_ENTRY(inLoc),config->getDatconnection()->getHost().c_str());
