@@ -305,7 +305,7 @@ namespace apidb
                 }
 	}
 	
-	void ConfigureProject::readConfig(const std::string filename)
+	void ConfigureProject::readConfig(const std::string& filename)
 	{
         //std::cout << "ConfigureProject::readConfig: Step 1\n";
 		if(core::Error::check())
