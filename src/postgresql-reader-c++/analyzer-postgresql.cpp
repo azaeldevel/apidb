@@ -22,6 +22,8 @@
     #include <libpq-fe.h>
 #elif defined LINUX_ARCH
     #include <libpq-fe.h>
+#elif defined LINUX_DEBIAN
+    #include <postgresql/libpq-fe.h>
 #else 
 	#error "Plataforma desconocida."
 #endif

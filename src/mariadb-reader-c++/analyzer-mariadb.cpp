@@ -22,6 +22,8 @@
     #include <mariadb/mysql.h>
 #elif defined LINUX_ARCH
     #include <mysql/mysql.h>
+#elif defined LINUX_DEBIAN
+    #include <mariadb/mysql.h>
 #else 
 	#error "Plataforma desconocida."
 #endif
