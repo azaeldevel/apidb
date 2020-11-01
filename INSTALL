@@ -57,7 +57,7 @@ Source base metode
         Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
         1.- unzip apidb-master.zip //Descomprimir archivo
         2.- cd apidb-master/src/build // entrar en el directorio
-        3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease -DPLATFORM=LINUX_ARCH|LINUX_GENTOO|LINUX_DEBIAN -DAPIDBBUILD=CORE;MARIADB;POSTGRESQL;COMMANDS;GTK3L -DAPIDBINSTALL=CORE;MARIADB;POSTGRESQL;COMMANDS;GTK3 ..
+        3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=betarelease -DPLATFORM=LINUX_ARCH|LINUX_GENTOO|LINUX_DEBIAN -DAPIDBINSTALL=CORE;MARIADB;POSTGRESQL;COMMANDS;GTK3 ..
         4.- make
         5.- sudo cpack --config CPackConfig.cmake
         6.- sudo ./apidb-*-Linux.sh  --prefix=/usr/local
