@@ -36,50 +36,33 @@ namespace apidb
 {
 namespace generators
 {
-	
-	CPP::~CPP()
+	Java::~Java()
 	{
-		delete[] writeResults;
+		
 	}
-	const std::string& CPP::getHeaderName() const
+	std::ofstream& Java::getSourceOutput()
 	{
-		return projectH;
+		return *writeResult;
 	}
-	std::ofstream& CPP::getSourceOutput()
-	{
-		return writeResults[1];
-	}
-	std::ofstream& CPP::getHeaderOutput()
-	{
-		return writeResults[0];
-	}
-	CPP::CPP(apidb::Analyzer& d,const ConfigureProject& config) : apidb::generators::Generator(config,d)
+	Java::Java(apidb::Analyzer& d,const ConfigureProject& config) : apidb::generators::Generator(config,d)
 	{                
-        if(config.outputLenguaje != OutputLenguajes::CPP)
+        if(config.outputLenguaje != OutputLenguajes::JAVA)
         {
             std::string msg = "La configuracion indica '" ;
-            msg = msg + getOutputLenguajeString()+ "', pero el componente es CMake.";
+            msg = msg + getOutputLenguajeString()+ "', pero el componente es Java.";
             throw BuildException(msg);
-        }
-                
-		//outputLenguaje = d.getOutputLenguaje();
-		writeResults = new std::ofstream[2];
+        } 
+		
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0)) 
 		{
-			projectH = configureProject.name + ".hpp";
-			writeResults[0].open(projectH);
-			projectCPP = configureProject.name + ".cpp";
-			writeResults[1].open(projectCPP);
+			
 		}
 		else
 		{
-			projectH = configureProject.name + ".hpp";
-			projectCPP = configureProject.name + ".cpp";
-			writeResults[0].open(configureProject.builDirectory + "/" + projectH);
-			writeResults[1].open(configureProject.builDirectory + "/" + projectCPP);
+			
 		}
-	}    
-	bool CPP::generate(bool log)
+	}
+	bool Java::generate(bool log)
 	{
 		if(log)analyzer.getOutput().add("Generando archivos de codigo fuente... \n");
 		std::string msg1 = "\tLenguaje resultado: " ;
@@ -89,16 +72,15 @@ namespace generators
 		std::string headers = "";     
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
-            getHeaderOutput()<< "#include <octetos/db/clientdb-mysql.hh>"<<std::endl<<std::endl;
-            getSourceOutput()<< "#include <mysql/mysql.h>"<<std::endl;
+            
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
-            getHeaderOutput()<< "#include <octetos/db/clientdb-maria.hh>"<<std::endl<<std::endl;
+            
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-        {            
-            getHeaderOutput()<< "#include <octetos/db/clientdb-postgresql.hh>"<<std::endl<<std::endl;
+        {
+            
         }
         else
         {
@@ -106,26 +88,20 @@ namespace generators
             throw BuildException(msg);
             return false;
         }
-		getHeaderOutput()<< "#include <string>" <<std::endl;        
-		//inlcudes in source file
-		getSourceOutput()<< "#include \"" << getHeaderName() <<"\""<<std::endl<<std::endl;
+		        
 			
 		
-		//writing code				
-		if(createH(getHeaderOutput(),log,getSymbolsTable()) == false)  
-		{
-			return false;
-		}
-		if(createCPP(getSourceOutput(),log,getSymbolsTable()) == false)
+		//writing code
+		if(create(log,getSymbolsTable()) == false)
 		{
 			return false;
 		}
           
         return true;    
     }
-		void CPP::writeSelectsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
+		void Java::writeSelects(const apidb::symbols::Table& table, std::ofstream& ofile)
         {
-        //select(conector,where)
+			//select(conector,where)	
             
             if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
             {        
@@ -462,7 +438,7 @@ namespace generators
             }
         }
     }
-	void CPP::writeDownloadsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
+	void Java::writeDownloads(const apidb::symbols::Table& table, std::ofstream& ofile)
     {        
         for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
         {
@@ -632,7 +608,7 @@ namespace generators
 			}         
 		}        
     }
-    void CPP::writeInsertCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
+    void Java::writeInsert(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{        
 		// Methodo insert
         ofile << "\t"<< "bool ";
@@ -799,13 +775,13 @@ namespace generators
         ofile << "\t\treturn false;"<<std::endl;
         ofile << "\t}"<<std::endl;
 	}
-	void CPP::writeDefaultContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
+	void Java::writeDefaultContructor(const apidb::symbols::Table& table,std::ofstream& ofile)
         {
 		ofile <<"\t"<<table.getName()<< "::" <<table.getName()<<"()"<<std::endl;
 		ofile <<"\t{"<<std::endl;
 		ofile <<"\t}"<<std::endl;
 	}
-	void CPP::writeCopyContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
+	void Java::writeCopyContructor(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		//constructor de copias 
 		ofile << "\t" << table.getName() << "::" << table.getName() <<"(const " << table.getName() <<"& obj)"<<std::endl;
@@ -817,7 +793,7 @@ namespace generators
 		}
 		ofile << "\t}"<<std::endl;
 	}
-	void CPP::writeKeyContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
+	void Java::writeKeyContructor(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		//constructor que toma key como parametro
         if(table.getKey().size() > 0)//tiene key
@@ -874,7 +850,7 @@ namespace generators
         }
 		ofile << "\t}" <<std::endl;
 	}
-	void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
+	void Java::createClassMethodes(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
         //for (auto const& [key, attr] : table) //para cada atributo se crean las funciones de operacion get, set y update
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
@@ -887,15 +863,15 @@ namespace generators
 				}
 				else
 				{
-					ofile <<"\t"<< "const " << it->second->getClassReferenced()->getName() << "& ";
+					ofile <<"\t"<< "final " << it->second->getClassReferenced()->getName() << "& ";
 				}
 			}
 			else
 			{
-				ofile <<"\t" << "const " << it->second->getOutType() <<"& ";
+				ofile <<"\t" << "final " << it->second->getOutType() <<" ";
 			}
 				
-			ofile << table.getName() <<"::" << it->second->getGet() << " const"<< std::endl;
+			ofile << table.getName() <<"::" << it->second->getGet() << " final"<< std::endl;
 			ofile << "\t{"<<std::endl;	
 			if((it->second->getOutType().compare("char") == 0) | (it->second->getOutType().compare("short") == 0) | (it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0) | (it->second->getOutType().compare("float") == 0) | (it->second->getOutType().compare("double") == 0))
 			{
@@ -1085,24 +1061,24 @@ namespace generators
                 
         }
 		
-		writeKeyContructorCPP(table,ofile);
-		writeCopyContructorCPP(table,ofile);
-		writeDefaultContructorCPP(table,ofile);			
-		writeInsertCPP(table,ofile);
-        writeDownloadsCPP(table,ofile);
-		writeSelectsCPP(table,ofile);
+		writeKeyContructor(table,ofile);
+		writeCopyContructor(table,ofile);
+		writeDefaultContructor(table,ofile);			
+		writeInsert(table,ofile);
+        writeDownloads(table,ofile);
+		writeSelects(table,ofile);
 		ofile << std::endl; 
     }
         
-    void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
+    void Java::createClass(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL or configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
-            file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \"`"<<  cl.getFullName() << "`\";" << std::endl;
+            file << "\tstatic String TABLE_NAME = \"`"<<  cl.getFullName() << "`\";" << std::endl;
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
         {
-            file << "\tconst std::string " <<  nameClass << "::TABLE_NAME = \""<<  cl.getFullName() << "\";" << std::endl;
+            file << "\tstatic String TABLE_NAME = \""<<  cl.getFullName() << "\";" << std::endl;
         }
         else
         {
@@ -1113,16 +1089,16 @@ namespace generators
             throw BuildException(msg);
 #endif
         }
-		createClassMethodesCPP(cl,file);        
+		createClassMethodes(cl,file);        
 		file<< std::endl<< std::endl;
     }
-    bool CPP::createCPP(std::ofstream& file,bool log,const symbols::ISpace* ispace)
+    bool Java::create(std::ofstream& file,bool log,const symbols::ISpace* ispace)
 	{
 		if(ispace->what() == symbols::SpaceType::TABLE)
         {
             symbols::Table* table = (symbols::Table*) ispace;
             //std::cout << "Es table " << table->getName() << std::endl;
-            createClassCPP(*table,file,table->getName());
+            createClass(*table,file,table->getName());
         }
         else if(ispace->what() == symbols::SpaceType::SPACE)
         {
@@ -1141,7 +1117,7 @@ namespace generators
             //std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
             for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
             {
-                createCPP(file,log,it->second);
+                create(file,log,it->second);
             }
             file << "\n}\n";
             file << std::endl;				
@@ -1149,444 +1125,37 @@ namespace generators
 		
 		return true;
 	}
-    bool CPP::createCPP(std::ofstream& file,bool log,const symbols::SymbolsTable& stb)
+    bool Java::create(bool log,const symbols::SymbolsTable& stb)
 	{
+		
 		for(symbols::SymbolsTable::const_iterator it = stb.begin(); it != stb.end(); it++)
 		{
 			symbols::ISpace* ispace = it->second;
 			if(ispace->what() == symbols::SpaceType::TABLE)
-            {
+            {				
                 symbols::Table* table = (symbols::Table*) ispace;
-                createClassCPP(*table,file,table->getName());
+				writeResult = new std::ofstream();
+				filename = table->getName();
+				filename +=  ".java";
+				writeResult->open(filename);
+                createClass(*table,*writeResult,table->getName());
+				writeResult->flush();
+				writeResult->close();
+				delete writeResult;
             }
             else if(ispace->what() == symbols::SpaceType::SPACE)
             {
-                symbols::Space* space = (symbols::Space*) ispace;
-                file << "namespace " ;
-                if(space->getName().empty())
-                {
-                    file << configureProject.name;
-                }
-                else
-                {
-                    file << space->getName() << std::endl;
-                }
-                file << "{\n";
-                //std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
-                file << "\n\n";
-                for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
-                {
-                    createCPP(file,log,it->second);
-                }
-                file << "\n}\n";
-                file << std::endl;
+                
             }
-		}	
+		}
+		
 		return true;
 	}
-    /*void CPP::createSpaceCPP(std::ofstream& file)
-    {
-                file <<"namespace "<< configureProject.name << std::endl;
-                file <<"{"<<std::endl;
-		
-                const std::map<const char*,symbols::Space*,symbols::cmp_str>& spacies = analyzer.getListTableConst();
-                
-                //for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
-                {
-                       if(strcmp(it->first,"") != 0)
-                        {
-                                short level = symbols::getSpaceLevel(it->first);
-                                for(short i = 0; i < level ; i++) file << "\t";
-                                file << "namespace " << it->second->getFirstName()  << std::endl;
-                                for(short i = 0; i < level ; i++) file << "\t";
-                                file << "{" << std::endl;
-                        }
-                        //for(auto table: *(it->second)) //reading attrubtes by table
-                        for(std::list<symbols::Table*>::iterator itT = it->second->begin(); itT != it->second->end(); itT++ )
-                        {
-                                createClassCPP(**itT,file,(*itT)->getName());
-                        }
-                        if(strcmp(it->first,"") != 0)
-                        {
-                                short level = symbols::getSpaceLevel(it->first);
-                                for(short i = 0; i < level ; i++) file << "\t";
-                                file << "}" << std::endl;
-                        }
-                }
-                file <<"}"<<std::endl;
-    }*/
-    void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
-    {                
-        //for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
-        const ConfigureProject::Table* tb = configureProject.findDownloadTable(table.getName());
-        if(tb != NULL)
-        {
-            for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itF = tb->begin(); itF != tb->end(); itF++)
-            {
-                if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-                {        
-                    ofile << "\t\tbool " << itF->first << "(octetos::db::mysql::Connector& connector);"<<std::endl;
-                }
-                else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-                {
-                    ofile << "\t\tbool " << itF->first << "(octetos::db::mariadb::Connector& connector);"<<std::endl;
-                }
-                else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-                {
-                    ofile << "\t\tbool " << itF->first << "(octetos::db::postgresql::Connector& connector);"<<std::endl;
-                }
-                else
-                {
-                    std::string msg = "Lenguaje no soportado " ;
-                    throw BuildException(msg);
-                }
-            }
-        }
-    }
-        
-	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile)
-	{
-			
-            if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-            {        
-                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::db::mysql::Connector& connector,const std::string& where, int leng = 0);"<<std::endl;
-            }
-            else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-            {
-                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::db::mariadb::Connector& connector,const std::string& where, int leng = 0);"<<std::endl;
-            }
-            else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-            {
-                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::db::postgresql::Connector& connector,const std::string& where, int leng = 0);"<<std::endl;
-            }
-            else
-            {
-                std::string msg = "Lenguaje no soportado " ;
-                throw BuildException(msg);
-            }
-                
-			//std::cout << "List Select Count : " << configureProject.selects.size() << std::endl;
-			//for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.selects.begin(); it != configureProject.selects.end(); it++)
-			
-				
-                        //std::cout << " Verificando " << table.getName();
-                        //std::cout << " tenga selects para : " << it->second->getName()  << std::endl;
-                        /*if(table.getName().compare(it->second->getName()) != 0) 
-                        {
-                                continue;//buscar la configuracion de la tabla correspondiente
-                        }*/
-				const ConfigureProject::Table* tb = configureProject.findSelectTable(table.getName());
-				if(tb != NULL) 
-				{
-					//std::cout << "Se encontro la tabla '" << table.getName() << std::endl;
-                        for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = tb->begin(); itT != tb->end(); itT++)
-                        {
-                            
-                            if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-                            {       
-                                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* " << itT->second->getName() << "(octetos::db::mysql::Connector& connector,";
-                            }
-                            else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-                            {
-                                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* " << itT->second->getName() << "(octetos::db::mariadb::Connector& connector,";
-                            }
-                            else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-                            {
-                                ofile << "\t\tstatic std::vector<" << table.getName() << "*>* " << itT->second->getName() << "(octetos::db::postgresql::Connector& connector,";
-                            }
-                            else
-                            {
-                                std::string msg = "Lenguaje no soportado " ;
-                                throw BuildException(msg);
-                            }
-                                //std::cout << "Generando codigo para  : " << itT->second->getName() << std::endl;
-                                const apidb::ConfigureProject::Parameters* params = itT->second->getParameters();                                
-                                apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
-                                itParamEnd--;
-                                for(const std::string& param : *params)
-                                {
-                                        auto fl = table.find(param.c_str());
-                                        if(fl != table.end())
-                                        {
-                                        if((*fl).second->getOutType().compare("std::string") == 0)
-                                        {
-                                                ofile << "const std::string& ";
-                                        }
-                                        else if((*fl).second->getSymbolReferenced() != NULL)
-                                        {
-                                                ofile << "const " << (*fl).second->getSymbolReferenced()->getClassParent()->getName() << "& ";
-                                        }
-                                        else
-                                        {
-                                                ofile << (*fl).second->getOutType() << " ";                            
-                                        }
-                                        }
-                                        ofile << param; 
-                                        if(param != *itParamEnd)
-                                        {
-                                        ofile << ",";
-                                        }
-                                }                                
-                                ofile << ", int leng = 0);"<<std::endl;                                
-                        }
-                }
-	}
-        /**
-        * Genera las funciones insert solo con los datos marcados como requeridos en la DB.
-        */
-        void CPP::writeInsertH(const apidb::symbols::Table& table,std::ofstream& ofile)
-	{
-		int countFIelds = 0;
-		// creando insert
-        ofile << "\t\t"<< "bool ";
-        if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-        {        
-            ofile << "insert(octetos::db::mysql::Connector& connector";
-        }
-        else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-        {
-            ofile << "insert(octetos::db::mariadb::Connector& connector";
-        }
-        else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-        {
-            ofile << "insert(octetos::db::postgresql::Connector& connector";
-        }
-        else
-        {
-            std::string msg = "Lenguaje no soportado " ;
-            throw BuildException(msg);
-        }
-        for(std::list<symbols::Symbol*>::const_iterator i = table.getRequired().begin(); i != table.getRequired().end(); i++)
-        {
-            if((*i)->getOutType().compare("int") == 0 && (*i)->isPrimaryKey() && (*i)->isAutoIncrement()) continue; //la llave no se optine como parametro
-            
-			countFIelds++;
-			if(i != table.getRequired().end())
-			{
-				ofile << " ,"; //se agrega la coma si hay un segundo parametro
-			}
-				
-			//
-			if((*i)->getClassReferenced() == NULL)
-			{
-				ofile << (*i)->getOutType() << " ";
-			}
-			else
-			{
-				ofile << "const " << (*i)->getClassReferenced()->getName() << "& ";
-				//ofile << "const " << (*i)->outType <<"& ";
-			}
-			ofile << (*i)->getName();
-		}
-        ofile << ");"<<std::endl;
-        
-		//if(countFIelds == 0) throw BuildException(table.name + " no tiene campo requerido por lo que no se puede generar metodo insert."); 
-	}
-	void CPP::writeDefaultContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
-	{
-		ofile <<"\t\t"<<table.getName()<<"();"<<std::endl;
-	}
-	void CPP::writeCopyContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
-	{
-		//constructor de copias 
-		ofile << "\t\t" << table.getName() <<"(const " << table.getName() <<"&);"<< std::endl;
-	}
-    void CPP::writeKeyContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
-	{
-        //constructor que toma key como parametro
-        if(table.getKey().size() > 0)//tiene key
-        {
-            ofile << "\t\t" <<table.getName() << "(";
-            auto endIt = table.getKey().end();
-            endIt--;
-            for(auto k : table.getKey())
-            {
-                if(k->getOutType().compare("std::string") == 0)
-                {
-                    ofile << "const " << k->getOutType() << "&";
-                }
-                else
-                {
-                    ofile << k->getOutType();                    
-                }
-                if(k != *endIt)
-                {
-                    ofile << ",";
-                }
-            }
-            ofile << ");"<<std::endl;
-		}
-		else
-		{
-			std::string msg = "Requirio la generacion de constructor de llave, pero la tabla '";
-			msg = msg + table.getName();
-            msg = msg + "'  no tiene llave, revise su configuracion o so modelo de DB";
-#ifndef NDEBUG
-			throw BuildException(msg,__FILE__,__LINE__);
-#else
-            throw BuildException(msg);
-#endif
-		}
-	}
-	void CPP::createClassMethodesH(const apidb::symbols::Table& table,std::ofstream& ofile)
-        {
-            std::string insertMethode = "";
-            for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
-            {
-                //get
-                if((it->second->getOutType().compare("char") == 0) | (it->second->getOutType().compare("short") == 0) | (it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0) | (it->second->getOutType().compare("float") == 0) | (it->second->getOutType().compare("double") == 0))
-                {
-                    if(it->second->getClassReferenced() == NULL)//si es foreing key
-                    {
-                        ofile <<"\t\t"<< it->second->getOutType() << " ";						
-                    }
-                    else
-                    {
-                        ofile <<"\t\t"<< "const " << it->second->getClassReferenced()->getName() << "& ";
-                    }
-                }
-                else
-                {
-                    ofile <<"\t\t" << "const " << it->second->getOutType() <<"& ";
-                }
-                ofile << it->second->getGet() << " const;"<< std::endl;
-                
-                            
-                //get key
-                if(it->second->isPrimaryKey() && !it->second->isForeignKey())
-                {
-                    ofile <<"\t\t"<< it->second->getOutType() << " getKey" << it->second->getUpperName() << "() const;"<< std::endl;
-                }
-                else if(it->second->isForeignKey())
-                {
-                    ofile <<"\t\t"<< it->second->getOutType() << " getKey" << it->second->getUpperName() << "() const;"<< std::endl;
-                }
-                
-                //getString()			
-                ofile << "\t\tstd::string get" << it->second->getUpperName() << "String() const;"<< std::endl;		
-                //update
-                if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-                {        
-                    ofile << "\t\tbool " << "update" << it->second->getUpperName() << "(octetos::db::mysql::Connector& connector,";
-                }
-                else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-                {
-                    ofile << "\t\tbool " << "update" << it->second->getUpperName() << "(octetos::db::mariadb::Connector& connector,";
-                }
-                else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-                {
-                    ofile << "\t\tbool " << "update" << it->second->getUpperName() << "(octetos::db::postgresql::Connector& connector,";
-                }
-                else
-                {
-                    std::string msg = "Lenguaje no soportado " ;
-                    throw BuildException(msg);
-                }
-                if(it->second->getClassReferenced() != 0)
-                            {
-                                    ofile << " const " << it->second->getClassReferenced()->getName() << "& " << it->second->getName();
-                            }
-                            else if((it->second->getOutType().compare("std::string") == 0))
-                            {
-                                    ofile << "const std::string& " << it->second->getName();
-                            }
-                            else if((it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0))
-                {
-                    ofile << it->second->getOutType() << " " << it->second->getName();						
-                }
-                else
-                {
-                    ofile << it->second->getOutType() << " " << it->second->getName();
-                }
-                ofile << ");"<< std::endl;            
-        }
-                 
-		writeKeyContructorH(table,ofile);		
-		writeCopyContructorH(table,ofile);
-		writeDefaultContructorH(table,ofile);
-		writeInsertH(table,ofile);	
-        writeSelectsH(table,ofile);
-        writeDownloadsH(table,ofile);
-    }
-    void CPP::createClassAttributesH(const apidb::symbols::Table& table,std::ofstream& ofile)
-    {
-                for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
-                {
-                        if(it->second->getClassReferenced() != NULL && (it->second->getOutType().compare("int") == 0 || it->second->getOutType().compare("std::string") == 0))
-                        {
-                                ofile << "\t\t" << it->second->getClassReferenced()->getName() << "* "<< it->second->getName()<<";"<< std::endl;
-                        }
-                        else
-                        {
-                                //ofile <<"[3]"<<std::endl;
-                                ofile << "\t\t" << it->second->getOutType() << " " << it->second->getName() <<";"<< std::endl;
-                        }
-                }
-    }
-    void CPP::createClassPublicH(std::ofstream& file)
-    {
-        file << "\tpublic:" <<std::endl;
-    }
     
-    void CPP::createClassPrivateH(std::ofstream& file)
-    {
-        file << "\tprivate:" <<std::endl;
-    }
-    void CPP::createClassH(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass,bool log)
-    {
-		//file <<"keyword"<<std::endl;
-        std::string msg1 = "\n\tHeading class ";
-        msg1 += cl.getName() + "";
-		if(log) analyzer.getOutput().add(msg1);
-        short level = symbols::getSpaceLevel(cl.getFullName());
-        for(short i =0; i < level ; i++) file << "\t";
-        file <<"\tclass "<<nameClass<<std::endl;  
-        for(short i =0; i < level ; i++) file << "\t";      
-        file <<"\t{"<<std::endl;
-        //file <<"private"<<std::endl;
-        createClassPrivateH(file);
-        for(short i =0; i < level ; i++) file << "\t";
-        file << "\t\tstatic const std::string TABLE_NAME;" <<std::endl;
-        //file <<"atributes"<<std::endl;
-        createClassAttributesH(cl,file);
-        createClassPublicH(file);
-        //file <<"methodes"<<std::endl;
-        createClassMethodesH(cl,file);
-        for(short i =0; i < level ; i++) file << "\t";
-        file <<"\t};"<<std::endl;
-    }
-    bool CPP::createH(std::ofstream& file,bool log,const symbols::ISpace* ispace)
-	{
-		if(ispace->what() == symbols::SpaceType::TABLE)
-        {
-            symbols::Table* table = (symbols::Table*) ispace;
-            createClassH(*table,file,table->getName(),log);
-        }
-        else if(ispace->what() == symbols::SpaceType::SPACE)
-        {
-            symbols::Space* space = (symbols::Space*) ispace;
-            file << "namespace " ;
-            if(space->getName().empty())
-            {
-                file << configureProject.name;
-            }
-            else
-            {
-                file << space->getName() << std::endl;
-            }
-            file << "{\n";
-            //std::cout << "Espacio '" << space->getName() << "'" << std::endl;
-            for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
-            {
-                createH(file,log,it->second);
-            }
-            file << "\n}\n";
-        }
-		
-		return true;
-	}
-    bool CPP::createDatconnectHPP(std::ofstream& file,bool log)
+        
+	
+	
+    bool Java::createDatconnect(std::ofstream& file,bool log)
 	{
 		if(!configureProject.writeDatconnect.empty() and configureProject.writeDatconnect.compare("¿?") != 0)
 		{
@@ -1620,42 +1189,7 @@ namespace generators
 		
 		return true;
 	}
-    bool CPP::createH(std::ofstream& file,bool log,const symbols::SymbolsTable& stb)
-	{
-		for(symbols::SymbolsTable::const_iterator it = stb.begin(); it != stb.end(); it++)
-		{
-			symbols::ISpace* ispace = it->second;
-            if(ispace->what() == symbols::SpaceType::TABLE)
-            {
-                symbols::Table* table = (symbols::Table*) ispace;
-                createClassH(*table,file,table->getName(),log);
-            }
-            else if(ispace->what() == symbols::SpaceType::SPACE)
-            {
-                symbols::Space* space = (symbols::Space*) ispace;
-                file << "namespace " ;
-                if(space->getName().empty())
-                {
-                    file << configureProject.name;
-                }
-                else
-                {
-                    file << space->getName() << std::endl;
-                }
-                file << "{\n";
-                createDatconnectHPP(file,log);
-                file << "\n\n";
-                //std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;
-                for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
-                {
-                    createH(file,log,it->second);
-                }
-                file << "\n}\n";
-                file << std::endl;
-            }
-		}	
-		return true;
-	}    
+       
 }
 }
 }

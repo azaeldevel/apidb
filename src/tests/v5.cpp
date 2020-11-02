@@ -41,6 +41,7 @@ std::string random_string( size_t length )
 
 static std::string filename;
 static std::string filename_nlst;
+static std::string fnJava;
 #ifdef APIDB_MYSQL
 static octetos::db::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456");
 #endif
@@ -54,6 +55,7 @@ static octetos::db::mariadb::Datconnect mariaSource("localhost",3306,"sysapp.alp
 static std::string sysappv1Filename = "sysappv1-alpha.apidb";
 static std::string sysappv20Filename = "sysappv20-alpha.apidb";
 static std::string sysappv30Filename = "sysappv30-alpha.apidb";
+static std::string sysappjava = "sysapp-java-alpha.apidb";
 
 /* The suite initialization function.
  * Opens the temporary file used by the tests.
@@ -63,6 +65,7 @@ int init_apidb(void)
 {
         filename = random_string(50);
         filename_nlst = random_string(50);
+		fnJava = random_string(50);
         return 0;
 }
 
@@ -74,6 +77,7 @@ int clean_apidb(void)
 {
         remove(filename.c_str());
         remove(filename_nlst.c_str());
+        remove(fnJava.c_str());
         return 0;
 }
 
@@ -208,6 +212,31 @@ void testCreateProject()
 	{
 		CU_ASSERT(false);
 	}
+	
+	
+	
+	
+	
+	//>>>>>>>>>>>>>>>>>>>>>for java
+	configProject.outputLenguaje = octetos::apidb::OutputLenguajes::JAVA;	
+	//configProject.packing = octetos::apidb::PackingLenguajes::CMake;
+	
+	if(octetos::core::Error::check())
+	{
+		std::cout << octetos::core::Error::get().describe() << std::endl;
+		CU_ASSERT(false)
+		return;
+	}
+	try
+	{
+		configProject.saveConfig(fnJava);
+		CU_ASSERT(true);
+	}
+	catch (std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << e.what() << "\n";
+	}
 }
 
 void testBuild_nlst()
@@ -257,7 +286,7 @@ void testBuild()
     //std::cout << "testBuild: Step 1.1\n";
 	try
 	{
-		configProject.readConfig(filename);
+		configProject.readConfig(fnJava);
 		CU_ASSERT(true);
 	}
 	catch(octetos::core::Error e)
@@ -411,6 +440,7 @@ int main(int argc, char *argv[])
         {
             //std::cout << argv[i] << ";\n";
             runTest = std::stoi(argv[i + 1]);
+			i++;
         }
         else if(strcmp(argv[i],"--run-all") == 0)
         {
@@ -427,7 +457,7 @@ int main(int argc, char *argv[])
 #endif
             enableMySQL = true;
 			serverscount++;
-        }  
+        }
         if(strcmp(argv[i],"--enable-postgresql") == 0)
         {
             //std::cout << argv[i] << ";\n";

@@ -86,8 +86,8 @@ namespace apidb
         {
 			NoLang,
 			C,
-            CPP
-            //JAVA,
+            CPP,
+            JAVA,
             //CSHARP,
             //PERL,
             //PYTHON

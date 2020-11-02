@@ -23,6 +23,9 @@
 #define APIDB_GENERATOR_HPP
 
 #include <fstream>
+#include <octetos/coreutils/shell.hh>
+
+
 namespace octetos
 {
  namespace apidb
@@ -47,11 +50,12 @@ namespace octetos
 			const ConfigureProject& configureProject;
 			apidb::Analyzer& analyzer;
 			const symbols::SymbolsTable& getSymbolsTable()const;
+			coreutils::Shell shell;
 		};
 		
-                /**
-                 * \private No es parte del API
-                 * */
+		/**
+		* \private 
+		* */
 		class CPP : public Generator
 		{
 		public:
@@ -103,10 +107,42 @@ namespace octetos
 			std::string projectCPP;
 		};
 		
+		/**
+		* \private 
+		* */
+		class Java : public Generator
+		{
+		public:
+			virtual bool generate(bool log);
+			Java(apidb::Analyzer&,const ConfigureProject&);
+			const std::string& getHeaderName() const;
+			std::ofstream& getSourceOutput();
+			virtual ~Java();
+			
+		private:			
+			bool create(bool log,const symbols::SymbolsTable&);
+			bool create(std::ofstream& file,bool log,const symbols::ISpace*);
+			void createClass(const apidb::symbols::Table&,std::ofstream&,const std::string&);
+			void createClassPrivate(std::ofstream&);
+			void createClassAttributes(const apidb::symbols::Table&,std::ofstream&);
+			void createClassPublic(std::ofstream&);
+			void createClassMethodes(const apidb::symbols::Table&,std::ofstream&);
+			void writeDefaultContructor(const apidb::symbols::Table&,std::ofstream&);
+			void writeKeyValue(const apidb::symbols::Table&,std::ofstream&);
+			void writeCopyContructor(const apidb::symbols::Table&,std::ofstream&);
+			void writeKeyContructor(const apidb::symbols::Table&,std::ofstream&);
+			void writeInsert(const apidb::symbols::Table&,std::ofstream&);
+			void writeDownloads(const apidb::symbols::Table&,std::ofstream&);
+			void writeSelects(const apidb::symbols::Table&,std::ofstream&);
+			bool createDatconnect(std::ofstream& file,bool log);
+			
+			std::ofstream* writeResult;//erreglo de writeoutput files
+ 			std::string filename;
+		};
 		
-                /**
-                 * \private No es parte del API
-                 * */
+		/**
+		* \private No es parte del API
+		* */
 		class CMake : public Generator
 		{
 		public:			

@@ -127,8 +127,8 @@ namespace apidb
                         case OutputLenguajes::CPP:
                                 xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"C++");
                                 break;
-                        case OutputLenguajes::C:
-                                xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"C");
+                        case OutputLenguajes::JAVA:
+                                xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"Java");
                                 break;
                         default:
                                 throw core::Error("Lenguaje de salida desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__); 
