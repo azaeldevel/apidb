@@ -160,6 +160,21 @@ namespace octetos
 			//Options options;
 			//const ConfigureProject& configureProject;
 		};	
+		
+		
+		/**
+		* \private No es parte del API
+		* */
+		class Maven : public Generator
+		{
+		public:			
+			virtual bool generate(bool log);
+			virtual ~Maven();
+			Maven(apidb::Analyzer&,const ConfigureProject&);
+			
+		private:
+			std::string filename;
+		};	
 	}
 		
 }

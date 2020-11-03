@@ -75,7 +75,8 @@ namespace apidb
         enum PackingLenguajes
         {
                 NoPack,
-                CMake
+                CMake,
+				Maven,
         };
         std::string getPackingLenguajes(PackingLenguajes);
         PackingLenguajes getPackingLenguajes(const std::string&);

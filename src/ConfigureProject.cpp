@@ -207,33 +207,33 @@ namespace apidb
         */
     ConfigureProject::~ConfigureProject()
     {
-        if(!handle) dlclose(handle);        
+        if(handle != NULL) dlclose(handle);        
     }
                 
 	bool ConfigureProject::testConexion()
-    {
-        bool ret = false;
-        if(inputLenguaje == apidb::InputLenguajes::MySQL)
-        {
-            //std::cout << "2 - createConnection:" << createConnection << "\n";
-            octetos::db::Connector*  connector = createConnector();
-            ret = connector->connect(*conectordb);
-            connector->close();
-        }
-        else if(inputLenguaje == apidb::InputLenguajes::PostgreSQL)
-        {
-            octetos::db::Connector*  connector = createConnector();
-            ret = connector->connect(*conectordb);
-            connector->close();
-        }        
-        else if(inputLenguaje == apidb::InputLenguajes::MariaDB)
-        {
-            octetos::db::Connector*  connector = createConnector();
-            ret = connector->connect(*conectordb);
-            connector->close();
-        }
-        return ret;
-    }
+    	{
+		bool ret = false;
+		if(inputLenguaje == apidb::InputLenguajes::MySQL)
+		{
+		    //std::cout << "2 - createConnection:" << createConnection << "\n";
+		    octetos::db::Connector*  connector = createConnector();
+		    ret = connector->connect(*conectordb);
+		    connector->close();
+		}
+		else if(inputLenguaje == apidb::InputLenguajes::PostgreSQL)
+		{
+		    octetos::db::Connector*  connector = createConnector();
+		    ret = connector->connect(*conectordb);
+		    connector->close();
+		}        
+		else if(inputLenguaje == apidb::InputLenguajes::MariaDB)
+		{
+		    octetos::db::Connector*  connector = createConnector();
+		    ret = connector->connect(*conectordb);
+		    connector->close();
+		}
+		return ret;
+    	}
     const core::Semver& ConfigureProject::getVersionProject()const
     {
         return projectVersion;

@@ -112,10 +112,10 @@ namespace generators
 		cmakelists<<"ENDIF()"<<std::endl;
         cmakelists<<std::endl;
     
-		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB REQUIRED octetos-db)"<<std::endl;
-		cmakelists<<"IF(OCTETOS_DB_FOUND)"<<std::endl;
+		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_ABSTRACT REQUIRED octetos-db-abstract)"<<std::endl;
+		cmakelists<<"IF(OCTETOS_DB_ABSTRACT_FOUND)"<<std::endl;
 		cmakelists<<"ELSE()\n";
-		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB library\")\n";
+		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB abtract library\")\n";
 		cmakelists<<"ENDIF()"<<std::endl;
 		cmakelists<<std::endl;
     

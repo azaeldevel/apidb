@@ -101,7 +101,7 @@
 data_type: BIT opt_length end
 	| TINYINT opt_length opt_uz end
 		{
-			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje== OutputLenguajes::C))
+			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje== OutputLenguajes::C) |  (driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA))
 			{
 				driver.oneLine = "short";
 			}
@@ -118,6 +118,10 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "unsigned char";
 			}
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
+			{
+				driver.oneLine = "byte";
+			}
 			else
 			{
                                 BuildException fail("OutputLenguaje is unknow.");
@@ -128,6 +132,10 @@ data_type: BIT opt_length end
 	| MEDIUMINT opt_length opt_uz end
 		{
 			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje== OutputLenguajes::C))
+			{
+				driver.oneLine = "int";
+			}
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
 				driver.oneLine = "int";
 			}
@@ -144,6 +152,10 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "int";
 			}
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
+			{
+				driver.oneLine = "int";
+			}
 			else
 			{
                                 BuildException fail("OutputLenguaje is unknow.");
@@ -157,6 +169,10 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "int";
 			}
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
+			{
+				driver.oneLine = "int";
+			}
 			else
 			{
                                 BuildException fail("OutputLenguaje is unknow.");
@@ -167,6 +183,10 @@ data_type: BIT opt_length end
 	| BIGINT opt_length opt_uz end
 		{
 			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje == OutputLenguajes::C))
+			{
+				driver.oneLine = "long";
+			}
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
 				driver.oneLine = "long";
 			}
@@ -184,6 +204,10 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "double";
 			}
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
+			{
+				driver.oneLine = "double";
+			}
 			else
 			{
                                 BuildException fail("OutputLenguaje is unknow.");
@@ -194,6 +218,10 @@ data_type: BIT opt_length end
 	| FLOAT opt_length opt_uz end
 		{
 			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje == OutputLenguajes::C))
+			{
+				driver.oneLine = "float";
+			}
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
 				driver.oneLine = "float";
 			}
@@ -210,6 +238,10 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "double";
 			}
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
+			{
+				driver.oneLine = "double";
+			}
 			else
 			{
                                 BuildException fail("OutputLenguaje is unknow.");
@@ -223,9 +255,9 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
@@ -240,9 +272,9 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
@@ -257,9 +289,9 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
@@ -274,9 +306,9 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
@@ -291,9 +323,9 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
@@ -308,9 +340,9 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
@@ -325,9 +357,9 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
@@ -348,9 +380,9 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
@@ -365,9 +397,9 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
@@ -382,9 +414,9 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
@@ -399,13 +431,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+				BuildException fail("OutputLenguaje is unknow.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -416,13 +448,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+				BuildException fail("OutputLenguaje is unknow.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -433,13 +465,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "std::string";
 			}
-			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::C)
+			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{
-				driver.oneLine ="const char*";
+				driver.oneLine = "String";
 			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+				BuildException fail("OutputLenguaje is unknow.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}

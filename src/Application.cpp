@@ -297,7 +297,7 @@ namespace apidb
                                 std::string msgstr = "";
                                 if(core::Error::check())
                                 {
-                                                msgstr = core::Error::get().what();
+                                                msgstr = (&core::Error::get())->what();
                                 }
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -348,7 +348,7 @@ namespace apidb
 			std::string msgstr = "";
 			if(core::Error::check())
 			{
-				msgstr = core::Error::get().what();
+				msgstr = (&core::Error::get())->what();
 			}
 			else
 			{
@@ -461,7 +461,7 @@ namespace apidb
 				std::string msgstr;
 				if(core::Error::check())
 				{
-					msgstr = core::Error::get().what();
+					msgstr = (&core::Error::get())->what();
 				}
 				else
 				{
@@ -804,7 +804,7 @@ namespace apidb
 			app->config->readConfig(filename);
 			
 		}
-		catch(std::exception e)
+		catch(std::exception& e)
 		{
 			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE, e.what());
 			gtk_dialog_run (GTK_DIALOG (msg)); 
@@ -824,8 +824,7 @@ namespace apidb
 		std::string msgstr = "";
 		if(core::Error::check())
 		{
-			core::Error e = core::Error::get();
-			msgstr = e.what();			
+			msgstr = (&core::Error::get())->what();			
 			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
 			gtk_dialog_run (GTK_DIALOG (msg));
 			gtk_widget_destroy (msg);
@@ -844,7 +843,7 @@ namespace apidb
 			std::string msgstr = "";
 			if(core::Error::check())
 			{
-				msgstr = core::Error::get().what();
+				msgstr = (&core::Error::get())->what();
 			}
 			else
 			{
@@ -869,7 +868,7 @@ namespace apidb
 		Application* app = (Application*)data;
 		std::string filename;
 		
-		GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"_Cancel",GTK_RESPONSE_CANCEL,"_Open",GTK_RESPONSE_ACCEPT,NULL);   
+		GtkWidget *dialog = gtk_file_chooser_dialog_new("Seleccionar Proyecto",NULL,GTK_FILE_CHOOSER_ACTION_OPEN,"_Cancel",GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL);   
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
 		{
 			char* tmpfilename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
@@ -1457,7 +1456,7 @@ namespace apidb
                                         std::string msgstr = "";
                                         if(core::Error::check())
                                         {
-                                                msgstr = core::Error::get().what();
+                                                msgstr = (&core::Error::get())->what();
                                         }
                                         else
                                         {

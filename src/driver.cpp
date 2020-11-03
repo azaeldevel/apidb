@@ -254,7 +254,7 @@ namespace apidb
 		
         //std::cout << "Driver::generate : Step 2\n";
         
-		bool flagCPP,flagCMAKE,flagJava;
+		bool flagCPP,flagCMAKE,flagJava,flagMaven;
 		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
             //std::cout << "Driver::generate : Step 2.1\n";
@@ -284,6 +284,12 @@ namespace apidb
 			apidb::generators::CMake cmake(*analyzer,configureProject);			
 			if(progress != NULL)flagCMAKE = cmake.generate(true);
             else flagCMAKE = cmake.generate(false);
+        }
+        else if(configureProject.packing == PackingLenguajes::Maven)
+        {
+			apidb::generators::Maven maven(*analyzer,configureProject);			
+			if(progress != NULL)flagMaven = maven.generate(true);
+            else flagMaven = maven.generate(false);
         }
         else
         {

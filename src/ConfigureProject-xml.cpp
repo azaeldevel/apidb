@@ -73,6 +73,7 @@ namespace apidb
 		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(versionResult.getMinor()).c_str());
 		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(versionResult.getPatch()).c_str());
 		
+				
 		xmlNodePtr db_node = xmlNewChild(root_node, NULL, (const xmlChar *)"ConectorDB", NULL);
 		if(inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
@@ -100,7 +101,7 @@ namespace apidb
 		}
 		else
 		{
-            throw core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
+            		throw core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
 		}
                                 
         //
@@ -406,7 +407,8 @@ namespace apidb
             if (!processNode(reader)) 
             {
                 //fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
-                throw  core::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode,__FILE__,__LINE__);
+                //throw  core::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode,__FILE__,__LINE__);
+                return;
             }
             //std::cout << "ConfigureProject::readConfig: Step 9.2.2\n";
             xmlFreeTextReader(reader);
@@ -746,12 +748,10 @@ namespace apidb
                 if(outL.compare("C++") == 0)
                 {
                         outputLenguaje = OutputLenguajes::CPP;
-                        //std::cout << "LANG = C++" <<  std::endl;
                 }     
-                else if(outL.compare("C") == 0)
+                else if(outL.compare("Java") == 0)
                 {
-                        outputLenguaje = OutputLenguajes::C;
-                        //std::cout << "LANG = C++" <<  std::endl;
+                        outputLenguaje = OutputLenguajes::JAVA;
                 }
                 else
                 {

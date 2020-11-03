@@ -289,10 +289,10 @@ void testBuild()
 		configProject.readConfig(fnJava);
 		CU_ASSERT(true);
 	}
-	catch(octetos::core::Error e)
+	catch(octetos::core::Error& e)
 	{
         CU_ASSERT(false);
-                
+		std::cout << e.what() << "\n";
         return;		
 	}
 
@@ -305,7 +305,7 @@ void testBuild()
     }
     octetos::apidb::Tracer tracer(0);
     //std::cout << "testBuild: Step 3\n";
-    if(!driver.driving(NULL))
+    if(!driver.driving(&tracer))
     {
         if(octetos::core::Error::check())
         {
