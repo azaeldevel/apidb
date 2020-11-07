@@ -67,6 +67,7 @@ namespace apidb
 			}
 			else
 			{
+				std::cout << "Val : " << str << "\n";
 				iterator it2 = find(str.c_str());
 				if(it2 != end())
 				{

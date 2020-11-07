@@ -28,40 +28,22 @@
 #include "common.hpp"
 #include "Errors.hpp"
 #include "analyzer.hpp"
-
+#include "common-mysql.hpp"
 
 namespace octetos
 {
 namespace apidb
 {
-    /*bool createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password, octetos::db::Datconnect** dat)
-    {
-        (*dat) = new octetos::db::mysql::Datconnect(host,port,database,usuario,password);
-        return true;
-    }
-    bool createDatconnect(octetos::db::Datconnect** dat)
-    {
-        (*dat) = new octetos::db::mysql::Datconnect();
-        return true;
-    }
-    bool createConnector(octetos::db::Connector** conn)
-    {
-        (*conn) = new octetos::db::mysql::Connector();
-        return true;
-    }*/
-
-    bool symbols::Table::basicSymbolsPostgreSQL(octetos::db::Connector& connect)
-    {
-        std::string msg = "No se ha activado el soporte para PostgreSQL.";
-        core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
-        
-        return false;
-    }
+	symbols::TableMySQL::TableMySQL(const std::string& s): Table(s)
+	{
+	
+	}
+   
 
     /**
     * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
     */
-    bool symbols::Table::fillKeyType(octetos::db::Connector& connect,const SymbolsTable& symbolsTable)
+    bool symbols::TableMySQL::fillKeyType(octetos::db::Connector& connect,const SymbolsTable& symbolsTable)
 	{
         /**
         * Lista las relaciones de llaves foraneas para la tabla actual
@@ -126,7 +108,7 @@ namespace apidb
     }
 	
 	
-    bool symbols::Table::basicSymbolsMySQL(octetos::db::Connector& connect)
+    bool symbols::TableMySQL::basicSymbols(octetos::db::Connector& connect)
     {
         std::string str = "DESCRIBE ";
         if(space.compare("") != 0)

@@ -142,9 +142,6 @@ namespace apidb
         * \brief Identifica el tipo del Servidor de base de datos
         * */
         InputLenguajes inputLenguaje;
-        bool enabledMySQL;
-        bool enabledMariaDB;
-        bool enabledPostgreSQL;  
         /**
         * \brief Información de conexión a la base de datos, esta opcion sera removida en v5
         * \deprecated Sera removido de la interface publica en v5, usar getDatconnection() en su lugar.

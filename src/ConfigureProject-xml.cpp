@@ -707,19 +707,19 @@ namespace apidb
                 name = xmlTextReaderConstName(reader);
                 std::string inL = (const char*)xmlTextReaderConstValue(reader);
                 //std::cout << "ConfigureProject::getProjectNodes : v1.1.0 update - 2.\n";
-                if(inL.compare("MySQL") == 0 and enabledMySQL)
+                if(inL.compare("MySQL") == 0)
                 {
                     setInputLenguaje(InputLenguajes::MySQL);
                     conectordb = createDatConnection();
                     conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);
                 }
-                else if(inL.compare("PostgreSQL") == 0 and enabledPostgreSQL)
+                else if(inL.compare("PostgreSQL") == 0)
                 {
                     setInputLenguaje(InputLenguajes::PostgreSQL);
                     conectordb = createDatConnection();
                     conectordb->set(InputLenguajes::PostgreSQL,host,port,database,user,password);
                 }
-                else if(inL.compare("MariaDB") == 0 and enabledMariaDB)
+                else if(inL.compare("MariaDB") == 0)
                 {
                     setInputLenguaje(InputLenguajes::MariaDB);
                     conectordb = createDatConnection();
@@ -728,6 +728,14 @@ namespace apidb
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML. El driver '";
+                    msgstr += inL;
+                    msgstr += "' solicitado no existe o no hay soporte activo para dicho driver.";
+                    core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
+                    return false;
+                }
+                if(handle == NULL)
+                {
+                	std::string msgstr = "Fallo durante el parseo XML. El driver '";
                     msgstr += inL;
                     msgstr += "' solicitado no existe o no hay soporte activo para dicho driver.";
                     core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));

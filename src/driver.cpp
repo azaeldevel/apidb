@@ -94,6 +94,12 @@ namespace apidb
 		symbols::Space* space;		
 		if(actualspace ==  NULL)
 		{
+			if(analyzer == NULL)
+			{	
+				std::string msg = "No se ha asignado el analizador '";
+				core::Error::write(core::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
+				return false;
+			}
 			symbols::Space* global = analyzer->symbolsTable.findSpace(configureProject.name);
 			if(global == NULL)
 			{

@@ -27,7 +27,9 @@
 #else 
 	#error "Plataforma desconocida."
 #endif
+
 #include <iostream>
+#include <mysql/mysql.h>
 #include <string>
 #include <octetos/db/clientdb-mysql.hh>
 #include "analyzer.hpp"

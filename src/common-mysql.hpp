@@ -18,8 +18,8 @@
  * 
  * */
 
-#ifndef APIDB_COMMON_POSTGRESQL_HPP
-#define APIDB_COMMON_POSTGRESQL_HPP
+#ifndef APIDB_COMMON_TABLEMYSQL_HPP
+#define APIDB_COMMON_TABLEMYSQL_HPP
  
 #include "common.hpp"
 
@@ -31,12 +31,12 @@ namespace apidb
 { 
 namespace symbols
 {
-    class TablePostgreSQL : public Table
+    class TableMySQL : public Table
     {
     public:
         virtual bool basicSymbols(octetos::db::Connector& connect); 
 		virtual bool fillKeyType(octetos::db::Connector& connect, const SymbolsTable&);
-        TablePostgreSQL(const std::string& );
+        TableMySQL(const std::string& );
     };
 }
 }

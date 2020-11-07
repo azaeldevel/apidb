@@ -43,7 +43,7 @@ static std::string filename;
 static std::string filename_nlst;
 static std::string fnJava;
 #ifdef APIDB_MYSQL
-static octetos::db::mysql::Datconnect mysqlSource("192.168.0.101",3306,"sysappv2.alpha","develop","123456");
+static octetos::db::mysql::Datconnect mysqlSource("localhost",3306,"sysapp.alpha","sysapp","123456");
 #endif
 #ifdef APIDB_POSTGRESQL
 static octetos::db::postgresql::Datconnect postgresqlSource("localhost",5432,"sysapp_alpha","sysapp","123456"); 

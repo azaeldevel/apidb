@@ -52,7 +52,7 @@ namespace apidb
     {
         if(conectordb) 
         {
-            //destroy conectordb
+            destroyDatConnection(conectordb);
             conectordb = NULL;
         }
         conectordb = createDatConnection();
@@ -259,7 +259,7 @@ namespace apidb
             std::string msgErr ="No se reconoce el driver solicitado :\n" ;
             msgErr = msgErr + "\t" + dlerror();
             core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);            
-            throw (err);
+            return false;
         }
         
         handle = dlopen(libname.c_str(), RTLD_LAZY);
@@ -328,21 +328,7 @@ namespace apidb
         createConnector = NULL;
         createDatConnection = NULL;
         conectordb = NULL;
-#ifdef APIDB_MARIADB
-        enabledMariaDB = true;
-#else
-        enabledMariaDB = false;
-#endif
-#ifdef APIDB_MySQL
-        enabledMySQL = true;
-#else
-        enabledMySQL = false;
-#endif
-#ifdef APIDB_POSTGRESQL
-        enabledPostgreSQL = true;
-#else
-        enabledPostgreSQL = false;
-#endif
+	
     }
 
 }
