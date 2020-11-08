@@ -286,7 +286,7 @@ void testBuild()
     //std::cout << "testBuild: Step 1.1\n";
 	try
 	{
-		configProject.readConfig(fnJava);
+		configProject.readConfig(filename);
 		CU_ASSERT(true);
 	}
 	catch(octetos::core::Error& e)

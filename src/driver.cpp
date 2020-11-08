@@ -38,15 +38,20 @@ namespace apidb
 {
     bool Driver::loadLibrary()
     {
+    	if(configureProject.checkFailLoadDat())
+    	{
+    		return false;
+    	}
+    	
+    	
         void* handle = configureProject.getLibraryHandle();
-        if(handle == NULL)
-        {
-			std::string msg = "Falla al intetar cargar la funcion de libreia 'destroyAnalyzer'";
-			core::Error::write(core::Error(msg,ErrorCodes::DRIVER_FAIL ,__FILE__,__LINE__));
-			return false;
-        }
-        
-        
+      	if(handle == NULL)
+		{
+				std::string msg = "Falla al intentar cargar la funcion de libreia 'destroyAnalyzer'";
+				core::Error::write(core::Error(msg,ErrorCodes::NODBCONECTOR_POSTPONED ,__FILE__,__LINE__));
+				return false;
+		}
+
         create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
         destroy = (void (*)(octetos::apidb::Analyzer*))dlsym(handle, "destroyAnalyzer");
         
@@ -154,29 +159,25 @@ namespace apidb
 	{ 
 		analyzer = NULL;
         
-        if(!loadLibrary())
+        if(loadLibrary())
         {
-            return;
+			connector = config.newConnector();
+		    try
+		    {
+		        bool flag = connector->connect(*(config.getDatconnection()));
+		        if(!flag)
+		        {
+		            delete connector;
+		            connector = NULL;
+		        }
+		    }
+		    catch(octetos::db::SQLException ex)
+		    {
+		        //std::cout <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
+		        core::Error err(ex.what(), ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
+		        core::Error::write(err);
+		    }
         }
-        
-		connector = config.newConnector();
-        
-        try
-        {
-            bool flag = connector->connect(*(config.getDatconnection()));
-            if(!flag)
-            {
-                delete connector;
-                connector = NULL;
-            }
-        }
-        catch(octetos::db::SQLException ex)
-        {
-            //std::cout <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
-            core::Error err(ex.what(), ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
-            core::Error::write(err);
-        }                    
-		
 	}
 		
 	OutputLenguajes Driver::getOutputLenguaje() const
@@ -387,6 +388,10 @@ namespace apidb
         //std::cout << "Driver::analyze : Step 1\n";
             
         //std::cout << "Driver::analyze : Step 2\n";
+        if(connector == NULL) 
+        {        
+        	return false;
+        }
         
         analyzer = create(&configureProject,connector,progress);
         

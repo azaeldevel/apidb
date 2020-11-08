@@ -65,7 +65,9 @@ namespace apidb
                 
                 DRIVER_FAIL,
 				
-				APIDB_FAIL
+				APIDB_FAIL,
+				
+				NODBCONECTOR_POSTPONED
                 
         };
         

@@ -812,24 +812,34 @@ namespace apidb
         }  
 	void Application::documen_open(Application* app,const std::string& filename)
 	{
-		//std::cout << "Application::documen_open: Step 1 "<< std::endl;
+		std::cout << "Application::documen_open: Step 1 "<< std::endl;
 		if(app->config == NULL)
 		{
 			app->config = new ConfigureProject();
 		}
-		//std::cout << "Application::documen_open : Step 2" << std::endl;
+		std::cout << "Application::documen_open : Step 2" << std::endl;
 		try
 		{
 			//std::cout << "Application::documen_open : Step 2.1" << std::endl;            
 			//std::cout << "Application::documen_open : Step 2.2" << std::endl;
 			app->config->readConfig(filename);
-			if(core::Error::check())
+			if(app->config->checkFailLoadDat())
 			{
+				app->originFilename = filename;
+				app->createNotebook();
+				app->loadConfig();
+				app->setSaved(true);
+				app->isOpen = true;
+				app->isNew = false;
+				gtk_widget_show_all(app->window);
+				return;
+			}
+			else if(core::Error::check())
+			{				
 				std::string msgstr = (&core::Error::get())->what();
 				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
 				gtk_dialog_run (GTK_DIALOG (msg));
 				gtk_widget_destroy (msg);
-				return;
 			}			
 		}
 		catch(std::exception& e)
@@ -839,16 +849,17 @@ namespace apidb
 			gtk_widget_destroy (msg);
 			return;
 		}
-		//std::cout << "Application::documen_open : Step 3" << std::endl;
+		std::cout << "Application::documen_open : Step 3" << std::endl;
 		if(app->driver != NULL) 
 		{
 			delete (app->driver);
 			app->driver = NULL;
 		}
-		//std::cout << "Application::documen_open : Step 3.5 : " << app->config->conectordb->getHost() << std::endl;
 
-		//std::cout << "Step 3.6" << std::endl;
+		std::cout << "Application::documen_open : Step 3.6" << std::endl;
+		
 		app->driver = new Driver(*(app->config));
+		
 		std::string msgstr = "";
 		if(core::Error::check())
 		{
@@ -865,7 +876,7 @@ namespace apidb
 			gtk_widget_show_all(app->window);
 			return;
 		}
-		//std::cout << "Application::documen_open : Step 4" << std::endl;
+		std::cout << "Application::documen_open : Step 4" << std::endl;
 		if(!app->driver->analyze(NULL))
 		{
 			std::string msgstr = "";
@@ -881,7 +892,7 @@ namespace apidb
 			gtk_dialog_run (GTK_DIALOG (msg)); 
 			gtk_widget_destroy (msg);                                
 		}
-		//std::cout << "Application::documen_open : Step 5" << std::endl;
+		std::cout << "Application::documen_open : Step 5" << std::endl;
 		app->originFilename = filename;
 		app->createNotebook();
 		app->loadConfig();
@@ -889,7 +900,7 @@ namespace apidb
 		app->isOpen = true;
 		app->isNew = false;
 		gtk_widget_show_all(app->window);
-		//std::cout << "Application::documen_open : Step 6" << std::endl;
+		std::cout << "Application::documen_open : Step 6" << std::endl;
 	}
 	void Application::document_open (GtkWidget *widget, gpointer   data)
 	{
@@ -906,10 +917,7 @@ namespace apidb
 		}
 		gtk_widget_destroy (dialog);
 		
-		if(app->config == NULL)
-		{
-			app->config = new ConfigureProject();
-		}		
+				
 		documen_open(app,filename);
 	}
         gboolean Application::inVer_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)

@@ -150,8 +150,13 @@ namespace apidb
         
         void* getfnDatConection();
         void* getfnCreateConector();
+        bool enabledPostgreSQl;
+        bool enabledMariaDB;
+        bool enabledMySQL;
+        bool failLoadDat;
         
     public:
+    	bool checkFailLoadDat()const;
         void* getLibraryHandle() const;
         octetos::db::Datconnect* newDatConnection();
         void deleteDatConnection(octetos::db::Datconnect*);

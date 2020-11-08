@@ -40,6 +40,10 @@ namespace octetos
 {
 namespace apidb
 {
+	bool ConfigureProject::checkFailLoadDat()const
+	{
+		return failLoadDat;
+	}
     void ConfigureProject::deleteConnector(octetos::db::Connector* c)const
     {
         destroyConnector(c);
@@ -328,7 +332,22 @@ namespace apidb
         createConnector = NULL;
         createDatConnection = NULL;
         conectordb = NULL;
-	
+	#ifdef APIDB_POSTGRESQL
+		enabledPostgreSQl=true;
+	#else
+		enabledPostgreSQl=false;
+	#endif
+	#ifdef APIDB_MARIADB
+		enabledMariaDB=true;
+	#else
+		enabledMariaDB=false;
+	#endif
+	#ifdef APIDB_MYSQL
+		enabledMySQL=true;
+	#else
+		enabledMySQL=false;
+	#endif
+		failLoadDat=false;
     }
 
 }
