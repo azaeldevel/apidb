@@ -401,6 +401,11 @@ namespace apidb
 			}
                         return str;
 		}
+		
+		bool Symbol::isRequiered() const
+		{
+			return required;
+		}
                 /**
                  * \private
                  * */

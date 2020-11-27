@@ -715,6 +715,12 @@ namespace apidb
 		                conectordb = createDatConnection();
 		                conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);
                     }
+                    else if(enabledMariaDB)
+                	{
+		                setInputLenguaje(InputLenguajes::MariaDB);
+		                conectordb = createDatConnection();
+		                conectordb->set(InputLenguajes::MariaDB,host,port,database,user,password);
+                    }
                     else
                     {
 		                failLoadDat = true;                   

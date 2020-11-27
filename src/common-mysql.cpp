@@ -96,6 +96,8 @@ namespace apidb
 					core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 					return false;
 				}
+				targetSymbol->symbolReferenced = referenceSymbol;
+				targetSymbol->isFK = true;
 				//std::cout<< targetSymbol->getName() << "-->" << referenceTable->getName()  << ":" << referenceSymbol->getName() << "'" << std::endl;
 			}	
 		}

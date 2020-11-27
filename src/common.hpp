@@ -233,6 +233,7 @@ namespace apidb
             bool isFK;
             bool isAutoInc;
         public:			
+			bool isRequiered() const;
 			/**
             * \brief Indica si el compo es un llave primaria
             * */

@@ -55,14 +55,14 @@ namespace apidb
         /**
         * Lista las relaciones de llaves foraneas para la tabla actual
         */
-		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME FROM information_schema.TABLE_CONSTRAINTS i,information_schema.KEY_COLUMN_USAGE k WHERE i.CONSTRAINT_NAME = k.CONSTRAINT_NAME  AND i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =k.TABLE_SCHEMA AND i.TABLE_NAME = "; 
+		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME, i.CONSTRAINT_TYPE FROM information_schema.TABLE_CONSTRAINTS i,information_schema.KEY_COLUMN_USAGE k WHERE i.CONSTRAINT_NAME = k.CONSTRAINT_NAME  AND i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =k.TABLE_SCHEMA AND i.TABLE_NAME = "; 
         fks += "'";
 		fks += fullname;
         fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
 		fks += ((octetos::db::Datconnect*)(connect.getDatconection()))->getDatabase();
 		fks += "'";
-		//std::cout<<fks<<std::endl;
-		//std::cout<< "In table: " <<fullname<<std::endl;
+		std::cout<<fks<<std::endl;
+		std::cout<< "In table: " <<fullname<<std::endl;
         octetos::db::mariadb::Datresult dt;
         bool flag = connect.execute(fks,dt);
         if(flag)
@@ -72,9 +72,9 @@ namespace apidb
             MYSQL_ROW row;
             while ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))
             {
-				//std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType Find" << std::endl;			
+				std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType" << std::endl;			
 				symbols::Table* table = global->findTable(row[1]);
-				//std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType return" << std::endl;	
+				if(table != NULL) std::cout<<"Tabla encontrada'" << row[1] << "'." << std::endl;	
 				if(table == NULL)
 				{
 					std::string msg = "No se encontro la tabla '";
@@ -93,7 +93,9 @@ namespace apidb
 					core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 					return false;
 				}
-				//std::cout<<"Se encontró campo '" << referenceSymbol->getName() << "'" << std::endl;
+				std::cout<<"Se encontró campo de referencia '" << referenceSymbol->getName() << "'" << std::endl;
+				
+				std::cout<<"Buscando en '" << getName() << "' campo '" << row[0] << "'" << std::endl;
 				Symbol* targetSymbol = findSymbol(row[0]);
 				if(targetSymbol == NULL)
 				{
@@ -103,6 +105,9 @@ namespace apidb
 					core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
 					return false;
 				}
+				targetSymbol->symbolReferenced = referenceSymbol;
+				targetSymbol->isFK = true;
+				targetSymbol->classReferenced = table;
 				//std::cout<< targetSymbol->getName() << "-->" << referenceTable->getName()  << ":" << referenceSymbol->getName() << "'" << std::endl;
 			}	
 		}
@@ -139,7 +144,7 @@ namespace apidb
 				Symbol* attrribute = new Symbol();
 				attrribute->classParent = this;
 				attrribute->name = row[0];
-                //std::cout<<attrribute->name<<std::endl;
+                std::cout << "Prosesando :" <<attrribute->name<<std::endl;
 				std::string strName = attrribute->name;
 				if(strName.compare("id") == 0)
 				{
@@ -170,6 +175,10 @@ namespace apidb
                 {
                     attrribute->keyType = Symbol::KeyType::FOREIGN_UNIQUE;
                 }
+				else
+				{
+					attrribute->keyType = Symbol::KeyType::NOKEY;
+				}
 				std::string extra = row[5];
 
 				if(attrribute->required && attrribute->keyType == Symbol::KeyType::PRIMARY && extra.compare("auto_increment") == 0)//primary key
