@@ -184,7 +184,9 @@ namespace apidb
 		* \brief Verica los datos de conexion al servidor
 		**/
 		bool testConexion();
-                        
+      	
+      	bool unmcompress(const std::string& filename,char* tmp_apidbDir);
+      	bool compress(const std::string& tarf, char * tmp_apidbDir,const std::string& filenameProj);
         /**
         * \brief Version del archivo de proyecto.
         * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.

@@ -525,7 +525,7 @@ namespace generators
 					}
 					else
 					{
-						ofile << "\t\tstd::string sqlString +=  " << k->getName() << "  +  \"  =  '\" +  << std::to_string(" << k->getName() << '\"";
+						ofile << "\t\tstd::string sqlString +=  " << k->getName() << "  +  \"  =  '\" +  << std::to_string(" << k->getName() << "'\"";
 					}
 					
 					auto endK = table.getKey().end();
