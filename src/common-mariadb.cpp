@@ -61,8 +61,8 @@ namespace apidb
         fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
 		fks += ((octetos::db::Datconnect*)(connect.getDatconection()))->getDatabase();
 		fks += "'";
-		std::cout<<fks<<std::endl;
-		std::cout<< "In table: " <<fullname<<std::endl;
+		//std::cout<<fks<<std::endl;
+		//std::cout<< "In table: " <<fullname<<std::endl;
         octetos::db::mariadb::Datresult dt;
         bool flag = connect.execute(fks,dt);
         if(flag)
@@ -72,15 +72,15 @@ namespace apidb
             MYSQL_ROW row;
             while ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))
             {
-				std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType" << std::endl;			
+				//std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType" << std::endl;			
 				symbols::Table* table = global->findTable(row[1]);
-				if(table != NULL) std::cout<<"Tabla encontrada'" << row[1] << "'." << std::endl;	
+				//if(table != NULL) std::cout<<"Tabla encontrada'" << row[1] << "'." << std::endl;	
 				if(table == NULL)
 				{
 					std::string msg = "No se encontro la tabla '";
 					msg += row[1];
 					msg += "'";
-					core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					throw core::Exception(__FILE__,__LINE__,msg);
 					return false;
 				}
 				//std::cout<<"Se encontró tabla '" << table->getName() << "'" << std::endl;
@@ -90,19 +90,19 @@ namespace apidb
 					std::string msg = "No se encontro el campo '";
 					msg += row[2];
 					msg += "'";
-					core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					throw core::Exception(__FILE__,__LINE__,msg);
 					return false;
 				}
-				std::cout<<"Se encontró campo de referencia '" << referenceSymbol->getName() << "'" << std::endl;
+				//std::cout<<"Se encontró campo de referencia '" << referenceSymbol->getName() << "'" << std::endl;
 				
-				std::cout<<"Buscando en '" << getName() << "' campo '" << row[0] << "'" << std::endl;
+				//std::cout<<"Buscando en '" << getName() << "' campo '" << row[0] << "'" << std::endl;
 				Symbol* targetSymbol = findSymbol(row[0]);
 				if(targetSymbol == NULL)
 				{
 					std::string msg = "No se encontro el campo '";
 					msg += row[0];
 					msg += "'";
-					core::Error::write(core::Error(msg,ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__));
+					throw core::Exception(__FILE__,__LINE__,msg);
 					return false;
 				}
 				targetSymbol->symbolReferenced = referenceSymbol;
@@ -144,7 +144,7 @@ namespace apidb
 				Symbol* attrribute = new Symbol();
 				attrribute->classParent = this;
 				attrribute->name = row[0];
-                std::cout << "Prosesando :" <<attrribute->name<<std::endl;
+                //std::cout << "Prosesando :" <<attrribute->name<<std::endl;
 				std::string strName = attrribute->name;
 				if(strName.compare("id") == 0)
 				{
@@ -170,6 +170,10 @@ namespace apidb
 				if(strcmp(row[3],"PRI") == 0)
                 {
                     attrribute->keyType = Symbol::KeyType::PRIMARY;
+                }
+                else if(strcmp(row[3],"MUL") == 0)
+                {
+                    attrribute->keyType = Symbol::KeyType::UNIQUE;
                 }
                 else if(strcmp(row[3],"MUL") == 0)
                 {
@@ -206,7 +210,7 @@ namespace apidb
 		}
 		else
 		{
-			std::cout<<"Faill on basicSymbols  : "<< str <<std::endl;
+			//std::cout<<"Faill on basicSymbols  : "<< str <<std::endl;
             
 			return false;
 		}

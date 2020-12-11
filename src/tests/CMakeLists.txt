@@ -1,0 +1,10 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+PROJECT(tests LANGUAGES CXX)
+
+ADD_EXECUTABLE(sandbox-generator sandbox-generator.cpp)
+TARGET_LINK_LIBRARIES(sandbox-generator ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES}) 
+
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/muposys-nlst)
+ADD_EXECUTABLE(sandbox-queries sandbox-queries.cpp ${CMAKE_CURRENT_BINARY_DIR}/muposys-nlst/muposys.cpp)
+TARGET_LINK_LIBRARIES(sandbox-queries ${LIBRARIES}) 

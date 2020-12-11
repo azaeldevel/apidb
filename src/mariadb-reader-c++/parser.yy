@@ -234,6 +234,7 @@ data_type: BIT opt_length end
 		}
 	| DECIMAL opt_length opt_uz end
 		{
+            printf("Advertencia: APIDB no maneja correctamente el tipo de dato decimal, se recomoenda Float o Double segun corresponda.");
 			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje == OutputLenguajes::C))
 			{
 				driver.oneLine = "double";

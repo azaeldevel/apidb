@@ -93,8 +93,10 @@ namespace octetos
 			void writeKeyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
 			void writeInsertH(const apidb::symbols::Table&,std::ofstream&);
 			void writeInsertCPP(const apidb::symbols::Table&,std::ofstream&);
+            void writeSelecInstancetH(const apidb::symbols::Table&,std::ofstream&);
+            void writeSelecInstancetCPP(const apidb::symbols::Table&,std::ofstream&);
 			//void writeSelectH(const apidb::symbols::Table& table, std::ofstream& ofile);
-             //void writeSelectCPP(const apidb::symbols::Table&,std::ofstream&);
+            //void writeSelectCPP(const apidb::symbols::Table&,std::ofstream&);
 			void writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile);
 			void writeDownloadsCPP(const apidb::symbols::Table&,std::ofstream&);
 			void writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile);
