@@ -472,8 +472,12 @@ namespace generators
 				{
 					ofile << " FROM " << table.getName() << " WHERE \";\n" ;
 				}
+				
+				auto endK = table.getKey().end();
+                endK--;
                 for(auto k : table.getKey())
-                {                        
+                {     
+                    /*
 					if(k->getOutType().compare("std::string") == 0)
 					{
 						ofile << "\t\tstd::string sqlString +=  \"" << k->getName() << " +  = '" << k->getName() << "' \"";
@@ -482,15 +486,37 @@ namespace generators
 					{
 						ofile << "\t\tstd::string sqlString +=  " << k->getName() << "  +  \"  =  '\" +  << std::to_string(" << k->getName() << "'\"";
 					}
+					*/
+					if(k->classReferenced != NULL) //es un objeto
+                    {
+                        if(k->outType.compare("std::string") == 0)
+                        {
+                            ofile << "\t\tsqlString = sqlString + \"" << k->getName() << "\" = " << k->getName();
+                        }
+                        else
+                        {
+                            ofile << "\t\tsqlString = sqlString + std::to_string((*" << k->getName() << ")";
+                            getKey(ofile,k->symbolReferenced);
+                            ofile<< ");\n";
+                        }
+                        
+                    }
+                    else if(k->outType.compare("std::string") == 0)
+                    {
+                        ofile << "\t\tsqlString = sqlString + \"" << k->getName() << "\" = " << k->getName();
+                    }
+                    else
+                    {
+                        ofile << "\t\tsqlString = sqlString + std::to_string(" << k->getName()  <<")\n";
+                    }
+                    
 					
-					auto endK = table.getKey().end();
-					endK--;
-					if(*endK != k)
-					{
-						ofile << " \" and \" + ";
-					}
+                    if(*endK != k)
+                    {
+                            ofile << " \" and \" + ";
+                    }
                 }
-                ofile << ";" << std::endl;
+                
                 if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
                 {        
                     ofile << "\t\toctetos::db::mysql::Datresult dt;"  << std::endl;

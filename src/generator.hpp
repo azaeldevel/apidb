@@ -32,6 +32,8 @@ namespace octetos
 {
 	namespace generators
 	{
+        void getKey(std::ofstream& ofile, const symbols::Symbol* k);
+        void getKey2(std::ofstream& ofile, const symbols::Symbol* k);
                 /**
                  * \private No es parte del API
                  * */
