@@ -189,51 +189,6 @@ namespace generators
             throw BuildException(msg);
         }
         
-        /*if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-        {
-            ofile << "\t\tbool flag = connector.execute(sqlString,dt);"  << std::endl;
-            ofile << "\t\tif(flag)"  << std::endl;
-            ofile << "\t\t{" << std::endl;
-            ofile << "\t\t\tstd::vector<"<< table.getName() << "*>* tmpVc = new std::vector<" << table.getName() << "*>;" << std::endl;
-            ofile << "\t\t\twhile(dt.nextRow())" << std::endl;
-            ofile << "\t\t\t{"<< std::endl;
-            ofile << "\t\t\t\t"<< table.getName() << "* tmp = NULL;" << std::endl;            
-            ofile << "\t\t\t\ttmp = new " << table.getName() << "(";
-            auto endK2 = table.getKey().end();
-            endK2--;
-            int count2 = 0;
-            for(auto k : table.getKey())
-            {
-                if(k->getOutType().compare("std::string") == 0)
-                {
-                    ofile << "dt.getint(" << count2 << ")";
-                }
-                else if(k->getOutType().compare("int") == 0)
-                {
-                    ofile << "dt.getString(" << count2 << ")";
-                }
-                else
-                {
-                    ofile << "dt.getString(" << count2 << ")";                
-                }
-                if(k != *endK2)
-                {
-                    ofile << ",";
-                }
-                count2++;
-            }
-            ofile << ")" << ";" << std::endl;
-            ofile << "\t\t\t\ttmpVc->push_back(tmp);" << std::endl;
-            
-            ofile << "\t\t\t}"<< std::endl;
-            ofile << "\t\t\treturn tmpVc;" << std::endl;
-            ofile << "\t\t}" << std::endl;
-            ofile << "\t\treturn NULL;" << std::endl;
-            
-            ofile << "\t}" <<std::endl;
-        }
-        else
-        {*/
             ofile << "\t\tbool flag = connector.execute(sqlString,dt);"  << std::endl;
             ofile << "\t\tif(flag)"  << std::endl;
             ofile << "\t\t{" << std::endl;
@@ -272,7 +227,7 @@ namespace generators
             ofile << "\t\t}" << std::endl;
             ofile << "\t\treturn NULL;" << std::endl;
             ofile << "\t}" <<std::endl;
-        //}
+        
         
         //select from config
         //std::vector<apidb::ConfigureProject::Table> tbs = configureProject.selects;
@@ -465,11 +420,11 @@ namespace generators
         }
     }
 	void CPP::writeDownloadsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
-    {        
+    {
         for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
         {
             if(table.getName().compare(itT->second->getName()) != 0) 
-            {                
+            {
                 continue;//buscar la configuracion de la tabla correspondiente
             }
                         
@@ -1047,7 +1002,7 @@ namespace generators
 				else
 				{
 					ofile << "\t\tsqlString = \"UPDATE \" + TABLE_NAME;"<<std::endl;
-					ofile << "\t\tsqlString += \"FROM\";"<<std::endl;
+					//ofile << "\t\tsqlString += \" FROM \";"<<std::endl;
 				}
 				ofile << "\t\tsqlString = sqlString + \" SET " ;
 		        
