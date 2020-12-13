@@ -104,6 +104,7 @@ namespace octetos
 			void writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile);
 			void writeSelectsCPP(const apidb::symbols::Table&,std::ofstream&);
 			bool createDatconnectHPP(std::ofstream& file,bool log);
+            bool createDatconnectCPP(std::ofstream& file,bool log);
 			
 			//apidb::Analyzer& analyzer;
 			std::ofstream* writeResults;//erreglo de writeoutput files

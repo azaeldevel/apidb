@@ -31,61 +31,71 @@ int main(int argc, char *argv[])
 {
     std::string copyright = "APIDB  Copyright (C) 2018  Azael Reyes \nThis program comes with ABSOLUTELY NO WARRANTY.\n    Contacto: azael.devel@gmail.com";
         
-    const char* file;
-    const char* dir;
-	if(argc > 0)
+    const char* file = NULL;
+    const char* dir = NULL;
+	for(int i = 1; i < argc; i++)
 	{
-		if(strcmp(argv[1],"-v") ==0 || strcmp(argv[1],"--version") == 0)
+		if(strcmp(argv[i],"-v") == 0 || strcmp(argv[i],"--version") == 0)
 		{
 			std::cout<<"Version: " << octetos::apidb::getPakageVersion().toString()<<std::endl;
             std::cout<<std::endl;
-            std::cout<< copyright<<std::endl;
-                        
+            std::cout<< copyright<<std::endl;                        
 			return EXIT_SUCCESS;
 		}
-		else if((strcmp(argv[1],"-p") ==0 || strcmp(argv[1],"--project-file") == 0) && (strcmp(argv[3],"-o") ==0 || strcmp(argv[3],"--out-build") == 0) )
+		else if(strcmp(argv[i],"-p") == 0 || strcmp(argv[i],"--project-file") == 0)
         {
-            file = argv[2];
-            dir = argv[4];
+            std::cout<<"Detectando opcion -p\n";
+            if(argc >= i + 1)
+            {
+                i++;
+                std::cout<<"Detectando valor -p = " << argv[i] << "\n";                
+                file = argv[i]; 
+            }
+            else
+            {
+                std::cerr<<"Deve especificar la ruta del archivo.\n";
+                return EXIT_FAILURE;
+            }
+        }
+        else if(strcmp(argv[i],"-o") == 0 || strcmp(argv[i],"--out-build") == 0)
+        {
+            std::cout<<"Advertencia: El directorio de generacion sera optenido en primera instancia desde el archivo de projecto." <<std::endl;
         }
         else
-		{
-			std::cerr<<"Opciónes desconocida "<<std::endl;
-			return EXIT_FAILURE;
-		}
+        {
+            std::cerr<<"Opcion desconocida '" << argv[i] << "'.\n";
+        }
 	}
-	else
+	
+	if(file == NULL)
     {
-        std::cerr<<"Deve indicar el archivo de prjecto y el directorio de generacion, use las opciones -p 'file' -o 'dir'."<<std::endl;
+        std::cerr<<"Indique el archivo de preojecto mediente la opcion '-p'.\n";
         return EXIT_FAILURE;
     }
-		
-	std::ifstream fin(file);
-	if(fin) 
+    
+	if(file) 
 	{
 		std::cout<<"Cargando '" << file << "' ..." <<std::endl;
 		octetos::apidb::ConfigureProject config;
-        config.builDirectory = dir;
 		try
 		{
 			config.readConfig(file);
 		}
-        catch(octetos::core::Error e)
+        catch(const std::exception& e)
         {
-			std::cerr<<"Fallo la lectura del archivo."<<std::endl;
+			std::cerr<<"Fallo la lectura del archivo."<< e.what() <<std::endl;
 			return EXIT_FAILURE;                        
         }
+        if(config.builDirectory.empty()) config.builDirectory = dir;
         octetos::apidb::Driver driver(config);
         octetos::apidb::Tracer tr(0);
 		if(!driver.driving(&tr))
 		{
-			std::cerr<<"Fallo la generacion."<<std::endl;
 			return EXIT_FAILURE;
 		}
 		else
 		{
-			std::cout<<"Proyecto generado en '"<<dir<<"' exitosamente."<<std::endl;
-                        return EXIT_SUCCESS;
+            return EXIT_SUCCESS;
 		}
 	}
 	
