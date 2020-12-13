@@ -44,11 +44,11 @@ int main(int argc, char *argv[])
 		}
 		else if(strcmp(argv[i],"-p") == 0 || strcmp(argv[i],"--project-file") == 0)
         {
-            std::cout<<"Detectando opcion -p\n";
+            //std::cout<<"Detectando opcion -p\n";
             if(argc >= i + 1)
             {
                 i++;
-                std::cout<<"Detectando valor -p = " << argv[i] << "\n";                
+                //std::cout<<"Detectando valor -p = " << argv[i] << "\n";                
                 file = argv[i]; 
             }
             else
