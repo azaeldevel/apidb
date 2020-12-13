@@ -73,8 +73,6 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
     
-	if(file) 
-	{
 		std::cout<<"Cargando '" << file << "' ..." <<std::endl;
 		octetos::apidb::ConfigureProject config;
 		try
@@ -101,18 +99,23 @@ int main(int argc, char *argv[])
             std::cerr<<"No existe el archivo : " << file  <<std::endl;
 			return EXIT_FAILURE;
         } 
-        octetos::apidb::Driver driver(config);
-        octetos::apidb::Tracer tr(0);
-		if(!driver.driving(&tr))
-		{
-            std::cerr<<"Fallo desconocido.";
-            return EXIT_FAILURE;
-		}
-		else
-		{
-            return EXIT_SUCCESS;
-		}
-	}
+    octetos::apidb::Driver driver(config);
+    octetos::apidb::Tracer tr(0);
+    bool retDriver;
+    try
+    {
+            retDriver = driver.driving(&tr);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr<<"Fallo la lectura del archivo."<< e.what() <<std::endl;
+        return EXIT_FAILURE;
+    }
+    if(retDriver)
+    {
+        std::cerr<<"Fallo desconocido.";
+        return EXIT_FAILURE;
+    }
 	
 	return EXIT_SUCCESS;	
 }
