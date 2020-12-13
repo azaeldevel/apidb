@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 	
 	if(file == NULL)
     {
-        std::cerr<<"Indique el archivo de preojecto mediente la opcion '-p'.\n";
+        std::cerr<<"Indique el archivo de projecto mediente la opcion '-p'.\n";
         return EXIT_FAILURE;
     }
     
@@ -86,12 +86,27 @@ int main(int argc, char *argv[])
 			std::cerr<<"Fallo la lectura del archivo."<< e.what() <<std::endl;
 			return EXIT_FAILURE;                        
         }
-        if(config.builDirectory.empty()) config.builDirectory = dir;
+        if(config.builDirectory.empty())
+        {
+            if(dir != NULL) config.builDirectory = dir;
+        }
+        //verificar si exite el archivo de projecto
+        FILE *tmpfile = fopen(file, "r");
+        if (tmpfile) 
+        {
+            fclose(tmpfile);
+        } 
+        else 
+        {
+            std::cerr<<"No existe el archivo : " << file  <<std::endl;
+			return EXIT_FAILURE;
+        } 
         octetos::apidb::Driver driver(config);
         octetos::apidb::Tracer tr(0);
 		if(!driver.driving(&tr))
 		{
-			return EXIT_FAILURE;
+            std::cerr<<"Fallo desconocido.";
+            return EXIT_FAILURE;
 		}
 		else
 		{
