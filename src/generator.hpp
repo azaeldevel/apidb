@@ -26,13 +26,13 @@
 #if defined WINDOWS_MINGW
     #include <shell.hh>
 #else
-    #include <octetos/db/shell.hh>
+    #include <octetos/coreutils/shell.hh>
 #endif
 
 
 namespace octetos
 {
- namespace apidb
+namespace apidb
 {
 	namespace generators
 	{

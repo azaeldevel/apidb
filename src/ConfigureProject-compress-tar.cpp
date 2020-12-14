@@ -1,5 +1,23 @@
+//Tar>>>>>>>>>>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <fcntl.h>
+#if defined WINDOWS_MINGW
+
+#else
+    #include <libtar.h>
+#endif // defined
+//Tar<<<<<<<<<<
+
+#include "ConfigureProject.hpp"
+#include "Errors.hpp"
 
 
+namespace octetos
+{
+namespace apidb
+{
 	bool ConfigureProject::compress(const std::string& tarf, char * tmp_apidbDir,const std::string& filenameProj)
 	{
 		TAR *pTar;
@@ -36,3 +54,6 @@
 
  		return true;
 	}
+	
+}
+}

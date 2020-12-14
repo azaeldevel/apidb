@@ -35,7 +35,7 @@
 #if defined WINDOWS_MINGW
     #include <clientdb-maria.hh>
 #else
-    #include <octetos/db/clientdb-mari.hh>
+    #include <octetos/db/clientdb-maria.hh>
 #endif
 
 #include "apidb.hpp"

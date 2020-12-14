@@ -834,15 +834,15 @@ namespace apidb
 				gtk_widget_show_all(app->window);
 				return;
 			}
-			else if(core::Error::check())
-			{				
-				std::string msgstr = (&core::Error::get())->what();
+			else
+			{
+				std::string msgstr = "Erro desconocido en checkFailLoadDat.";
 				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
 				gtk_dialog_run (GTK_DIALOG (msg));
 				gtk_widget_destroy (msg);
 			}			
 		}
-		catch(std::exception& e)
+		catch(const std::exception& e)
 		{
 			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE, e.what());
 			gtk_dialog_run (GTK_DIALOG (msg)); 
@@ -857,13 +857,14 @@ namespace apidb
 		}
 
 		std::cout << "Application::documen_open : Step 3.6" << std::endl;
-		
-		app->driver = new Driver(*(app->config));
-		
-		std::string msgstr = "";
-		if(core::Error::check())
+		try
 		{
-			msgstr = (&core::Error::get())->what();			
+            app->driver = new Driver(*(app->config));
+        }
+        catch(const std::exception& e)
+		{
+			std::string msgstr = e.what();			
+            msgstr = "Erro desconocido en Driver.";
 			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
 			gtk_dialog_run (GTK_DIALOG (msg));
 			gtk_widget_destroy (msg);
@@ -874,7 +875,7 @@ namespace apidb
 			app->isOpen = true;
 			app->isNew = false;
 			gtk_widget_show_all(app->window);
-			return;
+            return;
 		}
 		std::cout << "Application::documen_open : Step 4" << std::endl;
 		if(!app->driver->analyze(NULL))
