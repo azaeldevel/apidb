@@ -1,9 +1,9 @@
 /**
- * 
+ *
  *  This file is part of apidb.
  *  APIDB do Make easy to connect your Database
  *  Copyright (C) 2018  Azael Reyes
- * 
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * */
 
 #include <iostream>
@@ -26,11 +26,17 @@
     #include <mysql/mysql.h>
 #elif defined LINUX_DEBIAN
     #include <mariadb/mysql.h>
+#elif defined WINDOWS_MINGW
+    #include <mariadb/mysql.h>
 #else
     #error "Plataforma desconocida."
 #endif
 #include <string>
-#include <octetos/db/clientdb-maria.hh>
+#if defined WINDOWS_MINGW
+    #include <clientdb-maria.hh>
+#else
+    #include <octetos/db/clientdb-mari.hh>
+#endif
 
 #include "apidb.hpp"
 #include "common-mariadb.hpp"
@@ -44,8 +50,8 @@ namespace apidb
 {
     symbols::TableMariaDB::TableMariaDB(const std::string& s) : Table(s)
     {
-        
-        
+
+
     }
     /**
     * Rellena los campos 'classReferenced' y 'symbolReferenced' de la tabla
@@ -55,7 +61,7 @@ namespace apidb
         /**
         * Lista las relaciones de llaves foraneas para la tabla actual
         */
-		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME, i.CONSTRAINT_TYPE FROM information_schema.TABLE_CONSTRAINTS i,information_schema.KEY_COLUMN_USAGE k WHERE i.CONSTRAINT_NAME = k.CONSTRAINT_NAME  AND i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =k.TABLE_SCHEMA AND i.TABLE_NAME = "; 
+		std::string fks = "SELECT k.COLUMN_NAME, k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME, i.CONSTRAINT_TYPE FROM information_schema.TABLE_CONSTRAINTS i,information_schema.KEY_COLUMN_USAGE k WHERE i.CONSTRAINT_NAME = k.CONSTRAINT_NAME  AND i.CONSTRAINT_TYPE = 'FOREIGN KEY' AND i.TABLE_SCHEMA =k.TABLE_SCHEMA AND i.TABLE_NAME = ";
         fks += "'";
 		fks += fullname;
         fks += "' AND i.CONSTRAINT_SCHEMA =  '" ;
@@ -66,15 +72,15 @@ namespace apidb
         octetos::db::mariadb::Datresult dt;
         bool flag = connect.execute(fks,dt);
         if(flag)
-        {                      
+        {
 			symbols::SymbolsTable::const_iterator itGlobal = symbolsTable.find(symbolsTable.getConfigureProject().name.c_str());
 			symbols::Space* global = ((symbols::Space*)itGlobal->second);
             MYSQL_ROW row;
             while ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))
             {
-				//std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType" << std::endl;			
+				//std::cout<<"Buscando tabla '" << row[1] << "' symbols::Table::fillKeyType" << std::endl;
 				symbols::Table* table = global->findTable(row[1]);
-				//if(table != NULL) std::cout<<"Tabla encontrada'" << row[1] << "'." << std::endl;	
+				//if(table != NULL) std::cout<<"Tabla encontrada'" << row[1] << "'." << std::endl;
 				if(table == NULL)
 				{
 					std::string msg = "No se encontro la tabla '";
@@ -94,7 +100,7 @@ namespace apidb
 					return false;
 				}
 				//std::cout<<"Se encontró campo de referencia '" << referenceSymbol->getName() << "'" << std::endl;
-				
+
 				//std::cout<<"Buscando en '" << getName() << "' campo '" << row[0] << "'" << std::endl;
 				Symbol* targetSymbol = findSymbol(row[0]);
 				if(targetSymbol == NULL)
@@ -109,17 +115,17 @@ namespace apidb
 				targetSymbol->isFK = true;
 				targetSymbol->classReferenced = table;
 				//std::cout<< targetSymbol->getName() << "-->" << referenceTable->getName()  << ":" << referenceSymbol->getName() << "'" << std::endl;
-			}	
+			}
 		}
 		else
 		{
 			//std::cout << "No retorno resultado la consulta" << std::endl;
 		}
-        
+
 		return true;
     }
-	
-	
+
+
     bool symbols::TableMariaDB::basicSymbols(octetos::db::Connector& connect)
     {
         std::string str = "DESCRIBE ";
@@ -133,7 +139,7 @@ namespace apidb
         }
         octetos::db::mariadb::Datresult dt;
         bool flag = connect.execute(str,dt);
-		if(flag) 
+		if(flag)
 		{
 			//std::cout<<str<<std::endl;
 			//MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());
@@ -152,7 +158,7 @@ namespace apidb
 				}
 				else
 				{
-					strName[0] = toupper(strName[0]);	
+					strName[0] = toupper(strName[0]);
 				}
 				attrribute->get = "get"; attrribute->get += strName; attrribute->get += "()";
 				attrribute->upperName = strName;
@@ -197,7 +203,7 @@ namespace apidb
 					attrribute->isPK = true;//attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
                     attrribute->isAutoInc = false;
 				}
-				
+
                                 insert(std::make_pair(attrribute->name.c_str(),attrribute));
 				if(attrribute->required)
 				{
@@ -205,13 +211,13 @@ namespace apidb
 				}
 				//std::cout<<"Termitade with:" << attrribute->name << "(" << attrribute->upperName << ")" <<std::endl;
 			}
-			
-			return true;			
+
+			return true;
 		}
 		else
 		{
 			//std::cout<<"Faill on basicSymbols  : "<< str <<std::endl;
-            
+
 			return false;
 		}
 	}

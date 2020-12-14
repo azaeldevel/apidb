@@ -17,3 +17,7 @@ src/versionInfo.h
 build
 .kdev4
 apidb.kdev4
+obj/
+bin/
+*.depend
+*.layout

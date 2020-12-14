@@ -1,9 +1,9 @@
 /**
- * 
+ *
  *  This file is part of apidb.
  *  APIDB do Make easy to connect your Database
  *  Copyright (C) 2018  Azael Reyes
- * 
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,21 +16,26 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * */
 
 #ifndef APIDB_COMMON_HPP
 #define APIDB_COMMON_HPP
- 
+
 #include <string>
 #include <list>
 #include <vector>
 #include <map>
-#include <octetos/db/clientdb.hh>
+#if defined WINDOWS_MINGW
+    #include <clientdb.hh>
+    #include <Message.hh>
+#else
+    #include <octetos/db/clientdb.hh>
+    #include <octetos/core/Message.hh>
+#endif
 #include <libxml/xmlreader.h>
 #include <iostream>
 #include <cstring>
-#include <octetos/core/Message.hh>
 
 
 namespace octetos
@@ -45,7 +50,7 @@ namespace apidb
          * \brief Determina si los mensajes de Warning(dirigidos a los usuarios) seran emitidos
          * */
         static bool ENABLE_USER_WARNING = true;
-        
+
         class Analyzer;
         namespace mysql
         {
@@ -61,14 +66,14 @@ namespace apidb
         }
         class ConfigureProject;
 
-    /*bool createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password, octetos::db::Datconnect**); 
-    bool createDatconnect(octetos::db::Datconnect**); 
+    /*bool createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password, octetos::db::Datconnect**);
+    bool createDatconnect(octetos::db::Datconnect**);
     bool createConnector(octetos::db::Connector**);*/
-    
+
     typedef octetos::db::Driver InputLenguajes;
-    std::string getInputLenguaje(InputLenguajes);	
-    InputLenguajes getInputLenguaje(const std::string&);	
-        
+    std::string getInputLenguaje(InputLenguajes);
+    InputLenguajes getInputLenguaje(const std::string&);
+
         /**
          * \brief Identifica los gentores de paquetes disponibles.
          * */
@@ -95,7 +100,7 @@ namespace apidb
         };
         std::string getOutputLenguajes(OutputLenguajes);
         OutputLenguajes getOutputLenguajes(const std::string&);
-        
+
         /**
          * \brief Distinge entre librerias estaticas y dinamicas para generar.
          * */
@@ -107,7 +112,7 @@ namespace apidb
         };
         std::string getCompiled(Compiled);
         Compiled getCompiled(const std::string&);
-        
+
         /**
          * \brief Clase de manejo de errores.
          **/
@@ -131,7 +136,7 @@ namespace apidb
 	private:
 		//std::string description;
 	};
-    
+
         /**
          * \brief Estructura de datos para construir la tabla de simbolos
          * */
@@ -140,9 +145,9 @@ namespace apidb
 		class Table;
 		class Space;
 		class SymbolsTable;
-		
+
         /**
-        * \private 
+        * \private
         * */
         struct cmp_str
         {
@@ -151,7 +156,7 @@ namespace apidb
                         return std::strcmp(a, b) < 0;
             }
         };
-                
+
         enum SpaceType
         {
             TABLE,
@@ -163,17 +168,17 @@ namespace apidb
 			virtual SpaceType what()const = 0;
 			virtual ~ISpace(){};
 		};
-        
+
 		/**
 		 * \brief Informacion sobre cada symbolo
 		 * */
-		class Symbol 
+		class Symbol
 		{
             friend class Analyzer;
             //friend class mysql::Analyzer;
             //friend class postgresql::Analyzer;
             friend class Table;
-                        
+
         public:
 			/**
             * \brief Identifica el tipo de llave.
@@ -189,77 +194,77 @@ namespace apidb
 			/**
             * \brief Tipo de dato en Bd para el campo
             * */
-            std::string inType;      
+            std::string inType;
 			/**
             * \brief Nombre del campo en BD
             * */
-            std::string name;   
+            std::string name;
 			/**
             * \brief Nombre del metodo get para leer el campo
             * */
-            std::string get;       
+            std::string get;
 			/**
             * \brief Nombre del campo decorado con mayusculas
             * */
-			std::string upperName;       
+			std::string upperName;
 			/**
             * \brief Determina si es campo es requierido
             * */
-			bool required;             
+			bool required;
 			/**
             * \brief Tipo de llave
             * */
-            KeyType keyType;      
+            KeyType keyType;
 			/**
             * \brief Puntero hacia la tabla referido por el campo en el caso de llaves foraneas.
             * */
-            Table* classReferenced;  
+            Table* classReferenced;
 			/**
             * \brief Clase contenedora del campo.
             * */
-            Table* classParent;    
+            Table* classParent;
 			/**
             * \brief Tipo de dato en el lenguaje resultado
             * */
-            std::string outType;         
+            std::string outType;
 			/**
             * \brief Puntero al campo referido en el caso de campo foraneos.
             * */
-            Symbol* symbolReferenced;   
-                        
+            Symbol* symbolReferenced;
+
 			static int counter;
-			int id;	
+			int id;
             bool isPK;
             bool isFK;
             bool isAutoInc;
-        public:			
+        public:
 			bool isRequiered() const;
 			/**
             * \brief Indica si el compo es un llave primaria
             * */
-            bool isPrimaryKey();    
+            bool isPrimaryKey();
 			/**
             * \brief Indica si el compo es un llave foranea
             * */
-            bool isForeignKey();    
+            bool isForeignKey();
 			/**
             * \brief Indica si el compo es auto incremento
             * */
             bool isAutoIncrement();
-                            
+
 			/**
             * \brief Inicializa los valores
             * */
-            Symbol();   
+            Symbol();
 			/**
             * \brief Inicializa los valores
             * */
-            ~Symbol(); 
+            ~Symbol();
 			/**
             * \brief El ID de simbolo.
             * */
             int getID()const;
-            
+
             /**
             * \brief Retorna el nombre del campo.
             * */
@@ -294,16 +299,16 @@ namespace apidb
                          * */
                         const std::string& getInType()const;
 		};
-		
+
                 /**
                  * \brief Conjunto de campos que forma una llave, cuan la llave es compuesta se hace una entrada por cada campo relacionado.
                  * */
 		class Key : public std::vector<Symbol*>
 		{
 		};
-        
+
 		/**
-		 * \brief Simbolos por alcance(tabla en SQL) 
+		 * \brief Simbolos por alcance(tabla en SQL)
 		 **/
 		class Table : public ISpace, public std::map<const char*,Symbol*,cmp_str>
 		{
@@ -326,7 +331,7 @@ namespace apidb
             /**
             * Lista los campos requerido(para uso de insert)
             * */
-            std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista    
+            std::list<Symbol*> required;//ademas de porner en true su abtributo se agrega a esta lista
             /**
             * \brief Nombre del spacio si lo tiene
             * */
@@ -334,23 +339,23 @@ namespace apidb
             /**
             * \brief Nombre completa de la tabla
             * */
-            std::string fullname; 
+            std::string fullname;
 
             /**
             * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
             * */
-            virtual bool basicSymbols(octetos::db::Connector& connect) = 0; 
+            virtual bool basicSymbols(octetos::db::Connector& connect) = 0;
 
             /**
             * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
-            * */			
+            * */
 			virtual bool fillKeyType(octetos::db::Connector& connect, const SymbolsTable&) = 0;
 
 			short countRef;
             /**
             * \brief La cantidad de rencias hechas a esta tabla en BD.
             * */
-            short getCountRefereces() const; 
+            short getCountRefereces() const;
             /**
             * \brief Simplemete crea el obejto con valores limpios
             * */
@@ -366,19 +371,19 @@ namespace apidb
             /**
             * \brief Retorna una string con el nombre de la tabla decorado con mayusculas
             * */
-            const std::string& getUpperName()const; 
+            const std::string& getUpperName()const;
             /**
             * \brief Retorna una lista de los campos requerido en insert(NOT NULL)
             * */
-            const std::list<Symbol*>& getRequired()const;  
+            const std::list<Symbol*>& getRequired()const;
             /**
             * \brief En desarrollo
             * */
-            const std::string& getSpace()const;  
+            const std::string& getSpace()const;
             /**
             * \brief En desarrollo
             * */
-            const std::string& getFullName()const;   
+            const std::string& getFullName()const;
             /**
             * \brief Retorna una refencias a la llave de la tabla.
             * */
@@ -387,8 +392,8 @@ namespace apidb
 			Symbol* findSymbol(const std::string&);
 			//virtual ISpace* searh(const std::string&);
 		};
-		
-                
+
+
 		/**
         * \brief Conjunto de tablas
         * \details No representa un spacio realmente sino que umula uno en base a ciertos creterio en el nombrambramiento de las tablas, esto para poder organizar mejor el codigo. En MySQL por ejemplo, Se permite poner el caracter punto en el nombre de la tabla, y este es el criterio usado para MySQL, APIDB crea un nuevo anidamiento de espacio cada vez que encuentre un punto en el nombre de la tabla.
@@ -399,50 +404,50 @@ namespace apidb
             /**
             * \brief Limpa el objeto
             * */
-			~Space();	
+			~Space();
                         /**
                          * \brief Busca una tabla por su nombre y la retorna en cals de encontrarla
                          * */
-                        //Table* search(const std::string&); 
+                        //Table* search(const std::string&);
                         /**
                          * \brief Busca una tabla por su nombre y la retorna en cals de encontrarla
                          * */
-			//std::list<Table*>::iterator find(const std::string& tableName);        
+			//std::list<Table*>::iterator find(const std::string& tableName);
 			//short getMaxCountRef();
                         /**
                          * \brief Retorna el nombre del espacio.
                          * */
-                        //const std::string& getMiddleName()const;  
+                        //const std::string& getMiddleName()const;
                         const std::string& getName()const;
                         //const std::string& getFullName()const;
                         /**
                          * \brief Crea el objeto con su nombre.
                          * */
                         Space(const std::string& middleName);
-                        
+
                         virtual SpaceType what()const;
 						//virtual ISpace* searh(const std::string&);
 						Table* findTable(const std::string&);
 						Space* findSpace(const std::string&);
-						
+
 						/**
-						 * 
-						 * 
+						 *
+						 *
 						 * \param name indica el nombre relativo a apartir del espacio actual
 						 * */
                         Space* addSpace(const std::string& name);
 						/**
-						 * 
+						 *
 						 * */
 						Table* addTable(symbols::Table* table);
-                private:                        
+                private:
                         /**
                          * \brief Nombre del espacion
                          * */
                         std::string name;
                         short level;
 		};
-                
+
                 /**
                  * \private
                  * */
@@ -458,18 +463,18 @@ namespace apidb
                 std::string getDeepChilName(const std::string& fullname);
 				std::string getChilFullName(const std::string& fullname);
 				std::string getExcludeChilName(const std::string& fullname);
-				
+
 				bool hasChild(const std::string& fullname);
 				std::string getTopName(const std::string& fullname);
-				
+
                 /**
-                 *\brief Contiene las estructura completa de la tabla de symbolos 
+                 *\brief Contiene las estructura completa de la tabla de symbolos
                  **/
                 class SymbolsTable : public std::map<const char*,symbols::ISpace*,symbols::cmp_str>
                 {
 				private:
 					const ConfigureProject* configureProject;
-					
+
                 public:
 					/**
 					*\brief Libera memoria
@@ -484,7 +489,7 @@ namespace apidb
 					const ConfigureProject& getConfigureProject()const;
                 };
     }
-    
+
         /**
          * \brief Implementa el modelo de mensajes basodo en la politica de toolkit::ActivityProgress.
          * */

@@ -1,9 +1,9 @@
 /**
- * 
+ *
  *  This file is part of apidb.
  *  APIDB do Make easy to connect your Database
  *  Copyright (C) 2018  Azael Reyes
- * 
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,13 +16,13 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * */
 
 //generic
 #include <stdio.h>
 
-//file operations 
+//file operations
 #include <fstream>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -35,7 +35,7 @@
 //
 #include <cctype>
 #include <cassert>
-#include <sstream> 
+#include <sstream>
 #include <string.h>
 #include <iostream>
 #include <map>
@@ -45,7 +45,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
-#include <libtar.h>
+#if defined WINDOWS_MINGW
+
+#else
+    #include <libtar.h>
+#endif // defined
 //Tar<<<<<<<<<<
 
 
@@ -64,16 +68,16 @@ namespace apidb
 		xmlDocPtr doc  = xmlNewDoc((const xmlChar *)"1.0");
 		xmlNodePtr root_node = xmlNewNode(NULL, (const xmlChar *)"project");
 		xmlDocSetRootElement(doc, root_node);
-		
+
 		xmlNewChild(root_node, NULL, (const xmlChar *)"name", (const xmlChar *)name.c_str());
 		//xmlNewChild(root_node, NULL, (const xmlChar *)"directory", (const xmlChar *)directory.c_str());
-				
+
 		xmlNodePtr version_node = xmlNewChild(root_node, NULL, (const xmlChar *)"version", NULL);
 		xmlNewChild(version_node, NULL, (const xmlChar *)"major", (const xmlChar *)std::to_string(versionResult.getMajor()).c_str());
 		xmlNewChild(version_node, NULL, (const xmlChar *)"minor", (const xmlChar *)std::to_string(versionResult.getMinor()).c_str());
 		xmlNewChild(version_node, NULL, (const xmlChar *)"patch", (const xmlChar *)std::to_string(versionResult.getPatch()).c_str());
-		
-				
+
+
 		xmlNodePtr db_node = xmlNewChild(root_node, NULL, (const xmlChar *)"ConectorDB", NULL);
 		if(inputLenguaje == apidb::InputLenguajes::MySQL)
 		{
@@ -103,7 +107,7 @@ namespace apidb
 		{
             		throw core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
 		}
-                                
+
         //
         xmlNodePtr inL_node = xmlNewChild(root_node, NULL, (const xmlChar *)"inputLenguaje", NULL);
         switch(inputLenguaje)
@@ -118,9 +122,9 @@ namespace apidb
                 xmlNewChild(inL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"PostgreSQL");
                 break;
             default:
-                throw core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);                              
+                throw core::Error("Lenguaje de entrada desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
         }
-                
+
                 //
                 xmlNodePtr outL_node = xmlNewChild(root_node, NULL, (const xmlChar *)"outputLenguaje", NULL);
                 switch(outputLenguaje)
@@ -132,9 +136,9 @@ namespace apidb
                                 xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"Java");
                                 break;
                         default:
-                                throw core::Error("Lenguaje de salida desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__); 
+                                throw core::Error("Lenguaje de salida desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
                 }
-                
+
                 //
                  xmlNodePtr pk_node = xmlNewChild(root_node, NULL, (const xmlChar *)"packing", NULL);
                 switch(packing)
@@ -145,7 +149,7 @@ namespace apidb
                         default:
                                 throw core::Error("Opcion de enpaquetado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
                 }
-                
+
                 //
                  xmlNodePtr cmpl_node = xmlNewChild(root_node, NULL, (const xmlChar *)"compiled", NULL);
                 switch(compiled)
@@ -159,11 +163,11 @@ namespace apidb
                         default:
                                 throw core::Error("Opcion de compilado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
                 }
-                
+
                 //
                 xmlNewChild(root_node, NULL, (const xmlChar *)"buildDirectory", (const xmlChar *)builDirectory.c_str());
                 //std::cout << "Buildd dir " << builDirectory << std::endl;
-				
+
 				if(namespace_detect.empty())
 				{
 					xmlNewChild(root_node, NULL, (const xmlChar *)"namespace_detect", (const xmlChar *)"¿?");
@@ -172,7 +176,7 @@ namespace apidb
 				{
 					xmlNewChild(root_node, NULL, (const xmlChar *)"namespace_detect", (const xmlChar *)namespace_detect.c_str());
 				}
-				 
+
 				if(executable_target.empty())
 				{
 					xmlNewChild(root_node, NULL, (const xmlChar *)"executable_target", (const xmlChar *)"¿?");
@@ -181,7 +185,7 @@ namespace apidb
 				{
 					xmlNewChild(root_node, NULL, (const xmlChar *)"executable_target", (const xmlChar *)executable_target.c_str());
 				}
-				
+
 				if(writeDatconnect.empty())
 				{
 					xmlNewChild(root_node, NULL, (const xmlChar *)"writeDatconnect", (const xmlChar *)"¿?");
@@ -207,7 +211,7 @@ namespace apidb
                         {
                                 countparams = 0;
                                 counFuns++;
-                                xmlNodePtr downls_fn_node = xmlNewChild(downls_tb_node, NULL, (const xmlChar *)"Function", NULL); 
+                                xmlNodePtr downls_fn_node = xmlNewChild(downls_tb_node, NULL, (const xmlChar *)"Function", NULL);
                                 xmlNewProp(downls_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
                                 const std::vector<std::string>& params = (const std::vector<std::string>&)*(itfn->second->getParameters());
                                 for(auto itParams : params)
@@ -239,7 +243,7 @@ namespace apidb
                         {
                                 countparams = 0;
                                 counFuns++;
-                                xmlNodePtr selects_fn_node = xmlNewChild(selects_tb_node, NULL, (const xmlChar *)"Function", NULL); 
+                                xmlNodePtr selects_fn_node = xmlNewChild(selects_tb_node, NULL, (const xmlChar *)"Function", NULL);
                                 xmlNewProp(selects_fn_node, BAD_CAST "name", BAD_CAST itfn->second->getName().c_str());
                                 const std::vector<std::string>& params = (const std::vector<std::string>&)*(itfn->second->getParameters());
                                 for(auto itParams : params)
@@ -256,43 +260,47 @@ namespace apidb
                         xmlNewChild(selects_node, NULL, (const xmlChar *)"Table", NULL);
                 }
                 xmlNewProp(selects_node, BAD_CAST "countTbs", BAD_CAST std::to_string(countTbs).c_str());
-                
+
                 char tmp_dirpath[] =  "/tmp/apidb-XXXXXX";
-                char * tmp_apidbDir  = mkdtemp(tmp_dirpath);
-                std::string tmpDir = tmp_apidbDir;
-                
+                #if defined WINDOWS_MINGW
+                    int rettmp  = _mktemp_s(tmp_dirpath, strlen(tmp_dirpath));
+                #else
+                    char * tmp_apidbDir  = mkdtemp(tmp_dirpath);
+                #endif // defined
+                std::string tmpDir = tmp_dirpath;
+
                 std::string nameVerFile = tmp_dirpath;
                 nameVerFile +=  "/version";
                 std::ofstream verF;
-                verF.open(nameVerFile);                
+                verF.open(nameVerFile);
                 verF << (std::string)apidb::getPakageVersion();
                 verF.flush();
                 verF.close();
-                
+
                  std::string xmlFile = tmp_dirpath;
                  xmlFile += "/main.xml";
                 //std::cout<< "Generando archivo de " <<  xmlFile << std::endl;
-		int ret = xmlSaveFormatFileEnc(xmlFile.c_str(), doc, "UTF-8", 1);	
+		int ret = xmlSaveFormatFileEnc(xmlFile.c_str(), doc, "UTF-8", 1);
 		xmlFreeDoc(doc);
 		xmlCleanupParser();
-		if( ret == -1) 
+		if( ret == -1)
 		{
 			throw core::Error("No se confirmo el guardado de archivo.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
 		}
-                
+
                 //comprimiendo archivo
                 //std::cout<< "Comprimiendo projecto." << std::endl;
       			std::string tarFilename= "apidb.tar";
-                compress(tarFilename,tmp_apidbDir,"apidb");
+                compress(tarFilename,tmp_dirpath,"apidb");
                 //std::cout<< "Archivo comprimido" << std::endl;
-                
+
                 if(filename.size()>0)
                 {
                     if(rename(tarFilename.c_str(),filename.c_str()) != 0)
                     {
                         std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
                         throw core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,__FILE__,__LINE__);
-                    }                        
+                    }
                 }
                 else
                 {
@@ -300,43 +308,7 @@ namespace apidb
                     throw core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_NOFULL_PATCH_PROJECT,__FILE__,__LINE__);
                 }
 	}
-	
-	bool ConfigureProject::compress(const std::string& tarf, char * tmp_apidbDir,const std::string& filenameProj)
-	{
-		TAR *pTar;
-       	tar_open(&pTar, (char*)tarf.c_str(), NULL, O_WRONLY | O_CREAT, 0644, TAR_IGNORE_MAGIC);
-       	tar_append_tree(pTar, tmp_apidbDir, (char*)filenameProj.c_str());
-       	tar_append_eof(pTar);
-    	tar_close(pTar);
-    	
-    	return true;
-	}
-	bool ConfigureProject::unmcompress(const std::string& filename,char* tmp_apidbDir)
-	{
-	   	//Descomomprimiendo archivo
-        
-        //std::cout << "ConfigureProject::readConfig: Step 4\n";
-      	//std::cout << "Descomprimiendo achivo." << std::endl;
-		TAR* tar_handle = NULL;
-		tar_open(&tar_handle, (char*) filename.c_str(), NULL,  O_RDONLY,  0644,  TAR_GNU);
-		if (tmp_apidbDir == NULL) 
-		{
-			//fprintf(stderr, "Failed to build temp file.\n");
-				throw core::Error("No se puede crear el directorio tempora para desempauqetar el archivo de proyecto.",ErrorCodes::READFILE_TEMPUNPACKFAIL,__FILE__,__LINE__);
 
-		}
-        //std::cout << "ConfigureProject::readConfig: Step 5\n";
-  		//std::cout << "tar_handle is " << tmp_apidbDir << std::endl;
-		//std::cout << "tmp_filepath "<< tmp_filepath  << std::endl;
-     	if(tar_extract_all(tar_handle, tmp_apidbDir) != 0)
-      	{
-        	core::Error::write( core::Error("Fallo duraten las descompresion del archivo.",ErrorCodes::Read_UncomConfigFile,__FILE__,__LINE__));
-         	//std::cout << "Fallo duraten las descompresion del archivo." << std::endl;
-      	}
- 		tar_close(tar_handle);	
- 		
- 		return true;
-	}
 	void ConfigureProject::readConfig(const std::string& filename)
 	{
         //std::cout << "ConfigureProject::readConfig: Step 1\n";
@@ -344,7 +316,7 @@ namespace apidb
 		{
 			throw core::Error("Hay un error pendiente de atender",core::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
 		}
-        
+
         //std::cout << "ConfigureProject::readConfig: Step 2\n";
         //std::cout << "Reading : " << filename << std::endl;
         FILE *apidbFilecheck = fopen(filename.c_str(), "r");
@@ -355,19 +327,23 @@ namespace apidb
             throw core::Error(msg,ErrorCodes::READFILE_INVALIDPATH,__FILE__,__LINE__);
         }
         //std::cout << "ConfigureProject::readConfig: Step 3\n";
-        
+
         fclose(apidbFilecheck);
         //std::cout << "Step 2." << std::endl;
         char tmp_filepath[] =  "/tmp/XXXXXXXXX";
-        char * tmp_apidbDir  = mkdtemp(tmp_filepath);       
+        #if defined WINDOWS_MINGW
+            int rettmp  = _mktemp_s(tmp_filepath, strlen(tmp_filepath));
+        #else
+            //char * tmp_apidbDir  = mkdtemp(tmp_dirpath);
+        #endif
 
-		bool retpree = unmcompress(filename,tmp_apidbDir);
-                   
-        //std::cout << "ConfigureProject::readConfig: Step 6\n";             
-		std::string tmVerFileName = tmp_apidbDir;
+		bool retpree = unmcompress(filename,tmp_filepath);
+
+        //std::cout << "ConfigureProject::readConfig: Step 6\n";
+		std::string tmVerFileName = tmp_filepath;
 		tmVerFileName += "/apidb/version";
 		//tmVerFileName="apidb/apidbcopy/version";
-		//std::cout << "Leyendo version de proyecto. from " << tmVerFileName << std::endl;                
+		//std::cout << "Leyendo version de proyecto. from " << tmVerFileName << std::endl;
 		FILE *apidbFilecheck2 = fopen(tmVerFileName.c_str(), "r");
 		if (apidbFilecheck2 == NULL )
 		{
@@ -380,7 +356,7 @@ namespace apidb
 		size_t line_buf_size = 0;
 		int line_count = 0;
 		ssize_t line_size;
-		line_size = getline(&line_buf, &line_buf_size, apidbFilecheck2);
+		char* retget = fgets(line_buf, line_buf_size, apidbFilecheck2);
 		std::string strver;
 		if(line_size > 0)
 		{
@@ -393,30 +369,30 @@ namespace apidb
 		//projectVersion.setNumbers(5,0,0);
 		//std::cout << "ConfigureProject::readConfig: Step 8.3\n";
 		//std::cout << "ConfigureProject::readConfig: Step 9\n";
-		
+
         //std::cout << "ConfigureProject::readConfig: Step 8\n";
 		fclose(apidbFilecheck2);
-		
-		//std::cout << "Leyendo XML." << std::endl;  
+
+		//std::cout << "Leyendo XML." << std::endl;
 		xmlTextReaderPtr reader;
 		int ret;
 		std::string xmlfile = tmp_filepath;
 		xmlfile += "/apidb/main.xml";
-		//std::cout << "Parseando XML " << xmlfile << std::endl;  
+		//std::cout << "Parseando XML " << xmlfile << std::endl;
         //std::cout << "ConfigureProject::readConfig: Step 9.1\n";
-        reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);                
+        reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);
         //std::cout << "ConfigureProject::readConfig: Step 9.2 " << xmlfile <<  "\n";
-		
-        if (reader != NULL) 
+
+        if (reader != NULL)
         {
             //std::cout << "ConfigureProject::readConfig: Step 9.2.1\n";
-            ret = xmlTextReaderRead(reader); 
+            ret = xmlTextReaderRead(reader);
 			if(ret == -1)
 			{
 				std::string msg = "Fallo en la lectura de los nodos XML.";
-				throw core::Error(msg,0,__FILE__,__LINE__);				
+				throw core::Error(msg,0,__FILE__,__LINE__);
 			}
-            if (!processNode(reader)) 
+            if (!processNode(reader))
             {
                 //fprintf(stderr, "%s : failed to parse\n", xmlfile.c_str());
                 //throw  core::Error("Fallo duraten el parseo de nodo.",ErrorCodes::Read_FileFailParseNode,__FILE__,__LINE__);
@@ -426,7 +402,7 @@ namespace apidb
             xmlFreeTextReader(reader);
             //std::cout << "ConfigureProject::readConfig: Step 9.2.3\n";
         }
-        else 
+        else
         {
 				//fprintf(stderr, "Unable to open %s\n", xmlfile.c_str());
 				std::string msg = "Fallo al abrir el archivo '";
@@ -434,7 +410,7 @@ namespace apidb
                 throw core::Error(msg,ErrorCodes::READFILE_OPENXMLFILE,__FILE__,__LINE__);
         }
 	}
-       
+
 	bool ConfigureProject::getProjectNodes(xmlTextReaderPtr reader)
 	{
 		//std::cout << "ConfigureProject::getProjectNodes: Step 1\n";
@@ -445,9 +421,9 @@ namespace apidb
 			core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_NOCOMPATIBLE_PROJECT,__FILE__,__LINE__));
 			return false;
 		}
-		
+
 		const xmlChar *name;
-		
+
 		//std::cout << "ConfigureProject::getProjectNodes: Step 2\n";
         std::string password,user,host,database;
         int port;
@@ -462,11 +438,11 @@ namespace apidb
 			//std::cout << "ConfigureProject::getProjectNodes: Step 2.1.2\n";
 			if(strcmp((const char*)name,"#text") == 0)
 			{
-				//std::cout << "ConfigureProject::getProjectNodes: Step 2.1.2.1\n";   
+				//std::cout << "ConfigureProject::getProjectNodes: Step 2.1.2.1\n";
 				this->name = (const char*)xmlTextReaderConstValue(reader);
 				//std::cout << "ConfigureProject::getProjectNodes: Step 2.1.2.2\n";
 			}
-                 
+
 			//std::cout << "ConfigureProject::getProjectNodes: Step 2.2\n";
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -487,9 +463,9 @@ namespace apidb
                 name = xmlTextReaderConstName(reader);
                 short major = 0;
                 if(strcmp((const char*)name,"#text") == 0)
-                {  
+                {
                 major = atoi((const char*)xmlTextReaderConstValue(reader));
-                }        
+                }
                 else
                 {
                         std::string msgstr = "Fallo durante el parseo XML.";
@@ -500,7 +476,7 @@ namespace apidb
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
-                name = xmlTextReaderConstName(reader);    
+                name = xmlTextReaderConstName(reader);
                 if(strcmp((const char*)name,"minor") == 0)
                 {
                 xmlTextReaderRead(reader);
@@ -528,7 +504,7 @@ namespace apidb
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
-                name = xmlTextReaderConstName(reader);    
+                name = xmlTextReaderConstName(reader);
                 if(strcmp((const char*)name,"patch") == 0)
                 {
                 xmlTextReaderRead(reader);
@@ -557,7 +533,7 @@ namespace apidb
                 this->versionResult.setNumbers(major,minor,patch);
 		//std::cout << "ConfigureProject::getProjectNodes: Step 2.8\n";
         // this->version.setStage(toolkit::Version::Stage::alpha);
-                
+
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -588,7 +564,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-                
+
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -615,7 +591,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-                
+
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -642,7 +618,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-                
+
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -669,7 +645,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-                
+
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -696,13 +672,13 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-                
+
         }
-        
+
         //std::cout << "ConfigureProject::getProjectNodes: Step 3\n";
                 /******************************************************************************************
                 * Version 1.1.0
-                * 
+                *
                 * *//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //std::cout << "ConfigureProject::getProjectNodes : v1.1.0 update.\n";
         if(projectVersion >= ver110)//la lectura es compatible con versiones anteriores del projecto
@@ -735,7 +711,7 @@ namespace apidb
                     }
                     else
                     {
-		                failLoadDat = true;                   
+		                failLoadDat = true;
                     }
                 }
                 else if(inL.compare("PostgreSQL") == 0)
@@ -748,7 +724,7 @@ namespace apidb
                     }
                     else
                     {
-		                failLoadDat = true;                    
+		                failLoadDat = true;
                     }
                 }
                 else if(inL.compare("MariaDB") == 0)
@@ -763,11 +739,11 @@ namespace apidb
                 	{
 		                setInputLenguaje(InputLenguajes::MySQL);
 		                conectordb = createDatConnection();
-		                conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);		                
+		                conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);
                     }
                     else
                     {
-		                failLoadDat = true;                   
+		                failLoadDat = true;
                     }
                 }
                 else
@@ -796,12 +772,12 @@ namespace apidb
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
-                name = xmlTextReaderConstName(reader);        
-                std::string outL = (const char*)xmlTextReaderConstValue(reader);        
+                name = xmlTextReaderConstName(reader);
+                std::string outL = (const char*)xmlTextReaderConstValue(reader);
                 if(outL.compare("C++") == 0)
                 {
                         outputLenguaje = OutputLenguajes::CPP;
-                }     
+                }
                 else if(outL.compare("Java") == 0)
                 {
                         outputLenguaje = OutputLenguajes::JAVA;
@@ -812,7 +788,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-                
+
                 //
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -822,8 +798,8 @@ namespace apidb
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
-                name = xmlTextReaderConstName(reader);        
-                std::string pk = (const char*)xmlTextReaderConstValue(reader);        
+                name = xmlTextReaderConstName(reader);
+                std::string pk = (const char*)xmlTextReaderConstValue(reader);
                 if(pk.compare("CMake") == 0)
                 {
                         packing = PackingLenguajes::CMake;
@@ -834,7 +810,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-                
+
                 //
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -844,8 +820,8 @@ namespace apidb
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
-                name = xmlTextReaderConstName(reader);        
-                std::string cmpl = (const char*)xmlTextReaderConstValue(reader);        
+                name = xmlTextReaderConstName(reader);
+                std::string cmpl = (const char*)xmlTextReaderConstValue(reader);
                 if(cmpl.compare("STATIC") == 0)
                 {
                         compiled = Compiled::STATIC;
@@ -860,7 +836,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-        
+
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -880,9 +856,9 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
         }
-		
+
 		//std::cout << "ConfigureProject::getProjectNodes: Step 4\n";
-              
+
         //std::cout << "ConfigureProject::getProjectNodes : v2.0.0 feactures.\n";
 		if(projectVersion >= ver200)
 		{
@@ -903,7 +879,7 @@ namespace apidb
                         core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
                         return false;
                 }
-                                
+
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -922,9 +898,9 @@ namespace apidb
                         return false;
                 }
 		}
-		
+
 		//std::cout << "ConfigureProject::getProjectNodes: Step 5\n";
-		
+
 		if(projectVersion >= ver220)
 		{
 			xmlTextReaderRead(reader);
@@ -946,12 +922,12 @@ namespace apidb
 			}
 		}
 		//std::cout << "ConfigureProject::getProjectNodes: Step 6\n";
-		
+
         //
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
         xmlTextReaderRead(reader);
-        
+
 		//const xmlChar *nameNodeList;
 		for(int i = 0; i < 2; i++)
 		{
@@ -962,22 +938,22 @@ namespace apidb
 			{
 				std::string msgstr = "Fallo durante el parseo XML.";
 				core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-				return false;				
+				return false;
 			}
                 int counTbs = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countTbs"));
                 for(int j = 0; j < counTbs; j++)
                 {
                         xmlTextReaderRead(reader);
-                        xmlTextReaderRead(reader);        
+                        xmlTextReaderRead(reader);
                         //std::cout << "\tTable  : " <<(const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
                         Table* ptb = new Table((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name"));
                         int counFuns = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countFuns"));
                         xmlTextReaderRead(reader);
-                        xmlTextReaderRead(reader);  
+                        xmlTextReaderRead(reader);
                         for(int i = 0; i < counFuns; i++)
                         {
                                 //std::cout << "\t\tFn : " << (const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name") << std::endl;
-                                Function*  pfn = new Function((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name"));                                
+                                Function*  pfn = new Function((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"name"));
                                 int counParams = atoi((const char*)xmlGetProp(xmlTextReaderCurrentNode(reader), (const xmlChar *)"countParams"));
                                 xmlTextReaderRead(reader);
                                 xmlTextReaderRead(reader);
@@ -992,14 +968,14 @@ namespace apidb
                                         strcpy(strnew,strParam);
                                         //pparams->push_back(strnew);
                                         pfn->addParam(strnew);
-                                        xmlTextReaderRead(reader);                
-                                        xmlTextReaderRead(reader);              
-                                        xmlTextReaderRead(reader);              
+                                        xmlTextReaderRead(reader);
+                                        xmlTextReaderRead(reader);
+                                        xmlTextReaderRead(reader);
                                         xmlTextReaderRead(reader);
                                 }
                                 //pfn->setHeader(pparams);
                                 ptb->insert(std::make_pair(pfn->getName().c_str(), pfn));
-                                xmlTextReaderRead(reader);      
+                                xmlTextReaderRead(reader);
                         }
                         if(node.compare("downloads") == 0)
                         {
@@ -1018,19 +994,19 @@ namespace apidb
                 xmlTextReaderRead(reader);
         }
         }
-        
+
         //std::cout << "ConfigureProject::getProjectNodes: Step 7\n";
-        
+
         return true;
     }
 
 
-    bool ConfigureProject::processNode(xmlTextReaderPtr reader) 
+    bool ConfigureProject::processNode(xmlTextReaderPtr reader)
     {
         //const xmlChar *name = xmlTextReaderConstName(reader);
         //std::cout << "ConfigureProject::processNode: Step 1\n";
         if(xmlTextReaderNodeType(reader) == 1) //es d apertura?
-        {        	
+        {
             ///std::cout << "ConfigureProject::processNode: Step 1.1\n";
             if(!getProjectNodes(reader))
             {
@@ -1051,9 +1027,9 @@ namespace apidb
                 //stack.pop_front();
         }
         //std::cout << "ConfigureProject::processNode: Step 2\n";
-        
+
         return true;
     }
-    
+
 }
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="apidb" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/apidb" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DWINDOWS_MINGW" />
+					<Add option="-DCODEBLOCKS" />
+					<Add directory="../core/src" />
+					<Add directory="../db/abstract/src" />
+					<Add directory="../db/maria/src" />
+					<Add directory="../coreutils/src" />
+					<Add directory="C:/msys64/mingw64/include/libxml2" />
+				</Compiler>
+				<Linker>
+					<Add library="../core/bin/Debug/liboctetos-core.dll" />
+					<Add library="../db/abstract/bin/Debug/liboctetos-db-abstract.dll" />
+					<Add library="../db/maria/bin/Debug/liboctetos-db-maria.dll" />
+					<Add library="../coreutils/bin/Debug/liboctetos-coreutils.dll" />
+					<Add library="C:/msys64/mingw64/lib/libmysqlclient.a" />
+					<Add library="C:/msys64/mingw64/lib/libmysqlclient.dll.a" />
+					<Add library="C:/msys64/mingw64/lib/libxml2.a" />
+					<Add library="C:/msys64/mingw64/lib/libxml2.dll.a" />
+					<Add library="C:/msys64/mingw64/lib/libdl.a" />
+					<Add library="C:/msys64/mingw64/lib/libdl.dll.a" />
+					<Add library="C:/Windows/System32/ws2_32.dll" />
+					<Add library="C:/Windows/System32/crypt32.dll" />
+					<Add library="C:/Windows/System32/secur32.dll" />
+					<Add library="C:/Windows/System32/wsock32.dll" />
+					<Add library="C:/Windows/System32/shlwapi.dll" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/apidb" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="src/ConfigureProject-compress-z.cpp" />
+		<Unit filename="src/ConfigureProject-xml.cpp" />
+		<Unit filename="src/ConfigureProject.cpp" />
+		<Unit filename="src/ConfigureProject.hpp" />
+		<Unit filename="src/Errors.cpp" />
+		<Unit filename="src/Errors.hpp" />
+		<Unit filename="src/analyzer.cpp" />
+		<Unit filename="src/analyzer.hpp" />
+		<Unit filename="src/apidb-build.cpp" />
+		<Unit filename="src/apidb.cpp" />
+		<Unit filename="src/apidb.hpp" />
+		<Unit filename="src/common-mariadb.cpp" />
+		<Unit filename="src/common-mariadb.hpp" />
+		<Unit filename="src/common.cpp" />
+		<Unit filename="src/common.hpp" />
+		<Unit filename="src/driver.cpp" />
+		<Unit filename="src/driver.hpp" />
+		<Unit filename="src/dynamic-mariadb.cpp" />
+		<Unit filename="src/dynamic.hh" />
+		<Unit filename="src/generator-c++.cpp" />
+		<Unit filename="src/generator-cmake.cpp" />
+		<Unit filename="src/generator-java.cpp" />
+		<Unit filename="src/generator-maven.cpp" />
+		<Unit filename="src/generator.cpp" />
+		<Unit filename="src/generator.hpp" />
+		<Unit filename="src/versionInfo-cb.h" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

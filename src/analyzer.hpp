@@ -1,9 +1,9 @@
 /**
- * 
+ *
  *  This file is part of apidb.
  *  APIDB do Make easy to connect your Database
  *  Copyright (C) 2018  Azael Reyes
- * 
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,14 +16,18 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * */
 
 
 #ifndef APIDB_ANALYZER_HPP
 #define APIDB_ANALYZER_HPP
 
-#include <octetos/core/Message.hh>
+#if defined WINDOWS_MINGW
+    #include <Message.hh>
+#else
+    #include <octetos/core/Message.hh>
+#endif
 
 #include "common.hpp"
 #include "ConfigureProject.hpp"
@@ -35,7 +39,7 @@
 namespace octetos
 {
 namespace apidb
-{    
+{
 class Driver;
 namespace generators
 {
@@ -50,7 +54,7 @@ namespace generators
 		friend class generators::Generator;
 		friend class Driver;
 		void* handle;
-        
+
 	public:
         /**
         * \brief Realiza una llamada al parser interno que realiza el analisis de cadana pasada
@@ -62,9 +66,9 @@ namespace generators
         * \param progress Use NULL para especificar que no desea log o una instacia valida de toolkit::ActivityProgress para generarlos.
         * */
         virtual bool analyze(core::ActivityProgress* progress) = 0;
-                
+
                 /**
-                 * \brief Retorna un referancia a la tabla de simbolos, no es modificable si necesita poder modicar 
+                 * \brief Retorna un referancia a la tabla de simbolos, no es modificable si necesita poder modicar
                  * \details Ya que la tabla de simbolos es un estructura de datos compleja y muy delicada no se permite acceso de escritura, si lo necesita puede considerar hacer una copia de la tabal mediante la  funcion copyListTable, la caul le construira una identica. Quiza quiera reconsiderar el modelo de su programa o la estructura del mismo tambien.
                  **/
                 //const std::map<const char*,symbols::ISpace*,symbols::cmp_str>& getListTableConst() const;
@@ -72,7 +76,7 @@ namespace generators
                  * \brief Crea una copia de la tabla de simbolos las cual puede ser manipulada
                  * */
                 //std::map<const char*,symbols::ISpace*,symbols::cmp_str> copyListTable()const;
-		
+
                 /**
                  * \brief Requiere la configuracion del proyecto y un conector la base de datos valido.
                  * */
@@ -80,9 +84,9 @@ namespace generators
                 /**
                  * \brief Destructor
                  * */
-                virtual ~Analyzer(); 
+                virtual ~Analyzer();
                 /**
-                 *\brief Nuevo sistema de recuperacion de Mensajes. 
+                 *\brief Nuevo sistema de recuperacion de Mensajes.
                  **/
                 core::ActivityProgress& getOutput();
                 /**
@@ -99,7 +103,7 @@ namespace generators
                  * \brief COnector a la base de datos.
                  * */
 		octetos::db::Connector* connector;
-		  
+
         /**
         * \brief Indica la configuracion del proyecto.
         * */
@@ -107,7 +111,7 @@ namespace generators
         /**
         * \brief Para envio de mensaje al usuario.
         * */
-        core::ActivityProgress* progress;				
+        core::ActivityProgress* progress;
 		bool basicSymbols(symbols::ISpace* ispace,core::ActivityProgress* progress);
 		bool fillKeyType(symbols::ISpace* ispace,core::ActivityProgress* progress);
 	};
