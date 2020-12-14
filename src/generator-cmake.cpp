@@ -1,9 +1,9 @@
 /**
- * 
+ *
  *  This file is part of apidb.
  *  APIDB do Make easy to connect your Database
  *  Copyright (C) 2018  Azael Reyes
- * 
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * */
 
 #include <list>
@@ -47,12 +47,12 @@ namespace generators
                         throw BuildException(msg);
                 }
 	}
-	
+
 	CMake::~CMake()
 	{
-		
+
 	}
-	
+
 	bool CMake::generate(bool log)
 	{
 		std::string namefile = "CMakeLists.txt";
@@ -64,19 +64,19 @@ namespace generators
 		{
 			cmakelists.open(configureProject.builDirectory+ "/" + namefile);
 		}
-			
+
 		//CMakeLists.txt
 		if(log)analyzer.getOutput().add( "\nGenerando archivos de gestor de projecto... ");
 		std::string msg1 = "\n\tTipo de Gestor: " ;
                 msg1 += getPackingLenguajeString() + "\n";
 		if(log)analyzer.getOutput().add(msg1);
-		
+
 		cmakelists<<"CMAKE_MINIMUM_REQUIRED(VERSION ";
 		cmakelists<<"3";
 		cmakelists<<".";
 		cmakelists<<"0";
 		cmakelists<<")"<<std::endl;
-		
+
 		cmakelists<<"PROJECT(";
 		cmakelists<<configureProject.name;
 		cmakelists<<" VERSION ";
@@ -85,7 +85,7 @@ namespace generators
 		cmakelists<<configureProject.versionResult.getMinor();
 		cmakelists<<".";
 		cmakelists<<configureProject.versionResult.getPatch();
-        
+
 		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
 			cmakelists<<" LANGUAGES CXX)"<<std::endl;
@@ -94,14 +94,14 @@ namespace generators
 		{
 			throw BuildException("El lenguje de salida es desconocido para el gentor de projecto.");
 		}
-		
+
 		cmakelists<<"SET(CMAKE_CXX_STANDARD 14)"<<std::endl;
 		cmakelists<<"SET(CMAKE_CXX_STANDARD_REQUIRED ON)"<<std::endl;
 		cmakelists<<"SET(CMAKE_CXX_EXTENSIONS OFF)"<<std::endl;
 		cmakelists<<"SET(CMAKE_BUILD_TYPE Debug)"<<std::endl;
 		cmakelists<<std::endl;
-		
-        
+
+
 		cmakelists<<"FIND_PACKAGE(PkgConfig REQUIRED)"<<std::endl;
 
 		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_CORE REQUIRED octetos-core)"<<std::endl;
@@ -111,14 +111,14 @@ namespace generators
 		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos Core library\")\n";
 		cmakelists<<"ENDIF()"<<std::endl;
         cmakelists<<std::endl;
-    
+
 		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_ABSTRACT REQUIRED octetos-db-abstract)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_DB_ABSTRACT_FOUND)"<<std::endl;
 		cmakelists<<"ELSE()\n";
 		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB abtract library\")\n";
 		cmakelists<<"ENDIF()"<<std::endl;
 		cmakelists<<std::endl;
-    
+
     if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
     {
 		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_MYSQL REQUIRED octetos-db-mysql)"<<std::endl;
@@ -127,7 +127,7 @@ namespace generators
         cmakelists<<"ELSE(OCTETOS_CORE_FOUND)\n";
         cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find Octetos DB MySQL library\")\n";
 		cmakelists<<"ENDIF()"<<std::endl;
-		
+
 		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_MYSQL REQUIRED octetos-db-mysql)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_DB_MYSQL_FOUND)"<<std::endl;
 		cmakelists<<"ELSE()\n";
@@ -141,7 +141,7 @@ namespace generators
 		cmakelists<<"IF(MARIADB_FOUND)"<<std::endl;
 		cmakelists<<"INCLUDE_DIRECTORIES(${MARIADB_INCLUDE_DIR})"<<std::endl;
 		cmakelists<<"ENDIF()"<<std::endl;
-		
+
 		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_MARIA REQUIRED octetos-db-maria)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_DB_MARIA_FOUND)"<<std::endl;
 		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_DB_MARIA_INCLUDE_DIR})"<<std::endl;
@@ -161,7 +161,7 @@ namespace generators
 		cmakelists<<"ELSE()"<<std::endl;
 		cmakelists<<"MESSAGE(FATAL_ERROR \"Could NOT find libpq or libpqxx library\")\n";
 		cmakelists<<"ENDIF()"<<std::endl;
-		
+
 		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_DB_POSTGRESQL REQUIRED octetos-db-postgresql)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_DB_POSTGRESQL_FOUND)"<<std::endl;
 		cmakelists<<"ELSE()\n";
@@ -173,19 +173,19 @@ namespace generators
     {
         std::cerr << "No hay soporte para este lenguaje en cmake" << std::endl;
     }
-		
+
 		cmakelists<<std::endl;
 		if(!configureProject.executable_target.empty() and configureProject.executable_target.compare("¿?") != 0)//la adicion de un ejecutable es opcional
 		{
-			cmakelists<<"ADD_EXECUTABLE(" << configureProject.executable_target << "  "<< configureProject.name; 
+			cmakelists<<"ADD_EXECUTABLE(" << configureProject.executable_target << "  "<< configureProject.name;
 			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
 			{
-				cmakelists <<".cpp "; 
+				cmakelists <<".cpp ";
 			}
 			cmakelists<<configureProject.executable_target;
 			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
 			{
-				cmakelists <<".cpp "; 
+				cmakelists <<".cpp ";
 			}
 			cmakelists <<")"<<std::endl;
             if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
@@ -209,7 +209,7 @@ namespace generators
         else if(configureProject.compiled == apidb::Compiled::STATIC)
         {
             cmakelists  << " STATIC ";
-        }                
+        }
         cmakelists << "${PROJECT_NAME}.cpp )"<<std::endl;
         if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
         {
@@ -230,21 +230,29 @@ namespace generators
                 std::string msg2 = "\tArchivo de gestion de projecto: '";
                 msg2 += namefile + "'\n";
 		if(log)analyzer.getOutput().add( msg2);
-		
+
 		//std::cout<<"Creating cmake.modules..."<<std::endl;
 		//cmake.modules
 		if(configureProject.builDirectory.empty() | (configureProject.builDirectory.compare(".") == 0))
 		{
-			std::string str = "cmake.modules";			
-			mkdir(str.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			std::string str = "cmake.modules";
+			#if defined WINDOWS_MINGW
+                mkdir(str.c_str());
+			#else
+                mkdir(str.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			#endif
 		}
 		else
 		{
 			std::string direct = configureProject.builDirectory + "/cmake.modules";
-			mkdir(direct.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			#if defined WINDOWS_MINGW
+                mkdir(direct.c_str());
+			#else
+                mkdir(direct.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			#endif
 		}
-		
-	
+
+
 		//std::cout<<"Creating toolkit-commonConfig.cmake..."<<std::endl;
 		namefile = "octetos-coreConfig.cmake";
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
@@ -303,7 +311,7 @@ namespace generators
 		  toolkitcommonconifg<<"OCTETOS_CORE_INCLUDE_DIR"<<std::endl;
 		  toolkitcommonconifg<<")"<<std::endl;
 		toolkitcommonconifg.close();
-                
+
     if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
     {
 		//std::cout<<"Creating toolkit-clientdbConfig.cmake..."<<std::endl;
@@ -317,8 +325,8 @@ namespace generators
 		else
 		{
 			toolkitclientdbConfig.open(configureProject.builDirectory + "/cmake.modules/" + namefile);
-		}	
-		
+		}
+
 		toolkitclientdbConfig<<"IF (OCTETOS_DB_MYSQL_INCLUDE_DIR)"<<std::endl;
 		  toolkitclientdbConfig<<"SET(OCTETOS_DB_MYSQL_FIND_QUIETLY TRUE)"<<std::endl;
 		toolkitclientdbConfig<<"ENDIF (OCTETOS_DB_MYSQL_INCLUDE_DIR)"<<std::endl;
@@ -383,7 +391,7 @@ namespace generators
 		{
 			toolkitcommonconifg.open(configureProject.builDirectory + "/cmake.modules/" + namefile);
 		}
-		
+
 		toolkitcommonconifg<<"IF (MYSQL_INCLUDE_DIR)"<<std::endl;
 		  toolkitcommonconifg<<"SET(MYSQL_FIND_QUIETLY TRUE)"<<std::endl;
 		toolkitcommonconifg<<"ENDIF (MYSQL_INCLUDE_DIR)"<<std::endl;
@@ -441,15 +449,15 @@ namespace generators
 		config<<"#define VERSION_PATCH @apidb_VERSION_PATCH@"<<std::endl;
 		config<<"#define VERSION_STAGE toolkit::Version::Stage::@apidb_VERSION_STAGE@"<<std::endl;
 		config<<"#define PAKAGENAME \"@PROJECT_NAME@\""<<std::endl;
-		config.close();		
+		config.close();
 		//analyzer->getOutputMessage()<<"\tArchivo de configuración de projecto: " << namefile <<std::endl;
-				
-                
+
+
 		//analyzer->getOutputMessage()<<"\tArchivo de develping phase: " << namefile <<std::endl;
 		//std::cout<<"return..."<<std::endl;
 		return true;
 	}
-	
+
 }
 }
 }

@@ -1,9 +1,9 @@
 /**
- * 
+ *
  *  This file is part of apidb.
  *  APIDB do Make easy to connect your Database
  *  Copyright (C) 2018  Azael Reyes
- * 
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,14 +16,18 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * */
 
 #ifndef APIDB_GENERATOR_HPP
 #define APIDB_GENERATOR_HPP
 
 #include <fstream>
-#include <octetos/coreutils/shell.hh>
+#if defined WINDOWS_MINGW
+    #include <shell.hh>
+#else
+    #include <octetos/db/shell.hh>
+#endif
 
 
 namespace octetos
@@ -39,24 +43,24 @@ namespace octetos
                  * */
 		class Generator
 		{
-		public:			
+		public:
 			virtual bool generate(bool log) = 0;
 			OutputLenguajes getOutputLenguaje() const;
 			std::string getOutputLenguajeString()const;
 			PackingLenguajes getPackingLenguaje() const;
-			std::string getPackingLenguajeString()const;	
+			std::string getPackingLenguajeString()const;
 			Generator(const ConfigureProject& config,apidb::Analyzer& analyzer);
-			
-		protected:		
-			//OutputLenguajes outputLenguaje;//se 
+
+		protected:
+			//OutputLenguajes outputLenguaje;//se
 			const ConfigureProject& configureProject;
 			apidb::Analyzer& analyzer;
 			const symbols::SymbolsTable& getSymbolsTable()const;
 			coreutils::Shell shell;
 		};
-		
+
 		/**
-		* \private 
+		* \private
 		* */
 		class CPP : public Generator
 		{
@@ -67,7 +71,7 @@ namespace octetos
 			std::ofstream& getSourceOutput();
 			std::ofstream& getHeaderOutput();
 			virtual ~CPP();
-			
+
 		private:
 			//void createSpaceH(std::ofstream& file,bool log);
 			bool createH(std::ofstream& file,bool log,const symbols::SymbolsTable&);
@@ -105,15 +109,15 @@ namespace octetos
 			void writeSelectsCPP(const apidb::symbols::Table&,std::ofstream&);
 			bool createDatconnectHPP(std::ofstream& file,bool log);
             bool createDatconnectCPP(std::ofstream& file,bool log);
-			
+
 			//apidb::Analyzer& analyzer;
 			std::ofstream* writeResults;//erreglo de writeoutput files
 			std::string projectH;
 			std::string projectCPP;
 		};
-		
+
 		/**
-		* \private 
+		* \private
 		* */
 		class Java : public Generator
 		{
@@ -123,8 +127,8 @@ namespace octetos
 			const std::string& getHeaderName() const;
 			std::ofstream& getSourceOutput();
 			virtual ~Java();
-			
-		private:			
+
+		private:
 			bool create(bool log,const symbols::SymbolsTable&);
 			bool create(std::ofstream& file,bool log,const symbols::ISpace*);
 			void createClass(const apidb::symbols::Table&,std::ofstream&,const std::string&);
@@ -140,21 +144,21 @@ namespace octetos
 			void writeDownloads(const apidb::symbols::Table&,std::ofstream&);
 			void writeSelects(const apidb::symbols::Table&,std::ofstream&);
 			bool createDatconnect(std::ofstream& file,bool log);
-			
+
 			std::ofstream* writeResult;//erreglo de writeoutput files
  			std::string filename;
 		};
-		
+
 		/**
 		* \private No es parte del API
 		* */
 		class CMake : public Generator
 		{
-		public:			
+		public:
 			virtual bool generate(bool log);
 			virtual ~CMake();
 			CMake(apidb::Analyzer&,const ConfigureProject&);
-			
+
 		private:
 			//apidb::Analyzer& analyzer;
 			std::ofstream cmakelists;
@@ -164,24 +168,24 @@ namespace octetos
 			std::ofstream developing;
 			//Options options;
 			//const ConfigureProject& configureProject;
-		};	
-		
-		
+		};
+
+
 		/**
 		* \private No es parte del API
 		* */
 		class Maven : public Generator
 		{
-		public:			
+		public:
 			virtual bool generate(bool log);
 			virtual ~Maven();
 			Maven(apidb::Analyzer&,const ConfigureProject&);
-			
+
 		private:
 			std::string filename;
-		};	
+		};
 	}
-		
+
 }
 }
 #endif

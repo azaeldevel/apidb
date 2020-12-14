@@ -1,5 +1,9 @@
 
-#include <octetos/db/clientdb-maria.hh>
+#if defined WINDOWS_MINGW
+    #include <clientdb-maria.hh>
+#else
+    #include <octetos/db/clientdb-maria.hh>
+#endif
 
 #include "dynamic.hh"
 
@@ -12,7 +16,7 @@ void destroyConector(octetos::db::Connector* obj)
 octetos::db::Connector* createConnector()
 {
     return new octetos::db::mariadb::Connector();
-} 
+}
 
 /*octetos::db::Datconnect* createDatconnect(const std::string& host, unsigned int port,const std::string& database,const std::string& usuario,const std::string& password)
 {
