@@ -545,25 +545,23 @@ namespace apidb
                 name = xmlTextReaderConstName(reader);
                 if(strcmp((const char*)name,"host") == 0)
                 {
-                xmlTextReaderRead(reader);
+                    xmlTextReaderRead(reader);
                 }
                 else
                 {
-                        std::string msgstr = "Fallo durante el parseo XML.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                        return false;
+                    std::string msgstr = "Fallo durante el parseo XML.";
+                    throw core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 name = xmlTextReaderConstName(reader);
                 host = "";
                 if(strcmp((const char*)name,"#text") == 0)
                 {
-                host = (const char*)xmlTextReaderConstValue(reader);
+                    host = (const char*)xmlTextReaderConstValue(reader);
                 }
                 else
                 {
-                        std::string msgstr = "Fallo durante el parseo XML.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                        return false;
+                    std::string msgstr = "Fallo durante el parseo XML.";
+                    throw core::Exception(msgstr,__FILE__,__LINE__);
                 }
 
                 xmlTextReaderRead(reader);
@@ -572,25 +570,23 @@ namespace apidb
                 name = xmlTextReaderConstName(reader);
                 if(strcmp((const char*)name,"port") == 0)
                 {
-                xmlTextReaderRead(reader);
+                    xmlTextReaderRead(reader);
                 }
                 else
                 {
-                        std::string msgstr = "Fallo durante el parseo XML.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                        return false;
+                    std::string msgstr = "Fallo durante el parseo XML.";
+                    throw core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 name = xmlTextReaderConstName(reader);
                 port = 0;
                 if(strcmp((const char*)name,"#text") == 0)
                 {
-                port = atoi((const char*)xmlTextReaderConstValue(reader));
+                    port = atoi((const char*)xmlTextReaderConstValue(reader));
                 }
                 else
                 {
-                        std::string msgstr = "Fallo durante el parseo XML.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                        return false;
+                    std::string msgstr = "Fallo durante el parseo XML.";
+                    throw core::Exception(msgstr,__FILE__,__LINE__);
                 }
 
                 xmlTextReaderRead(reader);
@@ -599,25 +595,23 @@ namespace apidb
                 name = xmlTextReaderConstName(reader);
                 if(strcmp((const char*)name,"nameDB") == 0)
                 {
-                xmlTextReaderRead(reader);
+                    xmlTextReaderRead(reader);
                 }
                 else
                 {
-                        std::string msgstr = "Fallo durante el parseo XML.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                        return false;
+                    std::string msgstr = "Fallo durante el parseo XML.";
+                    throw core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 name = xmlTextReaderConstName(reader);
                 database = "";
                 if(strcmp((const char*)name,"#text") == 0)
                 {
-                database = (const char*)xmlTextReaderConstValue(reader);
+                    database = (const char*)xmlTextReaderConstValue(reader);
                 }
                 else
                 {
-                        std::string msgstr = "Fallo durante el parseo XML.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                        return false;
+                    std::string msgstr = "Fallo durante el parseo XML.";
+                    throw core::Exception(msgstr,__FILE__,__LINE__);
                 }
 
                 xmlTextReaderRead(reader);
@@ -626,13 +620,12 @@ namespace apidb
                 name = xmlTextReaderConstName(reader);
                 if(strcmp((const char*)name,"user") == 0)
                 {
-                xmlTextReaderRead(reader);
+                    xmlTextReaderRead(reader);
                 }
                 else
                 {
-                        std::string msgstr = "Fallo durante el parseo XML.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                        return false;
+                    std::string msgstr = "Fallo durante el parseo XML.";
+                    throw core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 name = xmlTextReaderConstName(reader);
                 user = "";
@@ -642,9 +635,8 @@ namespace apidb
                 }
                 else
                 {
-                        std::string msgstr = "Fallo durante el parseo XML.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                        return false;
+                    std::string msgstr = "Fallo durante el parseo XML.";
+                    throw core::Exception(msgstr,__FILE__,__LINE__);
                 }
 
                 xmlTextReaderRead(reader);
@@ -653,13 +645,12 @@ namespace apidb
                 name = xmlTextReaderConstName(reader);
                 if(strcmp((const char*)name,"pw") == 0)
                 {
-                xmlTextReaderRead(reader);
+                    xmlTextReaderRead(reader);
                 }
                 else
                 {
-                        std::string msgstr = "Fallo durante el parseo XML.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                        return false;
+                    std::string msgstr = "Fallo durante el parseo XML.";
+                    throw core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 name = xmlTextReaderConstName(reader);
                 password = "";
@@ -669,9 +660,8 @@ namespace apidb
                 }
                 else
                 {
-                        std::string msgstr = "Fallo durante el parseo XML.";
-                        core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                        return false;
+                    std::string msgstr = "Fallo durante el parseo XML.";
+                    throw core::Exception(msgstr,__FILE__,__LINE__);
                 }
 
         }
