@@ -3,6 +3,8 @@
 
 #if defined WINDOWS_MINGW
     #include <clientdb.hh>
+#elif defined LINUX && defined CODEBLOCKS
+    #include <clientdb.hh>
 #else
     #include <octetos/db/clientdb.hh>
 #endif

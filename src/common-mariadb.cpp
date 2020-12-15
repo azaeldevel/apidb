@@ -34,6 +34,8 @@
 #include <string>
 #if defined WINDOWS_MINGW
     #include <clientdb-maria.hh>
+#elif defined LINUX && defined CODEBLOCKS
+    #include <clientdb-maria.hh>
 #else
     #include <octetos/db/clientdb-maria.hh>
 #endif

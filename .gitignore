@@ -21,3 +21,12 @@ obj/
 bin/
 *.depend
 *.layout
+src/mariadb-reader-c++/CMakeCache.txt
+src/mariadb-reader-c++/CMakeFiles/
+src/mariadb-reader-c++/Makefile
+src/mariadb-reader-c++/cmake_install.cmake
+src/mariadb-reader-c++/location.hh
+src/mariadb-reader-c++/parser.tab.cc
+src/mariadb-reader-c++/parser.tab.hh
+src/mariadb-reader-c++/position.hh
+src/mariadb-reader-c++/stack.hh

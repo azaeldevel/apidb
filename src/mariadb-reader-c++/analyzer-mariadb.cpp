@@ -1,9 +1,9 @@
 /**
- * 
+ *
  *  This file is part of apidb.
  *  APIDB do Make easy to connect your Database
  *  Copyright (C) 2018  Azael Reyes
- * 
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * */
 #if defined LINUX_GENTOO
     #include <mariadb/mysql.h>
@@ -24,12 +24,18 @@
     #include <mysql/mysql.h>
 #elif defined LINUX_DEBIAN
     #include <mariadb/mysql.h>
-#else 
+#else
 	#error "Plataforma desconocida."
 #endif
 #include <iostream>
 #include <string>
-#include <octetos/db/clientdb-maria.hh>
+#if defined WINDOWS_MINGW && defined CODEBLOCKS
+    #include <clientdb.hh>
+#elif defined LINUX && defined CODEBLOCKS
+    #include <clientdb-maria.hh>
+#else
+    #include <octetos/db/clientdb-maria.hh>
+#endif
 #include "analyzer.hpp"
 #include "../common-mariadb.hpp"
 
@@ -58,7 +64,7 @@ namespace mariadb
 		octetos::db::mariadb::Datresult dt;
         bool flag = connector->execute(str,dt);
 		//std::cout << str  <<std::endl;
-		if(flag) 
+		if(flag)
 		{
 			symbols::SymbolsTable::iterator itGlobal = symbolsTable.find(configureProject.name.c_str());
 			if(itGlobal == symbolsTable.end())
@@ -96,7 +102,7 @@ namespace mariadb
 					symbols::Space* space = spaceGlobal->findSpace(spacePath);
 					if(space == NULL)
 					{
-						//std::cout << "Agregando espacio '" << spacePath << "' en '" << spaceGlobal->getName() << "' Analyzer::listing" << std::endl;  
+						//std::cout << "Agregando espacio '" << spacePath << "' en '" << spaceGlobal->getName() << "' Analyzer::listing" << std::endl;
 						space = spaceGlobal->addSpace(spacePath);
 						if(space != NULL)
 						{
@@ -111,7 +117,7 @@ namespace mariadb
 						}
 					}
 					else
-					{		
+					{
 						//std::cout << prw->fullname << " -> '" << space->getName() << "'" << std::endl;
 						//std::pair<const char*, symbols::ISpace*> newInser(prw->fullname.c_str(),prw);
 						//space->insert(newInser);
@@ -133,7 +139,7 @@ namespace mariadb
 					throw core::Exception(msg,__FILE__,__LINE__);
 				}
 			}
-			
+
 			return true;
 		}
 		else
@@ -144,7 +150,7 @@ namespace mariadb
 			msg = msg + "' ";
 			msg = msg + mysql_error((MYSQL*)connector->getConnection());
 			throw core::Exception(msg,__FILE__,__LINE__);
-		}	
+		}
 		return true;
 	}
 }

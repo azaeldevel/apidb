@@ -15,9 +15,28 @@
 					<Add option="-g" />
 					<Add option="-DLINUX" />
 					<Add option="-DCODEBLOCKS" />
+					<Add option="-DLINUX_GENTOO" />
+					<Add directory="../core/src" />
+					<Add directory="../db/abstract/src" />
+					<Add directory="../db/maria/src" />
+					<Add directory="/usr/include/libxml2" />
+					<Add directory="/lib64" />
 				</Compiler>
 				<Linker>
-					<Add option="-lxml-2.0" />
+					<Add option="-lxml2" />
+					<Add option="-ldl" />
+					<Add option="-loctetos-core" />
+					<Add option="-loctetos-db-abstract" />
+					<Add option="-loctetos-db-maria" />
+					<Add option="-lmariadb" />
+					<Add option="-ltar" />
+					<Add option="-loctetos-coreutils" />
+					<Add option="-lfl" />
+					<Add library="src/mariadb-reader-c++/bin/Debug/libmariadb-reader.so" />
+					<Add directory="../core/bin/Debug" />
+					<Add directory="../db/abstract/bin/Debug" />
+					<Add directory="../db/maria/bin/Debug" />
+					<Add directory="/usr/lib" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -37,7 +56,6 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="src/Application.cpp" />
 		<Unit filename="src/ConfigureProject-compress-tar.cpp" />
 		<Unit filename="src/ConfigureProject-xml.cpp" />
 		<Unit filename="src/ConfigureProject.cpp" />

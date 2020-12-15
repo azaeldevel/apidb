@@ -29,6 +29,9 @@
 #if defined WINDOWS_MINGW
     #include <clientdb.hh>
     #include <Message.hh>
+#elif defined LINUX && defined CODEBLOCKS
+    #include <clientdb.hh>
+    #include <Message.hh>
 #else
     #include <octetos/db/clientdb.hh>
     #include <octetos/core/Message.hh>

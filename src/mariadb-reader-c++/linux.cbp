@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="mariadb-reader" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="../../bin/Debug/mariadb-reader" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../obj/Debug/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-fPIC" />
+					<Add option="-g" />
+					<Add option="-DCODEBLOCKS" />
+					<Add option="-DLINUX" />
+					<Add option="-DLINUX_GENTOO" />
+					<Add directory="../../../core/src" />
+					<Add directory="../../../db/abstract/src" />
+					<Add directory="../../../db/maria/src" />
+					<Add directory="/usr/include/libxml2/" />
+				</Compiler>
+				<Linker>
+					<Add option="-lxml2" />
+					<Add option="-loctetos-db-abstract" />
+					<Add option="-loctetos-db-maria" />
+					<Add option="-lfl" />
+					<Add library="../../../core/bin/Debug/liboctetos-core.so" />
+					<Add directory="/usr/lib" />
+					<Add directory="../../../core/bin/Debug" />
+					<Add directory="../../../db/abstract/bin/Debug" />
+					<Add directory="../../../db/maria/bin/Debug" />
+				</Linker>
+				<ExtraCommands>
+					<Add before="bison  -d parser.yy  -o parser.tab.cc" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/mariadb-reader" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="analyzer-mariadb.cpp" />
+		<Unit filename="analyzer.cpp" />
+		<Unit filename="analyzer.hpp" />
+		<Unit filename="location.hh" />
+		<Unit filename="parser.tab.cc" />
+		<Unit filename="parser.tab.hh" />
+		<Unit filename="parser.yy" />
+		<Unit filename="position.hh" />
+		<Unit filename="scanner.cpp" />
+		<Unit filename="scanner.hpp" />
+		<Unit filename="stack.hh" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>
