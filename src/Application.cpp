@@ -756,44 +756,44 @@ namespace apidb
          */
         void Application::loadConfig()
         {         
-			//std::cout << "Application::loadConfig : Step  1"<< std::endl;
+			std::cout << "Application::loadConfig : Step  1"<< std::endl;
 			gtk_entry_set_text (GTK_ENTRY(inName),config->name.c_str());
-			//std::cout << "Application::loadConfig : Step  2"<< std::endl;
+			std::cout << "Application::loadConfig : Step  2"<< std::endl;
 			gtk_entry_set_text (GTK_ENTRY(inVer),config->versionResult.toString().c_str());
-			//std::cout << "Application::loadConfig : Step  3"<< std::endl;
+			std::cout << "Application::loadConfig : Step  3"<< std::endl;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(inInL),(gint)config->getInputLenguaje());
-			//std::cout << "Application::loadConfig : Step  "<< std::endl;
+			std::cout << "Application::loadConfig : Step  "<< std::endl;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(inOutL),(gint)config->outputLenguaje);
-			//std::cout << "Application::loadConfig : Step  4"<< std::endl;
+			std::cout << "Application::loadConfig : Step  4"<< std::endl;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(inPkL),(gint)config->packing);
-			//std::cout << "Application::loadConfig : Step  5"<< std::endl;
+			std::cout << "Application::loadConfig : Step  5"<< std::endl;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(inCmpl),(gint)config->compiled);
-			//std::cout << "Application::loadConfig : Step  "<< std::endl;
+			std::cout << "Application::loadConfig : Step  "<< std::endl;
 			gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
-			//std::cout << "Application::loadConfig : Step  6"<< std::endl;
+			std::cout << "Application::loadConfig : Step  6"<< std::endl;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(inNameSpaceDetect),inNameSpaceDetect_comboxid(config->namespace_detect));
-			//std::cout << "Application::loadConfig : Step  7"<< std::endl;
+			std::cout << "Application::loadConfig : Step  7"<< std::endl;
 			if(!config->writeDatconnect.empty() and config->writeDatconnect.compare("¿?") != 0) gtk_entry_set_text(GTK_ENTRY(inWConnName),config->writeDatconnect.c_str());
-			//std::cout << "Application::loadConfig : Step  8"<< std::endl;
+			std::cout << "Application::loadConfig : Step  8"<< std::endl;
 			if(!config->executable_target.empty() and config->executable_target.compare("¿?") != 0)gtk_entry_set_text (GTK_ENTRY(inExe),config->executable_target.c_str());
-			//std::cout << "Application::loadConfig : Step  9"<< std::endl;
+			std::cout << "Application::loadConfig : Step  9"<< std::endl;
                 
 			gtk_entry_set_text(GTK_ENTRY(inLoc),config->getDatconnection()->getHost().c_str());
-			//std::cout << "Application::loadConfig : Step  10"<< std::endl;
+			std::cout << "Application::loadConfig : Step  10"<< std::endl;
 			//std::cout << "Application::loadConfig : Step  10.1 : " << strport << std::endl;
 			gtk_entry_set_text(GTK_ENTRY(inPort),std::to_string(config->getDatconnection()->getPort()).c_str());
-			//std::cout << "Application::loadConfig : Step  11"<< std::endl;
+			std::cout << "Application::loadConfig : Step  11"<< std::endl;
 			gtk_entry_set_text(GTK_ENTRY(inDB),config->getDatconnection()->getDatabase().c_str());
-			//std::cout << "Application::loadConfig : Step  12"<< std::endl;
+			std::cout << "Application::loadConfig : Step  12"<< std::endl;
 			gtk_entry_set_text(GTK_ENTRY(inUser),config->getDatconnection()->getUser().c_str());
-			//std::cout << "Application::loadConfig : Step  13"<< std::endl;
+			std::cout << "Application::loadConfig : Step  13"<< std::endl;
 			gtk_entry_set_text(GTK_ENTRY(inPw),config->getDatconnection()->getPassword().c_str());
-			//std::cout << "Application::loadConfig : Step  14"<< std::endl;
+			std::cout << "Application::loadConfig : Step  14"<< std::endl;
                                
-			//std::cout << "Application::loadConfig : Step  15"<< std::endl;
+			std::cout << "Application::loadConfig : Step  15"<< std::endl;
 			downsTree->fill();
                 
-			//std::cout << "Application::loadConfig : Step  16"<< std::endl;
+			std::cout << "Application::loadConfig : Step  16"<< std::endl;
 			selectsTree->fill();
                 
         }
