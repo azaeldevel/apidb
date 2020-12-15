@@ -674,7 +674,7 @@ namespace apidb
         //std::cout << "ConfigureProject::getProjectNodes : v1.1.0 update.\n";
         if(projectVersion >= ver110)//la lectura es compatible con versiones anteriores del projecto
         {
-            //std::cout << "ConfigureProject::getProjectNodes : v1.1.0 update - 1.\n";
+            std::cout << "ConfigureProject::getProjectNodes : projectVersion 1.\n";
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -688,6 +688,7 @@ namespace apidb
                 //std::cout << "ConfigureProject::getProjectNodes : v1.1.0 update - 2.\n";
                 if(inL.compare("MySQL") == 0 )
                 {
+                    std::cout << "ConfigureProject::getProjectNodes : projectVersion 2.\n";
                 	if(enabledMySQL)
                 	{
 		                setInputLenguaje(InputLenguajes::MySQL);
@@ -707,6 +708,7 @@ namespace apidb
                 }
                 else if(inL.compare("PostgreSQL") == 0)
                 {
+                    std::cout << "ConfigureProject::getProjectNodes : projectVersion 2.\n";
                 	if(enabledPostgreSQl)
                 	{
 		                setInputLenguaje(InputLenguajes::PostgreSQL);
@@ -720,30 +722,34 @@ namespace apidb
                 }
                 else if(inL.compare("MariaDB") == 0)
                 {
+                    std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.\n";
                 	if(enabledMariaDB)
                 	{
+                        std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.1a.\n";
 		                setInputLenguaje(InputLenguajes::MariaDB);
 		                conectordb = createDatConnection();
 		                conectordb->set(InputLenguajes::MariaDB,host,port,database,user,password);
                     }
                     else if(enabledMySQL)
                 	{
+                        std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.1b.\n";
 		                setInputLenguaje(InputLenguajes::MySQL);
 		                conectordb = createDatConnection();
 		                conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);
                     }
                     else
                     {
+                        std::cout << "ConfigureProject::getProjectNodes : projectVersion 31c.\n";
 		                failLoadDat = true;
                     }
+                    std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.2.\n";
                 }
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML. El driver '";
                     msgstr += inL;
                     msgstr += "' solicitado no existe o no hay soporte activo para dicho driver.";
-                    core::Error::write(core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_PARSE_XML,__FILE__,__LINE__));
-                    return false;
+                    core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 /*if(handle == NULL)
                 {

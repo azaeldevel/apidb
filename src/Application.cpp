@@ -817,6 +817,7 @@ namespace apidb
 		{
 			app->config = new ConfigureProject();
 		}
+		
 		std::cout << "Application::documen_open : Step 2" << std::endl;
 		try
 		{
