@@ -311,35 +311,39 @@ namespace apidb
 
 	void ConfigureProject::readConfig(const std::string& filename)
 	{
-        //std::cout << "ConfigureProject::readConfig: Step 1\n";
-		if(core::Error::check())
-		{
-			throw core::Error("Hay un error pendiente de atender",core::Error::Codes::ERROR_NOTADDRESSED,__FILE__,__LINE__);
-		}
-
         //std::cout << "ConfigureProject::readConfig: Step 2\n";
-        //std::cout << "Reading : " << filename << std::endl;
+        std::cout << "ConfigureProject::readConfig Reading : 1 - > " << filename << std::endl;
         FILE *apidbFilecheck = fopen(filename.c_str(), "r");
         if (apidbFilecheck == NULL )
         {
             std::string msg = "La dirección especificada '";
             msg += filename + "' no indica un archivo válido.";
-            throw core::Error(msg,ErrorCodes::READFILE_INVALIDPATH,__FILE__,__LINE__);
+            throw core::Exception(msg,__FILE__,__LINE__);
         }
         //std::cout << "ConfigureProject::readConfig: Step 3\n";
 
         fclose(apidbFilecheck);
-        //std::cout << "Step 2." << std::endl;
-        char tmp_filepath[] =  "/tmp/XXXXXXXXX";
+        std::cout << "ConfigureProject::readConfig Step 2.\n" << std::endl;
+        char tmp_filepath[] =  "/tmp/XXXXXX";
         #if defined WINDOWS_MINGW
             int rettmp  = _mktemp_s(tmp_filepath, strlen(tmp_filepath));
         #else
-            //char * tmp_apidbDir  = mkdtemp(tmp_dirpath);
+            if(mkdtemp(tmp_filepath) == NULL)
+            {
+                throw core::Exception("Fallo al crear archivo tmporal para descomprimir",__FILE__,__LINE__);
+            }
         #endif
 
+        std::cout << "Reading : " << tmp_filepath << "\n";
 		bool retpree = unmcompress(filename,tmp_filepath);
+        if(!retpree)
+        {
+            std::string msg = "Fallo al decomprimir archivo '";
+			msg += filename + "'";
+            throw core::Exception("Fallo al descomprimir con libtar.",__FILE__,__LINE__);
+        }
 
-        //std::cout << "ConfigureProject::readConfig: Step 6\n";
+        std::cout << "ConfigureProject::readConfig: Step 3\n";
 		std::string tmVerFileName = tmp_filepath;
 		tmVerFileName += "/apidb/version";
 		//tmVerFileName="apidb/apidbcopy/version";
@@ -349,25 +353,22 @@ namespace apidb
 		{
 			std::string msg = "La direecion especificada '";
 			msg += tmVerFileName + "' no indica un archivo valido.";
-			throw core::Error(msg,ErrorCodes::READFILE_INVALIDPATHVER,__FILE__,__LINE__);
+			throw core::Exception(msg,__FILE__,__LINE__);
 		}
-        //std::cout << "ConfigureProject::readConfig: Step 7\n";
-		char *line_buf = NULL;
-		size_t line_buf_size = 0;
-		int line_count = 0;
-		ssize_t line_size;
-		char* retget = fgets(line_buf, line_buf_size, apidbFilecheck2);
+        std::cout << "ConfigureProject::readConfig: Step 4\n";
+        int maxlsize = 20;
+		char line_buf[maxlsize];
+		if(fgets(line_buf, maxlsize, apidbFilecheck2) == NULL)
+        {
+			throw core::Exception("Fallo al leer la version del projecto.",__FILE__,__LINE__);            
+        }
 		std::string strver;
-		if(line_size > 0)
-		{
-			strver = line_buf;
-		}
-		//std::cout << "ConfigureProject::readConfig: Step 8.1\n";
-		//std::cout << "strver : '"  << strver << "'";
+		std::cout << "ConfigureProject::readConfig: Step 5\n";
+		std::cout << "strver : '"  << line_buf << "'\n";
 		//std::cout << "ConfigureProject::readConfig: Step 8.2\n";
-		projectVersion.set(strver);
+		projectVersion.set(line_buf);
 		//projectVersion.setNumbers(5,0,0);
-		//std::cout << "ConfigureProject::readConfig: Step 8.3\n";
+		std::cout << "ConfigureProject::readConfig: Step 6\n";
 		//std::cout << "ConfigureProject::readConfig: Step 9\n";
 
         //std::cout << "ConfigureProject::readConfig: Step 8\n";
@@ -379,7 +380,7 @@ namespace apidb
 		std::string xmlfile = tmp_filepath;
 		xmlfile += "/apidb/main.xml";
 		//std::cout << "Parseando XML " << xmlfile << std::endl;
-        //std::cout << "ConfigureProject::readConfig: Step 9.1\n";
+        std::cout << "ConfigureProject::readConfig: Step 7\n";
         reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);
         //std::cout << "ConfigureProject::readConfig: Step 9.2 " << xmlfile <<  "\n";
 

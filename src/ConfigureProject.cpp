@@ -347,7 +347,7 @@ namespace apidb
 	#else
 		enabledMySQL=false;
 	#endif
-		failLoadDat=false;
+		failLoadDat=true;
     }
 
 }

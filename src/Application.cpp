@@ -820,14 +820,17 @@ namespace apidb
 		std::cout << "Application::documen_open : Step 2" << std::endl;
 		try
 		{
-			//std::cout << "Application::documen_open : Step 2.1" << std::endl;            
-			//std::cout << "Application::documen_open : Step 2.2" << std::endl;
-			app->config->readConfig(filename);
+			std::cout << "Application::documen_open : Step 2.1" << std::endl;            
+			std::cout << "Application::documen_open : Step 2.2" << std::endl;
+			app->config->readConfig(filename);          
+			std::cout << "Application::documen_open : Step 2.3" << std::endl;
 			if(app->config->checkFailLoadDat())
 			{
 				app->originFilename = filename;
-				app->createNotebook();
-				app->loadConfig();
+				app->createNotebook();          
+                std::cout << "Application::documen_open : Step 2.4" << std::endl;
+				app->loadConfig();          
+                std::cout << "Application::documen_open : Step 2.5" << std::endl;
 				app->setSaved(true);
 				app->isOpen = true;
 				app->isNew = false;

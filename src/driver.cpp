@@ -52,8 +52,7 @@ namespace apidb
       	if(handle == NULL)
 		{
 				std::string msg = "Falla al intentar cargar la funcion de libreia 'destroyAnalyzer'";
-				core::Error::write(core::Error(msg,ErrorCodes::NODBCONECTOR_POSTPONED ,__FILE__,__LINE__));
-				return false;
+				throw core::Exception(msg,__FILE__,__LINE__);
 		}
 
         create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
@@ -63,9 +62,7 @@ namespace apidb
         {
             std::string msgErr ="No se pudo cargar la funcion createAnalyzer :\n" ;
             msgErr = msgErr + "\t" + dlerror();
-            core::Error err(msgErr,ErrorCodes::DRIVER_FAIL,__FILE__,__LINE__);
-            core::Error::write(err);
-            return false;
+            throw core::Exception(msgErr,__FILE__,__LINE__);
         }
 
         return true;
@@ -78,8 +75,7 @@ namespace apidb
 		{
 			std::string msg = "No se encontro el espacio Global '";
 			msg += configureProject.name + "'";
-			core::Error::write(core::Error(msg,ErrorCodes::DRIVER_FAIL,__FILE__,__LINE__));
-			return false;
+			throw core::Exception(msg,__FILE__,__LINE__);
 		}
 
 		symbols::Table* tb = global->findTable(table);
@@ -106,16 +102,14 @@ namespace apidb
 			if(analyzer == NULL)
 			{
 				std::string msg = "No se ha asignado el analizador '";
-				core::Error::write(core::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
-				return false;
+				throw core::Exception(msg,__FILE__,__LINE__);
 			}
 			symbols::Space* global = analyzer->symbolsTable.findSpace(configureProject.name);
 			if(global == NULL)
 			{
 				std::string msg = "No se encontro el espacio Global '";
 				msg += configureProject.name + "'";
-				core::Error::write(core::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
-				return false;
+				throw core::Exception(msg,__FILE__,__LINE__);
 			}
 			space = global;
 		}
@@ -130,8 +124,7 @@ namespace apidb
 			{
 				if(getTablesName(ret,(symbols::Space*)ispace) == false)
 				{
-					core::Error::write(core::Error("Fallo durante la resolución de nombres de tabla.",ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
-					return false;
+					throw core::Exception("Fallo durante la resolución de nombres de tabla.",__FILE__,__LINE__);
 				}
 			}
 			else if(ispace->what() == symbols::SpaceType::TABLE)
@@ -166,21 +159,12 @@ namespace apidb
         if(loadLibrary())
         {
 			connector = config.newConnector();
-		    try
-		    {
-		        bool flag = connector->connect(*(config.getDatconnection()));
-		        if(!flag)
-		        {
-		            delete connector;
-		            connector = NULL;
-		        }
-		    }
-		    catch(octetos::db::SQLException ex)
-		    {
-		        //std::cout <<"Fallo la conexion a DB : "<< ex.what() <<std::endl;
-		        core::Error err(ex.what(), ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
-		        core::Error::write(err);
-		    }
+            bool flag = connector->connect(*(config.getDatconnection()));
+            if(!flag)
+            {
+                delete connector;
+                connector = NULL;
+            }
         }
 	}
 
@@ -217,32 +201,6 @@ namespace apidb
         //std::cout << "Driver::driving : Step 3\n";
 		return false;
 	}
-	/*bool Driver::driving(bool log)
-	{
-		if(connector == NULL)
-                {
-                        std::cout<<"El conector es NULL." << std::endl;
-                        return false;
-                }
-
-		if(analyze(log))
-		{
-			if(generate(log))
-                        {
-                                return true;
-                        }
-                        else
-                        {
-                                std::cout<<"Fallo la etapa de generacion" << std::endl;
-                        }
-		}
-		else
-                {
-                        std::cout<<"Fallo la etapa de analisis." << std::endl;
-                }
-
-		return false;
-	}*/
 
 	bool Driver::generate(core::ActivityProgress* progress)
 	{
@@ -325,67 +283,6 @@ namespace apidb
         }
     }
 
-	/*bool Driver::generate(bool log)
-	{
-                if(ENABLE_DEVEL_WARNING)
-                {
-                        std::cout <<"\u001b[31;1m" << "\nAdvertencia: Driver::generate(bool log) esta marcada como obsoleta yserá removida a apartir de v2.\n Use Driver::analyze(toolkit::ActivityProgress* progress) en su lugar.\n" << "\u001b[0m";
-                }
-
-		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
-		{
-
-		}
-		else
-		{
-			std::string direct = configureProject.builDirectory;
-			std::ifstream ifile(direct);
-			if (!ifile)
-			{
-				std::string cmd = "mkdir ";
-				cmd = cmd + direct;
-				system(cmd.c_str());
-			}
-		}
-
-
-                bool flagCPP,flagCMAKE;
-		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
-		{
-
-			//std::cout<<"apidb::generators::CPP cpp(*analyzer);..."<<std::endl;
-			apidb::generators::CPP cpp(*analyzer,configureProject);
-			flagCPP = cpp.generate(log);
-			//std::cout<<"apidb::generators::CMake cmake(*analyzer);..."<<std::endl;
-		}
-		else
-		{
-			return false;
-		}
-
-                if(configureProject.packing == PackingLenguajes::CMake)
-                {
-			apidb::generators::CMake cmake(*analyzer,configureProject);
-			flagCMAKE = cmake.generate(log);
-                }
-                else
-                {
-                        return false;
-                }
-
-                ///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
-                if(flagCPP && flagCMAKE)
-                {
-                        if(log)analyzer->getOutput().add("Generacion completada.\n");
-                        return true;
-                }
-                else
-                {
-                        BuildException fail2("Fallo.");
-                        analyzer->getOutput().add(fail2);
-                        return false;
-                }
-	}*/
 
 	bool Driver::analyze(core::ActivityProgress* progress)
 	{
@@ -412,34 +309,18 @@ namespace apidb
         }
         //std::cout << "Driver::analyze : Step 4\n";
 		bool flagAnalyzer = false;
-		try
-		{
-			flagAnalyzer = analyzer->analyze(progress);
-		}
-		catch(db::SQLException e)
-		{
-			core::Error err(e.what(),ErrorCodes::ANALYZER_FAIL,__FILE__,__LINE__);
-			core::Error::write(err);
-			return false;
-		}
+        flagAnalyzer = analyzer->analyze(progress);
         //std::cout << "Driver::analyze : Step 5\n";
 		if(flagAnalyzer == false) //reading tables
 		{
-			if(core::Error::check())
-			{
-				if(progress != NULL)progress->add(core::Error::get());
-				return false;
-			}
-			else
-			{
-				if(progress != NULL)
-				{
-					std::string msgErr ="\tFallo al leer durante la fase de analisis." ;
-					core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
-					progress->add(err);
-				}
-                return false;
-			}
+            if(progress != NULL)
+            {
+                std::string msgErr ="\tFallo al leer durante la fase de analisis." ;
+                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
+                progress->add(err);
+            }
+            return false;
+			
 		}
 
         //std::cout << "Driver::analyze : Step 6\n";

@@ -82,8 +82,7 @@ namespace apidb
 		}
 		else
 		{
-			core::Error::write(core::Error("El lenguaje de entrada no esá soportado.",ErrorCodes::ERROR_UNNSOPORTED_INPUTLANGUAGE,__FILE__,__LINE__));
-			return false;
+            throw core::Exception("El lenguaje de entrada no esá soportado.",__FILE__,__LINE__);
 		}
 		
 		return true;
@@ -131,7 +130,7 @@ namespace apidb
 	Analyzer::~Analyzer()
 	{
 	}
-	Analyzer::Analyzer(const ConfigureProject& config,octetos::db::Connector* conn,core::ActivityProgress* p) : configureProject(config), connector(conn),progress(p),symbolsTable(config)
+	Analyzer::Analyzer(const ConfigureProject& config,octetos::db::Connector* conn,core::ActivityProgress* p) : connector(conn),configureProject(config),progress(p),symbolsTable(config)
 	{
 	}
 	
