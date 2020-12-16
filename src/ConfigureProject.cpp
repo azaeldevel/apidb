@@ -242,6 +242,42 @@ namespace apidb
     {
         return projectVersion;
     }
+    bool ConfigureProject::checkLibrary(InputLenguajes in)
+    {
+        //std::cout << "Step 0\n";
+        std::string libname = "";
+        if(in == apidb::InputLenguajes::MySQL)
+        {
+            libname = "libapidb-MySQL.so";
+        }
+        else if(in == apidb::InputLenguajes::MariaDB)
+        {
+            libname ="libapidb-MariaDB.so";
+        }
+        else if(in == apidb::InputLenguajes::PostgreSQL)
+        {
+            libname = "libapidb-PostgreSQL.so";
+        }
+        else
+        {
+            std::string msgErr ="No se reconoce el driver solicitado :\n" ;
+            msgErr = msgErr + "\t" + dlerror();
+            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
+            return false;
+        }
+
+        void* h = dlopen(libname.c_str(), RTLD_LAZY);
+        //std::cout << "Step 1\n";
+        if(h)
+        {
+            dlclose(h);
+            return true;            
+        }
+        else
+        {
+            return false;
+        }
+    }
     bool ConfigureProject::loadLibrary()
     {
         //std::cout << "Step 0\n";
@@ -332,6 +368,7 @@ namespace apidb
         createConnector = NULL;
         createDatConnection = NULL;
         conectordb = NULL;
+        /*
 	#ifdef APIDB_POSTGRESQL
 		enabledPostgreSQl=true;
 	#else
@@ -347,6 +384,7 @@ namespace apidb
 	#else
 		enabledMySQL=false;
 	#endif
+        */
 		failLoadDat=true;
     }
 

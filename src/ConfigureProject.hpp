@@ -138,6 +138,7 @@ namespace apidb
         octetos::db::Connector* (*createConnector)();
         void (*destroyConnector)(octetos::db::Connector*);
         bool loadLibrary();
+        bool checkLibrary(InputLenguajes in);
         /**
         * \brief Identifica el tipo del Servidor de base de datos
         * */
@@ -150,9 +151,9 @@ namespace apidb
         
         void* getfnDatConection();
         void* getfnCreateConector();
-        bool enabledPostgreSQl;
-        bool enabledMariaDB;
-        bool enabledMySQL;
+        //bool enabledPostgreSQl;
+        //bool enabledMariaDB;
+        //bool enabledMySQL;
         bool failLoadDat;
         
     public:

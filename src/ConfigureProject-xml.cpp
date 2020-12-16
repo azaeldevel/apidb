@@ -689,13 +689,13 @@ namespace apidb
                 if(inL.compare("MySQL") == 0 )
                 {
                     std::cout << "ConfigureProject::getProjectNodes : projectVersion 2.\n";
-                	if(enabledMySQL)
+                	if(checkLibrary(InputLenguajes::MySQL))
                 	{
 		                setInputLenguaje(InputLenguajes::MySQL);
 		                conectordb = createDatConnection();
 		                conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);
                     }
-                    else if(enabledMariaDB)
+                    else if(checkLibrary(InputLenguajes::MariaDB))
                 	{
 		                setInputLenguaje(InputLenguajes::MariaDB);
 		                conectordb = createDatConnection();
@@ -705,11 +705,12 @@ namespace apidb
                     {
 		                failLoadDat = true;
                     }
+                    failLoadDat = false;
                 }
                 else if(inL.compare("PostgreSQL") == 0)
                 {
                     std::cout << "ConfigureProject::getProjectNodes : projectVersion 2.\n";
-                	if(enabledPostgreSQl)
+                	if(checkLibrary(InputLenguajes::PostgreSQL))
                 	{
 		                setInputLenguaje(InputLenguajes::PostgreSQL);
 		                conectordb = createDatConnection();
@@ -719,18 +720,19 @@ namespace apidb
                     {
 		                failLoadDat = true;
                     }
+                    failLoadDat = false;
                 }
                 else if(inL.compare("MariaDB") == 0)
                 {
                     std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.\n";
-                	if(enabledMariaDB)
+                	if(checkLibrary(InputLenguajes::MariaDB))
                 	{
                         std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.1a.\n";
 		                setInputLenguaje(InputLenguajes::MariaDB);
 		                conectordb = createDatConnection();
 		                conectordb->set(InputLenguajes::MariaDB,host,port,database,user,password);
                     }
-                    else if(enabledMySQL)
+                    else if(checkLibrary(InputLenguajes::MySQL))
                 	{
                         std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.1b.\n";
 		                setInputLenguaje(InputLenguajes::MySQL);
@@ -743,6 +745,7 @@ namespace apidb
 		                failLoadDat = true;
                     }
                     std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.2.\n";
+                    failLoadDat = false;
                 }
                 else
                 {

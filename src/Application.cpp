@@ -825,7 +825,7 @@ namespace apidb
 			std::cout << "Application::documen_open : Step 2.2" << std::endl;
 			app->config->readConfig(filename);          
 			std::cout << "Application::documen_open : Step 2.3" << std::endl;
-			if(app->config->checkFailLoadDat())
+			if(!app->config->checkFailLoadDat())
 			{
 				app->originFilename = filename;
 				app->createNotebook();          
