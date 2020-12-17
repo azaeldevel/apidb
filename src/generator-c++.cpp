@@ -1446,6 +1446,43 @@ namespace generators
 	void CPP::writeDefaultContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		ofile <<"\t\t"<<table.getName()<<"();"<<std::endl;
+        
+        //raw datas
+        ofile << "\t\t" << table.getName() << "(";
+        if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
+        {        
+            ofile << "octetos::db::mysql::Connector& connector";
+        }
+        else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+        {
+            ofile << "octetos::db::mariadb::Connector& connector";
+        }
+        else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+        {
+            ofile << "octetos::db::postgresql::Connector& connector";
+        }
+        else
+        {
+            std::string msg = "Lenguaje no soportado " ;
+            throw BuildException(msg);
+        }
+        if(table.getRequired().size() == 1)
+        {
+            ofile << "";
+        }
+        std::list<symbols::Symbol*>::const_iterator penultimate = table.getRequired().begin();
+        penultimate--;
+        for(symbols::Symbol* symbol : table.getRequired())
+        {
+            if(symbol != *penultimate)
+            {
+                ofile << ",";
+            }
+            
+            ofile << symbol->outType << " " << symbol->name;
+            
+        }        
+        ofile << ");\n";
 	}
 	void CPP::writeCopyContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{

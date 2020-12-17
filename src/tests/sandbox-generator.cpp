@@ -1,24 +1,13 @@
 
 #include <octetos/db/clientdb-maria.hh>
-#include <time.h>
+
 
 #include "../apidb.hpp"
 #include "../common.hpp"
 
-double testTimeProc()
-{
-    clock_t begin = clock();
-
-    /* here, do your time-consuming job */
-
-    clock_t end = clock();
-    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    
-    return time_spent;
-}
 int main(int argc, char **argv)
 {
-
+    std::cout << "Step 1\n";
     octetos::db::mariadb::Datconnect mariaSource("localhost",3306,"muposys-0.1-alpha","muposys","123456");
     octetos::db::mariadb::Connector connector; 
     bool flag = false;  
@@ -31,7 +20,8 @@ int main(int argc, char **argv)
     {
         std::cerr << "Fallo en laconexion \n";
         return EXIT_FAILURE;
-    }    
+    }
+    std::cout << "Step 2\n";
     
     
     octetos::apidb::ConfigureProject configProject_nls;
@@ -47,14 +37,26 @@ int main(int argc, char **argv)
     configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
 	configProject_nls.writeDatconnect = "conector";
     
+    std::cout << "Step 3\n";
     octetos::apidb::Driver driver(configProject_nls);
 
+    std::cout << "Step 4\n";
     octetos::apidb::Tracer tracer(0);
-    //std::cout << "testBuild: Step 3\n";
-    if(!driver.driving(&tracer))
+    std::cout << "Step 5\n";
+    bool ret = false;
+    try
+    {
+        ret = driver.driving(&tracer);
+    }
+    catch(const std::exception& ex)
+    {
+        std::cerr << "Error : " << ex.what() << "\n";
+    }
+    if(ret)
     {
         
     }
+    std::cout << "Step 6\n";
     
     return EXIT_SUCCESS;
 }

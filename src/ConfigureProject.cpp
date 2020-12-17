@@ -40,6 +40,13 @@ namespace octetos
 {
 namespace apidb
 {
+    bool ConfigureProject::build()
+    {
+        setInputLenguaje(inputLenguaje);
+        //conectordb = createDatConnection();
+        //conectordb->set(inputLenguaje,host,port,database,user,password);   
+        return true;
+    }
 	bool ConfigureProject::checkFailLoadDat()const
 	{
 		return failLoadDat;
@@ -323,18 +330,14 @@ namespace apidb
         {
             std::string msgErr ="dlsym fallo con parse_string:\n" ;
             msgErr = msgErr + "\t" + dlerror();
-            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
-            core::Error::write(err);
-            return false;
+            throw core::Exception(msgErr,__FILE__,__LINE__);
         }
         destroyConnector = (void (*)(octetos::db::Connector*))dlsym(handle, "destroyConector");
         if(!destroyConnector)
         {
             std::string msgErr ="dlsym fallo con destroyConnector:\n" ;
-            msgErr = msgErr + "\t" + dlerror();
-            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
-            core::Error::write(err);
-            return false;
+            msgErr = msgErr + "\t" + dlerror();            
+            throw core::Exception(msgErr,__FILE__,__LINE__);
         }
 
         //>>>>>>>>>>>>>>>>>
@@ -342,23 +345,17 @@ namespace apidb
         if(!createDatConnection)
         {
             std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
-                msgErr = msgErr + "\t" + dlerror();
-            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
-            core::Error::write(err);
-            return false;
+            msgErr = msgErr + "\t" + dlerror();            
+            throw core::Exception(msgErr,__FILE__,__LINE__);
         }
         destroyDatConnection = (void (*)(octetos::db::Datconnect*))dlsym(handle, "destroyDatconnect");
         if(!createDatConnection)
         {
             std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
-                msgErr = msgErr + "\t" + dlerror();
-            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
-            core::Error::write(err);
-            return false;
+            msgErr = msgErr + "\t" + dlerror();            
+            throw core::Exception(msgErr,__FILE__,__LINE__);
         }
-
-
-
+        
         return true;
     }
 

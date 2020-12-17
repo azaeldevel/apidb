@@ -42,23 +42,23 @@ namespace apidb
 {
     bool Driver::loadLibrary()
     {
-    	if(configureProject.checkFailLoadDat())
+    	if(configureProject.getDatconnection() == NULL)
     	{
-    		return false;
+    		std::string msg = "No se ha asignado la informacionde conexio.";
+            throw core::Exception(msg,__FILE__,__LINE__);
     	}
-
 
         void* handle = configureProject.getLibraryHandle();
       	if(handle == NULL)
 		{
-				std::string msg = "Falla al intentar cargar la funcion de libreia 'destroyAnalyzer'";
-				throw core::Exception(msg,__FILE__,__LINE__);
+            std::string msg = "Falla al intentar cargar la funcion de libreia 'destroyAnalyzer'";
+            throw core::Exception(msg,__FILE__,__LINE__);
 		}
 
-        create = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
-        destroy = (void (*)(octetos::apidb::Analyzer*))dlsym(handle, "destroyAnalyzer");
+        createAnalyzer = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
+        destroyAnalyzer = (void (*)(octetos::apidb::Analyzer*))dlsym(handle, "destroyAnalyzer");
 
-        if(create == NULL)
+        if(createAnalyzer == NULL)
         {
             std::string msgErr ="No se pudo cargar la funcion createAnalyzer :\n" ;
             msgErr = msgErr + "\t" + dlerror();
@@ -137,26 +137,31 @@ namespace apidb
 	}
     Driver::~Driver()
     {
-        if(analyzer and destroy)
+        if(analyzer)
         {
-            destroy(analyzer);
+            destroyAnalyzer(analyzer);
         }
         if(connector)
         {
             connector->close();
             configureProject.deleteConnector(connector);
         }
-        //if(!handle) dlclose(handle);
     }
     const Analyzer&  Driver::getAnalyzer() const
     {
         return *analyzer;
     }
-	Driver::Driver(const ConfigureProject& config) : configureProject(config)
+	Driver::Driver(ConfigureProject& config) : configureProject(config)
 	{
 		analyzer = NULL;
-
-        if(loadLibrary())
+        destroyAnalyzer = NULL;
+        createAnalyzer = NULL;
+        
+        if(!loadLibrary())
+        {
+            throw core::Exception("Fallo la carga(dinamica) de componete de basi de datos solicitado.");
+        }
+        if(config.build())
         {
 			connector = config.newConnector();
             bool flag = connector->connect(*(config.getDatconnection()));
@@ -165,6 +170,19 @@ namespace apidb
                 delete connector;
                 connector = NULL;
             }
+        }
+        if(!createAnalyzer)
+        {
+            throw core::Exception("No se ha creado el constructor de anlizador",__FILE__,__LINE__);
+        }
+        if(!destroyAnalyzer)
+        {
+            throw core::Exception("No se ha creado el destructor de anlizador",__FILE__,__LINE__);
+        }
+        analyzer = createAnalyzer(&configureProject,connector,NULL);
+        if(!analyzer)
+        {
+            throw core::Exception("Fallo al crean el anlizador",__FILE__,__LINE__);
         }
 	}
 
@@ -175,13 +193,13 @@ namespace apidb
 
 	bool Driver::driving(core::ActivityProgress* progress)
 	{
-        //std::cout << "Driver::driving : Step 1\n";
+        std::cout << "Driver::driving : Step 1\n";
 		if(connector == NULL)
 		{
 			//std::cout<<"El conector es NULL." << std::endl;
 			return false;
 		}
-        //std::cout << "Driver::driving : Step 2\n";
+        std::cout << "Driver::driving : Step 2\n";
 		if(analyze(progress))
 		{
 			if(generate(progress))
@@ -198,7 +216,7 @@ namespace apidb
 			//std::cout<<"Fallo la etapa de analisis." << std::endl;
 			return false;
 		}
-        //std::cout << "Driver::driving : Step 3\n";
+        std::cout << "Driver::driving : Step 3\n";
 		return false;
 	}
 
@@ -286,17 +304,23 @@ namespace apidb
 
 	bool Driver::analyze(core::ActivityProgress* progress)
 	{
-        //std::cout << "Driver::analyze : Step 1\n";
+        std::cout << "Driver::analyze : Step 1\n";
 
-        //std::cout << "Driver::analyze : Step 2\n";
+        std::cout << "Driver::analyze : Step 2\n";
         if(connector == NULL)
         {
-        	return false;
+            throw core::Exception("No se ha asignado a conector.");
         }
+        if(createAnalyzer == NULL)
+        {
+            throw core::Exception("No se ha asignado a metodo contructor de driver.");
+        }
+        
+        std::cout << "Driver::analyze : Step 3\n";
 
-        analyzer = create(&configureProject,connector,progress);
+        analyzer = createAnalyzer(&configureProject,connector,progress);
 
-        //std::cout << "Driver::analyze : Step 3\n";
+        std::cout << "Driver::analyze : Step 4\n";
         if(progress != NULL)
         {
             core::Confirmation conf1("\n\tAnalisis de Base de Datos..");
@@ -307,10 +331,10 @@ namespace apidb
             core::Confirmation conf2(msg);
             progress->add(conf2);
         }
-        //std::cout << "Driver::analyze : Step 4\n";
 		bool flagAnalyzer = false;
+        std::cout << "Driver::analyze : Step 5\n";
         flagAnalyzer = analyzer->analyze(progress);
-        //std::cout << "Driver::analyze : Step 5\n";
+        std::cout << "Driver::analyze : Step 6\n";
 		if(flagAnalyzer == false) //reading tables
 		{
             if(progress != NULL)
@@ -323,7 +347,7 @@ namespace apidb
 			
 		}
 
-        //std::cout << "Driver::analyze : Step 6\n";
+        std::cout << "Driver::analyze : Step 7\n";
 		return true;
 	}
 

@@ -170,7 +170,7 @@ namespace apidb
         
         const Table* findSelectTable(const std::string&)const;
         const Table* findDownloadTable(const std::string&)const;
-		
+		bool build();
 		
 		ConfigureProject();
 		/**

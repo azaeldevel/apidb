@@ -75,7 +75,7 @@ namespace apidb
                 /**
                  * \brief Unico contructor 
                  * */
-        Driver(const ConfigureProject&);
+        Driver(ConfigureProject&);
         /**
         * \brief Retorna el obejeto Analyzer utilizado.
         * */
@@ -89,13 +89,13 @@ namespace apidb
 	private:
 		octetos::db::Connector* connector;		
         apidb::Analyzer* analyzer;
-		const ConfigureProject& configureProject;
+		ConfigureProject& configureProject;
         //void* handle;
         octetos::db::Connector* (*createConnector)();
         
         //>>>>
-        void (*destroy)(octetos::apidb::Analyzer*);
-        apidb::Analyzer* (*create)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
+        void (*destroyAnalyzer)(octetos::apidb::Analyzer*);
+        apidb::Analyzer* (*createAnalyzer)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
 	};
 }
 }
