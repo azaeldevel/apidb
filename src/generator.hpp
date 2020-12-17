@@ -36,11 +36,26 @@ namespace apidb
 {
 	namespace generators
 	{
+        /**
+         * @brief genera una llada recursiva para el componete indicado
+         * @condition se debe llamar con k->symbolReferenced
+         * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+         */
         void getKey(std::ofstream& ofile, const symbols::Symbol* k);
+        /**
+         * @brief genera una llada recursiva para el componete indicado
+         * @condition se debe llamar con k->symbolReferenced
+         * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+         */
         void getKey2(std::ofstream& ofile, const symbols::Symbol* k);
-                /**
-                 * \private No es parte del API
-                 * */
+        
+        void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+        void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+        symbols::Symbol* getRootSymbol(symbols::Symbol* k);
+        
+        /**
+        * \private No es parte del API
+        * */
 		class Generator
 		{
 		public:
@@ -73,40 +88,55 @@ namespace apidb
 			virtual ~CPP();
 
 		private:
-			//void createSpaceH(std::ofstream& file,bool log);
+            //contructor
+			void writeDefaultContructorH(const apidb::symbols::Table&,std::ofstream&);
+			void writeDefaultContructorCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeKeyRawDataContructorH(const apidb::symbols::Table&,std::ofstream&);
+			void writeKeyRawDataContructorCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeCopyContructorH(const apidb::symbols::Table&,std::ofstream&);
+			void writeCopyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
+            
+            //selects
+			void writeSelectStaticH(const apidb::symbols::Table& table, std::ofstream& ofile);
+			void writeSelectStaticCPP(const apidb::symbols::Table&,std::ofstream&);
+            void writeSelectInstancetObjectDataH(const apidb::symbols::Table&,std::ofstream&);
+            void writeSelectInstancetObjectDataCPP(const apidb::symbols::Table&,std::ofstream&);
+            
+            //downloads
+			void writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile);
+			void writeDownloadsCPP(const apidb::symbols::Table&,std::ofstream&);
+            
+            //getter
+            void writeGettersH(const apidb::symbols::Table& table, std::ofstream& ofile);
+            void writeGettersCPP(const apidb::symbols::Table& table, std::ofstream& ofile);
+            
+            //updatter
+            void writeUppdatersH(const apidb::symbols::Table& table, std::ofstream& ofile);
+            void writeUppdatersCPP(const apidb::symbols::Table& table, std::ofstream& ofile);
+            
+            //inserts
+			void writeInsertH(const apidb::symbols::Table&,std::ofstream&);
+			void writeInsertCPP(const apidb::symbols::Table&,std::ofstream&);            
+            
+            //methodes
+			void createClassMethodesH(const apidb::symbols::Table&,std::ofstream&);
+			void createClassMethodesCPP(const apidb::symbols::Table&,std::ofstream&);            
+            
+			//varias
 			bool createH(std::ofstream& file,bool log,const symbols::SymbolsTable&);
 			bool createH(std::ofstream& file,bool log,const symbols::ISpace*);
 			void createClassH(const apidb::symbols::Table&,std::ofstream&,const std::string&,bool log);
 			void createClassPrivateH(std::ofstream&);
 			void createClassAttributesH(const apidb::symbols::Table&,std::ofstream&);
 			void createClassPublicH(std::ofstream&);
-			void createClassMethodesH(const apidb::symbols::Table&,std::ofstream&);
-			//void createSpaceCPP(std::ofstream& file);
 			bool createCPP(std::ofstream& file,bool log,const symbols::SymbolsTable&);
 			bool createCPP(std::ofstream& file,bool log,const symbols::ISpace*);
 			void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&);
 			void createClassPrivateCPP(std::ofstream&);
 			void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);
 			void createClassPublicCPP(std::ofstream&);
-			void createClassMethodesCPP(const apidb::symbols::Table&,std::ofstream&);
-			void writeDefaultContructorH(const apidb::symbols::Table&,std::ofstream&);
-			void writeDefaultContructorCPP(const apidb::symbols::Table&,std::ofstream&);
 			void writeKeyValueH(const apidb::symbols::Table&,std::ofstream&);
 			void writeKeyValueCPP(const apidb::symbols::Table&,std::ofstream&);
-			void writeCopyContructorH(const apidb::symbols::Table&,std::ofstream&);
-			void writeCopyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
-			void writeKeyContructorH(const apidb::symbols::Table&,std::ofstream&);
-			void writeKeyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
-			void writeInsertH(const apidb::symbols::Table&,std::ofstream&);
-			void writeInsertCPP(const apidb::symbols::Table&,std::ofstream&);
-            void writeSelecInstancetH(const apidb::symbols::Table&,std::ofstream&);
-            void writeSelecInstancetCPP(const apidb::symbols::Table&,std::ofstream&);
-			//void writeSelectH(const apidb::symbols::Table& table, std::ofstream& ofile);
-            //void writeSelectCPP(const apidb::symbols::Table&,std::ofstream&);
-			void writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile);
-			void writeDownloadsCPP(const apidb::symbols::Table&,std::ofstream&);
-			void writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile);
-			void writeSelectsCPP(const apidb::symbols::Table&,std::ofstream&);
 			bool createDatconnectHPP(std::ofstream& file,bool log);
             bool createDatconnectCPP(std::ofstream& file,bool log);
 

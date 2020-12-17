@@ -123,6 +123,15 @@ namespace apidb
 			~Table();
 		};
         
+        
+        enum Platform
+        {
+            NotPlatform,
+            Linux_Debian,
+            Linux_Arch,
+            Linux_Gentoo,
+            Windows_Mingw
+        };
     ///>>>>>>>>>>>>>>>>>>>>>>>>>Owner mebers    
     private:
         bool processNode(xmlTextReaderPtr);
@@ -155,6 +164,7 @@ namespace apidb
         //bool enabledMariaDB;
         //bool enabledMySQL;
         bool failLoadDat;
+        Platform platform;
         
     public:
     	bool checkFailLoadDat()const;
@@ -195,6 +205,8 @@ namespace apidb
         const core::Semver& getVersionProject()const;
         
         octetos::db::Datconnect*  getDatconnection() const;
+        
+        Platform getPlatform()const;
 		
 		/**
 		* \brief El nombre del proyecto.

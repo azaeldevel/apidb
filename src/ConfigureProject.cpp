@@ -40,6 +40,10 @@ namespace octetos
 {
 namespace apidb
 {
+    ConfigureProject::Platform ConfigureProject::getPlatform()const
+    {
+        return platform;
+    }
     bool ConfigureProject::build()
     {
         setInputLenguaje(inputLenguaje);
@@ -383,6 +387,17 @@ namespace apidb
 	#endif
         */
 		failLoadDat=true;
+    #if defined LINUX_ARCH
+        platform = Linux_Arch;
+    #elif defined LINUX_GENTOO
+        platform = Linux_Gentoo;
+    #elif defined LINUX_DEBIAN
+        platform = Linux_Debian;
+    #elif defined WINDOWS_MINGW && defined BUILDING_DLL
+        platform = Windows_Mingw;
+    #else
+        platform = NotPlatform;
+    #endif
     }
 
 }

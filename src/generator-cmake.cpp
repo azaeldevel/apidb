@@ -101,9 +101,26 @@ namespace generators
 		cmakelists<<"SET(CMAKE_BUILD_TYPE Debug)"<<std::endl;
 		cmakelists<<std::endl;
 
-
+        switch(configureProject.getPlatform())
+        {
+            case apidb::ConfigureProject::Platform::Linux_Arch:
+                cmakelists<<"add_definitions(-DLINUX_ARCH)\n";            
+                break;
+            case apidb::ConfigureProject::Platform::Linux_Debian:
+                cmakelists<<"add_definitions(-DLINUX_DEBIAN)\n";            
+                break;
+            case apidb::ConfigureProject::Platform::Linux_Gentoo:
+                cmakelists<<"add_definitions(-DLINUX_GENTOO)\n";            
+                break;
+            case apidb::ConfigureProject::Platform::NotPlatform:
+                        
+                break;
+            default:
+                
+                break;
+        }
+        
 		cmakelists<<"FIND_PACKAGE(PkgConfig REQUIRED)"<<std::endl;
-
 		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_CORE REQUIRED octetos-core)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_CORE_FOUND)"<<std::endl;
 		cmakelists<<"INCLUDE_DIRECTORIES(${OCTETOS_CORE_INCLUDE_DIR})"<<std::endl;
@@ -173,7 +190,6 @@ namespace generators
     {
         std::cerr << "No hay soporte para este lenguaje en cmake" << std::endl;
     }
-
 		cmakelists<<std::endl;
 		if(!configureProject.executable_target.empty() and configureProject.executable_target.compare("¿?") != 0)//la adicion de un ejecutable es opcional
 		{

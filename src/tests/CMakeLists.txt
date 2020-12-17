@@ -14,3 +14,7 @@ TARGET_LINK_LIBRARIES(sandbox-generator ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NA
 
 #ADD_EXECUTABLE(sandbox-build sandbox-build.cpp)
 #TARGET_LINK_LIBRARIES(sandbox-build ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES}) 
+
+#include_directories(${CMAKE_CURRENT_BINARY_DIR}/muposys-nlst)
+#ADD_EXECUTABLE(sandbox-operations sandbox-operations.cpp ${CMAKE_CURRENT_BINARY_DIR}/muposys-nlst/muposys.cpp)
+#TARGET_LINK_LIBRARIES(sandbox-operations ${LIBRARIES}) 
