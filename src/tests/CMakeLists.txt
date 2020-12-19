@@ -22,5 +22,12 @@ PROJECT(tests LANGUAGES CXX)
 ADD_EXECUTABLE(Driver Driver.cpp)
 TARGET_LINK_LIBRARIES(Driver ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES})
 
+ADD_EXECUTABLE(ConfigureProject ConfigureProject.cpp)
+TARGET_LINK_LIBRARIES(ConfigureProject ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES})
 
+
+
+add_test(NAME ConfigureProject-test COMMAND ConfigureProject)
 add_test(NAME Driver-test COMMAND Driver)
+
+add_test(NAME apidb-build-test COMMAND src/apidb-build -p src/tests/muposys -o src)

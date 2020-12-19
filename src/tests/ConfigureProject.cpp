@@ -25,20 +25,6 @@ int main(int argc, char **argv)
         }
     }
     
-    octetos::db::mariadb::Connector connector; 
-    bool flag = false;  
-	flag = connector.connect(mariaSource);
-    if(flag)
-    {
-        printf("SQL Server version: %s\n", connector.getVerionServer().toString().c_str());
-    }
-    else
-    {
-        std::cerr << "Fallo en laconexion \n";
-        return EXIT_FAILURE;
-    }
-    //std::cout << "Step 2\n";
-    
     
     octetos::apidb::ConfigureProject configProject;
     configProject.name = "muposys";
@@ -53,6 +39,15 @@ int main(int argc, char **argv)
     configProject.compiled = octetos::apidb::Compiled::STATIC;
 	configProject.writeDatconnect = "conector";
     
+    std::string filename = configProject.name + ".apidb";
+    try
+    {
+        configProject.saveConfig(filename);
+    }
+    catch(const std::string& ex)
+    {
+        std::cerr << "Fallo durante la ooperacionde guardar archivo '" << filename << "'\n";
+    }
         
     return EXIT_SUCCESS;
 } 

@@ -59,7 +59,17 @@ int main(int argc, char *argv[])
         }
         else if(strcmp(argv[i],"-o") == 0 || strcmp(argv[i],"--out-build") == 0)
         {
-            dir = argv[i]; 
+            if(argc >= i + 1)
+            {
+                i++;
+                //std::cout<<"Detectando valor -p = " << argv[i] << "\n";                
+                dir = argv[i]; 
+            }
+            else
+            {
+                std::cerr<<"Deve especificar la ruta del archivo.\n";
+                return EXIT_FAILURE;
+            }
         }
         else
         {
