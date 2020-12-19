@@ -1,6 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 PROJECT(src LANGUAGES CXX)
 
+
 SET (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive")
 
 SET(DDM_DESKTOP_DIR "/usr/share/applications/")
@@ -20,7 +21,7 @@ elseif(PLATFORM STREQUAL "LINUX_DEBIAN")
 else()
     MESSAGE(FATAL_ERROR "Indique el sistema opeartivo mediante la variable PLATFORM")
 endif()
-
+add_definitions(-DOCTETOS_DB_MEDIUMWORD)
 
 
 
@@ -354,11 +355,15 @@ IF(Doxygen_FOUND AND APIDB_DOC)
 	)
 ENDIF()
 
-IF(APIDB_BUILD_TEST STREQUAL "Y")
+if(APIDB_BUILD_TEST)
     #ADD_EXECUTABLE(testing-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} tests/v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )
     #TARGET_LINK_LIBRARIES(testing-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES})
+endif()
+
+if (${ENABLE_TESTS})
+    enable_testing()
     add_subdirectory(tests/)
-ENDIF()
+endif()
 
 if(APIDB_EXAMPLES)
     #ADD_EXECUTABLE(capture examples/capture_v${${PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )

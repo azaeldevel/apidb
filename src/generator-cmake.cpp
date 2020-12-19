@@ -113,13 +113,27 @@ namespace generators
                 cmakelists<<"add_definitions(-DLINUX_GENTOO)\n";            
                 break;
             case apidb::ConfigureProject::Platform::NotPlatform:
-                        
+                throw BuildException("No se asignado la plataforma el sistema operativo para el que se realizara la contruccion.",__FILE__,__LINE__);
                 break;
             default:
-                
+                throw BuildException("EL codigo del sistema operativo indicado es desconoido",__FILE__,__LINE__);
                 break;
         }
-        
+        switch(configureProject.getWidthDBWord())
+        {
+            case apidb::ConfigureProject::WidthDBWord::high:
+                cmakelists<<"add_definitions(-DOCTETOS_DB_HIGHWORD)\n"; 
+                break;
+            case apidb::ConfigureProject::WidthDBWord::medium:
+                cmakelists<<"add_definitions(-DOCTETOS_DB_MEDIUMWORD)\n"; 
+                break;
+            case apidb::ConfigureProject::WidthDBWord::low:
+                cmakelists<<"add_definitions(-DOCTETOS_DB_LOWWORD)\n"; 
+                break;
+            default:
+                throw BuildException("Se desconoce el ancho de las paralabras usadas por octetos-db-abstract para el projecto generado",__FILE__,__LINE__);
+                break;
+        }
 		cmakelists<<"FIND_PACKAGE(PkgConfig REQUIRED)"<<std::endl;
 		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_CORE REQUIRED octetos-core)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_CORE_FOUND)"<<std::endl;

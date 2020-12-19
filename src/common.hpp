@@ -119,7 +119,7 @@ namespace apidb
         /**
          * \brief Clase de manejo de errores.
          **/
-	class BuildException : public core::Error
+	class BuildException : public core::Exception
 	{
 	public:
                 /**
@@ -129,12 +129,12 @@ namespace apidb
                 /**
                  * \brief Requerida por std::exception
                  * */
-		virtual const char* what() const throw();
+		//virtual const char* what() const throw();
                 /**
                  * \brief Requerida por toolkit::Error
                  * */
 		BuildException(const std::string &description) throw();
-        BuildException(const std::string &description,std::string filename,int lineNumber) throw();
+        BuildException(const std::string &description,const char* filename,int lineNumber) throw();
         //Exception()throw();
 	private:
 		//std::string description;
@@ -511,6 +511,10 @@ namespace apidb
                  * \brief Requerida por toolkit::ActivityProgress
                  * */
                 virtual void add(const core::Error&);
+                /**
+                 * \brief Requerida por toolkit::ActivityProgress
+                 * */
+                virtual void add(const core::Exception&);
                 /**
                  * \brief Requerida por toolkit::ActivityProgress
                  * */

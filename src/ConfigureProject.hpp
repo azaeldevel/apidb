@@ -132,22 +132,20 @@ namespace apidb
             Linux_Gentoo,
             Windows_Mingw
         };
+        enum WidthDBWord
+        {
+            low,
+            medium,
+            high
+        };
     ///>>>>>>>>>>>>>>>>>>>>>>>>>Owner mebers    
     private:
-        bool processNode(xmlTextReaderPtr);
-        bool getProjectNodes(xmlTextReaderPtr);
+        //miembros dato
         /**
         * \brief la version del archivo de proyecto.
         * */
-        core::Semver projectVersion;
-        
+        core::Semver projectVersion; 
         void* handle;
-        octetos::db::Datconnect* (*createDatConnection)();
-        void (*destroyDatConnection)(octetos::db::Datconnect*);
-        octetos::db::Connector* (*createConnector)();
-        void (*destroyConnector)(octetos::db::Connector*);
-        bool loadLibrary();
-        bool checkLibrary(InputLenguajes in);
         /**
         * \brief Identifica el tipo del Servidor de base de datos
         * */
@@ -157,57 +155,27 @@ namespace apidb
         * \deprecated Sera removido de la interface publica en v5, usar getDatconnection() en su lugar.
         **/
         octetos::db::Datconnect* conectordb;
+        bool failLoadDat;
+        Platform platform;
+        WidthDBWord widthdbword;
+        
+        //data funtion
+        octetos::db::Datconnect* (*createDatConnection)();
+        void (*destroyDatConnection)(octetos::db::Datconnect*);
+        octetos::db::Connector* (*createConnector)();
+        void (*destroyConnector)(octetos::db::Connector*);
+        
+        //funtions
+        bool processNode(xmlTextReaderPtr);
+        bool getProjectNodes(xmlTextReaderPtr);       
+        bool loadLibrary();
+        bool checkLibrary(InputLenguajes in);
         
         void* getfnDatConection();
         void* getfnCreateConector();
-        //bool enabledPostgreSQl;
-        //bool enabledMariaDB;
-        //bool enabledMySQL;
-        bool failLoadDat;
-        Platform platform;
         
     public:
-    	bool checkFailLoadDat()const;
-        void* getLibraryHandle() const;
-        octetos::db::Datconnect* newDatConnection();
-        void deleteDatConnection(octetos::db::Datconnect*);
-        octetos::db::Connector* newConnector()const;
-        void deleteConnector(octetos::db::Connector*)const;
-        void setInputLenguaje(InputLenguajes);
-        void setInputs(InputLenguajes,octetos::db::Datconnect&);
-        InputLenguajes getInputLenguaje()const;
-        ~ConfigureProject();
-        
-        const Table* findSelectTable(const std::string&)const;
-        const Table* findDownloadTable(const std::string&)const;
-		bool build();
-		
-		ConfigureProject();
-		/**
-		* \brief Guarda el proyecto en el archivo especificado
-		* */
-		void saveConfig(const std::string& filename);
-		/**
-		* \brief Lee el proyecto desde el archivo especificado
-		* */
-		void readConfig(const std::string& filename);
-		/**
-		* \brief Verica los datos de conexion al servidor
-		**/
-		bool testConexion();
-      	
-      	bool unmcompress(const std::string& filename,char* tmp_apidbDir);
-      	bool compress(const std::string& tarf, char * tmp_apidbDir,const std::string& filenameProj);
-        /**
-        * \brief Version del archivo de proyecto.
-        * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
-        **/
-        const core::Semver& getVersionProject()const;
-        
-        octetos::db::Datconnect*  getDatconnection() const;
-        
-        Platform getPlatform()const;
-		
+        //miembros datos
 		/**
 		* \brief El nombre del proyecto.
 		*/
@@ -254,6 +222,54 @@ namespace apidb
 		* \brief Sí es true genera una variable statica global con los datos de conexión.
 		* */
 		std::string writeDatconnect;
+        
+        
+        //contructores
+		ConfigureProject();
+        ~ConfigureProject();
+        
+        //getter
+        void* getLibraryHandle() const;
+        InputLenguajes getInputLenguaje()const;
+        /**
+        * \brief Version del archivo de proyecto.
+        * \details Contiene la version del paquete apidb usado paara generar/guardar dicho archivo.
+        **/
+        const core::Semver& getVersionProject()const;        
+        octetos::db::Datconnect*  getDatconnection() const;        
+        Platform getPlatform()const;
+        WidthDBWord getWidthDBWord()const;
+        
+        //setter
+        void setInputLenguaje(InputLenguajes);
+        void setInputs(InputLenguajes,octetos::db::Datconnect&);
+        
+        //funciones   
+    	bool checkFailLoadDat()const;
+        octetos::db::Datconnect* newDatConnection();
+        void deleteDatConnection(octetos::db::Datconnect*);
+        octetos::db::Connector* newConnector()const;
+        void deleteConnector(octetos::db::Connector*)const;
+        
+        const Table* findSelectTable(const std::string&)const;
+        const Table* findDownloadTable(const std::string&)const;
+		bool build();
+		
+		/**
+		* \brief Guarda el proyecto en el archivo especificado
+		* */
+		void saveConfig(const std::string& filename);
+		/**
+		* \brief Lee el proyecto desde el archivo especificado
+		* */
+		void readConfig(const std::string& filename);
+		/**
+		* \brief Verica los datos de conexion al servidor
+		**/
+		bool testConexion();
+      	
+      	bool unmcompress(const std::string& filename,char* tmp_apidbDir);
+      	bool compress(const std::string& tarf, char * tmp_apidbDir,const std::string& filenameProj);
     };
 }
 }

@@ -40,6 +40,10 @@ namespace octetos
 {
 namespace apidb
 {
+    ConfigureProject::WidthDBWord ConfigureProject::getWidthDBWord()const
+    {
+        return widthdbword;
+    }
     ConfigureProject::Platform ConfigureProject::getPlatform()const
     {
         return platform;
@@ -398,6 +402,7 @@ namespace apidb
     #else
         platform = NotPlatform;
     #endif
+        widthdbword = WidthDBWord::medium;
     }
 
 }

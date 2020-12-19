@@ -13,8 +13,14 @@ PROJECT(tests LANGUAGES CXX)
 #TARGET_LINK_LIBRARIES(sandbox-inserts ${LIBRARIES}) 
 
 #ADD_EXECUTABLE(sandbox-build sandbox-build.cpp)
-#TARGET_LINK_LIBRARIES(sandbox-build ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES}) 
+#TARGET_LINK_LIBRARIES(sandbox-build ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES})
 
 #include_directories(${CMAKE_CURRENT_BINARY_DIR}/muposys-nlst)
 #ADD_EXECUTABLE(sandbox-operations sandbox-operations.cpp ${CMAKE_CURRENT_BINARY_DIR}/muposys-nlst/muposys.cpp)
-#TARGET_LINK_LIBRARIES(sandbox-operations ${LIBRARIES}) 
+#TARGET_LINK_LIBRARIES(sandbox-operations ${LIBRARIES})
+
+ADD_EXECUTABLE(Driver Driver.cpp)
+TARGET_LINK_LIBRARIES(Driver ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES})
+
+
+add_test(NAME Driver-test COMMAND Driver)

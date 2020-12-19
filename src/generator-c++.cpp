@@ -1130,13 +1130,7 @@ namespace generators
             ofile << "\t}"<<std::endl;
         }
         */
-        
-        
-        
-        
-        
-        
-        
+                
         
         auto penultimoReq = --table.getRequired().end();
         // Methodo insert Raw datas
@@ -1331,7 +1325,7 @@ namespace generators
         }
         else if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced == NULL and (*(table.getKey().begin()))->outType.compare("int") == 0)
         {//es llave simple y no tiene campos foraneos?
-            ofile << "\t\tif(connector.insert2(sqlString,dt))\n";
+            ofile << "\t\tif(connector.insert(sqlString,dt))\n";
             ofile << "\t\t{\n";
             ofile << "\t\t\t" << (*(table.getKey().begin()))->name;
             ofile << " = connector.last_inserted_id();\n";
@@ -1341,7 +1335,7 @@ namespace generators
         }
         else if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced != NULL )
         {//es llave simple y no tiene campos foraneos?
-            ofile << "\t\tif(connector.insert2(sqlString,dt)) return true;\n";
+            ofile << "\t\tif(connector.insert(sqlString,dt)) return true;\n";
             ofile << "\t\treturn false;\n";
         }
         else if(table.getKey().size() < 1 )
@@ -1512,6 +1506,7 @@ namespace generators
 	{
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
+            throw core::Exception("Faltas los encabazados de MySQL",__FILE__,__LINE__);
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
@@ -1529,6 +1524,7 @@ namespace generators
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
         {
+            throw core::Exception("Faltas los encabazados de PosrgreSQL",__FILE__,__LINE__);
         }
         else
         {
@@ -2079,11 +2075,52 @@ namespace generators
 		
 		return true;
 	}
-    bool CPP::createDatconnectHPP(std::ofstream& file,bool log)
+	bool CPP::createDatconnectCPP(std::ofstream& file,bool log)
 	{
 		if(!configureProject.writeDatconnect.empty() and configureProject.writeDatconnect.compare("¿?") != 0)
 		{
+            if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
+            {        
+                file << "\tstatic const octetos::db::mysql::Datconnect " << configureProject.writeDatconnect  << "(";
+            }
+            else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+            {                    
+                file << "\tstatic const octetos::db::maria::Datconnect " << configureProject.writeDatconnect  << "(";
+            }
+            else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+            {
+                file << "\tstatic const octetos::db::postgresql::Datconnect " << configureProject.writeDatconnect  << "(";
+            }
+            else
+            {
+                std::string msg = "Lenguaje no soportado " ;
+                core::Error::write(core::Error(msg,ErrorCodes::GENERATOR_FAIL,__FILE__,__LINE__));
+                return false;
+            }
 
+			file << "\"" << configureProject.getDatconnection()->getHost() << "\",";
+			file << configureProject.getDatconnection()->getPort() << ",";
+			file << "\"" << configureProject.getDatconnection()->getDatabase() << "\",";
+			file << "\"" << configureProject.getDatconnection()->getUser() << "\",";
+			file << "\"" << configureProject.getDatconnection()->getPassword() << "\"";
+			file << ");\n";
+		}
+		
+		return true;
+	}
+    bool CPP::createDatconnectHPP(std::ofstream& file,bool log)
+	{
+        //is function?
+        int lgf = configureProject.writeDatconnect.length();
+        std::string strF = configureProject.writeDatconnect.substr(lgf - 2,lgf);
+        if(strF.compare("()") == 0)
+        {
+            file << configureProject.writeDatconnect  << "\n";
+            return true;
+        }
+        
+		if(!configureProject.writeDatconnect.empty() and configureProject.writeDatconnect.compare("¿?") != 0)
+		{
             if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
             {        
                 file << "\tstatic const octetos::db::mysql::Datconnect " << configureProject.writeDatconnect  << "(";

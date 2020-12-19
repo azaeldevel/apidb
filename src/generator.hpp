@@ -125,12 +125,14 @@ namespace apidb
 			//varias
 			bool createH(std::ofstream& file,bool log,const symbols::SymbolsTable&);
 			bool createH(std::ofstream& file,bool log,const symbols::ISpace*);
+			bool createCPP(std::ofstream& file,bool log,const symbols::SymbolsTable&);
+			bool createCPP(std::ofstream& file,bool log,const symbols::ISpace*);
+            
+            //
 			void createClassH(const apidb::symbols::Table&,std::ofstream&,const std::string&,bool log);
 			void createClassPrivateH(std::ofstream&);
 			void createClassAttributesH(const apidb::symbols::Table&,std::ofstream&);
 			void createClassPublicH(std::ofstream&);
-			bool createCPP(std::ofstream& file,bool log,const symbols::SymbolsTable&);
-			bool createCPP(std::ofstream& file,bool log,const symbols::ISpace*);
 			void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&);
 			void createClassPrivateCPP(std::ofstream&);
 			void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);
@@ -200,7 +202,6 @@ namespace apidb
 			//const ConfigureProject& configureProject;
 		};
 
-
 		/**
 		* \private No es parte del API
 		* */
@@ -210,12 +211,11 @@ namespace apidb
 			virtual bool generate(bool log);
 			virtual ~Maven();
 			Maven(apidb::Analyzer&,const ConfigureProject&);
-
+            
 		private:
 			std::string filename;
 		};
 	}
-
 }
 }
 #endif

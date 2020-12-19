@@ -173,6 +173,10 @@ namespace apidb
         {
                 std::cout << e.describe();
         }
+        void Tracer::add(const core::Exception& e)
+        {
+                std::cout << e.what();
+        }
         void Tracer::add(const core::Confirmation& c)
         {
                 std::cout <<  c.getBrief();
@@ -191,14 +195,14 @@ namespace apidb
 	{
 		;
 	}
-	const char* BuildException::what() const throw()
+	/*const char* BuildException::what() const throw()
 	{
 		return core::Error::what();
-	}
-    BuildException::BuildException(const std::string &description) throw() : core::Error(description,core::Error::ERROR_UNKNOW)
+	}*/
+    BuildException::BuildException(const std::string &description) throw() : core::Exception(description)
     {
 	}
-    BuildException::BuildException(const std::string &description,std::string filename,int lineNumber) throw() : core::Error(description,core::Error::ERROR_UNKNOW,filename,lineNumber)
+    BuildException::BuildException(const std::string &description,const char*  filename,int lineNumber) throw() : core::Exception(description,filename,lineNumber)
     {
 	}
                
