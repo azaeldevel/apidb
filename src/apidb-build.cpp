@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
         }
         else if(strcmp(argv[i],"-o") == 0 || strcmp(argv[i],"--out-build") == 0)
         {
-            std::cout<<"Advertencia: El directorio de generacion sera optenido en primera instancia desde el archivo de projecto." <<std::endl;
+            dir = argv[i]; 
         }
         else
         {
@@ -84,9 +84,10 @@ int main(int argc, char *argv[])
 			std::cerr<<"Fallo la lectura del archivo."<< e.what() <<std::endl;
 			return EXIT_FAILURE;                        
         }
-        if(config.builDirectory.empty())
+        if(dir != NULL)
         {
-            if(dir != NULL) config.builDirectory = dir;
+            config.builDirectory = dir;
+            std::cout<<"Generando en '" << config.builDirectory << "' ..." <<std::endl;
         }
         //verificar si exite el archivo de projecto
         FILE *tmpfile = fopen(file, "r");
