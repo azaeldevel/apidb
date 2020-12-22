@@ -20,8 +20,7 @@ int main(int argc, char **argv)
     {
         std::cerr << "Fallo en la conexion\n";
         return EXIT_FAILURE;
-    }    
-    
+    }
     
     octetos::apidb::ConfigureProject configProject;
 	try
@@ -31,7 +30,7 @@ int main(int argc, char **argv)
 	catch(octetos::core::Error& e)
 	{
 		std::cerr << e.what() << "\n";
-        return;		
+        return EXIT_FAILURE;		
 	}
     
     octetos::apidb::Driver driver(configProject);

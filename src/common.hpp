@@ -110,9 +110,9 @@ namespace apidb
          * */
         enum Compiled
         {
-                NoCompile,
-                STATIC,
-                SHARED
+            NoCompile,
+            STATIC,
+            SHARED
         };
         std::string getCompiled(Compiled);
         Compiled getCompiled(const std::string&);
@@ -398,7 +398,6 @@ namespace apidb
 			Symbol* findSymbol(const std::string&);
 			//virtual ISpace* searh(const std::string&);
 		};
-
 
 		/**
         * \brief Conjunto de tablas

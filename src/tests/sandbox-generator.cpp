@@ -37,6 +37,8 @@ int main(int argc, char **argv)
     configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
 	configProject_nls.writeDatconnect = "conector";
     
+    configProject_nls.saveConfig("muposys");
+    
     std::cout << "Step 3\n";
     octetos::apidb::Driver driver(configProject_nls);
 

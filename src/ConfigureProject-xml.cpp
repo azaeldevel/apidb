@@ -146,8 +146,11 @@ namespace apidb
                         case PackingLenguajes::CMake:
                                 xmlNewChild(pk_node, NULL, (const xmlChar *)"name", (const xmlChar *)"CMake");
                                 break;
+                        case PackingLenguajes::OnlyCode:
+                                xmlNewChild(pk_node, NULL, (const xmlChar *)"name", (const xmlChar *)"OnlyCode");
+                                break;
                         default:
-                                throw core::Error("Opcion de enpaquetado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
+                                throw core::Exception("Opcion de enpaquetado desconocida.",__FILE__,__LINE__);
                 }
 
                 //
@@ -161,7 +164,7 @@ namespace apidb
                                 xmlNewChild(cmpl_node, NULL, (const xmlChar *)"name", (const xmlChar *)"SHARED");
                                 break;
                         default:
-                                throw core::Error("Opcion de compilado desconocida.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
+                                throw core::Exception("Opcion de compilado desconocida.",__FILE__,__LINE__);
                 }
 
                 //
@@ -802,7 +805,11 @@ namespace apidb
                 std::string pk = (const char*)xmlTextReaderConstValue(reader);
                 if(pk.compare("CMake") == 0)
                 {
-                        packing = PackingLenguajes::CMake;
+                    packing = PackingLenguajes::CMake;
+                }
+                else if(pk.compare("OnlyCode") == 0)
+                {
+                    packing = PackingLenguajes::OnlyCode;
                 }
                 else
                 {
