@@ -100,7 +100,7 @@ namespace generators
 		cmakelists<<"SET(CMAKE_CXX_EXTENSIONS OFF)"<<std::endl;
 		cmakelists<<"SET(CMAKE_BUILD_TYPE Debug)"<<std::endl;
 		cmakelists<<std::endl;
-
+        //cmakelists<<"\n";
         switch(configureProject.getPlatform())
         {
             case apidb::ConfigureProject::Platform::Linux_Arch:
@@ -134,6 +134,7 @@ namespace generators
                 throw BuildException("Se desconoce el ancho de las paralabras usadas por octetos-db-abstract para el projecto generado",__FILE__,__LINE__);
                 break;
         }
+        cmakelists<<"\n";
 		cmakelists<<"FIND_PACKAGE(PkgConfig REQUIRED)"<<std::endl;
 		cmakelists<<"PKG_CHECK_MODULES(OCTETOS_CORE REQUIRED octetos-core)"<<std::endl;
 		cmakelists<<"IF(OCTETOS_CORE_FOUND)"<<std::endl;
@@ -207,7 +208,7 @@ namespace generators
 		cmakelists<<std::endl;
 		if(!configureProject.executable_target.empty() and configureProject.executable_target.compare("¿?") != 0)//la adicion de un ejecutable es opcional
 		{
-			cmakelists<<"ADD_EXECUTABLE(" << configureProject.executable_target << "  "<< configureProject.name;
+			cmakelists<<"ADD_EXECUTABLE(" << configureProject.executable_target << "  ";
 			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
 			{
 				cmakelists <<".cpp ";
@@ -218,17 +219,18 @@ namespace generators
 				cmakelists <<".cpp ";
 			}
 			cmakelists <<")"<<std::endl;
+            cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << " ${OCTETOS_CORE_LIBRARY} ${OCTETOS_DB_ABSTRACT_LIBRARY} ";
             if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
             {
-                cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_DB_MYSQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${OCTETOS_CORE_LIBRARY} ${MYSQL_LIBRARIES})"<<std::endl;
+                 cmakelists  << " ${OCTETOS_DB_MYSQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES}  ${MYSQL_LIBRARIES})"<<std::endl;
             }
             else if(configureProject.getInputLenguaje()  == InputLenguajes::MariaDB)
             {
-                cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_DB_MARIA_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${OCTETOS_CORE_LIBRARY} ${LIBMARIADB_LIBRARIES})"<<std::endl;
+                cmakelists  << " ${OCTETOS_DB_MARIA_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${MARIADB_LIBRARIES})"<<std::endl;
             }
             else if(configureProject.getInputLenguaje()  == InputLenguajes::PostgreSQL)
             {
-                cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << "  ${OCTETOS_DB_POSTGRESQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${LIBPQ_LIBRARIES})"<<std::endl;
+                cmakelists  << " ${OCTETOS_DB_POSTGRESQL_LIBRARIES} ${LIBPQ_LIBRARIES})"<<std::endl;
             }
 		}
 		cmakelists<<"ADD_LIBRARY(${PROJECT_NAME} ";
@@ -240,27 +242,28 @@ namespace generators
         {
             cmakelists  << " STATIC ";
         }
-        cmakelists << "${PROJECT_NAME}.cpp )"<<std::endl;
+        cmakelists << "${PROJECT_NAME}.cpp)"<<std::endl;
+        cmakelists<<"TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${OCTETOS_CORE_LIBRARIES} ${OCTETOS_DB_ABSTRACT_LIBRARIES} ";
         if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
         {
-            cmakelists<<"TARGET_LINK_LIBRARIES(${PROJECT_NAME}  ${OCTETOS_DB_MYSQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
+            cmakelists<<"${OCTETOS_DB_MYSQL_LIBRARIES} ${MYSQL_LIBRARIES})"<<std::endl;
         }
         else if(configureProject.getInputLenguaje()  == InputLenguajes::MariaDB)
         {
-            cmakelists<<"TARGET_LINK_LIBRARIES(${PROJECT_NAME}   ${OCTETOS_DB_MARIA_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${LIBMARIADB_LIBRARIES})"<<std::endl;
+            cmakelists<<"${OCTETOS_DB_MARIA_LIBRARIES} ${LIBMARIADB_LIBRARIES})"<<std::endl;
         }
         else if(configureProject.getInputLenguaje()  == InputLenguajes::PostgreSQL)
         {
-            cmakelists<<"TARGET_LINK_LIBRARIES(${PROJECT_NAME}   ${OCTETOS_DB_POSTGRESQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${LIBPQ_LIBRARIES})"<<std::endl;
+            cmakelists<<"${OCTETOS_DB_POSTGRESQL_LIBRARIES} ${LIBPQ_LIBRARIES})"<<std::endl;
         }
         cmakelists<<"if(APIDBLIB)\n";
         cmakelists<<"set(APIDBLIB ${PROJECT_NAME} PARENT_SCOPE)\n";
         cmakelists<<"endif()\n";
 		cmakelists.close();
-                std::string msg2 = "\tArchivo de gestion de projecto: '";
-                msg2 += namefile + "'\n";
-		if(log)analyzer.getOutput().add( msg2);
-
+        std::string msg2 = "\tArchivo de gestion de projecto: '";
+        msg2 += namefile + "'\n";
+		if(log) analyzer.getOutput().add( msg2);
+        
 		//std::cout<<"Creating cmake.modules..."<<std::endl;
 		//cmake.modules
 		if(configureProject.builDirectory.empty() | (configureProject.builDirectory.compare(".") == 0))

@@ -1179,6 +1179,7 @@ namespace apidb
                 gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,0,"selecione","Selecione..."); 
                 gtk_combo_box_set_active((GtkComboBox*)inPkL,0);
                 gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,PackingLenguajes::CMake,getPackingLenguajes(PackingLenguajes::CMake).c_str(),getPackingLenguajes(PackingLenguajes::CMake).c_str());
+                gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,PackingLenguajes::OnlyCode,getPackingLenguajes(PackingLenguajes::OnlyCode).c_str(),"Solo Codigo");
                 gtk_box_pack_start(GTK_BOX(boxPkL), inPkL, FALSE, FALSE,0);   
                 gtk_box_pack_start(GTK_BOX(boxInfo), boxPkL, FALSE, FALSE,0);  
                 g_signal_connect(G_OBJECT(inPkL), "changed", G_CALLBACK(inPkL_changed), this);

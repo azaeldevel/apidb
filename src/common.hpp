@@ -82,9 +82,10 @@ namespace apidb
          * */
         enum PackingLenguajes
         {
-                NoPack,
-                CMake,
-				Maven,
+            NoPack,
+            CMake,
+            OnlyCode,
+            Maven,
         };
         std::string getPackingLenguajes(PackingLenguajes);
         PackingLenguajes getPackingLenguajes(const std::string&);
@@ -140,9 +141,9 @@ namespace apidb
 		//std::string description;
 	};
 
-        /**
-         * \brief Estructura de datos para construir la tabla de simbolos
-         * */
+    /**
+    * \brief Estructura de datos para construir la tabla de simbolos
+    **/
 	namespace symbols
 	{
 		class Table;
@@ -177,10 +178,10 @@ namespace apidb
 		 * */
 		class Symbol
 		{
-            friend class Analyzer;
-            //friend class mysql::Analyzer;
-            //friend class postgresql::Analyzer;
-            friend class Table;
+        friend class Analyzer;
+        //friend class mysql::Analyzer;
+        //friend class postgresql::Analyzer;
+        friend class Table;
 
         public:
 			/**
@@ -234,6 +235,10 @@ namespace apidb
             * \brief Puntero al campo referido en el caso de campo foraneos.
             * */
             Symbol* symbolReferenced;
+            /**
+             * 
+             **/
+            
 
 			static int counter;
 			int id;
@@ -254,7 +259,6 @@ namespace apidb
             * \brief Indica si el compo es auto incremento
             * */
             bool isAutoIncrement();
-
 			/**
             * \brief Inicializa los valores
             * */
@@ -267,7 +271,6 @@ namespace apidb
             * \brief El ID de simbolo.
             * */
             int getID()const;
-
             /**
             * \brief Retorna el nombre del campo.
             * */
@@ -276,36 +279,36 @@ namespace apidb
             * \brief Retorna el nombre del campo decorado con mayusculas.
             * */
             const std::string& getUpperName()const;
-                        /**
-                         * \brief Retorna el nombre del metodo get para el campo.
-                         * */
-                        const std::string& getGet()const;
-                        /**
-                         * \brief Retorna el tipo de dato correspodiente a el lenguaje resultado.
-                         * \details Por ejemplo, generará int si en la base de datos el campo es entero y el lenguaje resultado es C++ o C.
-                         * */
-                        const std::string& getOutType()const;
-                        /**
-                         * \brief Tabla referenciada por el campo(En el caso de las llaves foraneas).
-                         * */
-                        const Table* getClassReferenced()const;
-                        /**
-                         * \brief Tabla contenedora del campo
-                         * */
-                        const Table* getClassParent()const;
-                        /**
-                         * \brief Campo referenciado por este campo(En el caso de las llaves foraneas).
-                         * */
-                        const Symbol* getSymbolReferenced()const;
-                        /**
-                         * \brief retorna la string correspodiente al tipo de dato en la BD.
-                         * */
-                        const std::string& getInType()const;
+            /**
+            * \brief Retorna el nombre del metodo get para el campo.
+            * */
+            const std::string& getGet()const;
+            /**
+            * \brief Retorna el tipo de dato correspodiente a el lenguaje resultado.
+            * \details Por ejemplo, generará int si en la base de datos el campo es entero y el lenguaje resultado es C++ o C.
+            * */
+            const std::string& getOutType()const;
+            /**
+            * \brief Tabla referenciada por el campo(En el caso de las llaves foraneas).
+            * */
+            const Table* getClassReferenced()const;
+            /**
+            * \brief Tabla contenedora del campo
+            * */
+            const Table* getClassParent()const;
+            /**
+            * \brief Campo referenciado por este campo(En el caso de las llaves foraneas).
+            * */
+            const Symbol* getSymbolReferenced()const;
+            /**
+            * \brief retorna la string correspodiente al tipo de dato en la BD.
+            * */
+            const std::string& getInType()const;
 		};
 
-                /**
-                 * \brief Conjunto de campos que forma una llave, cuan la llave es compuesta se hace una entrada por cada campo relacionado.
-                 * */
+        /**
+        * \brief Conjunto de campos que forma una llave, cuan la llave es compuesta se hace una entrada por cada campo relacionado.
+        * */
 		class Key : public std::vector<Symbol*>
 		{
 		};
@@ -343,7 +346,7 @@ namespace apidb
             * \brief Nombre completa de la tabla
             * */
             std::string fullname;
-
+            
             /**
             * \brief Busca todos lo campos de la tabla actual y construlle la tabla de simbolos
             * */
@@ -408,122 +411,122 @@ namespace apidb
             * \brief Limpa el objeto
             * */
 			~Space();
-                        /**
-                         * \brief Busca una tabla por su nombre y la retorna en cals de encontrarla
-                         * */
-                        //Table* search(const std::string&);
-                        /**
-                         * \brief Busca una tabla por su nombre y la retorna en cals de encontrarla
-                         * */
+            /**
+            * \brief Busca una tabla por su nombre y la retorna en cals de encontrarla
+            * */
+            //Table* search(const std::string&);
+            /**
+            * \brief Busca una tabla por su nombre y la retorna en cals de encontrarla
+            * */
 			//std::list<Table*>::iterator find(const std::string& tableName);
 			//short getMaxCountRef();
-                        /**
-                         * \brief Retorna el nombre del espacio.
-                         * */
-                        //const std::string& getMiddleName()const;
-                        const std::string& getName()const;
-                        //const std::string& getFullName()const;
-                        /**
-                         * \brief Crea el objeto con su nombre.
-                         * */
-                        Space(const std::string& middleName);
+            /**
+            * \brief Retorna el nombre del espacio.
+            * */
+            //const std::string& getMiddleName()const;
+            const std::string& getName()const;
+            //const std::string& getFullName()const;
+            /**
+            * \brief Crea el objeto con su nombre.
+            * */
+            Space(const std::string& middleName);
 
-                        virtual SpaceType what()const;
-						//virtual ISpace* searh(const std::string&);
-						Table* findTable(const std::string&);
-						Space* findSpace(const std::string&);
+            virtual SpaceType what()const;
+            //virtual ISpace* searh(const std::string&);
+            Table* findTable(const std::string&);
+            Space* findSpace(const std::string&);
 
-						/**
-						 *
-						 *
-						 * \param name indica el nombre relativo a apartir del espacio actual
-						 * */
-                        Space* addSpace(const std::string& name);
-						/**
-						 *
-						 * */
-						Table* addTable(symbols::Table* table);
-                private:
-                        /**
-                         * \brief Nombre del espacion
-                         * */
-                        std::string name;
-                        short level;
+            /**
+            *
+            *
+            * \param name indica el nombre relativo a apartir del espacio actual
+            * */
+            Space* addSpace(const std::string& name);
+            /**
+            *
+            * */
+            Table* addTable(symbols::Table* table);
+            private:
+            /**
+            * \brief Nombre del espacion
+            * */
+            std::string name;
+            short level;
 		};
 
-                /**
-                 * \private
-                 * */
-                std::string getFirstName(const std::string&fullname);
-                /**
-                 * \private
-                 * */
-                std::string getSpacePatch(const std::string& fullname);
-                /**
-                 * \private
-                 * */
-                short getSpaceLevel(const std::string& fullname);
-                std::string getDeepChilName(const std::string& fullname);
-				std::string getChilFullName(const std::string& fullname);
-				std::string getExcludeChilName(const std::string& fullname);
+        /**
+        * \private
+        **/
+        std::string getFirstName(const std::string&fullname);
+        /**
+        * \private
+        * */
+        std::string getSpacePatch(const std::string& fullname);
+        /**
+        * \private
+        * */
+        short getSpaceLevel(const std::string& fullname);
+        std::string getDeepChilName(const std::string& fullname);
+        std::string getChilFullName(const std::string& fullname);
+        std::string getExcludeChilName(const std::string& fullname);
 
-				bool hasChild(const std::string& fullname);
-				std::string getTopName(const std::string& fullname);
-
-                /**
-                 *\brief Contiene las estructura completa de la tabla de symbolos
-                 **/
-                class SymbolsTable : public std::map<const char*,symbols::ISpace*,symbols::cmp_str>
-                {
-				private:
-					const ConfigureProject* configureProject;
-
-                public:
-					/**
-					*\brief Libera memoria
-					**/
-					SymbolsTable(const ConfigureProject&);
-					~SymbolsTable();
-					Table* findTable(const std::string&)const;
-					Space* addSpace(const std::string&);
-					Table* addTable(const std::string&);
-					Space* findSpace(const std::string&);
-					//ISpace* search(const std::string&)const;
-					const ConfigureProject& getConfigureProject()const;
-                };
-    }
+        bool hasChild(const std::string& fullname);
+        std::string getTopName(const std::string& fullname);
 
         /**
-         * \brief Implementa el modelo de mensajes basodo en la politica de toolkit::ActivityProgress.
-         * */
-        class Tracer : public core::ActivityProgress
+        *\brief Contiene las estructura completa de la tabla de symbolos
+        **/
+        class SymbolsTable : public std::map<const char*,symbols::ISpace*,symbols::cmp_str>
         {
+        private:
+            const ConfigureProject* configureProject;
+
         public:
-                /**
-                 * \brief Requerida por toolkit::ActivityProgress
-                 * */
-                Tracer(int activities);
-                /**
-                 * \brief Requerida por toolkit::ActivityProgress
-                 * */
-                virtual void add(const std::string&);
-                /**
-                 * \brief Requerida por toolkit::ActivityProgress
-                 * */
-                virtual void add(const core::Error&);
-                /**
-                 * \brief Requerida por toolkit::ActivityProgress
-                 * */
-                virtual void add(const core::Exception&);
-                /**
-                 * \brief Requerida por toolkit::ActivityProgress
-                 * */
-                virtual void add(const core::Confirmation&);
-                /**
-                 * \brief Requerida por toolkit::ActivityProgress
-                 * */
-                virtual void add(const core::Warning&);
+            /**
+            *\brief Libera memoria
+            **/
+            SymbolsTable(const ConfigureProject&);
+            ~SymbolsTable();
+            Table* findTable(const std::string&)const;
+            Space* addSpace(const std::string&);
+            Table* addTable(const std::string&);
+            Space* findSpace(const std::string&);
+            //ISpace* search(const std::string&)const;
+            const ConfigureProject& getConfigureProject()const;
         };
+    }
+
+    /**
+    * \brief Implementa el modelo de mensajes basodo en la politica de toolkit::ActivityProgress.
+    * */
+    class Tracer : public core::ActivityProgress
+    {
+    public:
+        /**
+        * \brief Requerida por toolkit::ActivityProgress
+        * */
+        Tracer(int activities);
+        /**
+        * \brief Requerida por toolkit::ActivityProgress
+        * */
+        virtual void add(const std::string&);
+        /**
+        * \brief Requerida por toolkit::ActivityProgress
+        * */
+        virtual void add(const core::Error&);
+        /**
+        * \brief Requerida por toolkit::ActivityProgress
+        * */
+        virtual void add(const core::Exception&);
+        /**
+        * \brief Requerida por toolkit::ActivityProgress
+        * */
+        virtual void add(const core::Confirmation&);
+        /**
+        * \brief Requerida por toolkit::ActivityProgress
+        * */
+        virtual void add(const core::Warning&);
+    };
 }
 }
 #endif

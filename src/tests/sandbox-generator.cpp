@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     version.setPrerelease("alpha");    
     configProject_nls.versionResult = version;
     configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
-    configProject_nls.packing = octetos::apidb::PackingLenguajes::CMake;
+    configProject_nls.packing = octetos::apidb::PackingLenguajes::OnlyCode;
     configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
 	configProject_nls.writeDatconnect = "conector";
     

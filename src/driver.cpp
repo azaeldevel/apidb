@@ -161,6 +161,7 @@ namespace apidb
         {
             throw core::Exception("Fallo la carga(dinamica) de componete de basi de datos solicitado.");
         }
+        
         if(config.build())
         {
 			connector = config.newConnector();
@@ -171,6 +172,7 @@ namespace apidb
                 connector = NULL;
             }
         }
+        
         if(!createAnalyzer)
         {
             throw core::Exception("No se ha creado el constructor de anlizador",__FILE__,__LINE__);
@@ -265,7 +267,6 @@ namespace apidb
 		}
 
         //std::cout << "Driver::generate : Step 3\n";
-
         if(configureProject.packing == PackingLenguajes::CMake)
         {
 			apidb::generators::CMake cmake(*analyzer,configureProject);
@@ -284,9 +285,7 @@ namespace apidb
         }
 
         //std::cout << "Driver::generate : Step 4\n";
-
-        ///std::cout<<"if(flagCPP && flagCMAKE)..."<<std::endl;
-        if(flagCPP && flagCMAKE)
+        if(flagCPP)
         {
             std::string msg1 =  "Generacion completada.\n" ;
             core::Confirmation conf1(msg1);
@@ -298,6 +297,12 @@ namespace apidb
             BuildException fail("Fallo.");
             analyzer->getOutput().add(fail);
             return false;
+        }
+        if(configureProject.packing == PackingLenguajes::OnlyCode && !flagCMAKE)
+        {
+            std::string msg1 =  "Fallo la generacion.\n" ;
+            if(progress != NULL) progress->add(msg1);
+            return true;            
         }
     }
 
@@ -331,6 +336,7 @@ namespace apidb
             core::Confirmation conf2(msg);
             progress->add(conf2);
         }
+        
 		bool flagAnalyzer = false;
         std::cout << "Driver::analyze : Step 5\n";
         flagAnalyzer = analyzer->analyze(progress);
@@ -343,10 +349,10 @@ namespace apidb
                 core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
                 progress->add(err);
             }
+            
             return false;
-			
 		}
-
+        
         std::cout << "Driver::analyze : Step 7\n";
 		return true;
 	}
