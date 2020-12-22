@@ -38,7 +38,7 @@ namespace apidb
     }
 	bool Application::downConf()
 	{
-        //std::cout << "downConf : Step 1\n";
+        std::cout << "downConf : Step 1\n";
         if(config == NULL)
         {
                 GtkWidget *msg = gtk_message_dialog_new (NULL,
@@ -54,7 +54,7 @@ namespace apidb
         }
         
         if(isSaved and !isOpen) return true;
-        //std::cout << "downConf : Step 2\n";
+        std::cout << "downConf : Step 2\n";
                 
         
         if(inInLEdited)
@@ -72,7 +72,7 @@ namespace apidb
             //std::cout << "In Language : " << gcinl << "\n";
             config->setInputLenguaje(getInputLenguaje(gcinl));
         }
-        //std::cout << "downConf : Step 3\n";
+        std::cout << "downConf : Step 3\n";
         if(inNameEdited)
         {
             std::string name = gtk_entry_get_text(GTK_ENTRY(inName));
@@ -91,7 +91,7 @@ namespace apidb
             config->name = name;
         }
         
-        //std::cout << "downConf : Step 4\n";
+        std::cout << "downConf : Step 4\n";
 		
 		
         if(inOutLEdited)
@@ -106,7 +106,7 @@ namespace apidb
             }
             config->outputLenguaje =  getOutputLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inOutL)));
         }
-        //std::cout << "downConf : Step 5\n";
+        std::cout << "downConf : Step 5\n";
         if(inVerEdited)
         {
             std::string verstr = gtk_entry_get_text(GTK_ENTRY(inVer));
@@ -118,7 +118,7 @@ namespace apidb
                                 return false;
             }                                
         }
-        //std::cout << "downConf : Step 6\n";
+        std::cout << "downConf : Step 6\n";
         if(inPkLEdited)
         {
             int intpkl = gtk_combo_box_get_active(GTK_COMBO_BOX(inPkL));
@@ -130,9 +130,10 @@ namespace apidb
                 return false;
                                 
             }
+            std::cout << "downConf : " << gtk_combo_box_get_active_id(GTK_COMBO_BOX(inPkL)) << "\n";
             config->packing = getPackingLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inPkL)));
         }
-        //std::cout << "downConf : Step 7\n";
+        std::cout << "downConf : Step 7\n";
         if(inCmplEdited)
         {
             int intcmpl = gtk_combo_box_get_active(GTK_COMBO_BOX(inCmpl));
@@ -393,40 +394,49 @@ namespace apidb
 	}
     void Application::document_saveas(GtkWidget *widget, gpointer data) 
     {
-        //std::cout << "document_saveas : Step 1\n";
+        std::cout << "document_saveas : Step 1\n";
         Application* app = (Application*)data;
-        
-        //std::cout << "document_saveas : Step 1.1\n";
-        
+             
         if(app->config == NULL)
         {
         	//std::cout << "document_saveas : app->config is NULL\n";
             app->config = new ConfigureProject();                
         }
-            
-        //std::cout << "document_saveas : Step 1.2\n";
-        
-        if(!app->downConf())
+           
+        std::cout << "document_saveas : Step 2\n";
+        try
         {
-            std::string strmsg = "Falló la operacionde Guardar";
-            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_CLOSE,strmsg.c_str());
+            if(!app->downConf())
+            {
+                std::string strmsg = "Falló la operacionde Guardar";
+                GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_CLOSE,strmsg.c_str());
+                gtk_dialog_run (GTK_DIALOG (msg)); 
+                gtk_widget_destroy (msg);
+                return;
+            }
+        }
+        catch(const std::exception& ex)
+        {
+            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_CLOSE,ex.what());
             gtk_dialog_run (GTK_DIALOG (msg)); 
             gtk_widget_destroy (msg);
+            
             return;
         }
-        //std::cout << "document_saveas : Step 2\n";
-       
+        
+        std::cout << "document_saveas : Step 3\n";       
         GtkWidget *dialog;
         GtkFileChooser *chooser;
         GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
         gint res;
-        //std::cout << "document_saveas : Step 3\n";
+        std::cout << "document_saveas : Step 4\n";
 
         dialog = gtk_file_chooser_dialog_new ("Save File", NULL,action,"_Cancel",GTK_RESPONSE_CANCEL,"_Save",GTK_RESPONSE_ACCEPT, NULL);
         chooser = GTK_FILE_CHOOSER (dialog);
         gtk_file_chooser_set_current_name (chooser,(app->config->name + ".apidb").c_str());
         res = gtk_dialog_run (GTK_DIALOG (dialog));
-        //std::cout << "document_saveas : Step 4\n";
+        
+        std::cout << "document_saveas : Step 5\n";
         if (res == GTK_RESPONSE_ACCEPT)
         {
             char *filename;
@@ -444,7 +454,7 @@ namespace apidb
     }
 	void Application::document_save(GtkWidget *widget, gpointer data) 
 	{
-		//std::cout << "document_save:Step 1" << std::endl;
+		std::cout << "document_save:Step 1" << std::endl;
 		Application* app = (Application*)data;
         
         if(app->config == NULL)
@@ -453,7 +463,7 @@ namespace apidb
             app->config = new ConfigureProject();                
         }
         
-		//std::cout << "document_save:Step 2" << std::endl;   
+		std::cout << "document_save:Step 2" << std::endl;   
 		/*if(!app->isOpen || !app->isSaved)
         {//no esta abierto el proyecto.                                
             std::string msgstr;
@@ -471,7 +481,7 @@ namespace apidb
             return;
         }*/
         
-		//std::cout << "document_save:Step 3" << std::endl;
+		std::cout << "document_save:Step 3" << std::endl;
         
 		if(!app->originFilename.empty() and !app->isNew) //si fue cargado simplemete usa el mismo archivo
 		{
@@ -479,15 +489,7 @@ namespace apidb
 			//escribir en la estura de configuracion del proyecto.
 			if(!app->downConf())
 			{
-				std::string msgstr;
-				if(core::Error::check())
-				{
-					msgstr = (&core::Error::get())->what();
-				}
-				else
-				{
-					msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
-				}
+				std::string msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
 				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
 				gtk_dialog_run (GTK_DIALOG (msg)); 
 				gtk_widget_destroy (msg);
@@ -520,7 +522,7 @@ namespace apidb
 		{
 			//????????
 		}
-		//std::cout << "document_save:Step 4" << std::endl;
+		std::cout << "document_save:Step 4" << std::endl;
 	}
         
         void Application::document_new(GtkWidget *widget, gpointer data) 

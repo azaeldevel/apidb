@@ -136,7 +136,7 @@ namespace apidb
                                 xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"Java");
                                 break;
                         default:
-                                throw core::Error("Lenguaje de salida desconocido.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
+                                throw core::Exception("Lenguaje de salida desconocido.",__FILE__,__LINE__);
                 }
 
                 //

@@ -250,6 +250,10 @@ namespace apidb
         {
             return PackingLenguajes::CMake;
         }
+        else if(str.compare("onlycode") == 0 or str.compare("OnlyCode") == 0)
+        {
+            return PackingLenguajes::OnlyCode;
+        }
                 
         return PackingLenguajes::NoPack;
     }

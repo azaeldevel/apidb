@@ -39,8 +39,11 @@ int main(int argc, char **argv)
     
     configProject_nls.saveConfig("muposys");
     
+    octetos::apidb::ConfigureProject configProject2;
+    configProject2.readConfig("muposys");
+    
     std::cout << "Step 3\n";
-    octetos::apidb::Driver driver(configProject_nls);
+    octetos::apidb::Driver driver(configProject2);
 
     std::cout << "Step 4\n";
     octetos::apidb::Tracer tracer(0);
