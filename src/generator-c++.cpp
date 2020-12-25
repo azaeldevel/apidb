@@ -807,7 +807,165 @@ namespace generators
 				}
 			ofile << "\t} " << std::endl;
 			}         
-		}        
+		}    
+		
+		
+        for(auto symbol : table)
+        {
+            if(symbol.second->isAutoIncrement() and symbol.second->isPrimaryKey()) continue;
+            else
+            {
+                symbols::Symbol* symroot = getRootSymbol(symbol.second);
+                if(symroot->isAutoIncrement() and symroot->isPrimaryKey()) continue;            
+            }
+                
+            if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
+            {        
+                ofile << "\tbool " << table.name << "::down" << symbol.second->upperName << "(octetos::db::mysql::Connector& connector)\n";
+            }
+            else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+            {        
+                ofile << "\tbool " << table.name << "::down" << symbol.second->upperName << "(octetos::db::maria::Connector& connector)\n";
+            }
+            else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+            {
+                ofile << "\tbool " << table.name << "::down" << symbol.second->upperName << "(octetos::db::postgresql::Connector& connector)\n";
+            }
+            else
+            {
+                std::string msg = "Lenguaje no soportado " ;
+                throw BuildException(msg);
+            }
+            
+            ofile << "\t{\n";
+            ofile << "\t\tstd::string sqlString = \"SELECT " << symbol.second->name << " \";\n";
+             
+            if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+            {
+                ofile << "\t\tsqlString = sqlString + \" FROM \\\"" << table.getName() << "\\\" WHERE \";\n" ;
+            }
+            else
+            {
+                ofile << "\t\tsqlString = sqlString + \" FROM " << table.getName() << " WHERE \";\n" ;
+            }
+            
+            auto kEnd = table.getKey().end();
+            kEnd--;
+            for(auto k : table.getKey())
+            {
+                ofile << "\t\tsqlString = sqlString + \"" << k->getName()  << " = \" + ";  
+                if(k->classReferenced != NULL) //es un objeto
+                {
+                    if(k->outType.compare("std::string") == 0)
+                    {
+                        ofile << "'" << k->getName() << " + \"'\";\n";
+                    }
+                    else
+                    {
+                        ofile << " \"'\" + std::to_string((*" << k->getName() << ")";
+                        getKey(ofile,k->symbolReferenced);
+                        ofile<< ") + \"'\";\n";
+                    }
+                }
+                else if(k->outType.compare("std::string") == 0)
+                {
+                    ofile << " '\" + " <<  k->getName()  << " + \"'\";\n";
+                }
+                else
+                {
+                    ofile << "std::to_string(" << k->getName()  <<");\n";
+                }
+                    
+                if(k != *kEnd)
+                {
+                    ofile << " + \" and \" ";
+                }          
+            }
+            
+            if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
+            {        
+                ofile << "\t\toctetos::db::mysql::Datresult dt;"  << std::endl;
+            }
+            else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+            {
+                ofile << "\t\toctetos::db::maria::Datresult dt;"  << std::endl;
+            }
+            else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+            {
+                ofile << "\t\toctetos::db::postgresql::Datresult dt;"  << std::endl;
+            }
+            else
+            {
+                std::string msg = "Lenguaje no soportado " ;
+                throw BuildException(msg);
+            }
+                
+            ofile << "\t\tbool flag = connector.execute(sqlString,dt);"  << std::endl;
+            ofile << "\t\tif(flag)"  << std::endl;
+            ofile << "\t\t{\n";            
+            if(symbol.second->symbolReferenced != NULL)
+            {
+                ofile << "\t\t\t" << symbol.second->name << " = new " << symbol.second->classReferenced->name << "(";
+                if(symbol.second->outType.compare("std::string") == 0)
+                {
+                    ofile << symbol.second->getName();
+                }
+                else
+                {
+                    ofile << "(*" << symbol.second->getName() << ")";
+                    getKey(ofile,symbol.second->symbolReferenced);
+                }
+                ofile << ");\n";
+            }
+            else
+            {
+                ofile << "\t\t\t" << symbol.second->name << " = dt.";
+                if(symbol.second->outType.compare("std::string") == 0)
+                {
+                    ofile << "getString(0)";
+                }
+                else if(symbol.second->outType.compare("int") == 0)
+                {
+                    ofile << "getint(0)";
+                }
+                else if(symbol.second->outType.compare("long") == 0)
+                {
+                    ofile << "getl(0)";
+                }
+                else if(symbol.second->outType.compare("long long") == 0)
+                {
+                    ofile << "getll(0)";
+                }
+                else if(symbol.second->outType.compare("float") == 0)
+                {
+                    ofile << "getfloat(0)";
+                }
+                else if(symbol.second->outType.compare("double") == 0)
+                {
+                    ofile << "getdouble(0)";
+                }
+                else if(symbol.second->outType.compare("char") == 0)
+                {
+                    ofile << "getchar(0)";
+                }
+                else if(symbol.second->outType.compare("unsigned char") == 0)
+                {
+                    ofile << "getuchar(0)";
+                }
+                else
+                {
+                    std::string msg = "El tipo de dato '";
+                    msg += symbol.second->outType + "' no tiene conversion en el metodo de descarga.";
+                    throw BuildException(msg,__FILE__,__LINE__);
+                }
+            }
+            ofile << ";\n";
+            ofile << "\t\t\treturn true;\n";
+            ofile << "\t\t}\n";
+            ofile << "\t\treturn false;\n";
+            ofile << "\t}\n";
+            
+        }
     }
     
     void getKey2(std::ofstream& ofile, const symbols::Symbol* k)
@@ -1615,6 +1773,35 @@ namespace generators
                     throw BuildException(msg);
                 }
             }
+        }
+        
+        for(auto symbol : table)
+        {
+            if(symbol.second->isAutoIncrement() and symbol.second->isPrimaryKey()) continue;
+            else
+            {
+                symbols::Symbol* symroot = getRootSymbol(symbol.second);
+                if(symroot->isAutoIncrement() and symroot->isPrimaryKey()) continue;            
+            }
+                
+            if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
+            {        
+                ofile << "\t\tbool down" << symbol.second->upperName << "(octetos::db::mysql::Connector& connector);\n";
+            }
+            else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
+            {        
+                ofile << "\t\tbool down" << symbol.second->upperName << "(octetos::db::maria::Connector& connector);\n";
+            }
+            else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+            {
+                ofile << "\t\tbool down" << symbol.second->upperName << "(octetos::db::postgresql::Connector& connector);\n";
+            }
+            else
+            {
+                std::string msg = "Lenguaje no soportado " ;
+                throw BuildException(msg);
+            }
+            
         }
     }
         

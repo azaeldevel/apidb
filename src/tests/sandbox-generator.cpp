@@ -42,6 +42,7 @@ int main(int argc, char **argv)
     octetos::apidb::ConfigureProject configProject2;
     configProject2.readConfig("/home/azael/develop/octetos/muposys/C++/apidb/muposys.apidb");
     configProject2.builDirectory= "muposys-apidb";
+    configProject2.packing = octetos::apidb::PackingLenguajes::CMake;
     
     std::cout << "Step 3\n";
     octetos::apidb::Driver driver(configProject2);
