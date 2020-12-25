@@ -24,7 +24,7 @@ int main(int argc, char **argv)
     std::cout << "Step 2\n";
     
     
-    octetos::apidb::ConfigureProject configProject_nls;
+    /*octetos::apidb::ConfigureProject configProject_nls;
     configProject_nls.name = "muposys";
     configProject_nls.builDirectory = "muposys-nlst";
 	configProject_nls.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);    
@@ -37,10 +37,11 @@ int main(int argc, char **argv)
     configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
 	configProject_nls.writeDatconnect = "conector";
     
-    configProject_nls.saveConfig("muposys");
+    configProject_nls.saveConfig("muposys");*/
     
     octetos::apidb::ConfigureProject configProject2;
-    configProject2.readConfig("muposys");
+    configProject2.readConfig("/home/azael/develop/octetos/muposys/C++/apidb/muposys.apidb");
+    configProject2.builDirectory= "muposys-apidb";
     
     std::cout << "Step 3\n";
     octetos::apidb::Driver driver(configProject2);

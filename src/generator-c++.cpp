@@ -678,48 +678,37 @@ namespace generators
 					ofile << " FROM " << table.getName() << " WHERE \";\n" ;
 				}
 				
-				auto endK = table.getKey().end();
-                endK--;
+				auto kEnd = table.getKey().end();
+                kEnd--;
                 for(auto k : table.getKey())
-                {     
-                    /*
-					if(k->getOutType().compare("std::string") == 0)
-					{
-						ofile << "\t\tstd::string sqlString +=  \"" << k->getName() << " +  = '" << k->getName() << "' \"";
-					}
-					else
-					{
-						ofile << "\t\tstd::string sqlString +=  " << k->getName() << "  +  \"  =  '\" +  << std::to_string(" << k->getName() << "'\"";
-					}
-					*/
-					if(k->classReferenced != NULL) //es un objeto
+                {
+                    ofile << "\t\tsqlString = sqlString + \"" << k->getName()  << " = \" + ";  
+                    if(k->classReferenced != NULL) //es un objeto
                     {
                         if(k->outType.compare("std::string") == 0)
                         {
-                            ofile << "\t\tsqlString = sqlString + \"" << k->getName() << "\" = " << k->getName();
+                            ofile << "'" << k->getName() << " + \"'\";\n";
                         }
                         else
                         {
-                            ofile << "\t\tsqlString = sqlString + std::to_string((*" << k->getName() << ")";
+                            ofile << " \"'\" + std::to_string((*" << k->getName() << ")";
                             getKey(ofile,k->symbolReferenced);
-                            ofile<< ");\n";
+                            ofile<< ") + \"'\";\n";
                         }
-                        
                     }
                     else if(k->outType.compare("std::string") == 0)
                     {
-                        ofile << "\t\tsqlString = sqlString + \"" << k->getName() << "\" = " << k->getName();
+                        ofile << " '\" + " <<  k->getName()  << " + \"'\";\n";
                     }
                     else
                     {
-                        ofile << "\t\tsqlString = sqlString + std::to_string(" << k->getName()  <<")\n";
+                        ofile << "std::to_string(" << k->getName()  <<");\n";
                     }
                     
-					
-                    if(*endK != k)
+                    if(k != *kEnd)
                     {
-                            ofile << " \" and \" + ";
-                    }
+                        ofile << " + \" and \" ";
+                    }          
                 }
                 
                 if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
