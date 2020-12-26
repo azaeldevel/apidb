@@ -1446,50 +1446,78 @@ namespace generators
 		ofile << " + \")\";"<< std::endl;
 		
         
+        //ofile << "\t\tstd::cout << sqlString << std::endl;\n";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {        
             ofile << "\t\toctetos::db::mysql::Datresult dt;" << std::endl;
+            //iniciar llave?
+            if(table.getKey().size() > 1)
+            {//es llave compuesta?
+                std::string msg = "No hay soporte aun para llaves compuestas" ;
+                throw BuildException(msg,__FILE__,__LINE__);
+            }
+            else if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced == NULL and (*(table.getKey().begin()))->outType.compare("int") == 0)
+            {//es llave simple y no tiene campos foraneos?
+                ofile << "\t\tif(connector.insert(sqlString,dt))\n";
+                ofile << "\t\t{\n";
+                ofile << "\t\t\t" << (*(table.getKey().begin()))->name;
+                ofile << " = connector.last_inserted_id();\n";
+                ofile << "\t\t\tif(" << (*(table.getKey().begin()))->name << " > 0) return true;\n";
+                ofile << "\t\t}\n";
+                ofile << "\t\treturn false;\n";
+            }
+            else if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced != NULL )
+            {//es llave simple y no tiene campos foraneos?
+                ofile << "\t\tif(connector.insert(sqlString,dt)) return true;\n";
+                ofile << "\t\treturn false;\n";
+            }
+            else if(table.getKey().size() < 1 )
+            {
+                std::string msg = "No hay llave para esta table " ;
+                throw BuildException(msg,__FILE__,__LINE__);
+            }  
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
             ofile << "\t\toctetos::db::maria::Datresult dt;" << std::endl;
+            //iniciar llave?
+            if(table.getKey().size() > 1)
+            {//es llave compuesta?
+                std::string msg = "No hay soporte aun para llaves compuestas" ;
+                throw BuildException(msg,__FILE__,__LINE__);
+            }
+            else if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced == NULL and (*(table.getKey().begin()))->outType.compare("int") == 0)
+            {//es llave simple y no tiene campos foraneos?
+                ofile << "\t\tif(connector.insert(sqlString,dt))\n";
+                ofile << "\t\t{\n";
+                ofile << "\t\t\t" << (*(table.getKey().begin()))->name;
+                ofile << " = connector.last_inserted_id();\n";
+                ofile << "\t\t\tif(" << (*(table.getKey().begin()))->name << " > 0) return true;\n";
+                ofile << "\t\t}\n";
+                ofile << "\t\treturn false;\n";
+            }
+            else if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced != NULL )
+            {//es llave simple y no tiene campos foraneos?
+                ofile << "\t\tif(connector.insert(sqlString,dt)) return true;\n";
+                ofile << "\t\treturn false;\n";
+            }
+            else if(table.getKey().size() < 1 )
+            {
+                std::string msg = "No hay llave para esta table " ;
+                throw BuildException(msg,__FILE__,__LINE__);
+            }  
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
         {
             ofile << "\t\toctetos::db::postgresql::Datresult dt;" << std::endl;
+            throw BuildException("No se ha emplemetnedo el insert en postgresql",__FILE__,__LINE__);
         }
         else
         {
             std::string msg = "Lenguaje no soportado " ;
-            throw BuildException(msg);
+            throw BuildException(msg,__FILE__,__LINE__);
         }   
-        ofile << "\t\tstd::cout << sqlString << std::endl;\n";
-        //iniciar llave?
-        if(table.getKey().size() > 1)
-        {//es llave compuesta?
-            std::string msg = "No hay soporte aun para llaves compuestas" ;
-            throw BuildException(msg);
-        }
-        else if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced == NULL and (*(table.getKey().begin()))->outType.compare("int") == 0)
-        {//es llave simple y no tiene campos foraneos?
-            ofile << "\t\tif(connector.insert(sqlString,dt))\n";
-            ofile << "\t\t{\n";
-            ofile << "\t\t\t" << (*(table.getKey().begin()))->name;
-            ofile << " = connector.last_inserted_id();\n";
-            ofile << "\t\t\tif(" << (*(table.getKey().begin()))->name << " > 0) return true;\n";
-            ofile << "\t\t}\n";
-            ofile << "\t\treturn false;\n";
-        }
-        else if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced != NULL )
-        {//es llave simple y no tiene campos foraneos?
-            ofile << "\t\tif(connector.insert(sqlString,dt)) return true;\n";
-            ofile << "\t\treturn false;\n";
-        }
-        else if(table.getKey().size() < 1 )
-        {
-            std::string msg = "No hay llave para esta table " ;
-            throw BuildException(msg);
-        }  
+        
         ofile << "\t}"<<std::endl;
 	}
 	void CPP::writeDefaultContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
@@ -2334,7 +2362,8 @@ namespace generators
         {
             strupper +=  std::toupper(configureProject.name[i],loc);
         }
-        getHeaderOutput()<< "#ifndef " << strupper << "_HH\n";
+        getHeaderOutput()<< "#ifndef " << strupper << "_HPP\n";
+        getHeaderOutput()<< "#define " << strupper << "_HPP\n";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
             getHeaderOutput()<< "#include <octetos/db/clientdb-mysql.hh>"<<std::endl<<std::endl;
