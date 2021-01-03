@@ -44,15 +44,15 @@ namespace generators
 			{
 		        if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
 		        {
-		            ofile << "\tboolean " << "update" << it->second->getUpperName() << "(octetos.db.mysql.Connector connector,";
+		            ofile << "\tpublic boolean " << "update" << it->second->getUpperName() << "(octetos.db.mysql.Connector connector,";
 		        }
 		        else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
 		        {
-		            ofile << "\tboolean " <<"update" << it->second->getUpperName() << "(octetos.db.maria.Connector connector,";
+		            ofile << "\tpublic boolean " <<"update" << it->second->getUpperName() << "(octetos.db.maria.Connector connector,";
 		        }
 		        else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
 		        {
-		            ofile << "\tboolean " <<"update" << it->second->getUpperName() << "(octetos.db.postgresql.Connector connector,";
+		            ofile << "\tpublic boolean " <<"update" << it->second->getUpperName() << "(octetos.db.postgresql.Connector connector,";
 		        }
 		        else
 		        {
@@ -178,11 +178,11 @@ namespace generators
         {
 			if(it->second->outType.compare("String") == 0)
 			{
-				ofile <<"\t"<< it->second->getOutType() << " ";
+				ofile <<"\tpublic "<< it->second->getOutType() << " ";
 			}
 			else if(it->second->getSymbolReferenced())
 			{
-				ofile <<"\t" << it->second->getClassReferenced()->getName() << " ";
+				ofile <<"\tpublic " << it->second->getClassReferenced()->getName() << " ";
 			}
 			else 
 			{
@@ -269,15 +269,15 @@ namespace generators
     {
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
-            ofile << "\tArrayList<"  << table.getName() << "> " << "select(octetos.db.mysql.Connector connector,String where, int leng)"<<std::endl;
+            ofile << "\tpublic ArrayList<"  << table.getName() << "> " << "select(octetos.db.mysql.Connector connector,String where, int leng)  throws SQLException"<<std::endl;
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
-            ofile << "\tArrayList<"  << table.getName() << "> " << "select(octetos.db.maria.Connector connector,String where, int leng)"<<std::endl;
+            ofile << "\tpublic ArrayList<"  << table.getName() << "> " << "select(octetos.db.maria.Connector connector,String where, int leng)  throws SQLException"<<std::endl;
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
         {
-            ofile << "\tArrayList<"  << table.getName() << "> " << "select(octetos.db.postgresql.Connector connector,String where, int leng) throws SQLException"<<std::endl;
+            ofile << "\tpublic ArrayList<"  << table.getName() << "> " << "select(octetos.db.postgresql.Connector connector,String where, int leng) throws SQLException"<<std::endl;
         }
         else
         {
@@ -314,11 +314,11 @@ namespace generators
         ofile << "\t\t}"  << std::endl;
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
-            ofile << "\t\toctetos.db.mysql.Datresult dt;"  << std::endl;
+            ofile << "\t\toctetos.db.mysql.Datresult dt = null;"  << std::endl;
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
-            ofile << "\t\toctetos.db.maria.Datresult dt;"  << std::endl;
+            ofile << "\t\toctetos.db.maria.Datresult dt = null;"  << std::endl;
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
         {
@@ -330,37 +330,37 @@ namespace generators
             throw BuildException(msg);
         }
         
-            ofile << "\t\tboolean flag = connector.select(sqlString,dt);"  << std::endl;
-            ofile << "\t\tif(flag)"  << std::endl;
-            ofile << "\t\t{" << std::endl;
-            ofile << "\t\t\tArrayList<"<< table.getName() << "> tmpVc = new ArrayList<" << table.getName() << ">();" << std::endl;
-            ofile << "\t\t\twhile(dt.nextRow())" << std::endl;
-            ofile << "\t\t\t{"<< std::endl;
-            ofile << "\t\t\t\t"<< table.getName() << " tmp;" << std::endl;            
-            ofile << "\t\t\t\ttmp = new " << table.getName() << "(";
-            auto endK2 = table.getKey().end();
-            endK2--;
-            int count2 = 0;
-            for(auto k : table.getKey())
+        ofile << "\t\tboolean flag = connector.select(sqlString,dt);"  << std::endl;
+        ofile << "\t\tif(flag)"  << std::endl;
+        ofile << "\t\t{" << std::endl;
+        ofile << "\t\t\tArrayList<"<< table.getName() << "> tmpVc = new ArrayList<" << table.getName() << ">();" << std::endl;
+        ofile << "\t\t\twhile(dt.nextRow())" << std::endl;
+        ofile << "\t\t\t{"<< std::endl;
+        ofile << "\t\t\t\t"<< table.getName() << " tmp;" << std::endl;            
+        ofile << "\t\t\t\ttmp = new " << table.getName() << "(";
+        auto endK2 = table.getKey().end();
+        endK2--;
+        int count2 = 0;
+        for(auto k : table.getKey())
+        {
+            if(k->getOutType().compare("String") == 0)
             {
-                if(k->getOutType().compare("String") == 0)
-                {
-                    ofile << "dt.getString(" << count2 << ")";
-                }
-                else if(k->getOutType().compare("int") == 0)
-                {
-                    ofile << "dt.getint(" << count2 << ")";
-                }
-                else
-                {
-                    ofile << "dt.getString(" << count2 << ")";                
-                }
-                if(k != *endK2)
-                {
-                    ofile << ",";
-                }
-                count2++;
+                ofile << "dt.getString(" << count2 << ")";
             }
+            else if(k->getOutType().compare("int") == 0)
+            {
+                ofile << "dt.getint(" << count2 << ")";
+            }
+            else
+            {
+                ofile << "dt.getString(" << count2 << ")";                
+            }
+            if(k != *endK2)
+            {
+                ofile << ",";
+            }
+            count2++;
+        }
             ofile << ")" << ";" << std::endl;
             ofile << "\t\t\t\ttmpVc.add(tmp);" << std::endl;
             ofile << "\t\t\t}"<< std::endl;
@@ -385,15 +385,15 @@ namespace generators
                 
                 if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
                 {        
-                    ofile << "\tArrayList<" << table.getName()<< "> " << itCfTb->second->getName() << "(octetos.db.mysql.Connector connector,";
+                    ofile << "\tpublic ArrayList<" << table.getName()<< "> " << itCfTb->second->getName() << "(octetos.db.mysql.Connector connector,";
                 }
                 else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
                 {
-                    ofile << "\tArrayList<" << table.getName()<< "> " << itCfTb->second->getName() << "(octetos.db.maria.Connector connector,";
+                    ofile << "\tpublic ArrayList<" << table.getName()<< "> " << itCfTb->second->getName() << "(octetos.db.maria.Connector connector,";
                 }
                 else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
                 {
-                    ofile << "\tArrayList<" << table.getName()<< "> " << itCfTb->second->getName() << "(octetos.db.postgresql.Connector connector,";
+                    ofile << "\tpublic ArrayList<" << table.getName()<< "> " << itCfTb->second->getName() << "(octetos.db.postgresql.Connector connector,";
                 }
                 else
                 {
@@ -514,7 +514,7 @@ namespace generators
                         std::string msg = "Lenguaje no soportado " ;
                         throw BuildException(msg);
                     }
-					ofile << "\t\tbool flag = connector.execute(sqlString,dt);"  << std::endl;
+					ofile << "\t\tboolean flag = connector.execute(sqlString,dt);"  << std::endl;
 					ofile << "\t\tif(flag)"  << std::endl;
 					ofile << "\t\t{" << std::endl;
                     ofile << "\t\t\tstd::vector<"<< table.getName() << "*>* tmpVc = new std::vector<" << table.getName() << "*>;" << std::endl;
@@ -574,15 +574,15 @@ namespace generators
             {
                 if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
                 {       
-                    ofile << "\tbool " << itCfTb->first << "(octetos.db.mysql.Connector& connector)"<<std::endl;
+                    ofile << "\tpublic boolean " << itCfTb->first << "(octetos.db.mysql.Connector connector)  throws SQLException"<<std::endl;
                 }
                 else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
                 {
-                    ofile << "\tbool " << itCfTb->first << "(octetos.db.maria.Connector& connector)"<<std::endl;
+                    ofile << "\tpublic boolean " << itCfTb->first << "(octetos.db.maria.Connector connector)  throws SQLException"<<std::endl;
                 }
                 else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
                 {
-                    ofile << "\tbool " << itCfTb->first << "(octetos.db.postgresql.Connector& connector)"<<std::endl;
+                    ofile << "\tpublic boolean " << itCfTb->first << "(octetos.db.postgresql.Connector connector)  throws SQLException"<<std::endl;
                 }
                 else
                 {
@@ -649,15 +649,15 @@ namespace generators
                 
                 if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
                 {        
-                    ofile << "\t\toctetos.db.mysql.Datresult dt;"  << std::endl;
+                    ofile << "\t\toctetos.db.mysql.Datresult dt = null;"  << std::endl;
                 }
                 else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
                 {
-                    ofile << "\t\toctetos.db.maria.Datresult dt;"  << std::endl;
+                    ofile << "\t\toctetos.db.maria.Datresult dt= null;"  << std::endl;
                 }
                 else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
                 {
-                    ofile << "\t\toctetos.db.postgresql.Datresult dt;"  << std::endl;
+                    ofile << "\t\toctetos.db.postgresql.Datresult dt = null;"  << std::endl;
                 }
                 else
                 {
@@ -665,7 +665,7 @@ namespace generators
                                     throw BuildException(msg);
                 }
                 
-                ofile << "\t\tbool flag = connector.execute(sqlString,dt);"  << std::endl;
+                ofile << "\t\tboolean flag = connector.select(sqlString,dt);"  << std::endl;
                 ofile << "\t\tif(flag)"  << std::endl;
                 ofile << "\t\t{" << std::endl;
                 ofile << ""<< std::endl;
@@ -757,20 +757,20 @@ namespace generators
                 
             if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
             {        
-                ofile << "\tbool down" << symbol.second->upperName << "(octetos.db.mysql.Connector& connector)\n";
+                ofile << "\tpublic boolean down" << symbol.second->upperName << "(octetos.db.mysql.Connector connector) throws SQLException\n";
             }
             else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
             {        
-                ofile << "\tbool down" << symbol.second->upperName << "(octetos.db.maria.Connector& connector)\n";
+                ofile << "\tpublic boolean down" << symbol.second->upperName << "(octetos.db.maria.Connector connector) throws SQLException\n";
             }
             else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
             {
-                ofile << "\tbool down" << symbol.second->upperName << "(octetos.db.postgresql.Connector& connector)\n";
+                ofile << "\tpublic boolean down" << symbol.second->upperName << "(octetos.db.postgresql.Connector connector) throws SQLException\n";
             }
             else
             {
                 std::string msg = "Lenguaje no soportado " ;
-                throw BuildException(msg);
+                throw BuildException(msg,__FILE__,__LINE__);
             }
             
             ofile << "\t{\n";
@@ -820,15 +820,15 @@ namespace generators
             
             if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
             {        
-                ofile << "\t\toctetos.db.mysql.Datresult dt;"  << std::endl;
+                ofile << "\t\toctetos.db.mysql.Datresult dt = null;"  << std::endl;
             }
             else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
             {
-                ofile << "\t\toctetos.db.maria.Datresult dt;"  << std::endl;
+                ofile << "\t\toctetos.db.maria.Datresult dt = null;"  << std::endl;
             }
             else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
             {
-                ofile << "\t\toctetos.db.postgresql.Datresult dt;"  << std::endl;
+                ofile << "\t\toctetos.db.postgresql.Datresult dt = null;"  << std::endl;
             }
             else
             {
@@ -836,7 +836,7 @@ namespace generators
                 throw BuildException(msg);
             }
                 
-            ofile << "\t\tbool flag = connector.execute(sqlString,dt);"  << std::endl;
+            ofile << "\t\tboolean flag = connector.select(sqlString,dt);"  << std::endl;
             ofile << "\t\tif(flag)"  << std::endl;
             ofile << "\t\t{\n";            
             if(symbol.second->symbolReferenced != NULL)
@@ -922,7 +922,7 @@ namespace generators
     }
     void Java::writeSelectInstancetObjectDataCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
-		ofile << "\t"<< "bool ";
+		ofile << "\tpublic boolean ";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {        
             ofile << "select(octetos.db.mysql.Connector connector";
@@ -1001,22 +1001,22 @@ namespace generators
         
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {        
-            ofile << "\t\toctetos.db.mysql.Datresult dat;\n";
+            ofile << "\t\toctetos.db.mysql.Datresult dat = null;\n";
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
-            ofile << "\t\toctetos.db.maria.Datresult dat;\n";
+            ofile << "\t\toctetos.db.maria.Datresult dat = null;\n";
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
         {
-            ofile << "\t\toctetos.db.postgresql.Datresult dat;\n";
+            ofile << "\t\toctetos.db.postgresql.Datresult dat = null;\n";
         }
         else
         {
             std::string msg = "Lenguaje no soportado " ;
             throw BuildException(msg);
         }
-		ofile << "\t\tbool retflag = connector.select(sql,dat);\n";
+		ofile << "\t\tboolean retflag = connector.select(sql,dat);\n";
         ofile << "\t\tif(retflag)\n";
         ofile << "\t\t{\n";
         for(symbols::Symbol* k : table.getKey())
@@ -1206,7 +1206,7 @@ namespace generators
         //ofile << "\t\tstd::cout << sqlString << std::endl;\n";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {        
-            ofile << "\t\toctetos.db.mysql.Datresult dt;" << std::endl;
+            ofile << "\t\toctetos.db.mysql.Datresult dt = null;" << std::endl;
             //iniciar llave?
             if(table.getKey().size() > 1)
             {//es llave compuesta?
@@ -1236,7 +1236,7 @@ namespace generators
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
-            ofile << "\t\toctetos.db.maria.Datresult dt;" << std::endl;
+            ofile << "\t\toctetos.db.maria.Datresult dt = null;" << std::endl;
             //iniciar llave?
             if(table.getKey().size() > 1)
             {//es llave compuesta?
@@ -1279,14 +1279,14 @@ namespace generators
 	}
 	void Java::writeDefaultContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
         {
-		ofile <<"\t"<<table.getName()<<"()"<<std::endl;
+		ofile <<"\tpublic "<<table.getName()<<"()"<<std::endl;
 		ofile <<"\t{"<<std::endl;
 		ofile <<"\t}"<<std::endl;
 	}
 	void Java::writeCopyContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		//constructor de copias 
-		ofile << "\t" << table.getName() <<"(" << table.getName() <<" obj)"<<std::endl;
+		ofile << "\tpublic " << table.getName() <<"(" << table.getName() <<" obj)"<<std::endl;
 		ofile << "\t{"<<std::endl;                
         //for (auto const& [key, attr] : table)
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
@@ -1300,7 +1300,7 @@ namespace generators
 		//constructor que toma key como parametro
         if(table.getKey().size() > 0)//tiene key
         {
-            ofile << "\t" << table.getName() << "(";
+            ofile << "\tpublic " << table.getName() << "(";
             auto endIt = table.getKey().end();
             endIt--;
             for(auto k : table.getKey())
@@ -1382,6 +1382,7 @@ namespace generators
         
     void Java::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {        
+        file << "package " << configureProject.space << ";\n";
         file << "import java.sql.SQLException;\n";
         file << "import java.util.ArrayList;\n\n";
         file << "\npublic class " << cl.getUpperName() << "\n{\n";

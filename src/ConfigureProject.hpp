@@ -222,7 +222,10 @@ namespace apidb
 		* \brief Sí es true genera una variable statica global con los datos de conexión.
 		* */
 		std::string writeDatconnect;
-        
+        /**
+         * \brief in C++ is the namespace for new package, in java is the nema of package.
+         * */
+        std::string space;
         
         //contructores
 		ConfigureProject();

@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     
     octetos::apidb::ConfigureProject configProject;
     configProject.name = "muposys";
-    configProject.builDirectory = "muposys-nlst";
+    configProject.builDirectory = "/home/azael/develop/octetos/muposys/java/muposys-db/src/main/java/octetos/muposys/db";
 	configProject.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);    
 	octetos::core::Semver version;
 	version.setNumbers(0,1,0);
@@ -37,6 +37,7 @@ int main(int argc, char **argv)
     configProject.compiled = octetos::apidb::Compiled::STATIC;
 	configProject.writeDatconnect = "conector";
     configProject.saveConfig("muposys");
+    configProject.space = "octetos.muposys.db";
     /*
     octetos::apidb::ConfigureProject configProject;
     configProject.readConfig("/home/azael/develop/octetos/muposys/C++/apidb/muposys.apidb");
