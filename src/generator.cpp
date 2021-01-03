@@ -55,11 +55,13 @@ namespace generators
 		{
 			case PackingLenguajes::CMake:		
 				return "CMake";
+            case PackingLenguajes::Maven:
+				return "Maven";
 			default:
 				return "Unknow";
 		}
 	}
-		
+    
 	PackingLenguajes Generator::getPackingLenguaje()const
 	{
 		return configureProject.packing;
@@ -71,18 +73,18 @@ namespace generators
 		{
 			case OutputLenguajes::CPP:
 				return "C++";
+			case OutputLenguajes::JAVA:
+				return "Java";
 			default:
 				return "Unknow";
 		}
 	}
-		
+    
 	OutputLenguajes Generator::getOutputLenguaje()const
 	{
 		return configureProject.outputLenguaje;
 	}
 	
-	
-    
 }
 }
 }

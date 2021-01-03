@@ -50,7 +50,7 @@ namespace generators
 
 	CMake::~CMake()
 	{
-
+        
 	}
 
 	bool CMake::generate(bool log)

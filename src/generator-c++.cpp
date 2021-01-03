@@ -288,7 +288,7 @@ namespace generators
         if(config.outputLenguaje != OutputLenguajes::CPP)
         {
             std::string msg = "La configuracion indica '" ;
-            msg = msg + getOutputLenguajeString()+ "', pero el componente es CMake.";
+            msg = msg + getOutputLenguajeString()+ "', pero el componente es C++.";
             throw BuildException(msg);
         }
                 

@@ -1,5 +1,4 @@
 /**
- *
  *  This file is part of apidb.
  *  APIDB do Make easy to connect your Database
  *  Copyright (C) 2018  Azael Reyes
@@ -16,7 +15,6 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  * */
 
 #ifndef APIDB_GENERATOR_HPP
@@ -42,6 +40,7 @@ namespace apidb
          * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
          */
         void getKey(std::ofstream& ofile, const symbols::Symbol* k);
+        
         /**
          * @brief genera una llada recursiva para el componete indicado
          * @condition se debe llamar con k->symbolReferenced
@@ -59,6 +58,9 @@ namespace apidb
 		class Generator
 		{
 		public:
+            /**
+             * \brief Llmada directameten por el driver para inila contruccion
+             * */
 			virtual bool generate(bool log) = 0;
 			OutputLenguajes getOutputLenguaje() const;
 			std::string getOutputLenguajeString()const;
@@ -80,6 +82,9 @@ namespace apidb
 		class CPP : public Generator
 		{
 		public:
+            /**
+             * \brief Llmada directameten por el driver para inila contruccion
+             * */
 			virtual bool generate(bool log);
 			CPP(apidb::Analyzer&,const ConfigureProject&);
 			const std::string& getHeaderName() const;
@@ -130,10 +135,10 @@ namespace apidb
             
             //
 			void createClassH(const apidb::symbols::Table&,std::ofstream&,const std::string&,bool log);
+            void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&);
 			void createClassPrivateH(std::ofstream&);
 			void createClassAttributesH(const apidb::symbols::Table&,std::ofstream&);
-			void createClassPublicH(std::ofstream&);
-			void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&);
+			void createClassPublicH(std::ofstream&);			
 			void createClassPrivateCPP(std::ofstream&);
 			void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);
 			void createClassPublicCPP(std::ofstream&);
@@ -148,37 +153,77 @@ namespace apidb
 			std::string projectCPP;
 		};
 
+        /**
+         * @brief genera una llada recursiva para el componete indicado
+         * @condition se debe llamar con k->symbolReferenced
+         * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+         */
+        void getKeyJava(std::ofstream& ofile, const symbols::Symbol* k);
+        
+        /**
+         * @brief genera una llada recursiva para el componete indicado
+         * @condition se debe llamar con k->symbolReferenced
+         * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+         */
+        void getKey2Java(std::ofstream& ofile, const symbols::Symbol* k);
 		/**
 		* \private
 		* */
 		class Java : public Generator
 		{
 		public:
+            /**
+             * \brief Llmada directameten por el driver para inila contruccion
+             * */
 			virtual bool generate(bool log);
 			Java(apidb::Analyzer&,const ConfigureProject&);
 			const std::string& getHeaderName() const;
 			std::ofstream& getSourceOutput();
+			std::ofstream& getHeaderOutput();
 			virtual ~Java();
-
+            
 		private:
+            //contructor
+			void writeDefaultContructorCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeKeyRawDataContructorCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeCopyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
+            
+            //selects
+			void writeSelectStaticCPP(const apidb::symbols::Table&,std::ofstream&);
+            void writeSelectInstancetObjectDataCPP(const apidb::symbols::Table&,std::ofstream&);
+            
+            //downloads
+			void writeDownloadsCPP(const apidb::symbols::Table&,std::ofstream&);
+            
+            //getter
+            void writeGettersCPP(const apidb::symbols::Table& table, std::ofstream& ofile);
+            
+            //updatter
+            void writeUppdatersCPP(const apidb::symbols::Table& table, std::ofstream& ofile);
+            
+            //inserts
+			void writeInsertCPP(const apidb::symbols::Table&,std::ofstream&);            
+            
+            //methodes
+			void createClassMethodesCPP(const apidb::symbols::Table&,std::ofstream&);            
+            
+			//varias
 			bool create(bool log,const symbols::SymbolsTable&);
-			bool create(std::ofstream& file,bool log,const symbols::ISpace*);
-			void createClass(const apidb::symbols::Table&,std::ofstream&,const std::string&);
-			void createClassPrivate(std::ofstream&);
+			bool create(bool log,const symbols::ISpace*);
+            
+            //
+            void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&);
 			void createClassAttributes(const apidb::symbols::Table&,std::ofstream&);
-			void createClassPublic(std::ofstream&);
-			void createClassMethodes(const apidb::symbols::Table&,std::ofstream&);
-			void writeDefaultContructor(const apidb::symbols::Table&,std::ofstream&);
-			void writeKeyValue(const apidb::symbols::Table&,std::ofstream&);
-			void writeCopyContructor(const apidb::symbols::Table&,std::ofstream&);
-			void writeKeyContructor(const apidb::symbols::Table&,std::ofstream&);
-			void writeInsert(const apidb::symbols::Table&,std::ofstream&);
-			void writeDownloads(const apidb::symbols::Table&,std::ofstream&);
-			void writeSelects(const apidb::symbols::Table&,std::ofstream&);
-			bool createDatconnect(std::ofstream& file,bool log);
+			void createClassPrivateCPP(std::ofstream&);
+			void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);
+			void createClassPublicCPP(std::ofstream&);
+			void writeKeyValueCPP(const apidb::symbols::Table&,std::ofstream&);
+			bool createDatconnectHPP(std::ofstream& file,bool log);
 
-			std::ofstream* writeResult;//erreglo de writeoutput files
- 			std::string filename;
+			//apidb::Analyzer& analyzer;
+			std::ofstream* writeResults;//erreglo de writeoutput files
+			std::string projectH;
+			std::string projectCPP;
 		};
 
 		/**

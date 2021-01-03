@@ -195,13 +195,13 @@ namespace apidb
 
 	bool Driver::driving(core::ActivityProgress* progress)
 	{
-        std::cout << "Driver::driving : Step 1\n";
+        //std::cout << "Driver::driving : Step 1\n";
 		if(connector == NULL)
 		{
 			//std::cout<<"El conector es NULL." << std::endl;
 			return false;
 		}
-        std::cout << "Driver::driving : Step 2\n";
+        //std::cout << "Driver::driving : Step 2\n";
 		if(analyze(progress))
 		{
 			if(generate(progress))
@@ -218,16 +218,17 @@ namespace apidb
 			//std::cout<<"Fallo la etapa de analisis." << std::endl;
 			return false;
 		}
-        std::cout << "Driver::driving : Step 3\n";
+        //std::cout << "Driver::driving : Step 3\n";
 		return false;
 	}
 
 	bool Driver::generate(core::ActivityProgress* progress)
 	{
+        
         //std::cout << "Driver::generate : Step 1 \n";
+        
 		if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0))
 		{
-
 		}
 		else
 		{
@@ -240,78 +241,52 @@ namespace apidb
 				system(cmd.c_str());
 			}
 		}
-
+        
         //std::cout << "Driver::generate : Step 2\n";
-
-		bool flagCPP,flagCMAKE,flagJava,flagMaven;
+        
 		if(configureProject.outputLenguaje == apidb::OutputLenguajes::CPP)
 		{
             //std::cout << "Driver::generate : Step 2.1\n";
 			apidb::generators::CPP cpp(*analyzer,configureProject);
             //std::cout << "Driver::generate : Step 2.2\n";
-			if(progress != NULL)flagCPP = cpp.generate(true);
-            else flagCPP = cpp.generate(false);
+			if(!cpp.generate(true)) progress->add("Fallo la generacion de codigo fuente.\n");
             //std::cout << "Driver::generate : Step 2.3\n";
 			//std::cout<<"apidb::generators::CMake cmake(*analyzer);..."<<std::endl;
+            if(configureProject.packing == PackingLenguajes::CMake)
+            {
+                apidb::generators::CMake cmake(*analyzer,configureProject);
+                if(!cmake.generate(true)) progress->add("Fallo la generacion de empaquetado.\n");;
+            }
 		}
 		else if(configureProject.outputLenguaje == apidb::OutputLenguajes::JAVA)
 		{
+            //std::cout << "Driver::generate : Step 2.1\n";
 			apidb::generators::Java java(*analyzer,configureProject);
             //std::cout << "Driver::generate : Step 2.2\n";
-			if(progress != NULL)flagJava = java.generate(true);
-            else flagJava = java.generate(false);
+			if(!java.generate(true)) progress->add("Fallo la generacion de codigo fuente.\n");
+            if(configureProject.packing == PackingLenguajes::Maven)
+            {
+                apidb::generators::Maven maven(*analyzer,configureProject);
+                if(!maven.generate(true)) progress->add("Fallo la generacion de empaquetado.\n");
+            }
+            //std::cout << "Driver::generate : Step 2.3\n";
 		}
 		else
 		{
 			return false;
 		}
-
         //std::cout << "Driver::generate : Step 3\n";
-        if(configureProject.packing == PackingLenguajes::CMake)
-        {
-			apidb::generators::CMake cmake(*analyzer,configureProject);
-			if(progress != NULL)flagCMAKE = cmake.generate(true);
-            else flagCMAKE = cmake.generate(false);
-        }
-        else if(configureProject.packing == PackingLenguajes::Maven)
-        {
-			apidb::generators::Maven maven(*analyzer,configureProject);
-			if(progress != NULL)flagMaven = maven.generate(true);
-            else flagMaven = maven.generate(false);
-        }
-        else
-        {
-            return false;
-        }
-
-        //std::cout << "Driver::generate : Step 4\n";
-        if(flagCPP)
-        {
-            std::string msg1 =  "Generacion completada.\n" ;
-            core::Confirmation conf1(msg1);
-            if(progress != NULL) progress->add(conf1);
-            return true;
-        }
-        else
-        {
-            BuildException fail("Fallo.");
-            analyzer->getOutput().add(fail);
-            return false;
-        }
-        if(configureProject.packing == PackingLenguajes::OnlyCode && !flagCMAKE)
-        {
-            std::string msg1 =  "Fallo la generacion.\n" ;
-            if(progress != NULL) progress->add(msg1);
-            return true;            
-        }
+        //if(progress != NULL) progress->add("Fallo la generacion.\n");
+        
+        return true; 
     }
 
 
 	bool Driver::analyze(core::ActivityProgress* progress)
 	{
-        std::cout << "Driver::analyze : Step 1\n";
+        //std::cout << "Driver::analyze : Step 1\n";
 
-        std::cout << "Driver::analyze : Step 2\n";
+        //std::cout << "Driver::analyze : Step 2\n";
         if(connector == NULL)
         {
             throw core::Exception("No se ha asignado a conector.");
@@ -321,11 +296,11 @@ namespace apidb
             throw core::Exception("No se ha asignado a metodo contructor de driver.");
         }
         
-        std::cout << "Driver::analyze : Step 3\n";
+        //std::cout << "Driver::analyze : Step 3\n";
 
         analyzer = createAnalyzer(&configureProject,connector,progress);
 
-        std::cout << "Driver::analyze : Step 4\n";
+        //std::cout << "Driver::analyze : Step 4\n";
         if(progress != NULL)
         {
             core::Confirmation conf1("\n\tAnalisis de Base de Datos..");
@@ -338,22 +313,21 @@ namespace apidb
         }
         
 		bool flagAnalyzer = false;
-        std::cout << "Driver::analyze : Step 5\n";
+        //std::cout << "Driver::analyze : Step 5\n";
         flagAnalyzer = analyzer->analyze(progress);
-        std::cout << "Driver::analyze : Step 6\n";
+        //std::cout << "Driver::analyze : Step 6\n";
 		if(flagAnalyzer == false) //reading tables
 		{
             if(progress != NULL)
             {
-                std::string msgErr ="\tFallo al leer durante la fase de analisis." ;
-                core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
-                progress->add(err);
+                std::string msgErr = "\tFallo al leer durante la fase de analisis.";
+                throw core::Exception(msgErr,__FILE__,__LINE__);
             }
             
             return false;
 		}
         
-        std::cout << "Driver::analyze : Step 7\n";
+        //std::cout << "Driver::analyze : Step 7\n";
 		return true;
 	}
 

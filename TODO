@@ -1,8 +1,8 @@
- - Bug : Cuando se guardan cambio despues de carga un archivo los data de BD no son guardados y falla la proxima lectua del archivo.
+ - Refactory de Anlizador de BD
+ - Soporte para Java
  - Hacer contruccion de Pruebas opcional
  - Hacer contruccion de GUI opcional
  - Mesnages de errore por excepciones
  - Soporte para llave compuesta 
  - Soporte para PHP
- - Soporte para Java
 
