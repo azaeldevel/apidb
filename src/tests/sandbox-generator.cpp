@@ -25,25 +25,35 @@ int main(int argc, char **argv)
     
     
     octetos::apidb::ConfigureProject configProject;
-    configProject.name = "muposys";
-    configProject.builDirectory = "/home/azael/develop/octetos/muposys/java/muposys-db/src/main/java/octetos/muposys/db";
+    configProject.name = "muposys";    
 	configProject.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);    
 	octetos::core::Semver version;
 	version.setNumbers(0,1,0);
     version.setPrerelease("alpha");    
     configProject.versionResult = version;
-    configProject.outputLenguaje = octetos::apidb::OutputLenguajes::JAVA;
-    configProject.packing = octetos::apidb::PackingLenguajes::OnlyCode;
-    configProject.compiled = octetos::apidb::Compiled::STATIC;
 	configProject.writeDatconnect = "conector";
-    configProject.saveConfig("muposys");
-    configProject.space = "octetos.muposys.db";
+    
+    configProject.builDirectory = "muposys";
+    configProject.space = "muposys::db";
+    configProject.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;
+    configProject.packing = octetos::apidb::PackingLenguajes::OnlyCode;
+    configProject.compiled = octetos::apidb::Compiled::NoCompile;
+    
+    //configProject.builDirectory = "/home/azael/develop/octetos/muposys/java/muposys-db/src/main/java/octetos/muposys/db";
+    //configProject.space = "octetos.muposys.db";
+    
+    //
     /*
     octetos::apidb::ConfigureProject configProject;
     configProject.readConfig("/home/azael/develop/octetos/muposys/C++/apidb/muposys.apidb");
     configProject.builDirectory = "muposys-apidb";
     configProject.packing = octetos::apidb::PackingLenguajes::CMake;
     */
+    
+    configProject.saveConfig("muposys.apidb");
+    
+    octetos::apidb::ConfigureProject configProject2;
+    configProject2.readConfig("muposys.apidb");
     
     //std::cout << "Step 3\n";
     octetos::apidb::Driver driver(configProject);

@@ -308,7 +308,7 @@ namespace generators
 			writeResults[0].open(configureProject.builDirectory + "/" + projectH);
 			writeResults[1].open(configureProject.builDirectory + "/" + projectCPP);
 		}
-	}    
+	}
 	bool CPP::generate(bool log)
 	{
 		if(log)analyzer.getOutput().add("Generando archivos de codigo fuente... \n");
@@ -328,27 +328,25 @@ namespace generators
           
         return true;    
     }
-		void CPP::writeSelectStaticCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
+    void CPP::writeSelectStaticCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
+    {
+        if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
+        {        
+            ofile << "\tstd::vector<"  << table.getName() << "*>* " << table.getName() << "::select(octetos::db::mysql::Connector& connector, const std::string& where, int leng)"<<std::endl;
+        }
+        else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
-        //select(conector,where)
-            
-            if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-            {        
-                ofile << "\tstd::vector<"  << table.getName() << "*>* " << table.getName() << "::select(octetos::db::mysql::Connector& connector, const std::string& where, int leng)"<<std::endl;
-            }
-            else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-            {
-                ofile << "\tstd::vector<"  << table.getName() << "*>* " << table.getName() << "::select(octetos::db::maria::Connector& connector, const std::string& where, int leng)"<<std::endl;
-            }
-            else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-            {
-                ofile << "\tstd::vector<"  << table.getName() << "*>* " << table.getName() << "::select(octetos::db::postgresql::Connector& connector, const std::string& where, int leng)"<<std::endl;
-            }
-            else
-            {
-                std::string msg = "Lenguaje no soportado " ;
-                throw BuildException(msg);
-            }
+            ofile << "\tstd::vector<"  << table.getName() << "*>* " << table.getName() << "::select(octetos::db::maria::Connector& connector, const std::string& where, int leng)"<<std::endl;
+        }
+        else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
+        {
+            ofile << "\tstd::vector<"  << table.getName() << "*>* " << table.getName() << "::select(octetos::db::postgresql::Connector& connector, const std::string& where, int leng)"<<std::endl;
+        }
+        else
+        {
+            std::string msg = "Lenguaje no soportado " ;
+            throw BuildException(msg,__FILE__,__LINE__);
+        }
         ofile << "\t{" <<std::endl;
         ofile << "\t\tstd::string sqlString = \"SELECT ";
         //selecciona los campos de las llaves
@@ -968,7 +966,7 @@ namespace generators
         }
     }
     
-    void getKey2(std::ofstream& ofile, const symbols::Symbol* k)
+    void CPP::getKey2(std::ofstream& ofile, const symbols::Symbol* k)
     {
         if(k->symbolReferenced != NULL)
         {            
@@ -1591,7 +1589,7 @@ namespace generators
         }
 		ofile << "\t}" <<std::endl;
 	}
-	void getKey(std::ofstream& ofile, const symbols::Symbol* k)
+	void CPP::getKey(std::ofstream& ofile, const symbols::Symbol* k)
     {
         if(k->symbolReferenced != NULL)
         {            
@@ -1657,9 +1655,13 @@ namespace generators
             symbols::Space* space = (symbols::Space*) ispace;
             //std::cout << "Es Espacio " << space->getFullName() << std::endl;
             file << "namespace " ;
-            if(space->getName().empty())
+            if(not configureProject.space.empty())
             {
-                file << configureProject.name;
+                    file << configureProject.space << "\n";
+            }
+            else if(space->getName().empty())
+            {
+                file << configureProject.name << "\n";
             }
             else
             {
@@ -1722,9 +1724,13 @@ namespace generators
             {
                 symbols::Space* space = (symbols::Space*) ispace;
                 file << "namespace " ;
-                if(space->getName().empty())
+                if(not configureProject.space.empty())
                 {
-                    file << configureProject.name;
+                    file << configureProject.space << "\n";
+                }
+                else if(space->getName().empty())
+                {
+                    file << configureProject.name << "\n";
                 }
                 else
                 {
@@ -2260,7 +2266,11 @@ namespace generators
         {
             symbols::Space* space = (symbols::Space*) ispace;
             file << "namespace " ;
-            if(space->getName().empty())
+            if(not configureProject.space.empty())
+            {
+                file << configureProject.space << "\n";
+            }
+            else if(space->getName().empty())
             {
                 file << configureProject.name;
             }
@@ -2398,7 +2408,11 @@ namespace generators
             {
                 symbols::Space* space = (symbols::Space*) ispace;
                 file << "namespace " ;
-                if(space->getName().empty())
+                if(not configureProject.space.empty())
+                {
+                    file << configureProject.space << "\n";
+                }
+                else if(space->getName().empty())
                 {
                     file << configureProject.name;
                 }

@@ -36,7 +36,7 @@ namespace apidb
 {
 namespace generators
 {
-    void Java::writeUppdatersCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
+    void Java::writeUppdaters(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
@@ -124,7 +124,7 @@ namespace generators
                                 else
                                 {
                                     ofile << k->getName();
-                                    getKey(ofile,k->symbolReferenced);
+                                    getKeyJava(ofile,k->symbolReferenced);
                                     ofile<< ";\n";
                                 }
                             }
@@ -172,7 +172,7 @@ namespace generators
         }
     }
     
-    void Java::writeGettersCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
+    void Java::writeGetters(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
@@ -208,9 +208,9 @@ namespace generators
     
 	Java::~Java()
 	{
-		delete[] writeResults;
+		//delete[] writeResults;
 	}
-	const std::string& Java::getHeaderName() const
+	/*const std::string& Java::getHeaderName() const
 	{
 		return projectH;
 	}
@@ -221,7 +221,7 @@ namespace generators
 	std::ofstream& Java::getHeaderOutput()
 	{
 		return writeResults[0];
-	}
+	}*/
 	Java::Java(apidb::Analyzer& d,const ConfigureProject& config) : apidb::generators::Generator(config,d)
 	{
         if(config.outputLenguaje != OutputLenguajes::JAVA)
@@ -265,7 +265,7 @@ namespace generators
         return true;    
     }
 		
-    void Java::writeSelectStaticCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
+    void Java::writeSelectStatic(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
@@ -560,7 +560,7 @@ namespace generators
             }
         }
     }
-	void Java::writeDownloadsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
+	void Java::writeDownloads(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
         for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
         {
@@ -628,7 +628,7 @@ namespace generators
                         else
                         {
                             ofile << " \"'\" + " << k->getName();
-                            getKey(ofile,k->symbolReferenced);
+                            getKeyJava(ofile,k->symbolReferenced);
                             ofile<< ") + \"'\";\n";
                         }
                     }
@@ -799,7 +799,7 @@ namespace generators
                     else
                     {
                         ofile << " \"'\" + " << k->getName();
-                        getKey(ofile,k->symbolReferenced);
+                        getKeyJava(ofile,k->symbolReferenced);
                         ofile<< " + \"'\";\n";
                     }
                 }
@@ -849,7 +849,7 @@ namespace generators
                 else
                 {
                     ofile << "(*" << symbol.second->getName() << ")";
-                    getKey(ofile,symbol.second->symbolReferenced);
+                    getKeyJava(ofile,symbol.second->symbolReferenced);
                 }
                 ofile << ");\n";
             }
@@ -908,7 +908,7 @@ namespace generators
         }
     }
     
-    void getKey2Java(std::ofstream& ofile, const symbols::Symbol* k)
+    void Java::getKey2Java(std::ofstream& ofile, const symbols::Symbol* k)
     {
         if(k->symbolReferenced != NULL)
         {            
@@ -920,7 +920,7 @@ namespace generators
             ofile << ".get" << k->getUpperName() << "()";
         }
     }
-    void Java::writeSelectInstancetObjectDataCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
+    void Java::writeSelectInstancetObjectData(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
 		ofile << "\tpublic boolean ";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
@@ -975,13 +975,13 @@ namespace generators
                 if(k->outType.compare("String") == 0)
                 {
                     ofile << k->getName();
-                    getKey2(ofile,k->symbolReferenced);
+                    getKey2Java(ofile,k->symbolReferenced);
                 }
                 else
                 {
                     
                     ofile << k->getName();
-                    getKey2(ofile,k->symbolReferenced);
+                    getKey2Java(ofile,k->symbolReferenced);
                 }
             }
             else if(k->outType.compare("String") == 0)
@@ -1036,7 +1036,7 @@ namespace generators
         ofile << "\t\treturn false;\n";
         ofile << "\t}\n";
 	}
-    void Java::writeInsertCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
+    void Java::writeInsert(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
         auto penultimoReq = --table.getRequired().end();
         // Methodo insert Raw datas
@@ -1277,13 +1277,13 @@ namespace generators
         
         ofile << "\t}"<<std::endl;
 	}
-	void Java::writeDefaultContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
-        {
+	void Java::writeDefaultContructor(const apidb::symbols::Table& table,std::ofstream& ofile)
+    {
 		ofile <<"\tpublic "<<table.getName()<<"()"<<std::endl;
 		ofile <<"\t{"<<std::endl;
 		ofile <<"\t}"<<std::endl;
 	}
-	void Java::writeCopyContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
+	void Java::writeCopyContructor(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		//constructor de copias 
 		ofile << "\tpublic " << table.getName() <<"(" << table.getName() <<" obj)"<<std::endl;
@@ -1295,7 +1295,7 @@ namespace generators
 		}
 		ofile << "\t}"<<std::endl;
 	}
-	void Java::writeKeyRawDataContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
+	void Java::writeKeyRawDataContructor(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		//constructor que toma key como parametro
         if(table.getKey().size() > 0)//tiene key
@@ -1348,42 +1348,42 @@ namespace generators
         }
 		ofile << "\t}" <<std::endl;
 	}
-	void getKeyJava(std::ofstream& ofile, const symbols::Symbol* k)
+	void Java::getKeyJava(std::ofstream& ofile, const symbols::Symbol* k)
     {
         if(k->symbolReferenced != NULL)
         {            
             ofile << ".get" << k->getUpperName() << "()";
-            getKey2(ofile,k->symbolReferenced);
+            getKey2Java(ofile,k->symbolReferenced);
         }
         else
         {
             ofile << ".get" << k->getUpperName() << "()";
         }
     }
-	void Java::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
+	void Java::createClassMethodes(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
-		writeDefaultContructorCPP(table,ofile);
-		writeKeyRawDataContructorCPP(table,ofile);
-		writeCopyContructorCPP(table,ofile);
+		writeDefaultContructor(table,ofile);
+		writeKeyRawDataContructor(table,ofile);
+		writeCopyContructor(table,ofile);
         
         ofile << "\n\n";
-        writeGettersCPP(table,ofile);
+        writeGetters(table,ofile);
         ofile << "\n\n";
-        writeUppdatersCPP(table,ofile);
+        writeUppdaters(table,ofile);
 		ofile << "\n\n";
-		writeInsertCPP(table,ofile);
+		writeInsert(table,ofile);
         ofile << "\n\n";        
-        writeSelectInstancetObjectDataCPP(table,ofile);
-		writeSelectStaticCPP(table,ofile);
+        writeSelectInstancetObjectData(table,ofile);
+		writeSelectStatic(table,ofile);
         ofile << "\n\n";        
-        writeDownloadsCPP(table,ofile);
+        writeDownloads(table,ofile);
         ofile << "\n\n"; 
     }
         
-    void Java::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
+    void Java::createClass(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {        
-        file << "package " << configureProject.space << ";\n";
-        file << "import java.sql.ResultSet;";
+        file << "package " << configureProject.space << ";\n\n";
+        file << "import java.sql.ResultSet;\n";
         file << "import java.sql.SQLException;\n";
         file << "import java.util.ArrayList;\n\n";
         file << "\npublic class " << cl.getUpperName() << "\n{\n";
@@ -1403,7 +1403,7 @@ namespace generators
         file<< "\n";
         createClassAttributes(cl,file);
         file<< "\n\n";
-		createClassMethodesCPP(cl,file);   
+		createClassMethodes(cl,file);   
         file<< "}\n";
 		file<< std::endl;
     }
@@ -1415,7 +1415,7 @@ namespace generators
             std::string strFilename = configureProject.builDirectory;
             strFilename += "/" + table->getName() + ".java";
             std::ofstream file(strFilename, std::ofstream::out);
-            createClassCPP(*table,file,table->getName());
+            createClass(*table,file,table->getName());
             file.flush();
             file.close();
         }
@@ -1476,7 +1476,7 @@ namespace generators
                 std::string strFilename = configureProject.builDirectory;
                 strFilename += "/" + table->getName() + ".java";
                 std::ofstream file(strFilename, std::ofstream::out);
-                createClassCPP(*table,file,table->getName());
+                createClass(*table,file,table->getName());
                 file.flush();
                 file.close();
             }
@@ -1587,7 +1587,7 @@ namespace generators
         }
     }
     
-    bool Java::createDatconnectHPP(std::ofstream& file,bool log)
+    bool Java::createDatconnect(std::ofstream& file,bool log)
 	{
         //is function?
         int lgf = configureProject.writeDatconnect.length();

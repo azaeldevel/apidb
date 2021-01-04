@@ -146,6 +146,9 @@ namespace apidb
                         case PackingLenguajes::CMake:
                                 xmlNewChild(pk_node, NULL, (const xmlChar *)"name", (const xmlChar *)"CMake");
                                 break;
+                        case PackingLenguajes::Maven:
+                                xmlNewChild(pk_node, NULL, (const xmlChar *)"name", (const xmlChar *)"Maven");
+                                break;
                         case PackingLenguajes::OnlyCode:
                                 xmlNewChild(pk_node, NULL, (const xmlChar *)"name", (const xmlChar *)"OnlyCode");
                                 break;
@@ -162,6 +165,9 @@ namespace apidb
                                 break;
                         case Compiled::SHARED:
                                 xmlNewChild(cmpl_node, NULL, (const xmlChar *)"name", (const xmlChar *)"SHARED");
+                                break;
+                        case Compiled::NoCompile:
+                                xmlNewChild(cmpl_node, NULL, (const xmlChar *)"name", (const xmlChar *)"NoCompile");
                                 break;
                         default:
                                 throw core::Exception("Opcion de compilado desconocida.",__FILE__,__LINE__);
@@ -807,6 +813,10 @@ namespace apidb
                 {
                     packing = PackingLenguajes::CMake;
                 }
+                else if(pk.compare("Maven") == 0)
+                {
+                    packing = PackingLenguajes::Maven;
+                }
                 else if(pk.compare("OnlyCode") == 0)
                 {
                     packing = PackingLenguajes::OnlyCode;
@@ -836,6 +846,10 @@ namespace apidb
                 else if(cmpl.compare("SHARED") == 0)
                 {
                         compiled = Compiled::SHARED;
+                }
+                else if(cmpl.compare("NoCompile") == 0)
+                {
+                        compiled = Compiled::NoCompile;
                 }
                 else
                 {

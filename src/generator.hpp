@@ -34,20 +34,7 @@ namespace apidb
 {
 	namespace generators
 	{
-        /**
-         * @brief genera una llada recursiva para el componete indicado
-         * @condition se debe llamar con k->symbolReferenced
-         * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
-         */
-        void getKey(std::ofstream& ofile, const symbols::Symbol* k);
-        
-        /**
-         * @brief genera una llada recursiva para el componete indicado
-         * @condition se debe llamar con k->symbolReferenced
-         * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
-         */
-        void getKey2(std::ofstream& ofile, const symbols::Symbol* k);
-        
+                
         void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
         void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
         symbols::Symbol* getRootSymbol(symbols::Symbol* k);
@@ -146,29 +133,26 @@ namespace apidb
 			void writeKeyValueCPP(const apidb::symbols::Table&,std::ofstream&);
 			bool createDatconnectHPP(std::ofstream& file,bool log);
             bool createDatconnectCPP(std::ofstream& file,bool log);
-
+            /**
+            * @brief genera una llada recursiva para el componete indicado
+            * @condition se debe llamar con k->symbolReferenced
+            * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+            */
+            void getKey(std::ofstream& ofile, const symbols::Symbol* k);
+            
+            /**
+            * @brief genera una llada recursiva para el componete indicado
+            * @condition se debe llamar con k->symbolReferenced
+            * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+            */
+            void getKey2(std::ofstream& ofile, const symbols::Symbol* k);
 			//apidb::Analyzer& analyzer;
 			std::ofstream* writeResults;//erreglo de writeoutput files
 			std::string projectH;
 			std::string projectCPP;
 		};
 
-        /**
-         * @brief genera una llada recursiva para el componete indicado
-         * @condition se debe llamar con k->symbolReferenced
-         * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
-         */
-        void getKeyJava(std::ofstream& ofile, const symbols::Symbol* k);
         
-        /**
-         * @brief genera una llada recursiva para el componete indicado
-         * @condition se debe llamar con k->symbolReferenced
-         * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
-         */
-        void getKey2Java(std::ofstream& ofile, const symbols::Symbol* k);
-		/**
-		* \private
-		* */
 		class Java : public Generator
 		{
 		public:
@@ -178,52 +162,67 @@ namespace apidb
 			virtual bool generate(bool log);
 			Java(apidb::Analyzer&,const ConfigureProject&);
 			const std::string& getHeaderName() const;
-			std::ofstream& getSourceOutput();
-			std::ofstream& getHeaderOutput();
+			//std::ofstream& getSourceOutput();
+			//std::ofstream& getHeaderOutput();
 			virtual ~Java();
             
 		private:
             //contructor
-			void writeDefaultContructorCPP(const apidb::symbols::Table&,std::ofstream&);
-			void writeKeyRawDataContructorCPP(const apidb::symbols::Table&,std::ofstream&);
-			void writeCopyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeDefaultContructor(const apidb::symbols::Table&,std::ofstream&);
+			void writeKeyRawDataContructor(const apidb::symbols::Table&,std::ofstream&);
+			void writeCopyContructor(const apidb::symbols::Table&,std::ofstream&);
             
             //selects
-			void writeSelectStaticCPP(const apidb::symbols::Table&,std::ofstream&);
-            void writeSelectInstancetObjectDataCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeSelectStatic(const apidb::symbols::Table&,std::ofstream&);
+            void writeSelectInstancetObjectData(const apidb::symbols::Table&,std::ofstream&);
             
             //downloads
-			void writeDownloadsCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeDownloads(const apidb::symbols::Table&,std::ofstream&);
             
             //getter
-            void writeGettersCPP(const apidb::symbols::Table& table, std::ofstream& ofile);
+            void writeGetters(const apidb::symbols::Table& table, std::ofstream& ofile);
             
             //updatter
-            void writeUppdatersCPP(const apidb::symbols::Table& table, std::ofstream& ofile);
+            void writeUppdaters(const apidb::symbols::Table& table, std::ofstream& ofile);
             
             //inserts
-			void writeInsertCPP(const apidb::symbols::Table&,std::ofstream&);            
+			void writeInsert(const apidb::symbols::Table&,std::ofstream&);            
             
             //methodes
-			void createClassMethodesCPP(const apidb::symbols::Table&,std::ofstream&);            
+			void createClassMethodes(const apidb::symbols::Table&,std::ofstream&);            
             
 			//varias
 			bool create(bool log,const symbols::SymbolsTable&);
 			bool create(bool log,const symbols::ISpace*);
             
             //
-            void createClassCPP(const apidb::symbols::Table&,std::ofstream&,const std::string&);
+            void createClass(const apidb::symbols::Table&,std::ofstream&,const std::string&);
 			void createClassAttributes(const apidb::symbols::Table&,std::ofstream&);
-			void createClassPrivateCPP(std::ofstream&);
-			void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);
-			void createClassPublicCPP(std::ofstream&);
-			void writeKeyValueCPP(const apidb::symbols::Table&,std::ofstream&);
-			bool createDatconnectHPP(std::ofstream& file,bool log);
-
+			void createClassPrivate(std::ofstream&);
+			//void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);
+			void createClassPublic(std::ofstream&);
+			void writeKeyValue(const apidb::symbols::Table&,std::ofstream&);
+			bool createDatconnect(std::ofstream& file,bool log);
+            /**
+            * @brief genera una llada recursiva para el componete indicado
+            * @condition se debe llamar con k->symbolReferenced
+            * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+            */
+            void getKeyJava(std::ofstream& ofile, const symbols::Symbol* k);
+            
+            /**
+            * @brief genera una llada recursiva para el componete indicado
+            * @condition se debe llamar con k->symbolReferenced
+            * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+            */
+            void getKey2Java(std::ofstream& ofile, const symbols::Symbol* k);
+            /**
+            * \private
+            * */
 			//apidb::Analyzer& analyzer;
-			std::ofstream* writeResults;//erreglo de writeoutput files
-			std::string projectH;
-			std::string projectCPP;
+			//std::ofstream* writeResults;//erreglo de writeoutput files
+			//std::string projectH;
+			//std::string projectCPP;
 		};
 
 		/**
