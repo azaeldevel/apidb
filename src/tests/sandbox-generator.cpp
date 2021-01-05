@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     configProject.saveConfig("muposys.apidb");
     
     octetos::apidb::ConfigureProject configProject2;
-    configProject2.readConfig("muposys.apidb");
+    //configProject2.readConfig("muposys.apidb");
     
     //std::cout << "Step 3\n";
     octetos::apidb::Driver driver(configProject);

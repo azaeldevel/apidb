@@ -204,6 +204,7 @@ ELSE()
         MESSAGE(FATAL_ERROR "No se encontro OpenSSL.")
 ENDIF()
 
+
 ###################################################################################################
 ###BUILD
 SET(LIBRARIES  ${OCTETOS_CORE_LIBRARIES} ${OCTETOS_COREUTILS_LIBRARIES} ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${TAR_LIBRARIES} ${GTK3_LIBRARIES} ${CUNIT_LIBRARIES} ${OCTETOS_DB_ABSTRACT_LIBRARIES} ${CMAKE_DL_LIBS} ${OPENSSL_LIBRARIES})
