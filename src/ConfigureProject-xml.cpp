@@ -294,28 +294,28 @@ namespace apidb
 		xmlCleanupParser();
 		if( ret == -1)
 		{
-			throw core::Error("No se confirmo el guardado de archivo.",ErrorCodes::CONFIGUREPROJECT_WRITE,__FILE__,__LINE__);
+			throw core::Exception("No se confirmo el guardado de archivo.",__FILE__,__LINE__);
 		}
 
-                //comprimiendo archivo
-                //std::cout<< "Comprimiendo projecto." << std::endl;
-      			std::string tarFilename= "apidb.tar";
-                compress(tarFilename,tmp_dirpath,"apidb");
-                //std::cout<< "Archivo comprimido" << std::endl;
+        //comprimiendo archivo
+        std::cout<< "Comprimiendo projecto." << std::endl;
+        std::string tarFilename= "apidb";
+        compress(tarFilename,tmp_dirpath,"apidb");
+        std::cout<< "Archivo comprimido" << std::endl;
 
-                if(filename.size()>0)
-                {
-                    if(rename(tarFilename.c_str(),filename.c_str()) != 0)
-                    {
-                        std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
-                        throw core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_FAIL_ON_MOVE_FILE,__FILE__,__LINE__);
-                    }
-                }
-                else
-                {
-                    std::string msgstr = "Especifique el nombre completo del archivo.";
-                    throw core::Error(msgstr,ErrorCodes::CONFIGUREPROJECT_NOFULL_PATCH_PROJECT,__FILE__,__LINE__);
-                }
+        if(filename.size()>0)
+        {
+            if(rename(tarFilename.c_str(),filename.c_str()) != 0)
+            {
+                std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
+                throw core::Exception(msgstr,__FILE__,__LINE__);
+            }
+        }
+        else
+        {
+            std::string msgstr = "Especifique el nombre completo del archivo.";
+            throw core::Exception(msgstr,__FILE__,__LINE__);
+        }
 	}
 
 	void ConfigureProject::readConfig(const std::string& filename)

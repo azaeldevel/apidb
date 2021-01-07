@@ -25,7 +25,7 @@ Firts you need install all dependencies
 	- Bison 3.2
 	- Flex 2.6.4
 	- GTK 3 library
-	- Tar library 1.2
+	- Tar library 1.2 (Linux) or Libzip(MINGW)
 	- Doxygen (opcional)
 	- ImageMagicK >= 7
 
