@@ -35,9 +35,9 @@ namespace apidb
 	namespace generators
 	{
                 
-        void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
-        void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
-        symbols::Symbol* getRootSymbol(symbols::Symbol* k);
+        //void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+        //void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+        //symbols::Symbol* getRootSymbol(symbols::Symbol* k);
         
         /**
         * \private No es parte del API
@@ -54,7 +54,22 @@ namespace apidb
 			PackingLenguajes getPackingLenguaje() const;
 			std::string getPackingLenguajeString()const;
 			Generator(const ConfigureProject& config,apidb::Analyzer& analyzer);
-
+            symbols::Symbol* getRootSymbol(symbols::Symbol* k);
+            void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+            void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+            /**
+            * @brief genera una llada recursiva para el componete indicado
+            * @condition se debe llamar con k->symbolReferenced
+            * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+            */
+            virtual void getKey(std::ofstream& ofile, const symbols::Symbol* k);
+            
+            /**
+            * @brief genera una llada recursiva para el componete indicado
+            * @condition se debe llamar con k->symbolReferenced
+            * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+            */
+            virtual void getKey2(std::ofstream& ofile, const symbols::Symbol* k);
 		protected:
 			//OutputLenguajes outputLenguaje;//se
 			const ConfigureProject& configureProject;
@@ -138,14 +153,14 @@ namespace apidb
             * @condition se debe llamar con k->symbolReferenced
             * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
             */
-            void getKey(std::ofstream& ofile, const symbols::Symbol* k);
+            //virtual void getKey(std::ofstream& ofile, const symbols::Symbol* k);
             
             /**
             * @brief genera una llada recursiva para el componete indicado
             * @condition se debe llamar con k->symbolReferenced
             * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
             */
-            void getKey2(std::ofstream& ofile, const symbols::Symbol* k);
+            //virtual void getKey2(std::ofstream& ofile, const symbols::Symbol* k);
 			//apidb::Analyzer& analyzer;
 			std::ofstream* writeResults;//erreglo de writeoutput files
 			std::string projectH;
@@ -208,14 +223,14 @@ namespace apidb
             * @condition se debe llamar con k->symbolReferenced
             * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
             */
-            void getKeyJava(std::ofstream& ofile, const symbols::Symbol* k);
+            //void getKeyJava(std::ofstream& ofile, const symbols::Symbol* k);
             
             /**
             * @brief genera una llada recursiva para el componete indicado
             * @condition se debe llamar con k->symbolReferenced
             * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
             */
-            void getKey2Java(std::ofstream& ofile, const symbols::Symbol* k);
+            //void getKey2Java(std::ofstream& ofile, const symbols::Symbol* k);
             /**
             * \private
             * */
@@ -258,6 +273,86 @@ namespace apidb
             
 		private:
 			std::string filename;
+		};
+        
+        
+		class PHP : public Generator
+		{
+		public:
+            /**
+             * \brief Llmada directameten por el driver para inila contruccion
+             * */
+			virtual bool generate(bool log);
+			PHP(Analyzer&,const ConfigureProject&);
+			const std::string& getHeaderName() const;
+			//std::ofstream& getSourceOutput();
+			//std::ofstream& getHeaderOutput();
+			virtual ~PHP();
+            
+		private:
+            //contructor
+			void writeDefaultContructor(const apidb::symbols::Table&,std::ofstream&);
+			void writeKeyRawDataContructor(const apidb::symbols::Table&,std::ofstream&);
+			void writeCopyContructor(const apidb::symbols::Table&,std::ofstream&);
+            
+            //selects
+			void writeSelectStatic(const apidb::symbols::Table&,std::ofstream&);
+            void writeSelectInstancetObjectData(const apidb::symbols::Table&,std::ofstream&);
+            
+            //downloads
+			void writeDownloads(const apidb::symbols::Table&,std::ofstream&);
+            
+            //getter
+            void writeGetters(const apidb::symbols::Table& table, std::ofstream& ofile);
+            
+            //updatter
+            void writeUppdaters(const apidb::symbols::Table& table, std::ofstream& ofile);
+            
+            //inserts
+			void writeInsert(const apidb::symbols::Table&,std::ofstream&);            
+            
+            //methodes
+			void createClassMethodes(const apidb::symbols::Table&,std::ofstream&);            
+            
+			//varias
+			bool create(std::ofstream& file, bool log, const symbols::SymbolsTable&);
+			bool create(std::ofstream& file, bool log, const symbols::ISpace*);
+            
+            //
+            void createClass(const apidb::symbols::Table&,std::ofstream&,const std::string&);
+			void createClassAttributes(const apidb::symbols::Table&,std::ofstream&);
+			void createClassPrivate(std::ofstream&);
+			//void createClassAttributesCPP(const apidb::symbols::Table&,std::ofstream&);
+			void createClassPublic(std::ofstream&);
+			void writeKeyValue(const apidb::symbols::Table&,std::ofstream&);
+			bool createDatconnect(std::ofstream& file,bool log);
+            /**
+            * @brief genera una llada recursiva para el componete indicado
+            * @condition se debe llamar con k->symbolReferenced
+            * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+            */
+            virtual void getKey(std::ofstream& ofile, const symbols::Symbol* k);
+            
+            /**
+            * @brief genera una llada recursiva para el componete indicado
+            * @condition se debe llamar con k->symbolReferenced
+            * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+            */
+            virtual void getInheritKey(std::ofstream& ofile, const symbols::Symbol* k);
+            
+            /**
+            * @brief genera una llada recursiva para el componete indicado
+            * @condition se debe llamar con k->symbolReferenced
+            * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+            */
+            //void getKey2Java(std::ofstream& ofile, const symbols::Symbol* k);
+            /**
+            * \private
+            * */
+			//apidb::Analyzer& analyzer;
+			//std::ofstream* writeResults;//erreglo de writeoutput files
+			//std::string projectH;
+			//std::string projectCPP;
 		};
 	}
 }

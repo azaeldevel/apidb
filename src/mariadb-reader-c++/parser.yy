@@ -105,9 +105,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "short";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Integer";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -122,9 +126,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "byte";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "String";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -139,9 +147,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "int";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Integer";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -156,9 +168,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "int";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Integer";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -173,9 +189,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "int";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Integer";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -190,9 +210,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "long";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Integer";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -208,9 +232,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "double";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Float";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -225,9 +253,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "float";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Float";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -243,9 +275,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "double";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Float";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -260,9 +296,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Float";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -277,9 +317,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Float";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -294,9 +338,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "String";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -311,9 +359,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "String";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -328,9 +380,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Float";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -345,9 +401,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "Float";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -362,9 +422,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "String";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -385,9 +449,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "String";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -402,9 +470,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "String";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -419,9 +491,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "String";
+			}
 			else
 			{
-                                BuildException fail("OutputLenguaje is unknow.");
+                                BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -436,9 +512,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "String";
+			}
 			else
 			{
-				BuildException fail("OutputLenguaje is unknow.");
+				BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -453,9 +533,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "String";
+			}
 			else
 			{
-				BuildException fail("OutputLenguaje is unknow.");
+				BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}
@@ -470,9 +554,13 @@ data_type: BIT opt_length end
 			{
 				driver.oneLine = "String";
 			}
+			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
+			{
+                driver.oneLine = "String";
+			}
 			else
 			{
-				BuildException fail("OutputLenguaje is unknow.");
+				BuildException fail("OutputLenguaje is unknow in parser.");
 				driver.getOutput().add(fail);
 				driver.oneLine =  "";
 			}

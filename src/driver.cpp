@@ -271,6 +271,21 @@ namespace apidb
             }
             //std::cout << "Driver::generate : Step 2.3\n";
 		}
+		else if(configureProject.outputLenguaje == apidb::OutputLenguajes::PHP)
+		{
+            //std::cout << "Driver::generate : Step 2.1\n";
+			apidb::generators::PHP php(*analyzer,configureProject);
+            //std::cout << "Driver::generate : Step 2.2\n";
+			if(!php.generate(true)) progress->add("Fallo la generacion de codigo fuente.\n");
+            /*
+            if(configureProject.packing == PackingLenguajes::Maven)
+            {
+                apidb::generators::Maven maven(*analyzer,configureProject);
+                if(!maven.generate(true)) progress->add("Fallo la generacion de empaquetado.\n");
+            }
+            */
+            //std::cout << "Driver::generate : Step 2.3\n";
+		}
 		else
 		{
 			return false;

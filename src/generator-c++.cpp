@@ -965,7 +965,7 @@ namespace generators
             
         }
     }
-    
+    /*
     void CPP::getKey2(std::ofstream& ofile, const symbols::Symbol* k)
     {
         if(k->symbolReferenced != NULL)
@@ -978,6 +978,7 @@ namespace generators
             ofile << ".get" << k->getUpperName() << "()";
         }
     }
+    */
     void CPP::writeSelectInstancetObjectDataCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
 		ofile << "\t"<< "bool " << table.name << "::";
@@ -1589,6 +1590,7 @@ namespace generators
         }
 		ofile << "\t}" <<std::endl;
 	}
+	/*
 	void CPP::getKey(std::ofstream& ofile, const symbols::Symbol* k)
     {
         if(k->symbolReferenced != NULL)
@@ -1601,6 +1603,7 @@ namespace generators
             ofile << ".get" << k->getUpperName() << "()";
         }
     }
+    */
 	void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		writeDefaultContructorCPP(table,ofile);        
@@ -1841,7 +1844,6 @@ namespace generators
         
 	void CPP::writeSelectStaticH(const apidb::symbols::Table& table, std::ofstream& ofile)
 	{
-			
             if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
             {        
                 ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::db::mysql::Connector& connector,const std::string& where, int leng = -1);"<<std::endl;
@@ -1857,7 +1859,7 @@ namespace generators
             else
             {
                 std::string msg = "Lenguaje no soportado " ;
-                throw BuildException(msg);
+                throw BuildException(msg,__FILE__,__LINE__);
             }
                 
 			//std::cout << "List Select Count : " << configureProject.selects.size() << std::endl;

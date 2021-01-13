@@ -135,6 +135,9 @@ namespace apidb
                         case OutputLenguajes::JAVA:
                                 xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"Java");
                                 break;
+                        case OutputLenguajes::PHP:
+                                xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"Php");
+                                break;
                         default:
                                 throw core::Exception("Lenguaje de salida desconocido.",__FILE__,__LINE__);
                 }
@@ -790,6 +793,10 @@ namespace apidb
                 else if(outL.compare("Java") == 0)
                 {
                         outputLenguaje = OutputLenguajes::JAVA;
+                }
+                else if(outL.compare("PHP") == 0)
+                {
+                        outputLenguaje = OutputLenguajes::PHP;
                 }
                 else
                 {

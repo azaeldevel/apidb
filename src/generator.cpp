@@ -85,6 +85,94 @@ namespace generators
 		return configureProject.outputLenguaje;
 	}
 	
+	symbols::Symbol* Generator::getRootSymbol(symbols::Symbol* k)
+    {
+        if(k == NULL) return NULL;
+        
+        if(k->symbolReferenced != NULL)
+        {
+            return getRootSymbol(k->symbolReferenced);
+        }
+        else
+        {
+            return k;
+        }
+    }
+    
+	void Generator::insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
+    {
+        if(k->symbolReferenced != NULL)
+        {
+            if(k->symbolReferenced->symbolReferenced != NULL)
+            {
+                insertParamsRaw(ofile,k->symbolReferenced,parent);
+            }     
+            else
+            {
+                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
+                penultimo--;
+                penultimo--;
+                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
+                {
+                    ofile << l->outType << " " << parent->name << l->upperName;
+                    if(*penultimo != l)
+                    {
+                        ofile << ",";
+                    }
+                }
+            }
+        }
+    }
+    
+	void Generator::insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
+    {
+        if(k->symbolReferenced != NULL)
+        {
+            if(k->symbolReferenced->symbolReferenced != NULL)
+            {
+                insertValueRaw(ofile,k->symbolReferenced,parent);
+            }     
+            else
+            {
+                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
+                penultimo--;
+                penultimo--;
+                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
+                {
+                    ofile << parent->name << l->upperName;
+                    if(*penultimo != l)
+                    {
+                        ofile << ",";
+                    }
+                }
+            }
+        }
+    }
+    void Generator::getKey(std::ofstream& ofile, const symbols::Symbol* k)
+    {
+        if(k->symbolReferenced != NULL)
+        {            
+            ofile << ".get" << k->getUpperName() << "()";
+            getKey2(ofile,k->symbolReferenced);
+        }
+        else
+        {
+            ofile << ".get" << k->getUpperName() << "()";
+        }
+    }
+    
+    void Generator::getKey2(std::ofstream& ofile, const symbols::Symbol* k)
+    {
+        if(k->symbolReferenced != NULL)
+        {            
+            ofile << ".get" << k->getUpperName() << "()";
+            getKey2(ofile,k->symbolReferenced);
+        }
+        else
+        {
+            ofile << ".get" << k->getUpperName() << "()";
+        }
+    }
 }
 }
 }

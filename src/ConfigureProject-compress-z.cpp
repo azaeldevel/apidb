@@ -102,7 +102,30 @@ bool ConfigureProject::compress(const std::string& tarf, char * tmp_apidbDir,con
 
 bool ConfigureProject::unmcompress(const std::string& filename,char* tmp_apidbDir)
 {
-    
+    int err = 0;
+    zip *z = zip_open("foo.zip", 0, &err);
+
+    //Search for the file of given name
+    const char *name = "file.txt";
+    struct zip_stat st;
+    zip_stat_init(&st);
+    zip_stat(z, name, 0, &st);
+
+    //Alloc memory for its uncompressed contents
+    char *contents = new char[st.size];
+
+    //Read the compressed file
+    zip_file *f = zip_fopen(z, "file.txt", 0);
+    zip_fread(f, contents, st.size);
+    zip_fclose(f);
+
+    //And close the archive
+    zip_close(z);
+    if(!std::ofstream("file1.txt").write(contents, st.size))
+    {
+        std::cerr << "Error writing file" << '\n';
+        return EXIT_FAILURE;
+    }
     return true;
 }
 

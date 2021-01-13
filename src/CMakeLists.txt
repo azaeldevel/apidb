@@ -204,16 +204,10 @@ ELSE()
         MESSAGE(FATAL_ERROR "No se encontro OpenSSL.")
 ENDIF()
 
-PKG_CHECK_MODULES(LIBZIP REQUIRED libzip)
-IF(LIBZIP_FOUND)
-	INCLUDE_DIRECTORIES(${LIBZIP_INCLUDE_DIR})
-ELSE()
-        MESSAGE(FATAL_ERROR "No se encontro LIBZIP.")
-ENDIF()
 
 ###################################################################################################
 ###BUILD
-SET(LIBRARIES  ${OCTETOS_CORE_LIBRARIES} ${OCTETOS_COREUTILS_LIBRARIES} ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${TAR_LIBRARIES} ${GTK3_LIBRARIES} ${CUNIT_LIBRARIES} ${OCTETOS_DB_ABSTRACT_LIBRARIES} ${CMAKE_DL_LIBS} ${OPENSSL_LIBRARIES} ${LIBZIP_LIBRARIES})
+SET(LIBRARIES  ${OCTETOS_CORE_LIBRARIES} ${OCTETOS_COREUTILS_LIBRARIES} ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${TAR_LIBRARIES} ${GTK3_LIBRARIES} ${CUNIT_LIBRARIES} ${OCTETOS_DB_ABSTRACT_LIBRARIES} ${CMAKE_DL_LIBS} ${OPENSSL_LIBRARIES})
 IF(APIDB_MYSQL STREQUAL "Y")
     SET(LIBRARIES ${LIBRARIES} ${OCTETOS_DB_MYSQL_LIBRARIES} ${MYSQL_LIBRARIES})
 ENDIF()
@@ -256,13 +250,13 @@ set_target_properties(${CMAKE_PROJECT_NAME}-Driver-obj  PROPERTIES POSITION_INDE
 ADD_LIBRARY(${CMAKE_PROJECT_NAME}-Driver SHARED $<TARGET_OBJECTS:${CMAKE_PROJECT_NAME}-Driver-obj>)
 
 
-ADD_LIBRARY(${CMAKE_PROJECT_NAME}-obj  OBJECT apidb.cpp analyzer.cpp generator.cpp generator-cmake.cpp generator-maven.cpp generator-c++.cpp generator-java.cpp generator-java.cpp  driver.cpp common.cpp)
+ADD_LIBRARY(${CMAKE_PROJECT_NAME}-obj  OBJECT apidb.cpp analyzer.cpp generator.cpp generator-cmake.cpp generator-maven.cpp generator-c++.cpp generator-java.cpp generator-java.cpp  driver.cpp common.cpp generator-php.cpp)
 set_target_properties(${CMAKE_PROJECT_NAME}-obj  PROPERTIES POSITION_INDEPENDENT_CODE 1 ) 
 
 ADD_LIBRARY(${CMAKE_PROJECT_NAME} SHARED $<TARGET_OBJECTS:${CMAKE_PROJECT_NAME}-obj>)
 TARGET_LINK_LIBRARIES(${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-Driver ${LIBRARIES})
 
-ADD_LIBRARY(${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}-obj  OBJECT ConfigureProject.cpp ConfigureProject-xml.cpp  ConfigureProject-compress-z.cpp)
+ADD_LIBRARY(${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}-obj  OBJECT ConfigureProject.cpp ConfigureProject-xml.cpp  ConfigureProject-compress-tar.cpp)
 set_target_properties(${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}-obj  PROPERTIES POSITION_INDEPENDENT_CODE 1 )
 ADD_LIBRARY(${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} SHARED $<TARGET_OBJECTS:${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}-obj>)
 TARGET_LINK_LIBRARIES(${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES})
@@ -273,7 +267,7 @@ TARGET_LINK_LIBRARIES(${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_
 
 
 
- 
+
 
 
 IF(APIDB_MYSQL STREQUAL "Y")

@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     
     configProject.builDirectory = "muposys";
     configProject.space = "muposys::db";
-    configProject.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;
+    configProject.outputLenguaje = octetos::apidb::OutputLenguajes::PHP;
     configProject.packing = octetos::apidb::PackingLenguajes::OnlyCode;
     configProject.compiled = octetos::apidb::Compiled::NoCompile;
     
@@ -50,9 +50,9 @@ int main(int argc, char **argv)
     configProject.packing = octetos::apidb::PackingLenguajes::CMake;
     */
     
-    configProject.saveConfig("muposys.apidb");
+    //configProject.saveConfig("muposys.apidb");
     
-    octetos::apidb::ConfigureProject configProject2;
+    //octetos::apidb::ConfigureProject configProject2;
     //configProject2.readConfig("muposys.apidb");
     
     //std::cout << "Step 3\n";
