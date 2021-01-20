@@ -36,7 +36,189 @@ namespace apidb
 {
 namespace generators
 { 
-	
+    
+    
+    
+	Operation::Operation(const ConfigureProject& c,const apidb::symbols::Table& t,std::ofstream& o) : configureProject(c), table(t), ofile(o)
+    {
+        definition = false;
+        implementation = false;
+    }
+    const char* Operation::opConcat() const
+    {
+        switch(configureProject.outputLenguaje)
+        {
+            case OutputLenguajes::CPP:
+                return "+";
+            case OutputLenguajes::JAVA:
+                return "+";
+            case OutputLenguajes::PHP:
+                return ".";
+            default:
+                return NULL;            
+        }
+    }   
+    const char* Operation::opReference() const
+    {        
+        switch(configureProject.outputLenguaje)
+        {
+            case OutputLenguajes::CPP:
+                return ".";
+            case OutputLenguajes::JAVA:
+                return ".";
+            case OutputLenguajes::PHP:
+                return "->";
+            default:
+                return NULL;            
+        }
+    }
+    const char* Operation::stringType() const
+    {   
+        switch(configureProject.outputLenguaje)
+        {
+            case OutputLenguajes::CPP:
+                return "std::string";
+            case OutputLenguajes::JAVA:
+                return "String";
+            case OutputLenguajes::PHP:
+                return "String";
+            default:
+                return NULL;            
+        }        
+    }
+    const char* Operation::integerType() const
+    {   
+        switch(configureProject.outputLenguaje)
+        {
+            case OutputLenguajes::CPP:
+                return "int";
+            case OutputLenguajes::JAVA:
+                return "int";
+            case OutputLenguajes::PHP:
+                return "Integer";
+            default:
+                return NULL;            
+        }        
+    }
+    const char* Operation::getsqlString()const
+    {
+        switch(configureProject.outputLenguaje)
+        {
+            case OutputLenguajes::CPP:
+                return "sqlString";
+            case OutputLenguajes::JAVA:
+                return "sqlString";
+            case OutputLenguajes::PHP:
+                return "$sqlString";
+            default:
+                return NULL;            
+        } 
+    }
+    void Operation::setDefinition(bool d)
+    {
+        definition = d;
+    }
+    void Operation::setImplementation(bool i)
+    {
+        implementation = i;
+    }
+    void Operation::inheritField(std::ofstream& ofile, const symbols::Symbol* k, const char* separator)
+    {
+        if(k->symbolReferenced != NULL)
+        {            
+            ofile << separator << "get" << k->getUpperName() << "()";
+            inheritField(ofile,k->symbolReferenced,separator);
+        }
+        else
+        {
+            ofile << separator <<  "get" << k->getUpperName() << "()";
+        }
+    }    
+	void Operation::insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
+    {
+        if(k->symbolReferenced != NULL)
+        {
+            if(k->symbolReferenced->symbolReferenced != NULL)
+            {
+                insertParamsRaw(ofile,k->symbolReferenced,parent);
+            }     
+            else
+            {
+                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
+                penultimo--;
+                penultimo--;
+                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
+                {
+                    
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << l->outType << " " << parent->name << l->upperName;
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << l->outType << " " << parent->name << l->upperName;
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << parent->name << l->upperName;
+                            break;
+                        default:
+                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                    if(*penultimo != l)
+                    {
+                        ofile << ",";
+                    }
+                }
+            }
+        }
+    }    
+	void Operation::insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
+    {
+        if(k->symbolReferenced != NULL)
+        {
+            if(k->symbolReferenced->symbolReferenced != NULL)
+            {
+                insertValueRaw(ofile,k->symbolReferenced,parent);
+            }     
+            else
+            {
+                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
+                penultimo--;
+                penultimo--;
+                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
+                {
+                    ofile << parent->name << l->upperName;
+                    if(*penultimo != l)
+                    {
+                        ofile << ",";
+                    }
+                }
+            }
+        }
+    }
+    symbols::Symbol* Operation::getRootSymbol(symbols::Symbol* k)
+    {
+        if(k == NULL) return NULL;
+        
+        if(k->symbolReferenced != NULL)
+        {
+            return getRootSymbol(k->symbolReferenced);
+        }
+        else
+        {
+            return k;
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 	const symbols::SymbolsTable& Generator::getSymbolsTable()const
 	{
 		return analyzer.symbolsTable;

@@ -77,7 +77,50 @@ namespace apidb
 			const symbols::SymbolsTable& getSymbolsTable()const;
 			coreutils::Shell shell;
 		};
+        
+        class Operation
+        {
+        public:
+            Operation(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
+            virtual bool generate() = 0;   
+            const char* opConcat() const;
+            const char* opReference() const;
+            const char* stringType() const;
+            const char* integerType() const;
+            void setDefinition(bool);
+            void setImplementation(bool);
+            symbols::Symbol* getRootSymbol(symbols::Symbol* k);
+            /**
+            * @brief genera una llada recursiva para el componete indicado
+            * @condition se debe llamar con k->symbolReferenced
+            * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
+            */
+            virtual void inheritField(std::ofstream& ofile, const symbols::Symbol* k, const char* separator);
+            
+            void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+            void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+            const char* getsqlString()const;
+        protected:
+            const ConfigureProject& configureProject;
+            const apidb::symbols::Table& table;
+            std::ofstream& ofile;
+            bool definition;
+            bool implementation;
+        };
+        
+        class Insert : public Operation
+        {          
+        public:
+            Insert(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
+            virtual bool generate();
+            
+        private:
+            bool definite();
+            bool implement();
+        };
 
+        
+        
 		/**
 		* \private
 		* */

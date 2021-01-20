@@ -21,23 +21,28 @@ int main(int argc, char **argv)
         std::cerr << "Fallo en laconexion \n";
         return EXIT_FAILURE;
     }
-    //std::cout << "Step 2\n";
-    
-    
-    octetos::apidb::ConfigureProject configProject;
-    configProject.name = "muposys";    
-	configProject.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);    
+    //std::cout << "Step 2\n";      
 	octetos::core::Semver version;
 	version.setNumbers(0,1,0);
-    version.setPrerelease("alpha");    
-    configProject.versionResult = version;
-	configProject.writeDatconnect = "conector";
+    version.setPrerelease("alpha"); 
     
-    configProject.builDirectory = "muposys";
-    configProject.space = "muposys::db";
+    
+    octetos::apidb::ConfigureProject configProjectCpp;
+    configProjectCpp.name = "muposys";    
+	configProjectCpp.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);     
+    configProjectCpp.versionResult = version;
+	configProjectCpp.writeDatconnect = "conector";
+    configProjectCpp.builDirectory = "muposys";
+    configProjectCpp.space = "muposys::db";
+    configProjectCpp.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;
+    configProjectCpp.packing = octetos::apidb::PackingLenguajes::CMake;
+    configProjectCpp.compiled = octetos::apidb::Compiled::STATIC;  
+    
+    /*PHP
     configProject.outputLenguaje = octetos::apidb::OutputLenguajes::PHP;
     configProject.packing = octetos::apidb::PackingLenguajes::OnlyCode;
     configProject.compiled = octetos::apidb::Compiled::NoCompile;
+    */
     
     //configProject.builDirectory = "/home/azael/develop/octetos/muposys/java/muposys-db/src/main/java/octetos/muposys/db";
     //configProject.space = "octetos.muposys.db";
@@ -56,7 +61,7 @@ int main(int argc, char **argv)
     //configProject2.readConfig("muposys.apidb");
     
     //std::cout << "Step 3\n";
-    octetos::apidb::Driver driver(configProject);
+    octetos::apidb::Driver driver(configProjectCpp);
 
     //std::cout << "Step 4\n";
     octetos::apidb::Tracer tracer(0);
@@ -75,6 +80,50 @@ int main(int argc, char **argv)
         
     }
     //std::cout << "Step 6\n";
+    
+    
+    octetos::apidb::ConfigureProject configProjectJava;
+    configProjectCpp.name = "muposys";    
+	configProjectCpp.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);   
+    configProjectCpp.versionResult = version;
+	configProjectCpp.writeDatconnect = "conector";
+    configProjectCpp.builDirectory = "muposys";
+    configProjectCpp.space = "octetos.muposys.db";
+    configProjectCpp.outputLenguaje = octetos::apidb::OutputLenguajes::JAVA;
+    configProjectCpp.packing = octetos::apidb::PackingLenguajes::NoPack;
+    configProjectCpp.compiled = octetos::apidb::Compiled::NoCompile; 
+    octetos::apidb::Driver driverJava(configProjectCpp);
+    octetos::apidb::Tracer tracerJava(0);
+    try
+    {
+        driverJava.driving(&tracerJava);
+    }
+    catch(const std::exception& ex)
+    {
+        std::cerr << "Error : " << ex.what() << "\n";
+    }
+    
+    
+    octetos::apidb::ConfigureProject configProjectPHP;
+    configProjectPHP.name = "muposys";    
+	configProjectPHP.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);   
+    configProjectPHP.versionResult = version;
+	configProjectPHP.writeDatconnect = "conector";
+    configProjectPHP.builDirectory = "muposys";
+    //configProjectPHP.space = "octetos.muposys.db";
+    configProjectPHP.outputLenguaje = octetos::apidb::OutputLenguajes::PHP;
+    configProjectPHP.packing = octetos::apidb::PackingLenguajes::NoPack;
+    configProjectPHP.compiled = octetos::apidb::Compiled::NoCompile; 
+    octetos::apidb::Driver driverPHP(configProjectPHP);
+    octetos::apidb::Tracer tracerPHP(0);
+    try
+    {
+        driverPHP.driving(&tracerPHP);
+    }
+    catch(const std::exception& ex)
+    {
+        std::cerr << "Error : " << ex.what() << "\n";
+    }
     
     return EXIT_SUCCESS;
 }
