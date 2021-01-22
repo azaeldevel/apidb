@@ -112,7 +112,7 @@ namespace generators
                 return "$sqlString";
             default:
                 return NULL;            
-        } 
+        }
     }
     void Operation::setDefinition(bool d)
     {

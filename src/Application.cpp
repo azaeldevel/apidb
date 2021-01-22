@@ -814,26 +814,26 @@ namespace apidb
         }  
 	void Application::documen_open(Application* app,const std::string& filename)
 	{
-		std::cout << "Application::documen_open: Step 1 "<< std::endl;
+		//std::cout << "Application::documen_open: Step 1 "<< std::endl;
 		if(app->config == NULL)
 		{
 			app->config = new ConfigureProject();
 		}
 		
-		std::cout << "Application::documen_open : Step 2" << std::endl;
+		//std::cout << "Application::documen_open : Step 2" << std::endl;
 		try
 		{
-			std::cout << "Application::documen_open : Step 2.1" << std::endl;            
-			std::cout << "Application::documen_open : Step 2.2" << std::endl;
+			//std::cout << "Application::documen_open : Step 2.1" << std::endl;            
+			//std::cout << "Application::documen_open : Step 2.2" << std::endl;
 			app->config->readConfig(filename);          
-			std::cout << "Application::documen_open : Step 2.3" << std::endl;
+			//std::cout << "Application::documen_open : Step 2.3" << std::endl;
 			if(!app->config->checkFailLoadDat())
 			{
 				app->originFilename = filename;
 				app->createNotebook();          
-                std::cout << "Application::documen_open : Step 2.4" << std::endl;
+                //std::cout << "Application::documen_open : Step 2.4" << std::endl;
 				app->loadConfig();          
-                std::cout << "Application::documen_open : Step 2.5" << std::endl;
+                //std::cout << "Application::documen_open : Step 2.5" << std::endl;
 				app->setSaved(true);
 				app->isOpen = true;
 				app->isNew = false;
@@ -1138,23 +1138,21 @@ namespace apidb
 		gtk_widget_set_events(inName,GDK_KEY_PRESS_MASK);
 		g_signal_connect(G_OBJECT(inName), "key-press-event", G_CALLBACK(inName_keypress), this);
                 
-                GtkWidget *boxVer = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                GtkWidget * lbVer = gtk_label_new ("Version: ");
-                gtk_box_pack_start(GTK_BOX(boxVer), lbVer, FALSE, FALSE,0); 
-                inVer = gtk_entry_new();
-                gtk_box_pack_start(GTK_BOX(boxVer), inVer, FALSE, FALSE,0);   
-                gtk_box_pack_start(GTK_BOX(boxInfo), boxVer, FALSE, FALSE,0);
-                g_signal_connect(G_OBJECT(inVer), "key-press-event", G_CALLBACK(inVer_keypress), this);
-                
+        GtkWidget *boxVer = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+        GtkWidget * lbVer = gtk_label_new ("Version: ");
+        gtk_box_pack_start(GTK_BOX(boxVer), lbVer, FALSE, FALSE,0); 
+        inVer = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(boxVer), inVer, FALSE, FALSE,0);   
+        gtk_box_pack_start(GTK_BOX(boxInfo), boxVer, FALSE, FALSE,0);
+        g_signal_connect(G_OBJECT(inVer), "key-press-event", G_CALLBACK(inVer_keypress), this);
+        
 		GtkWidget *boxInL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
 		GtkWidget * lbInL = gtk_label_new ("Lenguaje de Entrada:");
 		gtk_box_pack_start(GTK_BOX(boxInL), lbInL, FALSE, FALSE,0); 
 		inInL = gtk_combo_box_text_new();
-		std::string namestr;
-		
+		std::string namestr;		
 		gtk_combo_box_text_insert((GtkComboBoxText*)inInL,0,"selecione","Selecione..."); 
-		gtk_combo_box_set_active((GtkComboBox*)inInL,0);
-		
+		gtk_combo_box_set_active((GtkComboBox*)inInL,0);		
 		namestr = getInputLenguaje(InputLenguajes::MySQL);	gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,namestr.c_str(),namestr.c_str());
 		namestr = getInputLenguaje(InputLenguajes::PostgreSQL);		gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::PostgreSQL,namestr.c_str(),namestr.c_str());	
 		namestr = getInputLenguaje(InputLenguajes::MariaDB);	gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MariaDB,namestr.c_str(),namestr.c_str());
@@ -1552,19 +1550,23 @@ namespace apidb
                 GtkWidget *lbInfo = gtk_label_new (titleInfo);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxInfo,lbInfo);
                 createNotebookInfo(boxInfo);
+                
                 boxConex = gtk_box_new (GTK_ORIENTATION_VERTICAL,4);
                 GtkWidget * lbConex = gtk_label_new (titleConex);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxConex,lbConex);
                 g_signal_connect(GTK_NOTEBOOK (notebookMain), "switch-page", G_CALLBACK(conex_switchPage), this);
                 createNotebookConexion(boxConex);
+                
                 GtkWidget * lbDowns = gtk_label_new (titleDowns);
                 boxDowns = gtk_box_new (GTK_ORIENTATION_VERTICAL,1);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxDowns,lbDowns);
                 downsTree =  new TreeView(boxDowns,&(config->downloads),this);
+                
                 GtkWidget * lbSels = gtk_label_new (titleSelects);
                 boxSelects = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
                 gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxSelects,lbSels);
                 selectsTree =  new TreeView(boxSelects,&(config->selects),this);
+                
                 gtk_box_pack_start(GTK_BOX(vboxMain), notebookMain, FALSE, FALSE,0);
                 
                 return true;

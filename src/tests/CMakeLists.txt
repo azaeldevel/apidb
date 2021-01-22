@@ -8,9 +8,9 @@ TARGET_LINK_LIBRARIES(sandbox-generator ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NA
 #ADD_EXECUTABLE(sandbox-queries sandbox-queries.cpp ${CMAKE_CURRENT_BINARY_DIR}/muposys-nlst/muposys.cpp)
 #TARGET_LINK_LIBRARIES(sandbox-queries ${LIBRARIES}) 
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/muposys)
-ADD_EXECUTABLE(sandbox-inserts sandbox-inserts.cpp ${CMAKE_CURRENT_BINARY_DIR}/muposys/muposys.cpp)
-TARGET_LINK_LIBRARIES(sandbox-inserts ${LIBRARIES}) 
+#include_directories(${CMAKE_CURRENT_BINARY_DIR}/muposys)
+#ADD_EXECUTABLE(sandbox-siud sandbox-siud.cpp ${CMAKE_CURRENT_BINARY_DIR}/muposys/muposys.cpp)
+#TARGET_LINK_LIBRARIES(sandbox-siud ${LIBRARIES}) 
 
 #ADD_EXECUTABLE(sandbox-build sandbox-build.cpp)
 #TARGET_LINK_LIBRARIES(sandbox-build ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES})

@@ -286,6 +286,7 @@ namespace generators
 		
     void PHP::writeSelectStatic(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
+        /*
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
             ofile << "\tpublic static function select($connector,$where,$leng = -1)"<<std::endl;
@@ -364,25 +365,6 @@ namespace generators
             }
         }
         ofile << ");\n";
-        /*for(auto k : table.getKey())
-        {
-            if(k->getOutType().compare("String") == 0)
-            {
-                ofile << "\t\t\t\techo \"id : \" . $rs->tString(\"" << k->name << "\");";
-            }
-            else if(k->getOutType().compare("int") == 0)
-            {
-                ofile << "\t\t\t\techo \"id : \" . $rs->getInt(\"" << k->name << "\");";
-            }
-            else
-            {
-                ofile << "\t\t\t\techo \"id : \" . $rs->getString(\"" << k->name << "\");";                
-            }
-            if(k != *endK2)
-            {
-                ofile << ",";
-            }
-        }*/
         ofile << "\n";
         ofile << "\t\t\t\tarray_push($tmpVc,$tmp);" << std::endl;
             ofile << "\t\t\t}"<< std::endl;
@@ -580,7 +562,10 @@ namespace generators
                 ofile << "\t}"<<std::endl;
                 
             }
-        }
+        }*/
+        Select select(configureProject,table,ofile);
+        select.setImplementation(true);
+        select.generate();
     }
 	void PHP::writeDownloads(const apidb::symbols::Table& table, std::ofstream& ofile)
     {

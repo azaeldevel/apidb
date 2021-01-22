@@ -395,7 +395,7 @@ namespace octetos::apidb::generators
                             ofile << " " << opConcat() << " ";
                             break;
                         default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     }
                     
                     if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$this->";

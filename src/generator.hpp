@@ -87,6 +87,7 @@ namespace apidb
             const char* opReference() const;
             const char* stringType() const;
             const char* integerType() const;
+            const char* identifier(const char*) const;
             void setDefinition(bool);
             void setImplementation(bool);
             symbols::Symbol* getRootSymbol(symbols::Symbol* k);
@@ -119,7 +120,16 @@ namespace apidb
             bool implement();
         };
 
-        
+        class Select : public Operation
+        {          
+        public:
+            Select(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
+            virtual bool generate();
+            
+        private:
+            bool definite_static();
+            bool implement_static();
+        };
         
 		/**
 		* \private

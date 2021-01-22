@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string>
 #include <octetos/core/MD5sum.hh>
+#include <vector>
+
 
 int main(int argc, char **argv)
 {
@@ -28,13 +30,12 @@ int main(int argc, char **argv)
     time_t t;
     srand((unsigned) time(&t));
     int r = rand() % 10000;
-    std::string userstr,name;
+    std::string userstr,name,userstr2,name2;
     
     userstr = "user-";
     userstr += std::to_string(r);
     name = "name-";
-    name += std::to_string(r);
-    
+    name += std::to_string(r);    
     muposys::db::Users user;
     if(user.insert(connector,userstr,name))
     {
@@ -46,7 +47,30 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     
+    r = rand() % 10000;
+    userstr2 = "user-";
+    userstr2 += std::to_string(r);
+    name2 = "name-";
+    name2 += std::to_string(r);    
+    muposys::db::Users user2;
+    if(user2.insert(connector,userstr2,name2))
+    {
+        std::cerr << "insert : " << name2 << " \n";
+    }
+    else
+    {
+        std::cerr << "Fallo en insert" << name2 << " \n";
+        return EXIT_FAILURE;
+    }
+    
     connector.commit();
+    
+    std::vector<muposys::db::Users*>* userList = muposys::db::Users::select(connector,"person != 0",10);
+    for(muposys::db::Users* u : *userList)
+    {
+        std::cout << "user id=" << u->getPerson().getEnte().getID() << "\n";
+    }
+    
     
     return EXIT_SUCCESS;
 }
