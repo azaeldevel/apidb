@@ -36,8 +36,10 @@ namespace apidb
 {
 namespace generators
 {
+    
     void CPP::writeUppdatersCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
+        /*
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
             if(not it->second->isPrimaryKey())
@@ -170,6 +172,10 @@ namespace generators
 				ofile << "\t}"<<std::endl;	
             } 
         }
+        */
+        Update update(configureProject,table,ofile);
+        update.setImplementation(true);
+        update.generate();
     }
     void CPP::writeGettersCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
@@ -206,46 +212,9 @@ namespace generators
     }
     void CPP::writeUppdatersH(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
-        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
-        {
-            if(not it->second->isPrimaryKey())
-            {
-                if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-                {        
-                    ofile << "\t\tbool " << "update" << it->second->getUpperName() << "(octetos::db::mysql::Connector& connector,";
-                }
-                else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-                {
-                    ofile << "\t\tbool " << "update" << it->second->getUpperName() << "(octetos::db::maria::Connector& connector,";
-                }
-                else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-                {
-                    ofile << "\t\tbool " << "update" << it->second->getUpperName() << "(octetos::db::postgresql::Connector& connector,";
-                }
-                else
-                {
-                    std::string msg = "Lenguaje no soportado " ;
-                    throw BuildException(msg);
-                }
-                if(it->second->getClassReferenced() != 0)
-                {
-                    ofile << " const " << it->second->getClassReferenced()->getName() << "& " << it->second->getName();
-                }
-                else if((it->second->getOutType().compare("std::string") == 0))
-                {
-                    ofile << "const std::string& " << it->second->getName();
-                }
-                else if((it->second->getOutType().compare("int") == 0) | (it->second->getOutType().compare("long") == 0))
-                {
-                    ofile << it->second->getOutType() << " " << it->second->getName();						
-                }
-                else
-                {
-                    ofile << it->second->getOutType() << " " << it->second->getName();
-                }
-                ofile << ");"<< std::endl;
-            }
-        }
+        Update update(configureProject,table,ofile);
+        update.setDefinition(true);
+        update.generate();
     }
 	void CPP::writeGettersH(const apidb::symbols::Table& table, std::ofstream& ofile)
     {

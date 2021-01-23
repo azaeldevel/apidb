@@ -131,6 +131,17 @@ namespace apidb
             bool implement_static();
         };
         
+        class Update : public Operation
+        {
+        public:
+            Update(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
+            virtual bool generate();
+            
+        private:
+            bool definite();
+            bool implement();
+        };
+        
 		/**
 		* \private
 		* */

@@ -149,7 +149,6 @@ namespace generators
                 penultimo--;
                 for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
                 {
-                    
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:

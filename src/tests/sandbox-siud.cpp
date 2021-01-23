@@ -2,7 +2,6 @@
 #include <iostream>
 #include <fstream>
 #include <muposys.hpp>
-#include <mysql/mysql.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -39,7 +38,7 @@ int main(int argc, char **argv)
     muposys::db::Users user;
     if(user.insert(connector,userstr,name))
     {
-        std::cerr << "insert : " << name << " \n";
+        std::cout << "insert : " << name << " \n";
     }
     else
     {
@@ -47,6 +46,11 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     
+    octetos::core::MD5sum md5(std::to_string(user.getPerson().getEnte().getID()));
+    if(user.getPerson().getEnte().upMd5sum(connector,md5))
+    {
+        std::cout << "update id=" << user.getPerson().getEnte().getID() << ", name=" << (const std::string&)md5 << " \n";
+    }
     r = rand() % 10000;
     userstr2 = "user-";
     userstr2 += std::to_string(r);
