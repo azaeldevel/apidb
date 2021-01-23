@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     octetos::core::MD5sum md5(std::to_string(user.getPerson().getEnte().getID()));
     if(user.getPerson().getEnte().upMd5sum(connector,md5))
     {
-        std::cout << "update id=" << user.getPerson().getEnte().getID() << ", name=" << (const std::string&)md5 << " \n";
+        std::cout << "update id=" << user.getPerson().getEnte().getID() << ", md5=" << (const std::string&)md5 << " \n";
     }
     r = rand() % 10000;
     userstr2 = "user-";

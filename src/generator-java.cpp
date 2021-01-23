@@ -38,6 +38,7 @@ namespace generators
 {
     void Java::writeUppdaters(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
+        /*
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
             if(not it->second->isPrimaryKey())
@@ -170,6 +171,10 @@ namespace generators
 				ofile << "\t}"<<std::endl;	
             } 
         }
+        */
+        Update update(configureProject,table,ofile);
+        update.setImplementation(true);
+        update.generate();
     }
     
     void Java::writeGetters(const apidb::symbols::Table& table, std::ofstream& ofile)
@@ -230,25 +235,6 @@ namespace generators
             msg = msg + getOutputLenguajeString()+ "', pero el componente es Java.";
             throw BuildException(msg);
         }
-                
-		//outputLenguaje = d.getOutputLenguaje();
-		/*
-        writeResults = new std::ofstream[2];
-        if((configureProject.builDirectory.empty()) | (configureProject.builDirectory.compare(".") == 0)) 
-		{
-			projectH = configureProject.name + ".hpp";
-			writeResults[0].open(projectH);
-			projectCPP = configureProject.name + ".cpp";
-			writeResults[1].open(projectCPP);
-		}
-		else
-		{
-			projectH = configureProject.name + ".hpp";
-			projectCPP = configureProject.name + ".cpp";
-			writeResults[0].open(configureProject.builDirectory + "/" + projectH);
-			writeResults[1].open(configureProject.builDirectory + "/" + projectCPP);
-		}
-		*/
 	}
 	bool Java::generate(bool log)
 	{
