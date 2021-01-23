@@ -101,6 +101,7 @@ namespace apidb
             void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
             void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
             const char* getsqlString()const;
+            bool echoKey()const;
         protected:
             const ConfigureProject& configureProject;
             const apidb::symbols::Table& table;
@@ -135,6 +136,17 @@ namespace apidb
         {
         public:
             Update(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
+            virtual bool generate();
+            
+        private:
+            bool definite();
+            bool implement();
+        };
+        
+        class Remove : public Operation
+        {
+        public:
+            Remove(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
             virtual bool generate();
             
         private:
@@ -192,6 +204,10 @@ namespace apidb
             //methodes
 			void createClassMethodesH(const apidb::symbols::Table&,std::ofstream&);
 			void createClassMethodesCPP(const apidb::symbols::Table&,std::ofstream&);            
+                        
+            //updatter
+            void writeRemovesH(const apidb::symbols::Table& table, std::ofstream& ofile);
+            void writeRemovesCPP(const apidb::symbols::Table& table, std::ofstream& ofile);
             
 			//varias
 			bool createH(std::ofstream& file,bool log,const symbols::SymbolsTable&);

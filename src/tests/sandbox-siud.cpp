@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     time_t t;
     srand((unsigned) time(&t));
     int r = rand() % 10000;
-    std::string userstr,name,userstr2,name2;
+    std::string userstr,name,userstr2,name2,userstr3,name3;
     
     userstr = "user-";
     userstr += std::to_string(r);
@@ -64,6 +64,31 @@ int main(int argc, char **argv)
     else
     {
         std::cerr << "Fallo en insert" << name2 << " \n";
+        return EXIT_FAILURE;
+    }
+    
+    r = rand() % 10000;
+    userstr3 = "user-";
+    userstr3 += std::to_string(r);
+    name3 = "name-";
+    name3 += std::to_string(r);    
+    muposys::db::Users user3;
+    if(user3.insert(connector,userstr3,name3))
+    {
+        std::cout << "insert : " << name3 << " \n";
+    }
+    else
+    {
+        std::cerr << "Fallo en insert" << name3 << " \n";
+        return EXIT_FAILURE;
+    }
+    if(user3.remove(connector))
+    {
+        std::cout << "delete : " << name3 << " \n";
+    }
+    else
+    {
+        std::cerr << "Fallo en delete" << name3 << " \n";
         return EXIT_FAILURE;
     }
     

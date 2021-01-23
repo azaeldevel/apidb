@@ -317,7 +317,7 @@ namespace octetos::apidb::generators
         }
         else
         {
-            ofile << "tmp = new " << table.getName() << "(\n";
+            ofile << "tmp = new " << table.getName() << "(";
         }
         
         auto endK2 = table.getKey().end();
@@ -378,7 +378,7 @@ namespace octetos::apidb::generators
         if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
         ofile << "tmpVc;" << std::endl;
         ofile << "\t\t}" << std::endl;
-        if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "\t\treturn NULL;";
+        if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "\t\treturn NULL;\n";
         if(configureProject.outputLenguaje == OutputLenguajes::JAVA or configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "\t\treturn null;\n";
         ofile << "\t}" <<std::endl;
         

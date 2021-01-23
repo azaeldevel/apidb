@@ -36,7 +36,18 @@ namespace apidb
 {
 namespace generators
 {
-    
+    void CPP::writeRemovesCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
+    {
+        Remove remove(configureProject,table,ofile);
+        remove.setImplementation(true);
+        remove.generate();        
+    }
+    void CPP::writeRemovesH(const apidb::symbols::Table& table, std::ofstream& ofile)
+    {
+        Remove remove(configureProject,table,ofile);
+        remove.setDefinition(true);
+        remove.generate();        
+    }
     void CPP::writeUppdatersCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
         Update update(configureProject,table,ofile);
@@ -508,24 +519,9 @@ namespace generators
             ofile << "\t\t\treturn true;\n";
             ofile << "\t\t}\n";
             ofile << "\t\treturn false;\n";
-            ofile << "\t}\n";
-            
+            ofile << "\t}\n";            
         }
     }
-    /*
-    void CPP::getKey2(std::ofstream& ofile, const symbols::Symbol* k)
-    {
-        if(k->symbolReferenced != NULL)
-        {            
-            ofile << ".get" << k->getUpperName() << "()";
-            getKey2(ofile,k->symbolReferenced);
-        }
-        else
-        {
-            ofile << ".get" << k->getUpperName() << "()";
-        }
-    }
-    */
     void CPP::writeSelectInstancetObjectDataCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
 		ofile << "\t"<< "bool " << table.name << "::";
@@ -720,20 +716,7 @@ namespace generators
         }
 		ofile << "\t}" <<std::endl;
 	}
-	/*
-	void CPP::getKey(std::ofstream& ofile, const symbols::Symbol* k)
-    {
-        if(k->symbolReferenced != NULL)
-        {            
-            ofile << ".get" << k->getUpperName() << "()";
-            getKey2(ofile,k->symbolReferenced);
-        }
-        else
-        {
-            ofile << ".get" << k->getUpperName() << "()";
-        }
-    }
-    */
+	
 	void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		writeDefaultContructorCPP(table,ofile);        
@@ -750,7 +733,9 @@ namespace generators
 		writeSelectStaticCPP(table,ofile);
         ofile << "\n\n";        
         writeDownloadsCPP(table,ofile);
-        ofile << "\n\n"; 
+        ofile << "\n\n";        
+        writeRemovesCPP(table,ofile);
+        ofile << "\n\n";
     }
         
     void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
@@ -882,38 +867,7 @@ namespace generators
 		}	
 		return true;
 	}
-    /*void CPP::createSpaceCPP(std::ofstream& file)
-    {
-                file <<"namespace "<< configureProject.name << std::endl;
-                file <<"{"<<std::endl;
-		
-                const std::map<const char*,symbols::Space*,symbols::cmp_str>& spacies = analyzer.getListTableConst();
-                
-                //for(auto const& [keySpace, AttSpace]  : spacies)
-                for(std::map<const char*,symbols::Space*,symbols::cmp_str>::const_iterator it = spacies.begin(); it != spacies.end(); it++)
-                {
-                       if(strcmp(it->first,"") != 0)
-                        {
-                                short level = symbols::getSpaceLevel(it->first);
-                                for(short i = 0; i < level ; i++) file << "\t";
-                                file << "namespace " << it->second->getFirstName()  << std::endl;
-                                for(short i = 0; i < level ; i++) file << "\t";
-                                file << "{" << std::endl;
-                        }
-                        //for(auto table: *(it->second)) //reading attrubtes by table
-                        for(std::list<symbols::Table*>::iterator itT = it->second->begin(); itT != it->second->end(); itT++ )
-                        {
-                                createClassCPP(**itT,file,(*itT)->getName());
-                        }
-                        if(strcmp(it->first,"") != 0)
-                        {
-                                short level = symbols::getSpaceLevel(it->first);
-                                for(short i = 0; i < level ; i++) file << "\t";
-                                file << "}" << std::endl;
-                        }
-                }
-                file <<"}"<<std::endl;
-    }*/
+    
     void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
     {                
         //for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
@@ -968,7 +922,6 @@ namespace generators
                 std::string msg = "Lenguaje no soportado " ;
                 throw BuildException(msg);
             }
-            
         }
     }
         
@@ -1155,21 +1108,24 @@ namespace generators
         ofile << "\n";
         //downloaders
         writeDownloadsH(table,ofile);
+        ofile << "\n";
+        //delete
+        writeRemovesH(table,ofile);
     }
     void CPP::createClassAttributesH(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
-                for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
-                {
-                        if(it->second->getClassReferenced() != NULL && (it->second->getOutType().compare("int") == 0 || it->second->getOutType().compare("std::string") == 0))
-                        {
-                                ofile << "\t\t" << it->second->getClassReferenced()->getName() << "* "<< it->second->getName()<<";"<< std::endl;
-                        }
-                        else
-                        {
-                                //ofile <<"[3]"<<std::endl;
-                                ofile << "\t\t" << it->second->getOutType() << " " << it->second->getName() <<";"<< std::endl;
-                        }
-                }
+        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
+        {
+            if(it->second->getClassReferenced() != NULL && (it->second->getOutType().compare("int") == 0 || it->second->getOutType().compare("std::string") == 0))
+            {
+                ofile << "\t\t" << it->second->getClassReferenced()->getName() << "* "<< it->second->getName()<<";"<< std::endl;
+            }
+            else
+            {
+                //ofile <<"[3]"<<std::endl;
+                ofile << "\t\t" << it->second->getOutType() << " " << it->second->getName() <<";"<< std::endl;
+            }
+        }
     }
     void CPP::createClassPublicH(std::ofstream& file)
     {

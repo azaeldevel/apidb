@@ -38,7 +38,45 @@ namespace generators
 { 
     
     
-    
+    bool Operation::echoKey()const
+    {
+        if(table.getKey().size() > 1) throw BuildException("No hay soporte para llaves complejas",__FILE__,__LINE__); 
+        if(table.getKey().size() == 0) throw BuildException("No hay soporte para tablas no identificadas",__FILE__,__LINE__); 
+        
+        
+        symbols::Symbol* end = *(table.getKey().end()--);
+        for(symbols::Symbol* k : table.getKey())
+        {
+            ofile << "\"" << k->name << " = ";
+            if(k->symbolReferenced != NULL)
+            {
+                if(k->getOutType().compare(stringType()) == 0)
+                {
+                    throw BuildException("No hay soporte para llave con string",__FILE__,__LINE__); 
+                }
+                else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0 )
+                {
+                    ofile << "\" + std::to_string(";
+                    ofile << "(*" << k->name << ")";
+                    inheritField(ofile,k->symbolReferenced,opReference());
+                    ofile << ")";
+                }  
+            }
+            else
+            {
+                if(k->getOutType().compare(stringType()) == 0)
+                {
+                    throw BuildException("No hay soporte para llave con string",__FILE__,__LINE__); 
+                }
+                else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0 )
+                {
+                    ofile << "\" + std::to_string(" << k->name << ")";
+                }
+            }
+        }
+        
+        return true;
+    }
 	Operation::Operation(const ConfigureProject& c,const apidb::symbols::Table& t,std::ofstream& o) : configureProject(c), table(t), ofile(o)
     {
         definition = false;
