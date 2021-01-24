@@ -56,10 +56,25 @@ namespace generators
                 }
                 else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0 )
                 {
-                    ofile << "\" + std::to_string(";
-                    ofile << "(*" << k->name << ")";
-                    inheritField(ofile,k->symbolReferenced,opReference());
-                    ofile << ")";
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "\" + std::to_string(";
+                            ofile << "(*" << k->name << ")";
+                            inheritField(ofile,k->symbolReferenced,opReference());
+                            ofile << ")";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "\" + ";
+                            ofile << k->name;
+                            inheritField(ofile,k->symbolReferenced,opReference());
+                            break;
+                        case OutputLenguajes::PHP:
+                                
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
                 }  
             }
             else
@@ -70,7 +85,21 @@ namespace generators
                 }
                 else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0 )
                 {
-                    ofile << "\" + std::to_string(" << k->name << ")";
+                    
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "\" + std::to_string(" << k->name << ")";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "\" + " << k->name;
+                            break;
+                        case OutputLenguajes::PHP:
+                                
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
                 }
             }
         }

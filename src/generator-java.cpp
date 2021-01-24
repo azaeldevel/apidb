@@ -36,142 +36,14 @@ namespace apidb
 {
 namespace generators
 {
+    void Java::writeRemoves(const apidb::symbols::Table& table, std::ofstream& ofile)
+    {
+        Remove remove(configureProject,table,ofile);
+        remove.setImplementation(true);
+        remove.generate();
+    }
     void Java::writeUppdaters(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
-        /*
-        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
-        {
-            if(not it->second->isPrimaryKey())
-			{
-		        if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-		        {
-		            ofile << "\tpublic boolean " << "update" << it->second->getUpperName() << "(octetos.db.mysql.Connector connector,";
-		        }
-		        else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-		        {
-		            ofile << "\tpublic boolean " <<"update" << it->second->getUpperName() << "(octetos.db.maria.Connector connector,";
-		        }
-		        else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-		        {
-		            ofile << "\tpublic boolean " <<"update" << it->second->getUpperName() << "(octetos.db.postgresql.Connector connector,";
-		        }
-		        else
-		        {
-		            std::string msg = "Lenguaje no soportado " ;
-		            throw BuildException(msg);
-		        }
-				if((it->second->getOutType().compare("String") == 0 || it->second->getOutType().compare("int") == 0) && it->second->getClassReferenced() != NULL)
-		        {
-		            ofile << it->second->getClassReferenced()->getName()  << "& " << it->second->getName() ;
-		        }
-		        else if(it->second->getOutType().compare("String") == 0)
-		        {
-		            ofile << it->second->getOutType() << " " << it->second->getName() ;
-		        }
-		        else
-		        {
-		            ofile << it->second->getOutType() << " " << it->second->getName() ;
-		        }
-				ofile <<") throws SQLException"<< std::endl;
-				ofile << "\t{"<<std::endl;
-				ofile << "\t\tString sqlString = \"\";"<<std::endl;
-				if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-				{
-					ofile << "\t\tsqlString = \"UPDATE \\\"\" ;+ TABLE_NAME + \"\\\"\";"<<std::endl;
-				}
-				else
-				{
-					ofile << "\t\tsqlString = \"UPDATE \" + TABLE_NAME;"<<std::endl;
-					//ofile << "\t\tsqlString += \" FROM \";"<<std::endl;
-				}
-				ofile << "\t\tsqlString = sqlString + \" SET " ;
-		        
-				ofile << it->second->getName()  << " = " ;
-                            if( it->second->getOutType().compare("int") == 0 && it->second->getSymbolReferenced() != NULL)
-                            {
-		                            ofile << "'\" +  " << it->second->getName()   << ".getKey" << it->second->getSymbolReferenced()->getUpperName() << "() + \"'\";" << std::endl;                                    
-                            }
-		                    else if( it->second->getOutType().compare("int") == 0 && it->second->getSymbolReferenced() == NULL)
-		                    {
-		                            ofile << "'\" +  " << it->second->getName()   << " + \"'\";" << std::endl;                            
-		                    }
-		                    else if(it->second->getOutType().compare("String") == 0 && it->second->getSymbolReferenced() != NULL)
-		                    {
-		                            ofile << "'\" + " << it->second->getName()  << " + \"'\";" << std::endl;
-		                    }
-		                    else if(it->second->getOutType().compare("String") == 0  && it->second->getSymbolReferenced() == NULL)
-		                    {
-		                            ofile << "'\" + " << it->second->getName()  << " + \"'\";" << std::endl;
-		                    }
-		                    else
-		                    {
-		                            ofile << "\" + " << it->second->getName()  << ";" << std::endl;
-		                    }
-				
-				ofile << "\t\tsqlString = sqlString + \" WHERE ";
-                if(table.getKey().size() > 0)
-                {
-                    auto kEnd = table.getKey().end();
-                    kEnd--;
-                    for(auto k : table.getKey())
-                    {
-                            ofile << k->getName()  << " = \" + ";  
-                            if(k->classReferenced != NULL) //es un objeto
-                            {
-                                if(k->outType.compare("String") == 0)
-                                {
-                                    ofile << k->getName() << ";\n";
-                                }
-                                else
-                                {
-                                    ofile << k->getName();
-                                    getKey(ofile,k->symbolReferenced);
-                                    ofile<< ";\n";
-                                }
-                            }
-                            else if(k->outType.compare("String") == 0)
-                            {
-                                ofile << " '\" + " <<  k->getName()  << " + \"'\";\n";
-                            }
-                            else
-                            {
-                                ofile << "" << k->getName()  <<";\n";
-                            }
-                            if(k != *kEnd)
-                            {
-                                ofile << " + \" and \" ";
-                            }
-                            
-                    }
-                }
-                else
-                {
-                    throw BuildException("No hay soporte para table sin llave",__FILE__,__LINE__);
-                }
-				
-                if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-		        {
-                    ofile <<"\t\tResultSet rs  = null;\n";
-		        }
-		        else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-		        {
-		            ofile <<"\t\tResultSet rs = null;\n";
-		        }
-		        else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-		        {
-		            ofile <<"\t\tResultSet rs = null;\n";
-		        }
-		        else
-		        {
-		            std::string msg = "Lenguaje no soportado " ;
-		            throw BuildException(msg);
-		        }
-                
-				ofile <<"\t\treturn connector.update(sqlString,rs);\n";
-				ofile << "\t}"<<std::endl;	
-            } 
-        }
-        */
         Update update(configureProject,table,ofile);
         update.setImplementation(true);
         update.generate();
@@ -842,6 +714,8 @@ namespace generators
 		writeSelectStatic(table,ofile);
         ofile << "\n\n";        
         writeDownloads(table,ofile);
+        ofile << "\n\n"; 
+        writeRemoves(table,ofile);
         ofile << "\n\n"; 
     }
         

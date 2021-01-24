@@ -36,7 +36,7 @@ namespace octetos::apidb::generators
                     ofile << "\t\tbool remove(octetos::db::maria::Connector& connector);\n";                    
                     break;
                 case OutputLenguajes::JAVA:
-                    
+                     
                     break;
                 case OutputLenguajes::PHP:
                     
@@ -100,7 +100,7 @@ namespace octetos::apidb::generators
                     ofile << "\tbool " << table.getName() << "::remove(octetos::db::maria::Connector& connector)\n";                    
                     break;
                 case OutputLenguajes::JAVA:
-                    
+                    ofile << "\tpublic boolean remove(octetos.db.maria.Connector connector) throws SQLException\n";
                     break;
                 case OutputLenguajes::PHP:
                     
@@ -137,8 +137,22 @@ namespace octetos::apidb::generators
         ofile << "\t\t" << getsqlString() << " = " << getsqlString() << " + ";
         echoKey();
         ofile << ";\n";
-        ofile << "\t\toctetos::db::maria::Datresult dt;"  << std::endl;
-        ofile << "\t\treturn connector.execute(sqlString,dt);"  << std::endl;
+        
+        switch(configureProject.outputLenguaje)
+        {
+            case OutputLenguajes::CPP:
+                ofile << "\t\toctetos::db::maria::Datresult dt;"  << std::endl;
+                break;
+            case OutputLenguajes::JAVA:
+                ofile << "\t\tResultSet dt = null;"  << std::endl;
+                break;
+            case OutputLenguajes::PHP:
+                    
+                break;
+            default:
+                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+        }
+        ofile << "\t\treturn connector.remove(sqlString,dt);"  << std::endl;
         ofile << "\t}\n";
     }
     

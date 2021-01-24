@@ -290,6 +290,9 @@ namespace apidb
 			bool create(bool log,const symbols::SymbolsTable&);
 			bool create(bool log,const symbols::ISpace*);
             
+            //updatter
+            void writeRemoves(const apidb::symbols::Table& table, std::ofstream& ofile);
+            
             //
             void createClass(const apidb::symbols::Table&,std::ofstream&,const std::string&);
 			void createClassAttributes(const apidb::symbols::Table&,std::ofstream&);
