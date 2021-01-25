@@ -36,7 +36,12 @@ namespace apidb
 {
 namespace generators
 {
-    
+    void PHP::writeRemoves(const apidb::symbols::Table& table, std::ofstream& ofile)
+    {
+        Remove remove(configureProject,table,ofile);
+        remove.setImplementation(true);
+        remove.generate();
+    }
     void PHP::getInheritKey(std::ofstream& ofile, const symbols::Symbol* k)
     {
         if(k->symbolReferenced != NULL)
@@ -1132,6 +1137,8 @@ namespace generators
 		writeSelectStatic(table,ofile);
         ofile << "\n\n";        
         writeDownloads(table,ofile);
+        ofile << "\n\n";       
+        writeRemoves(table,ofile);
         ofile << "\n\n"; 
     }
         
