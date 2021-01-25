@@ -103,7 +103,7 @@ namespace octetos::apidb::generators
                     ofile << "\tpublic boolean remove(octetos.db.maria.Connector connector) throws SQLException\n";
                     break;
                 case OutputLenguajes::PHP:
-                    
+                    ofile << "\tpublic function remove($connector)\n";
                     break;
                 default:
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -133,11 +133,13 @@ namespace octetos::apidb::generators
         }
         ofile << "\t{\n";
         ofile << "\t\t";
-        ofile << stringType() << " " << getsqlString() << " = \"DELETE FROM " + table.getName() + " WHERE \";\n";
-        ofile << "\t\t" << getsqlString() << " = " << getsqlString() << " + ";
+        if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << stringType() << " ";
+        ofile << getsqlString() << " = \"DELETE FROM " + table.getName() + " WHERE \";\n";
+        ofile << "\t\t" << getsqlString() << " = " << getsqlString();
+        if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " + ";
+        if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " . ";
         echoKey();
         ofile << ";\n";
-        
         switch(configureProject.outputLenguaje)
         {
             case OutputLenguajes::CPP:
@@ -147,13 +149,16 @@ namespace octetos::apidb::generators
                 ofile << "\t\tResultSet dt = null;"  << std::endl;
                 break;
             case OutputLenguajes::PHP:
-                    
+                ofile << "\t\t$dt = null;"  << std::endl;                    
                 break;
             default:
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
         }
-        ofile << "\t\treturn connector.remove(sqlString,dt);"  << std::endl;
+        if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA ) ofile << "\t\treturn connector.remove(sqlString,dt);\n";
+        if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "\t\treturn $connector->remove($sqlString,$dt);\n";
         ofile << "\t}\n";
+        
+        return true;
     }
     
     bool Remove::generate()

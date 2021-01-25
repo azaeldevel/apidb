@@ -47,14 +47,14 @@ namespace generators
         symbols::Symbol* end = *(table.getKey().end()--);
         for(symbols::Symbol* k : table.getKey())
         {
-            ofile << "\"" << k->name << " = ";
+            ofile << " . \"" << k->name << " = ";
             if(k->symbolReferenced != NULL)
             {
                 if(k->getOutType().compare(stringType()) == 0)
                 {
                     throw BuildException("No hay soporte para llave con string",__FILE__,__LINE__); 
                 }
-                else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0 )
+                else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0  or k->getOutType().compare(integerType())  == 0 )
                 {
                     switch(configureProject.outputLenguaje)
                     {
@@ -70,12 +70,14 @@ namespace generators
                             inheritField(ofile,k->symbolReferenced,opReference());
                             break;
                         case OutputLenguajes::PHP:
-                                
+                            ofile << "\" . $this->";
+                            ofile << k->name;
+                            inheritField(ofile,k->symbolReferenced,opReference());
                             break;
                         default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
                     }
-                }  
+                }
             }
             else
             {
@@ -85,7 +87,6 @@ namespace generators
                 }
                 else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0 )
                 {
-                    
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:
@@ -95,7 +96,24 @@ namespace generators
                             ofile << "\" + " << k->name;
                             break;
                         case OutputLenguajes::PHP:
-                                
+                            ofile << "\" . $this->" << k->name;
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                }
+                else if(stringType())
+                {
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "\" + std::to_string(" << k->name << ")";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "\" + " << k->name;
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "\" . $this->" << k->name;
                             break;
                         default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            

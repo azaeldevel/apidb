@@ -397,6 +397,9 @@ namespace apidb
             //methodes
 			void createClassMethodes(const apidb::symbols::Table&,std::ofstream&);            
             
+            //updatter
+            void writeRemoves(const apidb::symbols::Table& table, std::ofstream& ofile);
+            
 			//varias
 			bool create(std::ofstream& file, bool log, const symbols::SymbolsTable&);
 			bool create(std::ofstream& file, bool log, const symbols::ISpace*);
