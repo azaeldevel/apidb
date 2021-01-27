@@ -51,36 +51,9 @@ namespace generators
     
     void Java::writeGetters(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
-        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
-        {
-			if(it->second->outType.compare("String") == 0)
-			{
-				ofile <<"\tpublic "<< it->second->getOutType() << " ";
-			}
-			else if(it->second->getSymbolReferenced())
-			{
-				ofile <<"\tpublic " << it->second->getClassReferenced()->getName() << " ";
-			}
-			else 
-			{
-				ofile <<"\t"<< it->second->getOutType() << " ";
-			}
-			ofile << "get" << it->second->getUpperName() << "()\n";			
-			ofile << "\t{"<<std::endl;
-			if(it->second->outType.compare("String") == 0)
-			{
-				ofile <<"\t\treturn "<< it->second->getName()  <<";"<< std::endl;
-			}
-			else if(it->second->symbolReferenced)
-			{
-				ofile <<"\t\treturn "<< it->second->getName()  <<";"<< std::endl;
-			}
-			else 
-			{
-				ofile <<"\t\treturn "<< it->second->getName() <<";"<< std::endl;
-			}
-			ofile << "\t}"<<std::endl;                
-        }
+        Getter getter(configureProject,table,ofile);
+        getter.setImplementation(true);
+        getter.generate();
     }
     
 	Java::~Java()
@@ -683,20 +656,6 @@ namespace generators
         }
 		ofile << "\t}" <<std::endl;
 	}
-	/*
-	void Java::getKeyJava(std::ofstream& ofile, const symbols::Symbol* k)
-    {
-        if(k->symbolReferenced != NULL)
-        {            
-            ofile << ".get" << k->getUpperName() << "()";
-            getKey2Java(ofile,k->symbolReferenced);
-        }
-        else
-        {
-            ofile << ".get" << k->getUpperName() << "()";
-        }
-    }
-    */
 	void Java::createClassMethodes(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		writeDefaultContructor(table,ofile);

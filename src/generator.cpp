@@ -43,12 +43,9 @@ namespace generators
         if(table.getKey().size() > 1) throw BuildException("No hay soporte para llaves complejas",__FILE__,__LINE__); 
         if(table.getKey().size() == 0) throw BuildException("No hay soporte para tablas no identificadas",__FILE__,__LINE__); 
         
-        
         symbols::Symbol* end = *(table.getKey().end()--);
         for(symbols::Symbol* k : table.getKey())
         {
-            //if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " + ";
-            //if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " . ";
             ofile << " \"" << k->name << " = ";
             if(k->symbolReferenced != NULL)
             {

@@ -137,7 +137,7 @@ namespace octetos::apidb::generators
         ofile << getsqlString() << " = \"DELETE FROM " + table.getName() + " WHERE \";\n";
         ofile << "\t\t" << getsqlString() << " = " << getsqlString();
         if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " + ";
-        if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " . ";
+        if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << " . ";
         echoKey();
         ofile << ";\n";
         switch(configureProject.outputLenguaje)

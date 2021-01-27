@@ -154,6 +154,21 @@ namespace apidb
             bool implement();
         };
         
+        class Getter : public Operation
+        {
+        public:
+            Getter(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
+            virtual bool generate();
+            
+        private:
+            bool definite();
+            bool definite(const symbols::Symbol* s);
+            bool definiteKey(const symbols::Symbol* s);
+            bool implement();
+            bool implement(const symbols::Symbol* s);
+            bool implementKey(const symbols::Symbol* s);
+        };
+        
 		/**
 		* \private
 		* */

@@ -12,7 +12,7 @@ namespace octetos::apidb::generators
     }
     
     bool Insert::definite()
-    {        
+    {
         //inser Raw data
         ofile << "\t\t"<< "bool insert(";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
@@ -80,7 +80,7 @@ namespace octetos::apidb::generators
                     if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
                     
                     if(l->symbolReferenced!= NULL)
-                    {                        
+                    {
                         ofile << ",";
                         insertParamsRaw(ofile,l,k);
                     }
