@@ -43,7 +43,7 @@ namespace generators
         if(table.getKey().size() > 1) throw BuildException("No hay soporte para llaves complejas",__FILE__,__LINE__); 
         if(table.getKey().size() == 0) throw BuildException("No hay soporte para tablas no identificadas",__FILE__,__LINE__); 
         
-        symbols::Symbol* end = *(table.getKey().end()--);
+        //symbols::Symbol* end = *(table.getKey().end()--);
         for(symbols::Symbol* k : table.getKey())
         {
             ofile << " \"" << k->name << " = ";
@@ -84,7 +84,7 @@ namespace generators
                 {
                     throw BuildException("No hay soporte para llave con string",__FILE__,__LINE__); 
                 }
-                else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0 )
+                else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0 or k->getOutType().compare(integerType()) == 0)
                 {
                     switch(configureProject.outputLenguaje)
                     {
@@ -206,7 +206,7 @@ namespace generators
     {
         implementation = i;
     }
-    void Operation::inheritField(std::ofstream& ofile, const symbols::Symbol* k, const char* separator)
+    void Operation::inheritField(std::ofstream& ofile, const symbols::Symbol* k, const char* separator) const
     {
         if(k->symbolReferenced != NULL)
         {            
@@ -217,7 +217,7 @@ namespace generators
         {
             ofile << separator <<  "get" << k->getUpperName() << "()";
         }
-    }    
+    }
 	void Operation::insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
     {
         if(k->symbolReferenced != NULL)

@@ -194,6 +194,7 @@ namespace generators
     
     void PHP::writeGetters(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
+        /*
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
 			if(it->second->outType.compare("String") == 0)
@@ -224,6 +225,10 @@ namespace generators
 			}
 			ofile << "\t}"<<std::endl;                
         }
+        */        
+        Getter getter(configureProject,table,ofile);
+        getter.setImplementation(true);
+        getter.generate();
     }
     
 	PHP::~PHP()

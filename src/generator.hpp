@@ -96,7 +96,7 @@ namespace apidb
             * @condition se debe llamar con k->symbolReferenced
             * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
             */
-            virtual void inheritField(std::ofstream& ofile, const symbols::Symbol* k, const char* separator);
+            virtual void inheritField(std::ofstream& ofile, const symbols::Symbol* k, const char* separator) const;
             
             void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
             void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
@@ -383,8 +383,6 @@ namespace apidb
 			virtual bool generate(bool log);
 			PHP(Analyzer&,const ConfigureProject&);
 			const std::string& getHeaderName() const;
-			//std::ofstream& getSourceOutput();
-			//std::ofstream& getHeaderOutput();
 			virtual ~PHP();
             
 		private:

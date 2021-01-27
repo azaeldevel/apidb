@@ -149,7 +149,7 @@ namespace octetos::apidb::generators
         {
             std::string msg = "Lenguaje no soportado " ;
             throw BuildException(msg,__FILE__,__LINE__);
-        }     
+        }
         ofile << "get" << s->getUpperName() << "Value() const; \n";
         
         return true;
@@ -173,7 +173,7 @@ namespace octetos::apidb::generators
                     ofile <<"\tpublic String ";
                     break;
                 case OutputLenguajes::PHP:
-                    
+                    ofile <<"\tpublic function ";
                     break;
                 default:
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -190,7 +190,7 @@ namespace octetos::apidb::generators
                     ofile <<"\tpublic " << s->classReferenced->name << " ";
                     break;
                 case OutputLenguajes::PHP:
-                    
+                    ofile <<"\tpublic function ";
                     break;
                 default:
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -207,7 +207,7 @@ namespace octetos::apidb::generators
                     ofile <<"\tpublic "<< s->getOutType() << " ";
                     break;
                 case OutputLenguajes::PHP:
-                    
+                    ofile <<"\tpublic function ";
                     break;
                 default:
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -222,17 +222,44 @@ namespace octetos::apidb::generators
         ofile << "\t{"<<std::endl;
         if(s->outType.compare("std::string") == 0)
         {
-            ofile <<"\t\treturn "<< s->getName()  <<";"<< std::endl;
+            
+            switch(configureProject.outputLenguaje)
+            {
+                case OutputLenguajes::CPP:
+                    ofile <<"\t\treturn "<< s->getName()  <<";"<< std::endl;
+                    break;
+                case OutputLenguajes::JAVA:
+                    ofile <<"\t\treturn "<< s->getName()  <<";"<< std::endl;
+                    break;
+                case OutputLenguajes::PHP:
+                    ofile <<"\t\treturn $this->"<< s->getName()  <<";"<< std::endl;
+                    break;
+                default:
+                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+            }
         }
         else if(s->symbolReferenced)
         {
             ofile <<"\t\treturn ";
-            if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "*";
+            switch(configureProject.outputLenguaje)
+            {
+                case OutputLenguajes::CPP:
+                    ofile << "*";
+                    break;
+                case OutputLenguajes::JAVA:
+                    
+                    break;
+                case OutputLenguajes::PHP:
+                    ofile << "$this->";
+                    break;
+                default:
+                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+            }
             ofile << s->getName()  <<";"<< std::endl;
         }
         else 
         {
-            ofile <<"\t\treturn "<< s->getName() <<";"<< std::endl;
+            ofile <<"\t\treturn $this->"<< s->getName() <<";"<< std::endl;
         }
         ofile << "\t}\n"<<std::endl; 
         
@@ -251,7 +278,7 @@ namespace octetos::apidb::generators
                     ofile <<"\tpublic "<< s->getOutType() << " ";
                     break;
                 case OutputLenguajes::PHP:
-                    
+                    ofile <<"\tpublic function ";
                     break;
                 default:
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -268,7 +295,7 @@ namespace octetos::apidb::generators
                     ofile <<"\tpublic "<< s->getOutType() << " ";
                     break;
                 case OutputLenguajes::PHP:
-                    
+                    ofile <<"\tpublic function ";
                     break;
                 default:
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -285,7 +312,7 @@ namespace octetos::apidb::generators
                     ofile <<"\tpublic "<< s->getOutType() << " ";
                     break;
                 case OutputLenguajes::PHP:
-                    
+                    ofile <<"\tpublic function ";
                     break;
                 default:
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -325,13 +352,13 @@ namespace octetos::apidb::generators
                     }
                     else
                     {
-                        ofile <<"\t\treturn " << s->name;
+                        ofile <<"\t\treturn $this->" << s->name;
                     }
                     break;
                 case OutputLenguajes::JAVA:
                     if(s->symbolReferenced != NULL)
                     {
-                        ofile <<"\t\treturn " << s->name;
+                        ofile <<"\t\treturn $this->" << s->name;
                         inheritField(ofile,s->symbolReferenced,".");
                     }
                     else
@@ -340,7 +367,15 @@ namespace octetos::apidb::generators
                     }                     
                     break;
                 case OutputLenguajes::PHP:
-                    
+                    if(s->symbolReferenced != NULL)
+                    {
+                        ofile <<"\t\treturn $this->" << s->name;
+                        inheritField(ofile,s->symbolReferenced,"->");
+                    }
+                    else
+                    {
+                        ofile <<"\t\treturn $this->" << s->name;
+                    }
                     break;
                 default:
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
