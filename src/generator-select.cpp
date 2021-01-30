@@ -28,14 +28,13 @@ namespace octetos::apidb::generators
             std::string msg = "Lenguaje no soportado " ;
             throw BuildException(msg,__FILE__,__LINE__);
         }
-                
         
         const ConfigureProject::Table* tb = configureProject.findSelectTable(table.getName());
         if(tb != NULL) 
         {
             //std::cout << "Se encontro la tabla '" << table.getName() << std::endl;
             for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itT = tb->begin(); itT != tb->end(); itT++)
-            {         
+            {
                 if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
                 {       
                     ofile << "\t\tstatic std::vector<" << table.getName() << "*>* " << itT->second->getName() << "(octetos::db::mysql::Connector& connector,";
@@ -84,8 +83,8 @@ namespace octetos::apidb::generators
                 }                                
                 ofile << ", int leng = 0);"<<std::endl;                                
             }
-        }                
-    return true;
+        }    
+        return true;
     }
     
     

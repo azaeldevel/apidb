@@ -41,9 +41,9 @@ namespace generators
     bool Operation::echoKey()const
     {
         if(table.getKey().size() > 1) throw BuildException("No hay soporte para llaves complejas",__FILE__,__LINE__); 
-        if(table.getKey().size() == 0) throw BuildException("No hay soporte para tablas no identificadas",__FILE__,__LINE__); 
+        //if(table.getKey().size() == 0) throw BuildException("No hay soporte para tablas no identificadas",__FILE__,__LINE__); 
         
-        //symbols::Symbol* end = *(table.getKey().end()--);
+        //symbols::Symbol* end = table.getKey().end();
         for(symbols::Symbol* k : table.getKey())
         {
             ofile << " \"" << k->name << " = ";
@@ -53,7 +53,7 @@ namespace generators
                 {
                     throw BuildException("No hay soporte para llave con string",__FILE__,__LINE__); 
                 }
-                else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0  or k->getOutType().compare(integerType())  == 0 )
+                else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0  or k->getOutType().compare(integerType()) == 0 )
                 {
                     switch(configureProject.outputLenguaje)
                     {
@@ -141,9 +141,9 @@ namespace generators
             default:
                 return NULL;            
         }
-    }   
+    }
     const char* Operation::opReference() const
-    {        
+    {
         switch(configureProject.outputLenguaje)
         {
             case OutputLenguajes::CPP:
@@ -157,7 +157,7 @@ namespace generators
         }
     }
     const char* Operation::stringType() const
-    {   
+    {
         switch(configureProject.outputLenguaje)
         {
             case OutputLenguajes::CPP:
@@ -168,10 +168,10 @@ namespace generators
                 return "String";
             default:
                 return NULL;            
-        }        
+        }   
     }
     const char* Operation::integerType() const
-    {   
+    {
         switch(configureProject.outputLenguaje)
         {
             case OutputLenguajes::CPP:
@@ -182,7 +182,7 @@ namespace generators
                 return "Integer";
             default:
                 return NULL;            
-        }        
+        }
     }
     const char* Operation::getsqlString()const
     {
@@ -213,9 +213,9 @@ namespace generators
             ofile << separator << "get" << k->getUpperName() << "()";
             inheritField(ofile,k->symbolReferenced,separator);
         }
-        else
+        else if(k != NULL)
         {
-            ofile << separator <<  "get" << k->getUpperName() << "()";
+            ofile << separator << "get" << k->getUpperName() << "()";
         }
     }
 	void Operation::insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
@@ -254,7 +254,7 @@ namespace generators
                 }
             }
         }
-    }    
+    }  
 	void Operation::insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
     {
         if(k->symbolReferenced != NULL)
@@ -311,9 +311,6 @@ namespace generators
 	{
 		
 	}
-	
-// 	
-	
 	std::string Generator::getPackingLenguajeString()const
 	{
 		switch(configureProject.packing)
@@ -326,12 +323,10 @@ namespace generators
 				return "Unknow";
 		}
 	}
-    
 	PackingLenguajes Generator::getPackingLenguaje()const
 	{
 		return configureProject.packing;
 	}
-	
 	std::string Generator::getOutputLenguajeString()const
 	{
 		switch(configureProject.outputLenguaje)
@@ -349,7 +344,6 @@ namespace generators
 	{
 		return configureProject.outputLenguaje;
 	}
-	
 	symbols::Symbol* Generator::getRootSymbol(symbols::Symbol* k)
     {
         if(k == NULL) return NULL;
@@ -363,7 +357,6 @@ namespace generators
             return k;
         }
     }
-    
 	void Generator::insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
     {
         if(k->symbolReferenced != NULL)
@@ -388,7 +381,6 @@ namespace generators
             }
         }
     }
-    
 	void Generator::insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
     {
         if(k->symbolReferenced != NULL)
@@ -418,7 +410,7 @@ namespace generators
         if(k->symbolReferenced != NULL)
         {            
             ofile << ".get" << k->getUpperName() << "()";
-            getKey2(ofile,k->symbolReferenced);
+            getKey(ofile,k->symbolReferenced);
         }
         else
         {

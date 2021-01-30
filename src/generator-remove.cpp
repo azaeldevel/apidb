@@ -10,6 +10,8 @@ namespace octetos::apidb::generators
     
     bool Remove::definite()
     {
+        if(table.getKey().size() == 0) return false;
+        
         //for actual object
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
@@ -74,6 +76,8 @@ namespace octetos::apidb::generators
     
     bool Remove::implement()
     {
+        if(table.getKey().size() == 0) return false;
+        
         //for actual object
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {

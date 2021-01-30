@@ -259,7 +259,20 @@ namespace octetos::apidb::generators
         }
         else 
         {
-            ofile <<"\t\treturn $this->"<< s->getName() <<";"<< std::endl;
+            switch(configureProject.outputLenguaje)
+            {
+                case OutputLenguajes::CPP:
+                    ofile <<"\t\treturn "<< s->getName() <<";"<< std::endl;
+                    break;
+                case OutputLenguajes::JAVA:
+                    ofile <<"\t\treturn "<< s->getName() <<";"<< std::endl;
+                    break;
+                case OutputLenguajes::PHP:
+                    ofile <<"\t\treturn $this->"<< s->getName() <<";"<< std::endl;
+                    break;
+                default:
+                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+            }
         }
         ofile << "\t}\n"<<std::endl; 
         
@@ -352,19 +365,19 @@ namespace octetos::apidb::generators
                     }
                     else
                     {
-                        ofile <<"\t\treturn $this->" << s->name;
+                        ofile <<"\t\treturn " << s->name;
                     }
                     break;
                 case OutputLenguajes::JAVA:
                     if(s->symbolReferenced != NULL)
                     {
-                        ofile <<"\t\treturn $this->" << s->name;
+                        ofile <<"\t\treturn " << s->name;
                         inheritField(ofile,s->symbolReferenced,".");
                     }
                     else
                     {
                         ofile <<"\t\treturn " << s->name;
-                    }                     
+                    }
                     break;
                 case OutputLenguajes::PHP:
                     if(s->symbolReferenced != NULL)

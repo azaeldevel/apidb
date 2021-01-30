@@ -169,6 +169,12 @@ namespace apidb
             bool implementKey(const symbols::Symbol* s);
         };
         
+        //TODO : Impletacion pendiente
+        class Download : public Select
+        {
+            
+        };
+        
 		/**
 		* \private
 		* */

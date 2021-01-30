@@ -509,37 +509,41 @@ namespace generators
                 ofile << ",";
             }
 		}
-		ofile << "\";\n\t\tsql = sql + \" FROM \" + TABLE_NAME " <<  " + \" WHERE ";
-        for(symbols::Symbol* k : table.getKey())
+		ofile << "\";\n\t\tsql = sql + \" FROM \" + TABLE_NAME " ;
+        if(table.getKey().size() > 0)
         {
-			ofile << k->getName() << " = \" + " ;  
-            if(k->symbolReferenced != NULL)
+            ofile <<  " + \" WHERE ";
+            for(symbols::Symbol* k : table.getKey())
             {
-                if(k->outType.compare("String") == 0)
+                ofile << k->getName() << " = \" + " ;  
+                if(k->symbolReferenced != NULL)
+                {
+                    if(k->outType.compare("String") == 0)
+                    {
+                        ofile << k->getName();
+                        getKey2(ofile,k->symbolReferenced);
+                    }
+                    else
+                    {
+                        
+                        ofile << k->getName();
+                        getKey2(ofile,k->symbolReferenced);
+                    }
+                }
+                else if(k->outType.compare("String") == 0)
                 {
                     ofile << k->getName();
-                    getKey2(ofile,k->symbolReferenced);
                 }
                 else
                 {
-                    
                     ofile << k->getName();
-                    getKey2(ofile,k->symbolReferenced);
+                }
+                if(k != (*penultimo) )
+                {
+                    ofile << " and ";
                 }
             }
-            else if(k->outType.compare("String") == 0)
-            {
-                ofile << k->getName();
-            }
-            else
-            {
-                ofile << k->getName();
-            }
-            if(k != (*penultimo) )
-            {
-                ofile << " and ";
-            }
-		}
+        }
 		ofile << ";\n";
         
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
@@ -630,14 +634,11 @@ namespace generators
 		}
 		else
 		{
-			std::string msg = "Requirio la generacion de constructor de llave, pero la tabla '";
-			msg = msg + table.getName();
-            msg = msg + "'  no tiene llave, revise su configuracion o so modelo de DB";
-			throw core::Exception(msg,__FILE__,__LINE__);
+			//no tiene constructor con llaves
 		}
-		ofile << "\t{" <<std::endl;
         if(table.getKey().size() > 0)//tiene key
         {
+            ofile << "\t{" <<std::endl;
             for(auto k : table.getKey())
             {
                 if(k->getClassReferenced() != NULL)
@@ -649,12 +650,12 @@ namespace generators
                     ofile << "\t\tthis." << k->getName()  << " = " << k->getName()  << ";" << std::endl;
                 }
             }
+            ofile << "\t}" <<std::endl;
         }
         else 
         {
             
         }
-		ofile << "\t}" <<std::endl;
 	}
 	void Java::createClassMethodes(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{

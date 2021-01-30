@@ -10,6 +10,8 @@ namespace octetos::apidb::generators
     
     bool Update::definite()
     {
+        if(table.getKey().size() == 0) return false;
+        
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
             if(not it->second->isPrimaryKey())
@@ -57,6 +59,8 @@ namespace octetos::apidb::generators
     
     bool Update::implement()
     {
+        if(table.getKey().size() == 0) return false;
+        
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
             if(not it->second->isPrimaryKey())
@@ -391,26 +395,42 @@ namespace octetos::apidb::generators
                     ofile << it->second->getName();
                     if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << ")";
                     ofile << ";\n";
-                }
-				ofile << "\t\tsqlString = sqlString";
-                switch(configureProject.outputLenguaje)
-                {
-                    case OutputLenguajes::CPP:
-                        ofile << " + ";
-                        break;
-                    case OutputLenguajes::JAVA:
-                        ofile << " + ";
-                        break;
-                    case OutputLenguajes::PHP:
-                        ofile << " . ";
-                        break;
-                    default:
-                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
-                }
-                ofile << "\" WHERE ";
+                }               
                 if(table.getKey().size() > 0)
                 {
-                    auto kEnd = table.getKey().end();
+                    ofile << "\t\tsqlString = sqlString";
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << " + ";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << " + ";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << " . ";
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    } 
+                    ofile << "\" WHERE \"";                    
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << " + ";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << " + ";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << " . ";
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    } 
+                    echoKey();
+                    ofile << ";\n";
+                    /*auto kEnd = table.getKey().end();
                     kEnd--;
                     for(auto k : table.getKey())
                     {
@@ -515,11 +535,11 @@ namespace octetos::apidb::generators
                             }
                             ofile <<"\" and \" ";
                         }
-                    }
+                    }*/
                 }
                 else
                 {
-                    throw BuildException("No hay soporte para table sin llave",__FILE__,__LINE__);
+                    //no tiene contructor con llaves
                 }
 				
                 if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)

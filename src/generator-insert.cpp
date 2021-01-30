@@ -228,7 +228,8 @@ namespace octetos::apidb::generators
             {
                 if(not k->isAutoIncrement() and not k->isPrimaryKey()) 
                 {
-                    ofile << "," << k->getOutType() << " " << k->name;
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << "," << k->getOutType() << " " << k->name;
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << ",$" << k->name;
                 }
             }
 		}
@@ -570,8 +571,23 @@ namespace octetos::apidb::generators
             }
             else if(table.getKey().size() < 1 )
             {
-                std::string msg = "No hay llave para esta table " ;
-                throw BuildException(msg,__FILE__,__LINE__);
+                switch(configureProject.outputLenguaje)
+                {
+                    case OutputLenguajes::CPP:
+                        ofile << "\t\tif(connector.insert(sqlString,dt)) ";
+                        break;
+                    case OutputLenguajes::JAVA:
+                        ofile << "\t\tif(connector.insert(sqlString,dt)) ";
+                        break;
+                    case OutputLenguajes::PHP:
+                        ofile << "\t\tif($connector->insert($sqlString,$dt)) ";
+                        break;
+                    default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                }
+                
+                ofile << "return true;\n";
+                ofile << "\t\treturn false;\n";
             }  
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)

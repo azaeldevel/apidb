@@ -57,7 +57,7 @@ namespace generators
     void PHP::getKey(std::ofstream& ofile, const symbols::Symbol* k)
     {
         if(k->symbolReferenced != NULL)
-        {            
+        {
             ofile << "->get" << k->getUpperName() << "()";
             getKey(ofile,k->symbolReferenced);
         }
@@ -68,6 +68,8 @@ namespace generators
     }
     void PHP::writeUppdaters(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
+        if(table.getKey().size() == 0) return;
+        
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
             if(not it->second->isPrimaryKey())
@@ -107,30 +109,30 @@ namespace generators
 				ofile << "\t\t$sqlString = $sqlString . \" SET " ;
 		        
 				ofile << it->second->getName()  << " = " ;
-                            if( it->second->getOutType().compare("int") == 0 && it->second->getSymbolReferenced() != NULL)
-                            {
-		                            ofile << "'\" .  $" << it->second->getName()   << ".getKey" << it->second->getSymbolReferenced()->getUpperName() << "() . \"'\";" << std::endl;                                    
-                            }
-		                    else if( it->second->getOutType().compare("int") == 0 && it->second->getSymbolReferenced() == NULL)
-		                    {
-		                            ofile << "'\" .  $" << it->second->getName()   << " + \"'\";" << std::endl;                            
-		                    }
-		                    else if(it->second->getOutType().compare("String") == 0 && it->second->getSymbolReferenced() != NULL)
-		                    {
-		                            ofile << "'\" . $" << it->second->getName()  << " . \"'\";" << std::endl;
-		                    }
-		                    else if(it->second->getOutType().compare("String") == 0  && it->second->getSymbolReferenced() == NULL)
-		                    {
-		                            ofile << "'\" . $" << it->second->getName()  << " . \"'\";" << std::endl;
-		                    }
-		                    else
-		                    {
-		                            ofile << "\" . $" << it->second->getName()  << ";" << std::endl;
-		                    }
-				
-				ofile << "\t\t$sqlString = $sqlString . \" WHERE ";
+                if( it->second->getOutType().compare("int") == 0 && it->second->getSymbolReferenced() != NULL)
+                {
+                    ofile << "'\" .  $" << it->second->getName()   << ".getKey" << it->second->getSymbolReferenced()->getUpperName() << "() . \"'\";" << std::endl;                                    
+                }
+                else if( it->second->getOutType().compare("int") == 0 && it->second->getSymbolReferenced() == NULL)
+                {
+                    ofile << "'\" .  $" << it->second->getName()   << " + \"'\";" << std::endl;                            
+                }
+                else if(it->second->getOutType().compare("String") == 0 && it->second->getSymbolReferenced() != NULL)
+                {
+                    ofile << "'\" . $" << it->second->getName()  << " . \"'\";" << std::endl;
+                }
+                else if(it->second->getOutType().compare("String") == 0  && it->second->getSymbolReferenced() == NULL)
+                {
+                    ofile << "'\" . $" << it->second->getName()  << " . \"'\";" << std::endl;
+                }
+                else
+                {
+                    ofile << "\" . $" << it->second->getName()  << ";" << std::endl;
+                }
+								
                 if(table.getKey().size() > 0)
                 {
+                    ofile << "\t\t$sqlString = $sqlString . \" WHERE ";
                     auto kEnd = table.getKey().end();
                     kEnd--;
                     for(auto k : table.getKey())
@@ -193,39 +195,7 @@ namespace generators
     }
     
     void PHP::writeGetters(const apidb::symbols::Table& table, std::ofstream& ofile)
-    {
-        /*
-        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
-        {
-			if(it->second->outType.compare("String") == 0)
-			{
-				ofile <<"\tpublic function ";
-			}
-			else if(it->second->getSymbolReferenced())
-			{
-				ofile <<"\tpublic function ";
-			}
-			else 
-			{
-				ofile <<"\tpublic function ";
-			}
-			ofile << "get" << it->second->getUpperName() << "()\n";			
-			ofile << "\t{"<<std::endl;
-			if(it->second->outType.compare("String") == 0)
-			{
-				ofile <<"\t\treturn $this->"<< it->second->getName()  <<";"<< std::endl;
-			}
-			else if(it->second->symbolReferenced)
-			{
-				ofile <<"\t\treturn $this->"<< it->second->getName()  <<";"<< std::endl;
-			}
-			else 
-			{
-				ofile <<"\t\treturn $this->"<< it->second->getName() <<";"<< std::endl;
-			}
-			ofile << "\t}"<<std::endl;                
-        }
-        */        
+    {   
         Getter getter(configureProject,table,ofile);
         getter.setImplementation(true);
         getter.generate();
@@ -964,10 +934,10 @@ namespace generators
                 ofile << ",";
             }
 		}
-		ofile << "\";\n\t\tsql = sql + \" FROM \" + TABLE_NAME " <<  " + \" WHERE ";
+		ofile << "\";\n\t\tsql = sql + \" FROM \" + TABLE_NAME ";
         for(symbols::Symbol* k : table.getKey())
         {
-			ofile << k->getName() << " = \" + " ;  
+			ofile <<  " + \" WHERE " << k->getName() << " = \" + " ;  
             if(k->symbolReferenced != NULL)
             {
                 if(k->outType.compare("String") == 0)
@@ -1085,14 +1055,11 @@ namespace generators
 		}
 		else
 		{
-			std::string msg = "Requirio la generacion de constructor de llave, pero la tabla '";
-			msg = msg + table.getName();
-            msg = msg + "'  no tiene llave, revise su configuracion o so modelo de DB";
-			throw core::Exception(msg,__FILE__,__LINE__);
+			// no tiene constructor con llaves
 		}
-		ofile << "\t{" <<std::endl;
         if(table.getKey().size() > 0)//tiene key
         {
+            ofile << "\t{" <<std::endl;
             if(table.getKey().size() > 1) throw core::Exception("Llave complet aun no soportada",__FILE__,__LINE__);
             for(auto k : table.getKey())
             {//TODO: La catidad de parametros deve variar de acuerdo a la cantidad de elementos en la llave: soport para llave compleja.
@@ -1106,12 +1073,12 @@ namespace generators
                     ofile << "\t\t$this->" << k->getName()  << " = $" << k->getName()  << ";" << std::endl;
                 }
             }
+            ofile << "\t}" <<std::endl;
         }
         else 
         {
             
         }
-		ofile << "\t}" <<std::endl;
 	}
 	/*void PHP::getKeyJava(std::ofstream& ofile, const symbols::Symbol* k)
     {
