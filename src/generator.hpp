@@ -35,9 +35,14 @@ namespace apidb
 	namespace generators
 	{
                 
-        //void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
-        //void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
-        //symbols::Symbol* getRootSymbol(symbols::Symbol* k);
+        enum OpCode
+        {
+            NoOp,
+            SELECT,
+            INSERT,
+            UPDATE,
+            DELETE,
+        };
         
         /**
         * \private No es parte del API
@@ -102,6 +107,7 @@ namespace apidb
             void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
             const char* getsqlString()const;
             bool echoKey()const;
+            bool echoKeyRawParam()const;
         protected:
             const ConfigureProject& configureProject;
             const apidb::symbols::Table& table;
@@ -130,6 +136,8 @@ namespace apidb
         private:
             bool definite_static();
             bool implement_static();
+            bool definite_rawdata();
+            bool implement_rawdata();
         };
         
         class Update : public Operation

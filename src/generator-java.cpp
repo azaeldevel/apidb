@@ -467,7 +467,7 @@ namespace generators
 	{
 		ofile << "\tpublic boolean ";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-        {        
+        {
             ofile << "select(octetos.db.mysql.Connector connector";
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
@@ -492,7 +492,7 @@ namespace generators
 			else
 			{
 				ofile << "," << k->getOutType() << " " ;
-			}  
+			}
 			
 			ofile << k->getName();
 		}
@@ -670,7 +670,7 @@ namespace generators
 		ofile << "\n\n";
 		writeInsert(table,ofile);
         ofile << "\n\n";        
-        writeSelectInstancetObjectData(table,ofile);
+        //writeSelectInstancetObjectData(table,ofile);
 		writeSelectStatic(table,ofile);
         ofile << "\n\n";        
         writeDownloads(table,ofile);

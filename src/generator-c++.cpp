@@ -690,7 +690,7 @@ namespace generators
 		ofile << "\n\n";
 		writeInsertCPP(table,ofile);
         ofile << "\n\n";        
-        writeSelectInstancetObjectDataCPP(table,ofile);
+        //writeSelectInstancetObjectDataCPP(table,ofile);
 		writeSelectStaticCPP(table,ofile);
         ofile << "\n\n";        
         writeDownloadsCPP(table,ofile);
@@ -1009,6 +1009,7 @@ namespace generators
 		//constructor de copias 
 		ofile << "\t\t" << table.getName() <<"(const " << table.getName() <<"&);"<< std::endl;
 	}
+    
     void CPP::writeKeyRawDataContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
         //constructor que toma key como parametro
@@ -1040,6 +1041,7 @@ namespace generators
 			//no genera contructor con llaves
 		}
 	}
+	
 	void CPP::createClassMethodesH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
         //contructors
@@ -1057,7 +1059,7 @@ namespace generators
 		writeInsertH(table,ofile);
         ofile << "\n";
         //selects
-        writeSelectInstancetObjectDataH(table,ofile);
+        //writeSelectInstancetObjectDataH(table,ofile);
         writeSelectStaticH(table,ofile);
         ofile << "\n";
         //downloaders
