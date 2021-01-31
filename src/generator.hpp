@@ -209,10 +209,8 @@ namespace apidb
 			void writeCopyContructorCPP(const apidb::symbols::Table&,std::ofstream&);
             
             //selects
-			void writeSelectStaticH(const apidb::symbols::Table& table, std::ofstream& ofile);
-			void writeSelectStaticCPP(const apidb::symbols::Table&,std::ofstream&);
-            void writeSelectInstancetObjectDataH(const apidb::symbols::Table&,std::ofstream&);
-            void writeSelectInstancetObjectDataCPP(const apidb::symbols::Table&,std::ofstream&);
+			void writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile);
+			void writeSelectsCPP(const apidb::symbols::Table&,std::ofstream&);
             
             //downloads
 			void writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile);
@@ -297,8 +295,8 @@ namespace apidb
 			void writeCopyContructor(const apidb::symbols::Table&,std::ofstream&);
             
             //selects
-			void writeSelectStatic(const apidb::symbols::Table&,std::ofstream&);
-            void writeSelectInstancetObjectData(const apidb::symbols::Table&,std::ofstream&);
+			void writeSelects(const apidb::symbols::Table&,std::ofstream&);
+            //void writeSelectInstancetObjectData(const apidb::symbols::Table&,std::ofstream&);
             
             //downloads
 			void writeDownloads(const apidb::symbols::Table&,std::ofstream&);
@@ -406,8 +404,8 @@ namespace apidb
 			void writeCopyContructor(const apidb::symbols::Table&,std::ofstream&);
             
             //selects
-			void writeSelectStatic(const apidb::symbols::Table&,std::ofstream&);
-            void writeSelectInstancetObjectData(const apidb::symbols::Table&,std::ofstream&);
+			void writeSelects(const apidb::symbols::Table&,std::ofstream&);
+            //void writeSelectInstancetObjectData(const apidb::symbols::Table&,std::ofstream&);
             
             //downloads
 			void writeDownloads(const apidb::symbols::Table&,std::ofstream&);

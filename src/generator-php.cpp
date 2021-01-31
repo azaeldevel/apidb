@@ -264,7 +264,7 @@ namespace generators
         return true;    
     }
 		
-    void PHP::writeSelectStatic(const apidb::symbols::Table& table, std::ofstream& ofile)
+    void PHP::writeSelects(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
         Select select(configureProject,table,ofile);
         select.setImplementation(true);
@@ -611,7 +611,7 @@ namespace generators
         }
     }
     */
-    void PHP::writeSelectInstancetObjectData(const apidb::symbols::Table& table,std::ofstream& ofile)	
+    /*void PHP::writeSelectInstancetObjectData(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
 		ofile << "\tpublic boolean ";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
@@ -726,7 +726,7 @@ namespace generators
         //ofile << "\t\t\n";
         ofile << "\t\treturn false;\n";
         ofile << "\t}\n";
-	}
+	}*/
     void PHP::writeInsert(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
         Insert insert(configureProject,table,ofile);
@@ -829,7 +829,7 @@ namespace generators
 		writeInsert(table,ofile);
         ofile << "\n\n";        
         //writeSelectInstancetObjectData(table,ofile);
-		writeSelectStatic(table,ofile);
+		writeSelects(table,ofile);
         ofile << "\n\n";        
         writeDownloads(table,ofile);
         ofile << "\n\n";       
@@ -838,19 +838,15 @@ namespace generators
     }
         
     void PHP::createClass(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
-    {        
-        //file << "package " << configureProject.space << ";\n\n";
-        //file << "import java.sql.ResultSet;\n";
-        //file << "import java.sql.SQLException;\n";
-        //file << "import java.util.ArrayList;\n\n";
+    {
         file << "\nclass " << cl.getUpperName() << "\n{\n";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL or configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
-            file << "\tprivate " << "$TABLE_NAME = \"`"<<  cl.getFullName() << "`\";" << std::endl;
+            file << "\tprivate $TABLE_NAME = \"`"<<  cl.getFullName() << "`\";" << std::endl;
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
         {
-            file << "\tprivate " << "$TABLE_NAME = \""<<  cl.getFullName() << "\";" << std::endl;
+            file << "\tprivate $TABLE_NAME = \""<<  cl.getFullName() << "\";" << std::endl;
         }
         else
         {

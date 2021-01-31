@@ -96,7 +96,7 @@ namespace generators
         return true;    
     }
 		
-    void Java::writeSelectStatic(const apidb::symbols::Table& table, std::ofstream& ofile)
+    void Java::writeSelects(const apidb::symbols::Table& table, std::ofstream& ofile)
     {  
         Select select(configureProject,table,ofile);
         select.setImplementation(true);
@@ -463,7 +463,7 @@ namespace generators
         }
     }
     */
-    void Java::writeSelectInstancetObjectData(const apidb::symbols::Table& table,std::ofstream& ofile)	
+    /*void Java::writeSelectInstancetObjectData(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
 		ofile << "\tpublic boolean ";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
@@ -582,7 +582,7 @@ namespace generators
         //ofile << "\t\t\n";
         ofile << "\t\treturn false;\n";
         ofile << "\t}\n";
-	}
+	}*/
     void Java::writeInsert(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
         Insert insert(configureProject,table,ofile);
@@ -671,7 +671,7 @@ namespace generators
 		writeInsert(table,ofile);
         ofile << "\n\n";        
         //writeSelectInstancetObjectData(table,ofile);
-		writeSelectStatic(table,ofile);
+		writeSelects(table,ofile);
         ofile << "\n\n";        
         writeDownloads(table,ofile);
         ofile << "\n\n"; 
