@@ -167,7 +167,7 @@ namespace generators
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:
-                            ofile << "\" + " << k->name;
+                            ofile << "\" + std::to_string(" << k->name << ")";
                             break;
                         case OutputLenguajes::JAVA:
                             ofile << "\" + " << k->name;
