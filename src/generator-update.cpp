@@ -122,7 +122,7 @@ namespace octetos::apidb::generators
 		            std::string msg = "Lenguaje no soportado " ;
 		            throw BuildException(msg);
 		        }
-		        ofile << ",";
+		        //ofile << ",";
 				if(it->second->symbolReferenced != NULL)
 		        {
                     switch(configureProject.outputLenguaje)
@@ -140,6 +140,23 @@ namespace octetos::apidb::generators
                         throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
                     }
 		        }
+		        else if(it->second->getOutType().compare(stringType()) == 0)
+                {
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "const " << stringType() << "& " << it->second->getName() ;
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << stringType() << " " << it->second->getName() ;
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << " $" << it->second->getName() ;
+                            break;
+                        default:
+                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                }
 		        else
 		        {
 		            ofile << it->second->getOutType() << " " << it->second->getName() ;
@@ -249,7 +266,7 @@ namespace octetos::apidb::generators
                     default:
                         throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
                 }
-		        echoKeyRawParam();
+		        echoDataRawParam(it->second);
                 ofile << ";\n";
                 if(table.getKey().size() > 0)
                 {
@@ -268,7 +285,7 @@ namespace octetos::apidb::generators
                             break;
                         default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
-                    } 
+                    }
                     ofile << "\" WHERE \"";                    
                     switch(configureProject.outputLenguaje)
                     {
@@ -349,7 +366,21 @@ namespace octetos::apidb::generators
 		            throw BuildException(msg);
 		        }
                 
-				ofile <<"\t\treturn connector.update(sqlString,dt);\n";
+				
+                switch(configureProject.outputLenguaje)
+                {
+                    case OutputLenguajes::CPP:
+                        ofile <<"\t\treturn connector.update(sqlString,dt);\n";
+                        break;
+                    case OutputLenguajes::JAVA:
+                        ofile <<"\t\treturn connector.update(sqlString,dt);\n";
+                        break;
+                    case OutputLenguajes::PHP:
+                        ofile <<"\t\treturn $connector->update(sqlString,dt);\n";
+                        break;
+                    default:
+                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                }
 				ofile << "\t}"<<std::endl;	
             } 
         }

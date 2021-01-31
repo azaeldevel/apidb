@@ -108,6 +108,7 @@ namespace apidb
             const char* getsqlString()const;
             bool echoKey()const;
             bool echoKeyRawParam()const;
+            bool echoDataRawParam(const symbols::Symbol* data)const;
         protected:
             const ConfigureProject& configureProject;
             const apidb::symbols::Table& table;
