@@ -366,7 +366,6 @@ namespace octetos::apidb::generators
 		            throw BuildException(msg);
 		        }
                 
-				
                 switch(configureProject.outputLenguaje)
                 {
                     case OutputLenguajes::CPP:
@@ -382,7 +381,7 @@ namespace octetos::apidb::generators
                         throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
                 }
 				ofile << "\t}"<<std::endl;	
-            } 
+            }
         }
         return true;
     }    
