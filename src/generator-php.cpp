@@ -70,7 +70,7 @@ namespace generators
     {
         if(table.getKey().size() == 0) return;
         
-        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
+        /*for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
             if(not it->second->isPrimaryKey())
 			{
@@ -191,7 +191,10 @@ namespace generators
 				ofile <<"\t\treturn $connector->update($sqlString,$rs);\n";
 				ofile << "\t}"<<std::endl;	
             } 
-        }
+        }*/
+        Update updater(configureProject,table,ofile);
+        updater.setImplementation(true);
+        updater.generate();
     }
     
     void PHP::writeGetters(const apidb::symbols::Table& table, std::ofstream& ofile)
