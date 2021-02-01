@@ -33,17 +33,7 @@ namespace octetos
 namespace apidb
 {
 	namespace generators
-	{
-                
-        enum OpCode
-        {
-            NoOp,
-            SELECT,
-            INSERT,
-            UPDATE,
-            DELETE,
-        };
-        
+	{        
         /**
         * \private No es parte del API
         * */
@@ -181,7 +171,13 @@ namespace apidb
         //TODO : Impletacion pendiente
         class Download : public Select
         {
+        public:
+            Download(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
+            virtual bool generate();
             
+        private:
+            bool definite();
+            bool implement();
         };
         
 		/**

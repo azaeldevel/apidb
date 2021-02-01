@@ -269,7 +269,7 @@ namespace octetos::apidb::generators
                 break;
             case OutputLenguajes::PHP:
                 ofile << "\t\t$dt = $connector->select($sqlString);"  << std::endl;
-                ofile << "\t\tif($dt)"  << std::endl;
+                ofile << "\t\tif(!is_null($dt))"  << std::endl;
                 break;
             default:
                 throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -310,7 +310,7 @@ namespace octetos::apidb::generators
         }
         ofile << "\t\t\t\t";
         if(configureProject.outputLenguaje == OutputLenguajes::PHP)
-        {        
+        {
             ofile << "$tmp = new " << table.getName() << "();\n";
             ofile << "\t\t\t\t$tmp->create(";
         }

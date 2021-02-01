@@ -141,6 +141,7 @@ namespace generators
     }
 	void CPP::writeDownloadsCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
+        /*
         for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
         {
             if(table.getName().compare(itT->second->getName()) != 0) 
@@ -480,6 +481,10 @@ namespace generators
             ofile << "\t\treturn false;\n";
             ofile << "\t}\n";            
         }
+        */
+        Download download(configureProject,table,ofile);
+        download.setImplementation(true);
+        download.generate();
     }
     void CPP::writeInsertCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{        
@@ -707,6 +712,7 @@ namespace generators
     void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
     {                
         //for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
+        /*
         const ConfigureProject::Table* tb = configureProject.findDownloadTable(table.getName());
         if(tb != NULL)
         {
@@ -759,6 +765,11 @@ namespace generators
                 throw BuildException(msg);
             }
         }
+        */
+
+        Download download(configureProject,table,ofile);
+        download.setDefinition(true);
+        download.generate();
     }
         
 	void CPP::writeSelectsH(const apidb::symbols::Table& table, std::ofstream& ofile)
