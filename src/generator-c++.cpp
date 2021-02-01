@@ -481,7 +481,6 @@ namespace generators
             ofile << "\t}\n";            
         }
     }
-    
     void CPP::writeInsertCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{        
         Insert insert(configureProject,table,ofile);
@@ -557,7 +556,6 @@ namespace generators
             
         }
 	}
-	
 	void CPP::createClassMethodesCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		writeDefaultContructorCPP(table,ofile);        
@@ -576,8 +574,7 @@ namespace generators
         ofile << "\n\n";        
         writeRemovesCPP(table,ofile);
         ofile << "\n\n";
-    }
-        
+    } 
     void CPP::createClassCPP(const apidb::symbols::Table& cl,std::ofstream& file,const std::string& nameClass)
     {
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL or configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
@@ -707,7 +704,6 @@ namespace generators
 		}	
 		return true;
 	}
-    
     void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
     {                
         //for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
@@ -771,68 +767,6 @@ namespace generators
         select.setDefinition(true);
         select.generate();
 	}
-	
-	symbols::Symbol* getRootSymbol(symbols::Symbol* k)
-    {
-        if(k == NULL) return NULL;
-        
-        if(k->symbolReferenced != NULL)
-        {
-            return getRootSymbol(k->symbolReferenced);
-        }
-        else
-        {
-            return k;
-        }
-    }
-	void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
-    {
-        if(k->symbolReferenced != NULL)
-        {
-            if(k->symbolReferenced->symbolReferenced != NULL)
-            {
-                insertParamsRaw(ofile,k->symbolReferenced,parent);
-            }     
-            else
-            {
-                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
-                penultimo--;
-                penultimo--;
-                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
-                {
-                    ofile << l->outType << " " << parent->name << l->upperName;
-                    if(*penultimo != l)
-                    {
-                        ofile << ",";
-                    }
-                }
-            }
-        }
-    }    
-	void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
-    {
-        if(k->symbolReferenced != NULL)
-        {
-            if(k->symbolReferenced->symbolReferenced != NULL)
-            {
-                insertValueRaw(ofile,k->symbolReferenced,parent);
-            }     
-            else
-            {
-                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
-                penultimo--;
-                penultimo--;
-                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
-                {
-                    ofile << parent->name << l->upperName;
-                    if(*penultimo != l)
-                    {
-                        ofile << ",";
-                    }
-                }
-            }
-        }
-    } 
         /**
         * Genera las funciones insert solo con los datos marcados como requeridos en la DB.
         */

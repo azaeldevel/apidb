@@ -58,20 +58,8 @@ namespace generators
     
 	Java::~Java()
 	{
-		//delete[] writeResults;
+		
 	}
-	/*const std::string& Java::getHeaderName() const
-	{
-		return projectH;
-	}
-	std::ofstream& Java::getSourceOutput()
-	{
-		return writeResults[1];
-	}
-	std::ofstream& Java::getHeaderOutput()
-	{
-		return writeResults[0];
-	}*/
 	Java::Java(apidb::Analyzer& d,const ConfigureProject& config) : apidb::generators::Generator(config,d)
 	{
         if(config.outputLenguaje != OutputLenguajes::JAVA)
@@ -449,140 +437,6 @@ namespace generators
             
         }
     }
-    /*
-    void Java::getKey2Java(std::ofstream& ofile, const symbols::Symbol* k)
-    {
-        if(k->symbolReferenced != NULL)
-        {            
-            ofile << ".get" << k->getUpperName() << "()";
-            getKey2Java(ofile,k->symbolReferenced);
-        }
-        else
-        {
-            ofile << ".get" << k->getUpperName() << "()";
-        }
-    }
-    */
-    /*void Java::writeSelectInstancetObjectData(const apidb::symbols::Table& table,std::ofstream& ofile)	
-	{
-		ofile << "\tpublic boolean ";
-        if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-        {
-            ofile << "select(octetos.db.mysql.Connector connector";
-        }
-        else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-        {
-            ofile << "select(octetos.db.maria.Connector connector";
-        }
-        else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-        {
-            ofile << "select(octetos.db.postgresql.Connector connector";
-        }
-        else
-        {
-            std::string msg = "Lenguaje no soportado " ;
-            throw BuildException(msg);
-        }
-        for(symbols::Symbol* k : table.getKey())
-        {
-			if(k->symbolReferenced != NULL)
-			{
-				ofile << "," << k->classReferenced->getName() << " ";
-			}
-			else
-			{
-				ofile << "," << k->getOutType() << " " ;
-			}
-			
-			ofile << k->getName();
-		}
-        ofile << ") throws SQLException"<<std::endl;
-        ofile << "\t{\n";
-        ofile << "\t\tString sql = \"SELECT ";
-        symbols::Key::const_iterator penultimo = --table.getKey().end();
-        //symbols::Symbol* penultimo = (--(table.end()))->second;
-        for(symbols::Symbol* k : table.getKey())
-        {
-			ofile << " " << k->getName();
-            if(k != (*penultimo))
-            {
-                ofile << ",";
-            }
-		}
-		ofile << "\";\n\t\tsql = sql + \" FROM \" + TABLE_NAME " ;
-        if(table.getKey().size() > 0)
-        {
-            ofile <<  " + \" WHERE ";
-            for(symbols::Symbol* k : table.getKey())
-            {
-                ofile << k->getName() << " = \" + " ;  
-                if(k->symbolReferenced != NULL)
-                {
-                    if(k->outType.compare("String") == 0)
-                    {
-                        ofile << k->getName();
-                        getKey2(ofile,k->symbolReferenced);
-                    }
-                    else
-                    {
-                        
-                        ofile << k->getName();
-                        getKey2(ofile,k->symbolReferenced);
-                    }
-                }
-                else if(k->outType.compare("String") == 0)
-                {
-                    ofile << k->getName();
-                }
-                else
-                {
-                    ofile << k->getName();
-                }
-                if(k != (*penultimo) )
-                {
-                    ofile << " and ";
-                }
-            }
-        }
-		ofile << ";\n";
-        
-        if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-        {        
-            ofile << "\t\tResultSet rs = null;\n";
-        }
-        else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-        {
-            ofile << "\t\tResultSet rs = null;\n";
-        }
-        else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-        {
-            ofile << "\t\tResultSet rs = null;\n";
-        }
-        else
-        {
-            std::string msg = "Lenguaje no soportado " ;
-            throw BuildException(msg);
-        }
-		ofile << "\t\trs = connector.select(sql);\n";
-        ofile << "\t\tif(rs != null)\n";
-        ofile << "\t\t{\n";
-        for(symbols::Symbol* k : table.getKey())
-        {
-            if(k->symbolReferenced != NULL)
-            {
-                ofile << "\t\t\tthis." << k->name << " = new " << k->classReferenced->name << "(" << k->name << ");\n";
-            }
-            else
-            {
-                ofile << "\t\t\tthis." << k->name << " = " << k->name << ";\n";
-            }
-        }        
-        ofile << "\t\t\treturn true;\n";
-        ofile << "\t\t}\n";
-        //ofile << "\t\t\n";
-        ofile << "\t\treturn false;\n";
-        ofile << "\t}\n";
-	}*/
     void Java::writeInsert(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
         Insert insert(configureProject,table,ofile);
@@ -804,72 +658,6 @@ namespace generators
 		}
 		return true;
 	}
-    
-	/*symbols::Symbol* getRootSymbolJava(symbols::Symbol* k)
-    {
-        if(k == NULL) return NULL;
-        
-        if(k->symbolReferenced != NULL)
-        {
-            return getRootSymbol(k->symbolReferenced);
-        }
-        else
-        {
-            return k;
-        }
-    }
-    
-	void insertParamsRawJava(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
-    {
-        if(k->symbolReferenced != NULL)
-        {
-            if(k->symbolReferenced->symbolReferenced != NULL)
-            {
-                insertParamsRaw(ofile,k->symbolReferenced,parent);
-            }     
-            else
-            {
-                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
-                penultimo--;
-                penultimo--;
-                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
-                {
-                    ofile << l->outType << " " << parent->name << l->upperName;
-                    if(*penultimo != l)
-                    {
-                        ofile << ",";
-                    }
-                }
-            }
-        }
-    }
-    
-	void insertValueRawJava(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
-    {
-        if(k->symbolReferenced != NULL)
-        {
-            if(k->symbolReferenced->symbolReferenced != NULL)
-            {
-                insertValueRaw(ofile,k->symbolReferenced,parent);
-            }     
-            else
-            {
-                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
-                penultimo--;
-                penultimo--;
-                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
-                {
-                    ofile << parent->name << l->upperName;
-                    if(*penultimo != l)
-                    {
-                        ofile << ",";
-                    }
-                }
-            }
-        }
-    }*/
-    
-    	
     void Java::createClassAttributes(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
@@ -885,7 +673,6 @@ namespace generators
             }
         }
     }
-    
     bool Java::createDatconnect(std::ofstream& file,bool log)
 	{
         //is function?
