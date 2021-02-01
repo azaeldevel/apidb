@@ -36,6 +36,15 @@ namespace apidb
 {
 namespace generators
 { 
+    bool Operation::echoKeyListName()const
+    {
+        if(table.getKey().size() > 1) throw BuildException("No hay soporte para llaves complejas.",__FILE__,__LINE__);
+        if(table.getKey().size() == 0) return false;
+        
+        ofile << table.getKey()[0]->name;
+        
+        return true;
+    }
     bool Operation::echoDataRawParam(const symbols::Symbol* k)const
     {
         //for(symbols::Symbol* k : table.getKey())

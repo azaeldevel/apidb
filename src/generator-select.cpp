@@ -17,7 +17,7 @@ namespace octetos::apidb::generators
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
-            ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::db::maria::Connector& connector,const std::string& where, int leng = -1);"<<std::endl;
+            ofile << "\t\tstatic std::vector<" << table.getName() << "*>* select(octetos::db::maria::Connector& connector,const std::string& where, int leng = -1,char order = 0);"<<std::endl;
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
         {
@@ -112,13 +112,13 @@ namespace octetos::apidb::generators
             switch(configureProject.outputLenguaje)
             {
                 case OutputLenguajes::CPP:
-                    ofile << "\tstd::vector<"  << table.getName() << "*>* " << table.getName() << "::select(octetos::db::maria::Connector& connector, const std::string& where, int leng)"<<std::endl;
+                    ofile << "\tstd::vector<"  << table.getName() << "*>* " << table.getName() << "::select(octetos::db::maria::Connector& connector, const std::string& where, int leng, char order)"<<std::endl;
                     break;
                 case OutputLenguajes::JAVA:
-                    ofile << "\tpublic static ArrayList<"  << table.getName() << "> " << "select(octetos.db.maria.Connector connector,String where, int leng)  throws SQLException"<<std::endl;
+                    ofile << "\tpublic static ArrayList<"  << table.getName() << "> " << "select(octetos.db.maria.Connector connector,String where, int leng, char order)  throws SQLException"<<std::endl;
                     break;
                 case OutputLenguajes::PHP:
-                    ofile << "\tpublic static function select($connector,$where,$leng = -1)"<<std::endl;
+                    ofile << "\tpublic static function select($connector,$where,$leng = -1, $order = \"\")"<<std::endl;
                     break;
                 default:
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -175,6 +175,22 @@ namespace octetos::apidb::generators
         ofile<< "= ";        
         if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
         ofile << "where;\n";
+        
+        if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << "\t\tif(order == 'a' || order == 'A')\n";
+        if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "\t\tif(strcmp($order,\"A\") == 0)\n";
+        ofile << "\t\t{\n";
+        ofile << "\t\t\t" << getsqlString() << " = " << getsqlString()  << " " << opConcat() << " " << "\" ORDER BY ";
+        echoKeyListName();
+        ofile << " ASC \";\n"; 
+        ofile << "\t\t}\n";
+        if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << "\t\telse if(order == 'd' || order == 'D')\n";
+        if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "\t\tif(strcmp($order,\"D\") == 0)\n";
+        ofile << "\t\t{\n";
+        ofile << "\t\t\t" << getsqlString() << " = " << getsqlString() << " " << opConcat() << " " << "\" ORDER BY ";
+        echoKeyListName();
+        ofile << " DESC \";\n"; 
+        ofile << "\t\t}\n";
+        
         ofile << "\t\tif(";
         if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
         ofile << "leng > 0)"  << std::endl;
@@ -182,8 +198,8 @@ namespace octetos::apidb::generators
         ofile << "\t\t\t" << getsqlString();        
         if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << " .";
         if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " +";
-        ofile << "= \" LIMIT  \";"  << std::endl;
-		ofile << "\t\t\t" << getsqlString();
+        ofile << "= \" LIMIT \";"  << std::endl;
+		ofile << "\t\t\t" << getsqlString();        
         switch(configureProject.outputLenguaje)
         {
             case OutputLenguajes::CPP:
@@ -199,6 +215,7 @@ namespace octetos::apidb::generators
                 throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
         }
         ofile << "\t\t}"  << std::endl;
+        
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
             switch(configureProject.outputLenguaje)

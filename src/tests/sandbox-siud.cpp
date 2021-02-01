@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     }
     time_t t;
     srand((unsigned) time(&t));
-    int r = rand() % 10000;
+    int r = rand() % 100000;
     std::string userstr,name,userstr2,name2,userstr3,name3;
     
     userstr = "user-";
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     {
         std::cout << "update id=" << user.getPerson().getEnte().getID() << ", md5=" << (const std::string&)md5 << " \n";
     }
-    r = rand() % 10000;
+    r = rand() % 100000;
     userstr2 = "user-";
     userstr2 += std::to_string(r);
     name2 = "name-";
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     
-    r = rand() % 10000;
+    r = rand() % 100000;
     userstr3 = "user-";
     userstr3 += std::to_string(r);
     name3 = "name-";
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
     
     connector.commit();
     
-    std::vector<muposys::db::Users*>* userList = muposys::db::Users::select(connector,"person != 0",10);
+    std::vector<muposys::db::Users*>* userList = muposys::db::Users::select(connector,"person != 0",10,'D');
     for(muposys::db::Users* u : *userList)
     {
         std::cout << "user id=" << u->getPerson().getEnte().getID() << "\n";

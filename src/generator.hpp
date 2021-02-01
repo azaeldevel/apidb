@@ -99,6 +99,7 @@ namespace apidb
             bool echoKey()const;
             bool echoKeyRawParam()const;
             bool echoDataRawParam(const symbols::Symbol* data)const;
+            bool echoKeyListName()const;
         protected:
             const ConfigureProject& configureProject;
             const apidb::symbols::Table& table;
