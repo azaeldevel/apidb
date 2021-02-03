@@ -38,10 +38,20 @@ namespace generators
 { 
     bool Operation::echoKeyListName()const
     {
-        if(table.getKey().size() > 1) throw BuildException("No hay soporte para llaves complejas.",__FILE__,__LINE__);
+        //if(table.getKey().size() > 1) throw BuildException("No hay soporte para llaves complejas.",__FILE__,__LINE__);
         if(table.getKey().size() == 0) return false;
         
-        ofile << table.getKey()[0]->name;
+        const symbols::Key& key = table.getKey();
+        std::vector<symbols::Symbol*>::const_iterator itend = key.end();
+        itend--;
+        for(std::vector<symbols::Symbol*>::const_iterator it = key.begin(); it < key.end(); it++)
+        {
+            ofile << (*it)->name;
+            if(it < itend) 
+            {
+                ofile << ",";
+            }
+        }
         
         return true;
     }
@@ -139,8 +149,14 @@ namespace generators
     }
     bool Operation::echoKeyRawParam()const
     {
-        for(symbols::Symbol* k : table.getKey())
+        const symbols::Key& key = table.getKey();
+        std::vector<symbols::Symbol*>::const_iterator itend = key.end();
+        itend--;
+        symbols::Symbol* endK = *itend;
+        
+        for(std::vector<symbols::Symbol*>::const_iterator it = key.begin(); it < key.end(); it++)
         {
+            symbols::Symbol* k = *it;
             ofile << " \"" << k->name << " = ";
             if(k->symbolReferenced != NULL)
             {
@@ -197,16 +213,34 @@ namespace generators
                     throw BuildException("No hay soporte para llave con string",__FILE__,__LINE__); 
                 }
             }
+            if(it < itend) 
+            {
+                switch(configureProject.outputLenguaje)
+                {
+                    case OutputLenguajes::CPP:
+                        ofile << " + \" and \" + ";
+                        break;
+                    case OutputLenguajes::JAVA:
+                        ofile << " + \" and \" + ";
+                        break;
+                    case OutputLenguajes::PHP:
+                        ofile << " . \" and \" . ";
+                        break;
+                    default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                }
+            }
         }
     }
     bool Operation::echoKey()const
     {
-        if(table.getKey().size() > 1) throw BuildException("No hay soporte para llaves complejas",__FILE__,__LINE__); 
-        //if(table.getKey().size() == 0) throw BuildException("No hay soporte para tablas no identificadas",__FILE__,__LINE__); 
-        
-        //symbols::Symbol* end = table.getKey().end();
-        for(symbols::Symbol* k : table.getKey())
+        const symbols::Key& key = table.getKey();
+        std::vector<symbols::Symbol*>::const_iterator itend = key.end();
+        itend--;
+        symbols::Symbol* endK = *itend;
+        for(std::vector<symbols::Symbol*>::const_iterator it = key.begin(); it < key.end(); it++)
         {
+            symbols::Symbol* k = *it;
             ofile << " \"" << k->name << " = ";
             if(k->symbolReferenced != NULL)
             {
@@ -235,7 +269,7 @@ namespace generators
                             inheritField(ofile,k->symbolReferenced,opReference());
                             break;
                         default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     }
                 }
             }
@@ -278,6 +312,24 @@ namespace generators
                         default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
                     }
+                }
+            }
+            
+            if(it < itend) 
+            {
+                switch(configureProject.outputLenguaje)
+                {
+                    case OutputLenguajes::CPP:
+                        ofile << " + \" and \" + ";
+                        break;
+                    case OutputLenguajes::JAVA:
+                        ofile << " + \" and \" + ";
+                        break;
+                    case OutputLenguajes::PHP:
+                        ofile << " . \" and \" . ";
+                        break;
+                    default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
                 }
             }
         }
@@ -359,6 +411,48 @@ namespace generators
                 return NULL;            
         }
     }
+    const char* Operation::byteType() const
+    {
+        switch(configureProject.outputLenguaje)
+        {
+            case OutputLenguajes::CPP:
+                return "unsigned char";
+            case OutputLenguajes::JAVA:
+                return "byte";
+            case OutputLenguajes::PHP:
+                return "Byte";
+            default:
+                return NULL;            
+        }
+    }
+    const char* Operation::floatType() const
+    {
+        switch(configureProject.outputLenguaje)
+        {
+            case OutputLenguajes::CPP:
+                return "float";
+            case OutputLenguajes::JAVA:
+                return "float";
+            case OutputLenguajes::PHP:
+                return "Float";
+            default:
+                return NULL;            
+        }
+    }
+    const char* Operation::doubleType() const
+    {
+        switch(configureProject.outputLenguaje)
+        {
+            case OutputLenguajes::CPP:
+                return "double";
+            case OutputLenguajes::JAVA:
+                return "double";
+            case OutputLenguajes::PHP:
+                return "Double";
+            default:
+                return NULL;            
+        }
+    }
     void Operation::setDefinition(bool d)
     {
         definition = d;
@@ -377,67 +471,6 @@ namespace generators
         else if(k != NULL)
         {
             ofile << separator << "get" << k->getUpperName() << "()";
-        }
-    }
-	void Operation::insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
-    {
-        if(k->symbolReferenced != NULL)
-        {
-            if(k->symbolReferenced->symbolReferenced != NULL)
-            {
-                insertParamsRaw(ofile,k->symbolReferenced,parent);
-            }     
-            else
-            {
-                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
-                penultimo--;
-                penultimo--;
-                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
-                {
-                    switch(configureProject.outputLenguaje)
-                    {
-                        case OutputLenguajes::CPP:
-                            ofile << l->outType << " " << parent->name << l->upperName;
-                            break;
-                        case OutputLenguajes::JAVA:
-                            ofile << l->outType << " " << parent->name << l->upperName;
-                            break;
-                        case OutputLenguajes::PHP:
-                            ofile << parent->name << l->upperName;
-                            break;
-                        default:
-                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
-                    }
-                    if(*penultimo != l)
-                    {
-                        ofile << ",";
-                    }
-                }
-            }
-        }
-    }  
-	void Operation::insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
-    {
-        if(k->symbolReferenced != NULL)
-        {
-            if(k->symbolReferenced->symbolReferenced != NULL)
-            {
-                insertValueRaw(ofile,k->symbolReferenced,parent);
-            }     
-            else
-            {
-                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
-                penultimo--;
-                penultimo--;
-                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
-                {
-                    ofile << parent->name << l->upperName;
-                    if(*penultimo != l)
-                    {
-                        ofile << ",";
-                    }
-                }
-            }
         }
     }
     symbols::Symbol* Operation::getRootSymbol(symbols::Symbol* k)
@@ -505,7 +538,7 @@ namespace generators
 	{
 		return configureProject.outputLenguaje;
 	}
-	symbols::Symbol* Generator::getRootSymbol(symbols::Symbol* k)
+	/*symbols::Symbol* Generator::getRootSymbol(symbols::Symbol* k)
     {
         if(k == NULL) return NULL;
         
@@ -590,7 +623,7 @@ namespace generators
         {
             ofile << ".get" << k->getUpperName() << "()";
         }
-    }
+    }*/
 }
 }
 }

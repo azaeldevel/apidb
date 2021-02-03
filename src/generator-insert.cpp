@@ -5,16 +5,86 @@
 namespace octetos::apidb::generators
 {
 
-  
-
-    Insert::Insert(const ConfigureProject& c,const apidb::symbols::Table& t,std::ofstream& o) : Operation(c,t,o)
+    
+	void Insert::insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
+    {
+        if(k->symbolReferenced != NULL)
+        {
+            if(k->symbolReferenced->symbolReferenced != NULL)
+            {
+                insertParamsRaw(ofile,k->symbolReferenced,parent);
+            }     
+            else
+            {
+                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
+                penultimo--;
+                penultimo--;
+                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
+                {
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << l->outType << " " << parent->name << l->upperName;
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << l->outType << " " << parent->name << l->upperName;
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << parent->name << l->upperName;
+                            break;
+                        default:
+                        throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                    if(*penultimo != l)
+                    {
+                        ofile << ",";
+                    }
+                }
+            }
+        }
+    }  
+	void Insert::insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
+    {
+        if(k->symbolReferenced != NULL)
+        {
+            if(k->symbolReferenced->symbolReferenced != NULL)
+            {
+                insertValueRaw(ofile,k->symbolReferenced,parent);
+            }     
+            else
+            {
+                auto penultimo = k->symbolReferenced->classParent->getRequired().begin();
+                penultimo--;
+                penultimo--;
+                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
+                {
+                    ofile << parent->name << l->upperName;
+                    if(*penultimo != l)
+                    {
+                        ofile << ",";
+                    }
+                }
+            }
+        }
+    }
+    Insert::Insert(const ConfigureProject& c,const apidb::symbols::Table& t,std::ofstream& o,Mode m) : Operation(c,t,o),mode(m),countFuns(0)
     {
     }
     
     bool Insert::definite()
     {
+        short countRef = 0;
+        if(mode == Mode::ReferencedParent)
+        {
+            for(symbols::Symbol* k : table.getRequired())
+            {
+                if(k->symbolReferenced != NULL) countRef++;
+            }
+            if(countRef == 0) return false;
+        }        
+        
         //inser Raw data
-        ofile << "\t\t"<< "bool insert(";
+        ofile << "\t\t" << "bool insert(";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
             switch(configureProject.outputLenguaje)
@@ -70,45 +140,76 @@ namespace octetos::apidb::generators
         {
             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
         }
-        for(symbols::Symbol* k : table.getRequired())
+        if(mode == Mode::CreateParent)
         {
-            if(k->symbolReferenced!= NULL)
+            for(symbols::Symbol* k : table.getRequired())
             {
-                for(symbols::Symbol* l : k->classReferenced->getRequired())
+                if(k->symbolReferenced != NULL)
                 {
-                    symbols::Symbol* rootS = getRootSymbol(l);
-                    if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
-                    
-                    if(l->symbolReferenced!= NULL)
+                    for(symbols::Symbol* l : k->classReferenced->getRequired())
                     {
-                        ofile << ",";
-                        insertParamsRaw(ofile,l,k);
-                    }
-                    else if(l->outType.compare(stringType()) == 0)
-                    {
-                        if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << ",const ";
-                        ofile << stringType();
-                        if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "& " ;
-                        ofile << k->name << l->upperName;
-                    }
-                    else
-                    {
-                        ofile << "," << k->getOutType() << " " << k->name << l->upperName;
+                        symbols::Symbol* rootS = getRootSymbol(l);
+                        if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                        
+                        if(l->symbolReferenced!= NULL)
+                        {
+                            ofile << ",";
+                            insertParamsRaw(ofile,l,k);
+                        }
+                        else if(l->outType.compare(stringType()) == 0)
+                        {
+                            if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << ",const ";
+                            ofile << stringType();
+                            if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "& " ;
+                            ofile << k->name << l->upperName;
+                        }
+                        else
+                        {
+                            ofile << "," << k->getOutType() << " " << k->name << l->upperName;
+                        }
                     }
                 }
+                else if(k->outType.compare(stringType()) == 0)
+                {
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << ",const ";
+                    ofile << stringType();
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "& " ;
+                    ofile << k->name;
+                }
+                else
+                {
+                    if(not k->isAutoIncrement() and not k->isPrimaryKey()) ofile << "," << k->getOutType() << " " << k->name;
+                }
             }
-			else if(k->outType.compare(stringType()) == 0)
+        }
+        else if(mode == Mode::ReferencedParent)
+        {
+            for(symbols::Symbol* k : table.getRequired())
             {
-                if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << ",const ";
-                ofile << stringType();
-                if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "& " ;
-                ofile << k->name;
+                ofile << ",";
+                if(k->symbolReferenced!= NULL)
+                {
+                    ofile << "const " << k->symbolReferenced->classParent->name << "& " << k->name;
+                }
+                else if(k->outType.compare(stringType()) == 0)
+                {
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "const ";
+                    ofile << stringType();
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "& " ;
+                    ofile << k->name;
+                }
+                else if(k->outType.compare(integerType()) == 0)
+                {
+                    
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << integerType();
+                    ofile << " " << k->name;
+                }
+                else
+                {
+                    if(not k->isAutoIncrement() and not k->isPrimaryKey()) ofile << k->getOutType() << " " << k->name;
+                }
             }
-            else
-            {
-                if(not k->isAutoIncrement() and not k->isPrimaryKey()) ofile << "," << k->getOutType() << " " << k->name;
-            }
-		}
+        }
         ofile << ");"<<std::endl;    
         return true;
     }
@@ -116,6 +217,16 @@ namespace octetos::apidb::generators
     
     bool Insert::implement()
     {
+        short countRef = 0;
+        if(mode == Mode::ReferencedParent)
+        {
+            for(symbols::Symbol* k : table.getRequired())
+            {
+                if(k->symbolReferenced != NULL) countRef++;
+            }
+            if(countRef == 0) return false;
+        }  
+        
         auto penultimoReq = --table.getRequired().end();
         // Methodo insert Raw datas
         ofile << "\t";
@@ -133,7 +244,7 @@ namespace octetos::apidb::generators
                     ofile << "public function insert($connector";
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
@@ -174,158 +285,238 @@ namespace octetos::apidb::generators
         {
             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
         }
-        for(symbols::Symbol* k : table.getRequired())
+        if(mode == Mode::CreateParent)
         {
-            if(k->symbolReferenced!= NULL)
+            for(symbols::Symbol* k : table.getRequired())
             {
-                for(symbols::Symbol* l : k->classReferenced->getRequired())
+                if(k->symbolReferenced!= NULL)
                 {
-                    symbols::Symbol* rootS = getRootSymbol(l);
-                    if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
-                    
-                    if(l->symbolReferenced!= NULL)
-                    {                        
-                        ofile << ",";
-                        insertParamsRaw(ofile,l,k);
-                    }
-                    else if(l->outType.compare(stringType()) == 0)
+                    for(symbols::Symbol* l : k->classReferenced->getRequired())
                     {
-                        ofile << ",";
-                        if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "const " << stringType() << "& ";                        
-                        if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << stringType() << " ";
-                        if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
-                        ofile << k->name << l->upperName;
-                    }
-                    else
-                    {
+                        symbols::Symbol* rootS = getRootSymbol(l);
+                        if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
                         
-                        switch(configureProject.outputLenguaje)
+                        if(l->symbolReferenced!= NULL)
+                        {                        
+                            ofile << ",";
+                            insertParamsRaw(ofile,l,k);
+                        }
+                        else if(l->outType.compare(stringType()) == 0)
                         {
-                            case OutputLenguajes::CPP:
-                                ofile << "," << k->getOutType() << " " << k->name << l->upperName;
-                                break;
-                            case OutputLenguajes::JAVA:
-                                ofile << "," << k->getOutType() << " " << k->name << l->upperName;
-                                break;
-                            case OutputLenguajes::PHP:
-                                ofile << ", $" << k->name << l->upperName;
-                                break;
-                            default:
-                                throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            ofile << ",";
+                            if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "const " << stringType() << "& ";                        
+                            if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << stringType() << " ";
+                            if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                            ofile << k->name << l->upperName;
+                        }
+                        else
+                        {
+                            
+                            switch(configureProject.outputLenguaje)
+                            {
+                                case OutputLenguajes::CPP:
+                                    ofile << "," << k->getOutType() << " " << k->name << l->upperName;
+                                    break;
+                                case OutputLenguajes::JAVA:
+                                    ofile << "," << k->getOutType() << " " << k->name << l->upperName;
+                                    break;
+                                case OutputLenguajes::PHP:
+                                    ofile << ", $" << k->name << l->upperName;
+                                    break;
+                                default:
+                                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                            }
                         }
                     }
                 }
-            }
-			else if(k->outType.compare(stringType()) == 0)
-            {
-                ofile << ",";
-                if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "const " << stringType() << "& ";                        
-                if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << stringType() << " ";
-                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
-                ofile << k->name;
-            }
-            else
-            {
-                if(not k->isAutoIncrement() and not k->isPrimaryKey()) 
+                else if(k->outType.compare(stringType()) == 0)
                 {
-                    if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << "," << k->getOutType() << " " << k->name;
-                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << ",$" << k->name;
+                    ofile << ",";
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "const " << stringType() << "& ";                        
+                    if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << stringType() << " ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
+                    ofile << k->name;
+                }
+                else
+                {
+                    if(not k->isAutoIncrement() and not k->isPrimaryKey()) 
+                    {
+                        if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << "," << k->getOutType() << " " << k->name;
+                        if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << ",$" << k->name;
+                    }
                 }
             }
-		}
+        }
+        else if(mode == Mode::ReferencedParent)
+        {
+            for(symbols::Symbol* k : table.getRequired())
+            {
+                ofile << ",";
+                if(k->symbolReferenced != NULL)
+                {
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "const ";
+                    ofile << k->symbolReferenced->classParent->name;
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "& ";
+                    ofile << " " << k->name;
+                }
+                else if(k->outType.compare(stringType()) == 0)
+                {
+                    
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "const " << stringType() << "& ";                        
+                    if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << stringType() << " ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
+                    ofile << k->name;
+                }
+                else if(k->outType.compare(integerType()) == 0)
+                {
+                    
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << integerType();
+                    ofile << " " << k->name;
+                }
+                else
+                {
+                    if(not k->isAutoIncrement() and not k->isPrimaryKey()) 
+                    {
+                        if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << k->getOutType() << " " << k->name;
+                        if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << ",$" << k->name;
+                    }
+                }
+            }
+        }
         ofile << ")";
         if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " throws SQLException";
         ofile << "\n\t{\n";
         
-        //para cada campo foraneo
-        for(symbols::Symbol* k : table.getRequired())
+        if(mode == Mode::CreateParent)
         {
-            if(k->isPrimaryKey() && k->isAutoIncrement()) continue;
-            
-			if(k->symbolReferenced != NULL)
+            //para cada campo foraneo
+            for(symbols::Symbol* k : table.getRequired())
             {
-                ofile << "\t\t";
-                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$this->";
-                ofile << k->name << " = new " << k->classReferenced->name << "();\n";
-                ofile << "\t\tif(";
-                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$this->";
-                ofile << k->name;
-                switch(configureProject.outputLenguaje)
+                if(k->isPrimaryKey() && k->isAutoIncrement()) continue;
+                
+                if(k->symbolReferenced != NULL)
                 {
-                    case OutputLenguajes::CPP:
-                        ofile << "->";
-                        break;
-                    case OutputLenguajes::JAVA:
-                        ofile << ".";
-                        break;
-                    case OutputLenguajes::PHP:
-                        ofile << "->";
-                        break;
-                    default:
-                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
-                }
-                ofile << "insert(";
-                switch(configureProject.outputLenguaje)
-                {
-                    case OutputLenguajes::CPP:
-                        ofile << "connector";
-                        break;
-                    case OutputLenguajes::JAVA:
-                        ofile << "connector";
-                        break;
-                    case OutputLenguajes::PHP:
-                        ofile << "$connector";
-                        break;
-                    default:
-                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
-                }
-                for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
-                {
-                    if(l->symbolReferenced != NULL)
+                    ofile << "\t\t";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                    ofile << "this";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP or configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "->";
+                    if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << ".";
+                    ofile << k->name << " = new " << k->classReferenced->name << "();\n";
+                    ofile << "\t\tif(";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                    ofile << "this";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP or configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "->";
+                    if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << ".";
+                    ofile << k->name;
+                    switch(configureProject.outputLenguaje)
                     {
-                        for(symbols::Symbol* m : l->symbolReferenced->classParent->getRequired())
-                        {                            
-                            symbols::Symbol* rootS = getRootSymbol(m);
-                            if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
-                            
-                            ofile << ",";
-                            if(m->symbolReferenced!= NULL)
+                        case OutputLenguajes::CPP:
+                            ofile << "->";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << ".";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "->";
+                            break;
+                        default:
+                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                    ofile << "insert(";
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "connector";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "connector";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "$connector";
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                    if(mode == Mode::CreateParent)
+                    {
+                        for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
+                        {
+                            if(l->symbolReferenced != NULL)
                             {
-                                insertValueRaw(ofile,m,l);
+                                for(symbols::Symbol* m : l->symbolReferenced->classParent->getRequired())
+                                {                            
+                                    symbols::Symbol* rootS = getRootSymbol(m);
+                                    if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                                    
+                                    ofile << ",";
+                                    if(m->symbolReferenced!= NULL)
+                                    {
+                                        insertValueRaw(ofile,m,l);
+                                    }
+                                    else if(m->outType.compare(stringType()) == 0)
+                                    {
+                                        ofile << k->name << m->upperName;
+                                    }
+                                    else
+                                    {
+                                        ofile << k->name << m->upperName;
+                                    }
+                                }
                             }
-                            else if(m->outType.compare(stringType()) == 0)
+                            else if(l->outType.compare(stringType()) == 0)
                             {
-                                ofile << k->name << m->upperName;
+                                symbols::Symbol* rootS = getRootSymbol(l);
+                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                                
+                                ofile << ",";
+                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
+                                ofile << k->name << l->upperName;
                             }
                             else
                             {
-                                ofile << k->name << m->upperName;
+                                symbols::Symbol* rootS = getRootSymbol(l);
+                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                                
+                                ofile << ",";                        
+                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
+                                ofile << k->name << l->upperName;
                             }
                         }
                     }
-                    else if(l->outType.compare(stringType()) == 0)
+                    else if(mode == Mode::ReferencedParent)
                     {
-                        symbols::Symbol* rootS = getRootSymbol(l);
-                        if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
-                        
-                        ofile << ",";
-                        if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
-                        ofile << k->name << l->upperName;
+                        for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
+                        {
+                            if(l->symbolReferenced != NULL)
+                            {
+                                
+                                ofile << ","<< k->name;
+                            }
+                            else if(l->outType.compare(stringType()) == 0)
+                            {
+                                symbols::Symbol* rootS = getRootSymbol(l);
+                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                                
+                                ofile << ",";
+                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
+                                ofile << k->name << l->upperName;
+                            }
+                            else
+                            {
+                                symbols::Symbol* rootS = getRootSymbol(l);
+                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                                
+                                ofile << ",";                        
+                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
+                                ofile << k->name << l->upperName;
+                            }
+                        }
                     }
-                    else
-                    {
-                        symbols::Symbol* rootS = getRootSymbol(l);
-                        if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
                         
-                        ofile << ",";                        
-                        if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
-                        ofile << k->name << l->upperName;
-                    }
-                }
-                ofile << ") == false) return false;\n";
-            }            
-		}
-
+                    ofile << ") == false) return false;\n";
+                }            
+            }
+        }
                 
         ofile << "\t\t";
         switch(configureProject.outputLenguaje)
@@ -370,24 +561,90 @@ namespace octetos::apidb::generators
         }
 		ofile << ")\";" << std::endl;
 		ofile << "\t\t" <<  getsqlString() << " = " << getsqlString() << " " << opConcat() << " \" VALUES(\"";
-		for(symbols::Symbol* k : table.getRequired())
+        if(mode == Mode::CreateParent)
         {
-            if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
-            
-            if(k->symbolReferenced != NULL)
-            {                
-                if(getRootSymbol(k->symbolReferenced)->outType.compare(stringType()) == 0)
+            for(symbols::Symbol* k : table.getRequired())
+            {
+                if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
+                
+                if(k->symbolReferenced != NULL)
+                {                
+                    if(getRootSymbol(k->symbolReferenced)->outType.compare(stringType()) == 0)
+                    {
+                        ofile << " " << opConcat() << " \"'\" ";
+                        insertValueRaw(ofile,k->symbolReferenced,k);
+                        ofile << " " << opConcat() << " \"'\" ";
+                    }
+                    else
+                    {
+                        switch(configureProject.outputLenguaje)
+                        {
+                            case OutputLenguajes::CPP:
+                                ofile << " + std::to_string((*";
+                                break;
+                            case OutputLenguajes::JAVA:
+                                ofile << " + ";
+                                break;
+                            case OutputLenguajes::PHP:
+                                ofile << " " << opConcat() << " ";
+                                break;
+                            default:
+                                throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                        }
+                        
+                        if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$this->";
+                        ofile << k->name;
+                        if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << ")";
+                        inheritField(ofile,k->symbolReferenced,opReference());
+                        if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << ")";                                       
+                    }
+                }
+                else if(k->outType.compare(stringType()) == 0)
                 {
-                    ofile << " " << opConcat() << " \"'\" ";
-                    insertValueRaw(ofile,k->symbolReferenced,k);
-                    ofile << " " << opConcat() << " \"'\" ";
+                    ofile << " " << opConcat() << " " << " \"'\" ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " + ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << " . ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                    ofile << k->name;
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " + ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << " . ";
+                    ofile << "\"'\"";
                 }
                 else
-                {
+                {                
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:
-                            ofile << " + std::to_string((*";
+                            ofile << " + std::to_string(" << k->name << ")";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << " + " << k->name;
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << " . " << k->name;
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                }
+                if(*penultimoReq != k)
+                {
+                    ofile << " " << opConcat() << " \",\" ";
+                }
+            }
+        }
+        else if(mode == Mode::ReferencedParent)
+        {
+            for(symbols::Symbol* k : table.getRequired())
+            {
+                if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
+                
+                if(k->symbolReferenced != NULL)
+                {    
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << " + std::to_string(";
                             break;
                         case OutputLenguajes::JAVA:
                             ofile << " + ";
@@ -398,45 +655,45 @@ namespace octetos::apidb::generators
                         default:
                             throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     }
-                    
+                        
                     if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$this->";
-                    ofile << k->name;
-                    if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << ")";
+                    ofile << k->name;                    
                     inheritField(ofile,k->symbolReferenced,opReference());
                     if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << ")";                                       
+                    
                 }
-            }
-            else if(k->outType.compare(stringType()) == 0)
-            {
-                ofile << " " << opConcat() << " " << " \"'\" ";
-                if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " + ";
-                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << " . ";
-                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
-                ofile << k->name;
-                if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " + ";
-                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << " . ";
-                ofile << "\"'\"";
-            }
-            else
-            {                
-                switch(configureProject.outputLenguaje)
+                else if(k->outType.compare(stringType()) == 0)
                 {
-                    case OutputLenguajes::CPP:
-                        ofile << " + std::to_string(" << k->name << ")";
-                        break;
-                    case OutputLenguajes::JAVA:
-                        ofile << " + " << k->name;
-                        break;
-                    case OutputLenguajes::PHP:
-                        ofile << " . " << k->name;
-                        break;
-                    default:
-                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    ofile << " " << opConcat() << " " << " \"'\" ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " + ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << " . ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                    ofile << k->name;
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " + ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << " . ";
+                    ofile << "\"'\"";
                 }
-            }
-            if(*penultimoReq != k)
-            {
-                ofile << " " << opConcat() << " \",\" ";
+                else
+                {                
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << " + std::to_string(" << k->name << ")";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << " + " << k->name;
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << " . " << k->name;
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                }
+                if(*penultimoReq != k)
+                {
+                    ofile << " " << opConcat() << " \",\" ";
+                }
             }
         }
 		ofile << " " << opConcat() << "  \")\";"<< std::endl;
@@ -508,8 +765,21 @@ namespace octetos::apidb::generators
             //iniciar llave?
             if(table.getKey().size() > 1)
             {//es llave compuesta?
-                std::string msg = "No hay soporte aun para llaves compuestas" ;
-                throw BuildException(msg,__FILE__,__LINE__);
+                switch(configureProject.outputLenguaje)
+                {
+                    case OutputLenguajes::CPP:
+                        ofile << "\t\tif(connector.insert(sqlString,dt)) return true;\n";
+                        break;
+                    case OutputLenguajes::JAVA:
+                        ofile << "\t\tif(connector.insert(sqlString,dt)) return true;\n";
+                        break;
+                    case OutputLenguajes::PHP:
+                        ofile << "\t\tif($connector->insert($sqlString,$dt)) return true;\n";
+                        break;
+                    default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                }                
+                ofile << "\t\treturn false;\n";
             }
             else if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced == NULL and (*(table.getKey().begin()))->outType.compare(integerType()) == 0)
             {//es llave simple y no tiene campos foraneos?

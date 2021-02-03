@@ -38,7 +38,7 @@ namespace octetos::apidb::generators
                     }
                     else if(s->getSymbolReferenced())
                     {
-                        ofile <<"\t\tconst " << s->getClassReferenced()->getName() << "& ";
+                        ofile <<"\t\t" << s->getClassReferenced()->getName() << "& ";
                     }
                     else 
                     {
@@ -184,7 +184,7 @@ namespace octetos::apidb::generators
             switch(configureProject.outputLenguaje)
             {
                 case OutputLenguajes::CPP:
-                    ofile <<"\tconst " << s->classReferenced->name << "& ";
+                    ofile <<"\t" << s->classReferenced->name << "& ";
                     break;
                 case OutputLenguajes::JAVA:
                     ofile <<"\tpublic " << s->classReferenced->name << " ";

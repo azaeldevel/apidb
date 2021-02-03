@@ -80,10 +80,10 @@ namespace octetos::apidb::generators
                     {
                         ofile << ",";
                     }
-                }                                
+                }
                 ofile << ", int leng = 0);"<<std::endl;                                
             }
-        }    
+        }
         return true;
     }
     

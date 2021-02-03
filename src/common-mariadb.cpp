@@ -179,34 +179,51 @@ namespace apidb
                 {
                     attrribute->keyType = Symbol::KeyType::PRIMARY;
                 }
-                else if(strcmp(row[3],"MUL") == 0)
+                else if(strcmp(row[3],"UNI") == 0)
                 {
                     attrribute->keyType = Symbol::KeyType::UNIQUE;
                 }
-                else if(strcmp(row[3],"MUL") == 0)
+                else if(strcmp(row[3],"") != 0)
                 {
-                    attrribute->keyType = Symbol::KeyType::FOREIGN_UNIQUE;
+                    //attrribute->keyType = Symbol::KeyType::FOREIGN_UNIQUE;
+                    attrribute->keyType = Symbol::KeyType::NOKEY;
+                    const std::string red("\033[0;31m");
+                    const std::string reset("\033[0m");
+                    std::cout << red << "Advertencia : " << "El campo '" << attrribute->name << "' es una llave de tipo desconocido.\n" << reset;
                 }
-				else
-				{
-					attrribute->keyType = Symbol::KeyType::NOKEY;
-				}
-				std::string extra = row[5];
-
-				if(attrribute->required && attrribute->keyType == Symbol::KeyType::PRIMARY && extra.compare("auto_increment") == 0)//primary key
+                else
+                {
+                    //attrribute->keyType = Symbol::KeyType::FOREIGN_UNIQUE;
+                    attrribute->keyType = Symbol::KeyType::NOKEY;
+                }
+                
+				//std::string extra = row[5];
+                if(strcmp(row[5],"auto_increment") == 0)
+                {
+                    attrribute->isAutoInc = true;
+                }
+                else
+                {
+                    attrribute->isAutoInc = false;
+                }
+                
+                
+                
+				if(attrribute->keyType == Symbol::KeyType::PRIMARY)//primary key
 				{
 					key.push_back(attrribute);
 					attrribute->isPK = true;//attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
-                    attrribute->isAutoInc = true;
+                    
 				}
+				/*
 				else if(attrribute->required && attrribute->keyType == Symbol::KeyType::PRIMARY)//unique constraing
 				{
 					key.push_back(attrribute);
 					attrribute->isPK = true;//attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
                     attrribute->isAutoInc = false;
 				}
-
-                                insert(std::make_pair(attrribute->name.c_str(),attrribute));
+                */
+                insert(std::make_pair(attrribute->name.c_str(),attrribute));
 				if(attrribute->required)
 				{
 					required.push_back(attrribute);//si attrribute->required tambie se agrega a un lista especial

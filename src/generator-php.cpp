@@ -134,7 +134,7 @@ namespace generators
     }
 	void PHP::writeDownloads(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
-        for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
+        /*for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
         {
             if(table.getName().compare(itT->second->getName()) != 0) 
             {
@@ -457,11 +457,14 @@ namespace generators
             ofile << "\t\treturn false;\n";
             ofile << "\t}\n";
             
-        }
+        }*/        
+        Download download(configureProject,table,ofile);
+        download.setImplementation(true);
+        download.generate();
     }
     void PHP::writeInsert(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
-        Insert insert(configureProject,table,ofile);
+        Insert insert(configureProject,table,ofile,Insert::Mode::CreateParent);
         insert.setImplementation(true);
         insert.generate();
 	}
@@ -515,17 +518,47 @@ namespace generators
         if(table.getKey().size() > 0)//tiene key
         {
             ofile << "\t{" <<std::endl;
-            if(table.getKey().size() > 1) throw core::Exception("Llave complet aun no soportada",__FILE__,__LINE__);
-            for(auto k : table.getKey())
-            {//TODO: La catidad de parametros deve variar de acuerdo a la cantidad de elementos en la llave: soport para llave compleja.
-                if(k->getClassReferenced() != NULL)
+            //if(table.getKey().size() > 1) throw core::Exception("Llave complet aun no soportada",__FILE__,__LINE__);
+            if(table.getKey().size() == 1)
+            {
+                if(table.getKey()[0]->getClassReferenced() != NULL)
                 {
-                    ofile << "\t\t$this->" << k->getName()  << " = new " << k->getClassReferenced()->getName() << "();" << std::endl;
-                    ofile << "\t\t$this->" << k->getName() << "->create($" << k->getName()  << ");" << std::endl;
+                    ofile << "\t\t$this->" << table.getKey()[0]->getName()  << " = new " << table.getKey()[0]->getClassReferenced()->getName() << "();" << std::endl;
+                    ofile << "\t\t$this->" << table.getKey()[0]->getName() << "->create($" << table.getKey()[0]->getName()  << ");" << std::endl;
                 }
                 else
                 {
-                    ofile << "\t\t$this->" << k->getName()  << " = $" << k->getName()  << ";" << std::endl;
+                    ofile << "\t\t$this->" << table.getKey()[0]->getName()  << " = $" << table.getKey()[0]->getName()  << ";" << std::endl;
+                }
+            }
+            else //if(table.getKey().size() > 1)
+            {
+                const symbols::Key& key = table.getKey();
+                std::vector<symbols::Symbol*>::const_iterator itend = key.end();
+                itend--;
+                for(auto k : table.getKey())
+                {//TODO: La catidad de parametros deve variar de acuerdo a la cantidad de elementos en la llave: soport para llave compleja.
+                    ofile << "\t\t$this->" << k->getName();
+                    if(k->getClassReferenced() != NULL)
+                    {
+                        ofile << " = new " << k->getClassReferenced()->getName() << "();" << std::endl;
+                    }
+                    else
+                    {
+                        ofile << "\t\t$this->" << k->getName()  << " = $" << k->getName()  << ";" << std::endl;
+                    }
+                }                
+                for(auto k : table.getKey())
+                {//TODO: La catidad de parametros deve variar de acuerdo a la cantidad de elementos en la llave: soport para llave compleja.
+                    ofile << "\t\t$this->" << k->getName();
+                    if(k->getClassReferenced() != NULL)
+                    {
+                        ofile << "\t\t$this->" << k->getName() << "->create($" << k->getName()  << ");" << std::endl;
+                    }
+                    else
+                    {
+                        ofile << "\t\t$this->" << k->getName()  << " = $" << k->getName()  << ";" << std::endl;
+                    }
                 }
             }
             ofile << "\t}" <<std::endl;

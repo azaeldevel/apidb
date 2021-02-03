@@ -49,22 +49,22 @@ namespace apidb
 			PackingLenguajes getPackingLenguaje() const;
 			std::string getPackingLenguajeString()const;
 			Generator(const ConfigureProject& config,apidb::Analyzer& analyzer);
-            symbols::Symbol* getRootSymbol(symbols::Symbol* k);
-            void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
-            void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+            //symbols::Symbol* getRootSymbol(symbols::Symbol* k);
+            //void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+            //void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
             /**
             * @brief genera una llada recursiva para el componete indicado
             * @condition se debe llamar con k->symbolReferenced
             * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
             */
-            virtual void getKey(std::ofstream& ofile, const symbols::Symbol* k);
+            //virtual void getKey(std::ofstream& ofile, const symbols::Symbol* k);
             
             /**
             * @brief genera una llada recursiva para el componete indicado
             * @condition se debe llamar con k->symbolReferenced
             * @condition en caso de que el valopr sea no string se deve realizar la comversion en la funcion llamadora
             */
-            virtual void getKey2(std::ofstream& ofile, const symbols::Symbol* k);
+            //virtual void getKey2(std::ofstream& ofile, const symbols::Symbol* k);
 		protected:
 			//OutputLenguajes outputLenguaje;//se
 			const ConfigureProject& configureProject;
@@ -82,6 +82,10 @@ namespace apidb
             const char* opReference() const;
             const char* stringType() const;
             const char* integerType() const;
+            const char* floatType() const;
+            const char* doubleType() const;
+            const char* byteType() const;
+            
             const char* identifier(const char*) const;
             void setDefinition(bool);
             void setImplementation(bool);
@@ -93,8 +97,6 @@ namespace apidb
             */
             virtual void inheritField(std::ofstream& ofile, const symbols::Symbol* k, const char* separator) const;
             
-            void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
-            void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
             const char* getsqlString()const;
             bool echoKey()const;
             bool echoKeyRawParam()const;
@@ -111,10 +113,24 @@ namespace apidb
         class Insert : public Operation
         {          
         public:
-            Insert(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
+            enum Mode
+            {
+                NoMode,
+                CreateParent,
+                ReferencedParent
+            };
+            Insert(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&,Mode mode);
             virtual bool generate();
             
+            void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+            void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+            void insertParamsObject(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+            void insertValueObject(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
         private:
+            //attributes
+            Mode mode;
+            short countFuns;
+            //operations
             bool definite();
             bool implement();
         };

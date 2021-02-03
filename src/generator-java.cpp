@@ -92,7 +92,7 @@ namespace generators
     }
 	void Java::writeDownloads(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
-        for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
+        /*for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
         {
             if(table.getName().compare(itT->second->getName()) != 0) 
             {
@@ -436,12 +436,19 @@ namespace generators
             ofile << "\t}\n";
             
         }
+        */
+        Download download(configureProject,table,ofile);
+        download.setImplementation(true);
+        download.generate();
     }
     void Java::writeInsert(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{
-        Insert insert(configureProject,table,ofile);
+        Insert insert(configureProject,table,ofile,Insert::Mode::CreateParent);
         insert.setImplementation(true);
         insert.generate();
+        Insert insert2(configureProject,table,ofile,Insert::Mode::ReferencedParent);
+        insert2.setImplementation(true);
+        insert2.generate();
 	}
 	void Java::writeDefaultContructor(const apidb::symbols::Table& table,std::ofstream& ofile)
     {

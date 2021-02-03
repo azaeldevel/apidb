@@ -488,9 +488,12 @@ namespace generators
     }
     void CPP::writeInsertCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{        
-        Insert insert(configureProject,table,ofile);
+        Insert insert(configureProject,table,ofile,Insert::Mode::CreateParent);
         insert.setImplementation(true);
         insert.generate();
+        Insert insert2(configureProject,table,ofile,Insert::Mode::ReferencedParent);
+        insert2.setImplementation(true);
+        insert2.generate();
 	}
 	void CPP::writeDefaultContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
@@ -783,9 +786,12 @@ namespace generators
         */
     void CPP::writeInsertH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
-        Insert insert(configureProject,table,ofile);
+        Insert insert(configureProject,table,ofile,Insert::Mode::CreateParent);
         insert.setDefinition(true);
         insert.generate();
+        Insert insertObj(configureProject,table,ofile,Insert::Mode::ReferencedParent);
+        insertObj.setDefinition(true);
+        insertObj.generate();
 	}
 	void CPP::writeDefaultContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
