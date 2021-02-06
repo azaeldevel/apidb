@@ -104,7 +104,7 @@ namespace apidb
             bool echoKeyListName()const;
             void echoCopyParams()const;
             void echoCopyParamsRaw()const;
-            
+            void echoCopyParamsJava()const;
         protected:
             const ConfigureProject& configureProject;
             const apidb::symbols::Table& table;

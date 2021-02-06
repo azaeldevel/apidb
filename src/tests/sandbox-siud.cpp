@@ -31,6 +31,7 @@ int main(int argc, char **argv)
     int r = rand() % 100000;
     std::string userstr,name,userstr2,name2,userstr3,name3,projectName,rqname1,rqname2,rqname3;
     
+    
     userstr = "user-";
     userstr += std::to_string(r);
     name = "name-";
@@ -38,19 +39,20 @@ int main(int argc, char **argv)
     muposys::db::Users user;
     if(user.insert(connector,userstr,name))
     {
-        std::cout << "insert : " << name << " \n";
+        std::cout << "insert 1: " << name << " \n";
     }
     else
     {
         std::cerr << "Fallo en insert" << name << " \n";
         return EXIT_FAILURE;
-    }
-    
+    }    
     octetos::core::MD5sum md5(std::to_string(user.getPerson().getEnte().getID()));
     if(user.getPerson().getEnte().upMd5sum(connector,md5))
     {
         std::cout << "update id=" << user.getPerson().getEnte().getID() << ", md5=" << (const std::string&)md5 << " \n";
     }
+    
+    
     r = rand() % 100000;
     userstr2 = "user-";
     userstr2 += std::to_string(r);
@@ -59,23 +61,24 @@ int main(int argc, char **argv)
     muposys::db::Users user2;
     if(user2.insert(connector,userstr2,name2))
     {
-        std::cerr << "insert : " << name2 << " \n";
+        //std::cerr << "insert 2: " << name2 << " \n";
     }
     else
     {
         std::cerr << "Fallo en insert" << name2 << " \n";
         return EXIT_FAILURE;
     }
-    
+    std::cout << "step 2\n";
     r = rand() % 100000;
     userstr3 = "user-";
     userstr3 += std::to_string(r);
     name3 = "name-";
     name3 += std::to_string(r);    
     muposys::db::Users user3;
+    
     if(user3.insert(connector,userstr3,name3))
     {
-        std::cout << "insert : " << name3 << " \n";
+        std::cout << "insert 3: " << name3 << " \n";
     }
     else
     {
@@ -173,11 +176,35 @@ int main(int argc, char **argv)
         std::cerr << "Fallo en insert" << rqname3 << " \n";
         return EXIT_FAILURE;
     }
+    if(rq3.downName(connector))
+    {
+        std::cout << "descarga de (name): " << rqname3 << " \n";
+    }
+    else
+    {
+        std::cerr << "Fallo descarga (name) " << rqname3 << " \n";
+        return EXIT_FAILURE;
+    }    
+    if(rq3.downPriority(connector))
+    {
+        std::cout << "descarga de (priority): " << rqname3 << " \n";
+    }
+    else
+    {
+        std::cerr << "Fallo descarga (priority) " << rqname3 << " \n";
+        return EXIT_FAILURE;
+    }
+    std::cout << "In project:" << rq3.getProjectValue() << ", RQ number:" << rq3.getNumber() << ", Name: " << rq3.getName() << "\n";  
+    if(rqname3.compare(rq3.getName()) == 0)
+    {
+        std::cout << "Comprobacion de descarga para " << rqname3 << " \n";
+    }
+    else
+    {
+        std::cerr << "Fallo comprobacion descarga " << rqname3 << " \n";
+        return EXIT_FAILURE;
+    }
     
-    
-    
-    
-     
     
     connector.commit();
     

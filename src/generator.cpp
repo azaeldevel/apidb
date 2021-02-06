@@ -36,17 +36,72 @@ namespace apidb
 {
 namespace generators
 { 
+    void Operation::echoCopyParamsJava()const
+    {
+        for(symbols::Symbol* k : table.getKey())
+        {
+            ofile << "\t\t\t";
+            ofile << "this." << k->name << " = "  << k->name << ";\n";
+        }        
+    }
     void Operation::echoCopyParams()const
     {
         for(symbols::Symbol* k : table.getKey())
         {
             if(k->symbolReferenced != NULL)
             {
-                ofile << "\t\t\tthis->" << k->name << " = new " << k->classReferenced->name << "(" << k->name << ");\n";
+                ofile << "\t\t\t";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                ofile << "this";
+                switch(configureProject.outputLenguaje)
+                {
+                    case OutputLenguajes::CPP:
+                        ofile << "->";
+                        break;
+                    case OutputLenguajes::JAVA:
+                        ofile << ".";
+                        break;
+                    case OutputLenguajes::PHP:
+                        ofile << "->";
+                        break;
+                    default:
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                }
+                ofile << k->name << " = new " << k->classReferenced->name;
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP)
+                {
+                    ofile << "();\n";
+                    ofile << "\t\t\t$this->" << k->name << "->copy($" << k->name <<");\n"; 
+                }
+                else
+                {
+                    ofile << "(";
+                    ofile << k->name;
+                    ofile <<");\n";
+                }
             }
             else
             {
-                ofile << "\t\t\tthis->" << k->name << " = " << k->name << ";\n";
+                ofile << "\t\t\t";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                ofile << "this";
+                switch(configureProject.outputLenguaje)
+                {
+                    case OutputLenguajes::CPP:
+                        ofile << "->";
+                        break;
+                    case OutputLenguajes::JAVA:
+                        ofile << ".";
+                        break;
+                    case OutputLenguajes::PHP:
+                        ofile << "->";
+                        break;
+                    default:
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                }
+                ofile << k->name << " = ";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                ofile << k->name << ";\n";
             }
         }        
     }
@@ -56,7 +111,26 @@ namespace generators
         {
             if(k->symbolReferenced == NULL)
             {
-                ofile << "\t\t\tthis->" << k->name << " = " << k->name << ";\n";
+                ofile << "\t\t\t";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                ofile << "this";
+                switch(configureProject.outputLenguaje)
+                {
+                    case OutputLenguajes::CPP:
+                        ofile << "->";
+                        break;
+                    case OutputLenguajes::JAVA:
+                        ofile << ".";
+                        break;
+                    case OutputLenguajes::PHP:
+                        ofile << "->";
+                        break;
+                    default:
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                }
+                ofile << k->name << " = ";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                ofile << k->name << ";\n";
             }
         }        
     }

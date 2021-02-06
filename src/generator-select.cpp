@@ -853,7 +853,7 @@ namespace octetos::apidb::generators
         }
 		
         ofile << "\t\t{\n";
-        for(symbols::Symbol* k : table.getKey())
+        /*for(symbols::Symbol* k : table.getKey())
         {
             if(k->symbolReferenced != NULL)
             {
@@ -897,7 +897,8 @@ namespace octetos::apidb::generators
                 if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
                 ofile << k->name << ";\n";
             }
-        }
+        }*/
+        echoCopyParams();
         //ofile << "\t\t\t";
         ofile << "\t\t}\n";
         //ofile << "\t\t\n";

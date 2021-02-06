@@ -86,6 +86,10 @@ foreach ($userList as &$u)
 }
 
 
+
+
+echo "<br><br>";
+
 $number = rand(0,100000);
 $projectName = "proj-" . $number;
 $proj = new SoftwareProjects();
@@ -98,13 +102,14 @@ else
 	echo "Fallo insert $projectName <br>";
 }
 
+
 $where = "project = " . $proj->getEnteValue();
-$rqsList = Users::select($conn,$where,1,"D");
+$rqsList = SoftwareRQs::select($conn,$where,1,"D");
 $lastRQNumber = 1;
 if(count($rqsList) > 0)
 {
 	$rqlast = $rqsList[0];
-	if($rqlast->downNumber(conn))
+	if($rqlast->downNumber($conn))
 	{
 		$lastRQNumber = $rqlast->getNumber();
 	}
@@ -150,6 +155,26 @@ else
 {
 	echo "Fallo insert $rqname3 <br>";
 }
+if($rq3->downName($conn))
+{
+	echo "descarga de (name): $rqname3<br>";
+}
+else
+{
+	echo "Fallo descarga (name) $rqname3 <br>";
+}
 
+if($rq3->downPriority($conn))
+{
+	echo "descarga de (priority): $rqname3<br>";
+}
+else
+{
+	echo "Fallo descarga (priority) $rqname3 <br>";
+}
+echo "In project:" . $rq3->getProjectValue() . ", RQ number:" . $rq3->getNumber() . ", Name: "  . $rq3->getName() . "<br>";  
+
+
+$conn->commit();
 
 ?>

@@ -800,7 +800,7 @@ namespace octetos::apidb::generators
                         {
                             echoCopyParamsRaw();
                         }
-                        else if(mode == Mode::CreateParent)
+                        else if(mode == Mode::ReferencedParent)
                         {
                             echoCopyParams();
                         }                        
@@ -808,10 +808,32 @@ namespace octetos::apidb::generators
                         ofile << "\t\t}\n";
                         break;
                     case OutputLenguajes::JAVA:
-                        ofile << "\t\tif(connector.insert(sqlString,dt)) return true;\n";
+                        ofile << "\t\tif(connector.insert(sqlString,dt))\n";
+                        ofile << "\t\t{\n";
+                        if(mode == Mode::CreateParent)
+                        {
+                            echoCopyParamsRaw();
+                        }
+                        else if(mode == Mode::ReferencedParent)
+                        {
+                            echoCopyParams();
+                        }                        
+                        ofile << "\t\t\treturn true;\n";
+                        ofile << "\t\t}\n";
                         break;
-                    case OutputLenguajes::PHP:
-                        ofile << "\t\tif($connector->insert($sqlString,$dt)) return true;\n";
+                    case OutputLenguajes::PHP:                        
+                        ofile << "\t\tif($connector->insert($sqlString,$dt))\n";
+                        ofile << "\t\t{\n";
+                        if(mode == Mode::CreateParent)
+                        {
+                            echoCopyParamsRaw();
+                        }
+                        else if(mode == Mode::ReferencedParent)
+                        {
+                            echoCopyParams();
+                        }                        
+                        ofile << "\t\t\treturn true;\n";
+                        ofile << "\t\t}\n";
                         break;
                     default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -864,13 +886,50 @@ namespace octetos::apidb::generators
                 switch(configureProject.outputLenguaje)
                 {
                     case OutputLenguajes::CPP:
-                        ofile << "\t\treturn connector.insert(sqlString,dt);\n";
+                        ofile << "\t\tif(connector.insert(sqlString,dt))\n";
+                        ofile << "\t\t{\n";
+                        if(mode == Mode::CreateParent)
+                        {
+                            
+                        }
+                        else if(mode == Mode::ReferencedParent)
+                        {
+                            echoCopyParams();
+                        }                        
+                        ofile << "\t\t\treturn true;\n";
+                        ofile << "\t\t}\n";
+                        ofile << "\t\treturn false;\n";
                         break;
                     case OutputLenguajes::JAVA:
-                        ofile << "\t\treturn connector.insert(sqlString,dt);\n";
+                        ofile << "\t\tif(connector.insert(sqlString,dt))\n";
+                        ofile << "\t\t{\n";
+                        if(mode == Mode::CreateParent)
+                        {
+                            
+                        }
+                        else if(mode == Mode::ReferencedParent)
+                        {
+                            echoCopyParamsJava();
+                        }                        
+                        ofile << "\t\t\treturn true;\n";
+                        ofile << "\t\t}\n";
+                        ofile << "\t\treturn false;\n";
                         break;
-                    case OutputLenguajes::PHP:
-                        ofile << "\t\treturn $connector->insert($sqlString,$dt);\n";
+                        break;
+                    case OutputLenguajes::PHP:;
+                        ofile << "\t\tif($connector->insert($sqlString,$dt))\n";
+                        ofile << "\t\t{\n";
+                        if(mode == Mode::CreateParent)
+                        {
+                            
+                        }
+                        else if(mode == Mode::ReferencedParent)
+                        {
+                            echoCopyParams();
+                        }                        
+                        ofile << "\t\t\treturn true;\n";
+                        ofile << "\t\t}\n";
+                        ofile << "\t\treturn false;\n";
                         break;
                     default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
