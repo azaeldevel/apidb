@@ -270,7 +270,7 @@ namespace octetos::apidb::generators
                     ofile <<  "($connector";
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
@@ -437,13 +437,16 @@ namespace octetos::apidb::generators
                         throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
                     }
                     ofile << "insert";
-                    if(mode == Mode::CreateParent)
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP)
                     {
-                        ofile << "Raw";
-                    }
-                    else if(mode == Mode::ReferencedParent)
-                    {
-                        ofile << "Object";
+                        if(mode == Mode::CreateParent)
+                        {
+                            ofile << "Raw";
+                        }
+                        else if(mode == Mode::ReferencedParent)
+                        {
+                            ofile << "Object";
+                        }
                     }
                     ofile << "(";
                     switch(configureProject.outputLenguaje)
@@ -554,7 +557,7 @@ namespace octetos::apidb::generators
                 
                 break;
             default:
-                throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
         }
         ofile << getsqlString() << " = \"\";"<<std::endl;
 		if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
@@ -710,7 +713,7 @@ namespace octetos::apidb::generators
                             ofile << " . $" << k->name;
                             break;
                         default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     }
                 }
                 if(*penultimoReq != k)
@@ -791,7 +794,18 @@ namespace octetos::apidb::generators
                 switch(configureProject.outputLenguaje)
                 {
                     case OutputLenguajes::CPP:
-                        ofile << "\t\tif(connector.insert(sqlString,dt)) return true;\n";
+                        ofile << "\t\tif(connector.insert(sqlString,dt))\n";
+                        ofile << "\t\t{\n";
+                        if(mode == Mode::CreateParent)
+                        {
+                            echoCopyParamsRaw();
+                        }
+                        else if(mode == Mode::CreateParent)
+                        {
+                            echoCopyParams();
+                        }                        
+                        ofile << "\t\t\treturn true;\n";
+                        ofile << "\t\t}\n";
                         break;
                     case OutputLenguajes::JAVA:
                         ofile << "\t\tif(connector.insert(sqlString,dt)) return true;\n";
@@ -818,7 +832,7 @@ namespace octetos::apidb::generators
                         ofile << "\t\tif($connector->insert($sqlString,$dt))\n";
                         break;
                     default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                 }
                 ofile << "\t\t{\n";
                 ofile << "\t\t\t";

@@ -102,6 +102,9 @@ namespace apidb
             bool echoKeyRawParam()const;
             bool echoDataRawParam(const symbols::Symbol* data)const;
             bool echoKeyListName()const;
+            void echoCopyParams()const;
+            void echoCopyParamsRaw()const;
+            
         protected:
             const ConfigureProject& configureProject;
             const apidb::symbols::Table& table;
@@ -215,6 +218,8 @@ namespace apidb
 
 		private:
             //contructor
+            void writeDestructorH(const apidb::symbols::Table&,std::ofstream&);
+            void writeDestructorCPP(const apidb::symbols::Table&,std::ofstream&);
 			void writeDefaultContructorH(const apidb::symbols::Table&,std::ofstream&);
 			void writeDefaultContructorCPP(const apidb::symbols::Table&,std::ofstream&);
 			void writeKeyRawDataContructorH(const apidb::symbols::Table&,std::ofstream&);

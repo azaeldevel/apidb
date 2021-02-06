@@ -36,6 +36,30 @@ namespace apidb
 {
 namespace generators
 { 
+    void Operation::echoCopyParams()const
+    {
+        for(symbols::Symbol* k : table.getKey())
+        {
+            if(k->symbolReferenced != NULL)
+            {
+                ofile << "\t\t\tthis->" << k->name << " = new " << k->classReferenced->name << "(" << k->name << ");\n";
+            }
+            else
+            {
+                ofile << "\t\t\tthis->" << k->name << " = " << k->name << ";\n";
+            }
+        }        
+    }
+    void Operation::echoCopyParamsRaw()const
+    {
+        for(symbols::Symbol* k : table.getKey())
+        {
+            if(k->symbolReferenced == NULL)
+            {
+                ofile << "\t\t\tthis->" << k->name << " = " << k->name << ";\n";
+            }
+        }        
+    }
     bool Operation::echoKeyListName()const
     {
         //if(table.getKey().size() > 1) throw BuildException("No hay soporte para llaves complejas.",__FILE__,__LINE__);
