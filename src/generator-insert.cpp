@@ -258,7 +258,16 @@ namespace octetos::apidb::generators
                     ofile << "public boolean insert(octetos.db.maria.Connector connector";
                     break;
                 case OutputLenguajes::PHP:
-                    ofile << "public function insert($connector";
+                    ofile << "public function insert";
+                    if(mode == Mode::CreateParent)
+                    {
+                        ofile << "Raw";
+                    }
+                    else if(mode == Mode::ReferencedParent)
+                    {
+                        ofile << "Object";
+                    }
+                    ofile <<  "($connector";
                     break;
                 default:
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -355,23 +364,28 @@ namespace octetos::apidb::generators
                 if(k->symbolReferenced != NULL)
                 {
                     if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "const ";
-                    ofile << k->symbolReferenced->classParent->name;
+                    if(configureProject.outputLenguaje != OutputLenguajes::PHP) ofile << k->symbolReferenced->classParent->name;
                     if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "& ";
-                    ofile << " " << k->name;
+                    ofile << " ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                    ofile << k->name;
                 }
                 else if(k->outType.compare(stringType()) == 0)
                 {
                     
                     if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "const " << stringType() << "& ";                        
                     if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << stringType() << " ";
-                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
+                    ofile << " ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
                     ofile << k->name;
                 }
                 else if(k->outType.compare(integerType()) == 0)
                 {
                     
                     if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << integerType();
-                    ofile << " " << k->name;
+                    ofile << " ";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                    ofile << k->name;
                 }
                 else
                 {
@@ -422,7 +436,16 @@ namespace octetos::apidb::generators
                         default:
                         throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
                     }
-                    ofile << "insert(";
+                    ofile << "insert";
+                    if(mode == Mode::CreateParent)
+                    {
+                        ofile << "Raw";
+                    }
+                    else if(mode == Mode::ReferencedParent)
+                    {
+                        ofile << "Object";
+                    }
+                    ofile << "(";
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:
@@ -656,7 +679,7 @@ namespace octetos::apidb::generators
                             throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     }
                         
-                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$this->";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
                     ofile << k->name;                    
                     inheritField(ofile,k->symbolReferenced,opReference());
                     if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << ")";                                       
@@ -684,7 +707,7 @@ namespace octetos::apidb::generators
                             ofile << " + " << k->name;
                             break;
                         case OutputLenguajes::PHP:
-                            ofile << " . " << k->name;
+                            ofile << " . $" << k->name;
                             break;
                         default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            

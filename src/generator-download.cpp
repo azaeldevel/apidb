@@ -400,8 +400,20 @@ namespace octetos::apidb::generators
                     throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
             ofile << "\t\t{\n"; 
-            if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "\t\t\tif(!dt.nextRow()) return false;\n";
-            if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << "\t\t\tif(!dt.next()) return false;\n";
+            switch(configureProject.outputLenguaje)
+            {
+                case OutputLenguajes::CPP:
+                    ofile << "\t\t\tif(!dt.nextRow()) return false;\n";
+                    break;
+                case OutputLenguajes::JAVA:
+                    ofile << "\t\t\tif(!dt.next()) return false;\n";
+                    break;
+                case OutputLenguajes::PHP:
+                    ofile << "\t\t\tif(!$dt->nextRow()) return false;\n";
+                    break;
+                default:
+                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+            }
             if(symbol.second->symbolReferenced != NULL)
             {
                 ofile << "\t\t\t" << symbol.second->name << " = new " << symbol.second->classReferenced->name << "(";
@@ -433,10 +445,27 @@ namespace octetos::apidb::generators
                     default:
                             throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                 }
-                ofile << "\t\t\t" << symbol.second->name << " = dt.";
+                ofile << "\t\t\t";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$this->";
+                ofile << symbol.second->name << " = ";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                ofile << "dt" << opReference();
                 if(symbol.second->outType.compare(stringType()) == 0)
-                {              
-                    ofile << "getString(" << fielNumber << ")";
+                {
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "getString(" << fielNumber << ")";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "getString(" << fielNumber << ")";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "getString(\"" << symbol.second->name << "\")";
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
                 }
                 else if(symbol.second->outType.compare(integerType()) == 0)
                 {
@@ -449,7 +478,7 @@ namespace octetos::apidb::generators
                             ofile << "getInt(" << fielNumber << ")";
                             break;
                         case OutputLenguajes::PHP:
-                            
+                            ofile << "getString(\"" << symbol.second->name << "\")";
                             break;
                         default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -474,7 +503,7 @@ namespace octetos::apidb::generators
                             ofile << "getFloat(" << fielNumber << ")"; 
                             break;
                         case OutputLenguajes::PHP:
-                            
+                            ofile << "getString(\"" << symbol.second->name << "\")"; 
                             break;
                         default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -491,7 +520,7 @@ namespace octetos::apidb::generators
                             ofile << "getDouble(" << fielNumber << ")";
                             break;
                         case OutputLenguajes::PHP:
-                            
+                            ofile << "getString(\"" << symbol.second->name << "\")";
                             break;
                         default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
@@ -512,7 +541,7 @@ namespace octetos::apidb::generators
                             ofile << "getByte(0)"; 
                             break;
                         case OutputLenguajes::PHP:
-                            
+                            ofile << "getString(\"" << symbol.second->name << "\")";
                             break;
                         default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            

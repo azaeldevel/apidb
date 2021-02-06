@@ -467,6 +467,9 @@ namespace generators
         Insert insert(configureProject,table,ofile,Insert::Mode::CreateParent);
         insert.setImplementation(true);
         insert.generate();
+        Insert insert2(configureProject,table,ofile,Insert::Mode::ReferencedParent);
+        insert2.setImplementation(true);
+        insert2.generate();
 	}
 	void PHP::writeDefaultContructor(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
@@ -515,58 +518,21 @@ namespace generators
 		{
 			// no tiene constructor con llaves
 		}
-        if(table.getKey().size() > 0)//tiene key
+		
+		ofile << "\t{\n";
+        for(auto k : table.getKey())
         {
-            ofile << "\t{" <<std::endl;
-            //if(table.getKey().size() > 1) throw core::Exception("Llave complet aun no soportada",__FILE__,__LINE__);
-            if(table.getKey().size() == 1)
+            if(k->symbolReferenced != NULL)
             {
-                if(table.getKey()[0]->getClassReferenced() != NULL)
-                {
-                    ofile << "\t\t$this->" << table.getKey()[0]->getName()  << " = new " << table.getKey()[0]->getClassReferenced()->getName() << "();" << std::endl;
-                    ofile << "\t\t$this->" << table.getKey()[0]->getName() << "->create($" << table.getKey()[0]->getName()  << ");" << std::endl;
-                }
-                else
-                {
-                    ofile << "\t\t$this->" << table.getKey()[0]->getName()  << " = $" << table.getKey()[0]->getName()  << ";" << std::endl;
-                }
+                ofile << "\t\t$this->" << k->name  << " = new " << k->classReferenced->name << "();\n";
+                ofile << "\t\t$this->" << k->name  << "->create($" << k->name << ");\n";
             }
-            else //if(table.getKey().size() > 1)
+            else
             {
-                const symbols::Key& key = table.getKey();
-                std::vector<symbols::Symbol*>::const_iterator itend = key.end();
-                itend--;
-                for(auto k : table.getKey())
-                {//TODO: La catidad de parametros deve variar de acuerdo a la cantidad de elementos en la llave: soport para llave compleja.
-                    ofile << "\t\t$this->" << k->getName();
-                    if(k->getClassReferenced() != NULL)
-                    {
-                        ofile << " = new " << k->getClassReferenced()->getName() << "();" << std::endl;
-                    }
-                    else
-                    {
-                        ofile << "\t\t$this->" << k->getName()  << " = $" << k->getName()  << ";" << std::endl;
-                    }
-                }                
-                for(auto k : table.getKey())
-                {//TODO: La catidad de parametros deve variar de acuerdo a la cantidad de elementos en la llave: soport para llave compleja.
-                    ofile << "\t\t$this->" << k->getName();
-                    if(k->getClassReferenced() != NULL)
-                    {
-                        ofile << "\t\t$this->" << k->getName() << "->create($" << k->getName()  << ");" << std::endl;
-                    }
-                    else
-                    {
-                        ofile << "\t\t$this->" << k->getName()  << " = $" << k->getName()  << ";" << std::endl;
-                    }
-                }
+                ofile << "\t\t$this->" << k->name  << " = $" << k->name  << ";\n";
             }
-            ofile << "\t}" <<std::endl;
         }
-        else 
-        {
-            
-        }
+        ofile << "\t}\n";		
 	}
 	void PHP::createClassMethodes(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
