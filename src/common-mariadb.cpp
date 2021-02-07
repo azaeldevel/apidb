@@ -183,6 +183,11 @@ namespace apidb
                 {
                     attrribute->keyType = Symbol::KeyType::UNIQUE;
                 }
+                else if(strcmp(row[3],"MUL") == 0)
+                {
+                    //campo forane pero no una llave
+                    attrribute->keyType = Symbol::KeyType::NOKEY;
+                }
                 else if(strcmp(row[3],"") != 0)
                 {
                     //attrribute->keyType = Symbol::KeyType::FOREIGN_UNIQUE;

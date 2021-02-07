@@ -24,7 +24,7 @@ namespace octetos::apidb::generators
                     
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
@@ -52,7 +52,7 @@ namespace octetos::apidb::generators
                     
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
@@ -69,7 +69,7 @@ namespace octetos::apidb::generators
                     
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else
@@ -97,7 +97,7 @@ namespace octetos::apidb::generators
                     
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
@@ -125,7 +125,7 @@ namespace octetos::apidb::generators
                     
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
@@ -285,7 +285,7 @@ namespace octetos::apidb::generators
             switch(configureProject.outputLenguaje)
             {
                 case OutputLenguajes::CPP:
-                    ofile <<"\t"<< s->getOutType() << " ";
+                    ofile <<"\tconst "<< s->getOutType() << "& ";
                     break;
                 case OutputLenguajes::JAVA:
                     ofile <<"\tpublic "<< s->getOutType() << " ";
@@ -294,7 +294,7 @@ namespace octetos::apidb::generators
                     ofile <<"\tpublic function ";
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(s->getSymbolReferenced())
@@ -311,7 +311,7 @@ namespace octetos::apidb::generators
                     ofile <<"\tpublic function ";
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else 

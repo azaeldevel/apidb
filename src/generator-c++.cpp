@@ -36,6 +36,40 @@ namespace apidb
 {
 namespace generators
 {
+    void CPP::writeForwardClass(std::ofstream& file,bool log,const symbols::ISpace* ispace)
+    {
+        if(ispace->what() == symbols::SpaceType::TABLE)
+        {
+            symbols::Table* table = (symbols::Table*) ispace;
+            //createClassH(*table,file,table->getName(),log);
+            file << "\tclass " << table->name << ";\n";
+        }
+        else if(ispace->what() == symbols::SpaceType::SPACE)
+        {
+            symbols::Space* space = (symbols::Space*) ispace;
+            file << "namespace " ;
+            if(not configureProject.space.empty())
+            {
+                file << configureProject.space << "\n";
+            }
+            else if(space->getName().empty())
+            {
+                file << configureProject.name;
+            }
+            else
+            {
+                file << space->getName() << std::endl;
+            }
+            file << "{\n";
+            //std::cout << "Espacio '" << space->getName() << "'" << std::endl;
+            for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+            {
+                //createH(file,log,it->second);
+                writeForwardClass(file,log,it->second);
+            }
+            file << "\n}\n";
+        }
+    }
     void CPP::writeRemovesCPP(const apidb::symbols::Table& table, std::ofstream& ofile)
     {
         Remove remove(configureProject,table,ofile);
@@ -175,7 +209,11 @@ namespace generators
         {
             if(k->symbolReferenced != NULL)
             {
-                ofile << "\t\tif(" << k->name << ") delete " << k->name << ";\n";
+                ofile << "\t\tif(" << k->name << " != NULL)\n"; 
+                ofile << "\t\t{\n";
+                ofile << "\t\t\tdelete " << k->name << ";\n";
+                ofile << "\t\t\t" << k->name << " = NULL;\n";
+                ofile << "\t\t}\n";
             }            
         }
 		ofile <<"\t}\n";
@@ -397,63 +435,7 @@ namespace generators
 		return true;
 	}
     void CPP::writeDownloadsH(const apidb::symbols::Table& table, std::ofstream& ofile)
-    {                
-        //for(std::map<const char*,ConfigureProject::Table*>::const_iterator it = configureProject.downloads.begin(); it != configureProject.downloads.end(); it++)
-        /*
-        const ConfigureProject::Table* tb = configureProject.findDownloadTable(table.getName());
-        if(tb != NULL)
-        {
-            for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itF = tb->begin(); itF != tb->end(); itF++)
-            {
-                if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-                {        
-                    ofile << "\t\tbool " << itF->first << "(octetos::db::mysql::Connector& connector);"<<std::endl;
-                }
-                else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-                {
-                    ofile << "\t\tbool " << itF->first << "(octetos::db::maria::Connector& connector);"<<std::endl;
-                }
-                else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-                {
-                    ofile << "\t\tbool " << itF->first << "(octetos::db::postgresql::Connector& connector);"<<std::endl;
-                }
-                else
-                {
-                    std::string msg = "Lenguaje no soportado " ;
-                    throw BuildException(msg);
-                }
-            }
-        }
-        
-        for(auto symbol : table)
-        {
-            if(symbol.second->isAutoIncrement() and symbol.second->isPrimaryKey()) continue;
-            else
-            {
-                symbols::Symbol* symroot = getRootSymbol(symbol.second);
-                if(symroot->isAutoIncrement() and symroot->isPrimaryKey()) continue;            
-            }
-                
-            if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-            {        
-                ofile << "\t\tbool down" << symbol.second->upperName << "(octetos::db::mysql::Connector& connector);\n";
-            }
-            else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-            {        
-                ofile << "\t\tbool down" << symbol.second->upperName << "(octetos::db::maria::Connector& connector);\n";
-            }
-            else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-            {
-                ofile << "\t\tbool down" << symbol.second->upperName << "(octetos::db::postgresql::Connector& connector);\n";
-            }
-            else
-            {
-                std::string msg = "Lenguaje no soportado " ;
-                throw BuildException(msg);
-            }
-        }
-        */
-
+    {
         Download download(configureProject,table,ofile);
         download.setDefinition(true);
         download.generate();
@@ -734,6 +716,42 @@ namespace generators
         }
 		getHeaderOutput()<< "#include <string>\n";        
 			
+        file << "\n";
+        for(symbols::SymbolsTable::const_iterator it = stb.begin(); it != stb.end(); it++)
+		{
+            symbols::ISpace* ispace = it->second;
+            if(ispace->what() == symbols::SpaceType::TABLE)
+            {
+                symbols::Table* table = (symbols::Table*) ispace;
+                //createClassH(*table,file,table->getName(),log);
+                file << "class " << table->name << ";";
+            }
+            else if(ispace->what() == symbols::SpaceType::SPACE)
+            {
+                symbols::Space* space = (symbols::Space*) ispace;
+                file << "namespace " ;
+                if(not configureProject.space.empty())
+                {
+                    file << configureProject.space << "\n";
+                }
+                else if(space->getName().empty())
+                {
+                    file << configureProject.name;
+                }
+                else
+                {
+                    file << space->getName() << std::endl;
+                }
+                file << "{\n";
+                //std::cout << "Espacio '" << space->getName() << "'" << std::endl;
+                for(symbols::Space::iterator it = space->begin(); it != space->end(); it++)
+                {
+                    //createH(file,log,it->second);
+                    writeForwardClass(file,log,it->second);
+                }
+                file << "\n}\n";
+            }
+        }
 		
 		for(symbols::SymbolsTable::const_iterator it = stb.begin(); it != stb.end(); it++)
 		{
@@ -760,6 +778,9 @@ namespace generators
                     file << space->getName() << std::endl;
                 }
                 file << "{\n";
+                file << "\n";
+                
+                file << "\n";
                 createDatconnectHPP(file,log);
                 file << "\n\n";
                 //std::cout << "Espacio '" << space->getFullName() << "'" << std::endl;

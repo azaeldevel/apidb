@@ -68,7 +68,7 @@ int main(int argc, char **argv)
         std::cerr << "Fallo en insert" << name2 << " \n";
         return EXIT_FAILURE;
     }
-    std::cout << "step 2\n";
+    
     r = rand() % 100000;
     userstr3 = "user-";
     userstr3 += std::to_string(r);
@@ -147,7 +147,8 @@ int main(int argc, char **argv)
     {
         std::cerr << "Fallo en insert" << rqname1 << " \n";
         return EXIT_FAILURE;
-    }    
+    }  
+    //std::cout << "Step 1\n";
     
     r = rand() % 100000;
     rqname2 = "rq-";
@@ -205,19 +206,40 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     
+    std::string stritem1,catalog1,brief1;
+    r = rand() % 100000;
+    catalog1 = "ctl-";
+    catalog1 += std::to_string(r);
+    stritem1 = "item-";
+    stritem1 += std::to_string(r);  
+    brief1 = "brief-";
+    brief1 += std::to_string(r);
+    muposys::db::Catalog item1;
+    if(item1.insert(connector,catalog1,stritem1,brief1))
+    {
+        std::cout << "insert item: " << stritem1 << " \n";
+    }
+    else
+    {
+        std::cerr << "Fallo en insert" << stritem1 << " \n";
+        return EXIT_FAILURE;
+    }
     
+    //std::cout << "Step 2\n";
     connector.commit();
-    
-    for(muposys::db::Users* u : *userList)
+    //std::cout << "Step 3\n";
+    /*for(muposys::db::Users* u : *userList)
     {
         delete u;        
-    }
+    }*/
     delete userList;
-    for(muposys::db::SoftwareRQs* rq : *rqsList)
+    /*for(muposys::db::SoftwareRQs* rq : *rqsList)
     {
         delete rq;        
-    }
-    delete rqsList;  
-    
+    }*/
+    delete rqsList;
+    //std::cout << "Step 4\n";
+    connector.close();    
+    //std::cout << "Step 5\n";
     return EXIT_SUCCESS;
 }

@@ -151,14 +151,30 @@ namespace octetos::apidb::generators
         if(configureProject.outputLenguaje != OutputLenguajes::PHP) ofile << stringType() << " ";
         ofile << getsqlString() << " = \"SELECT ";
         //selecciona los campos de las llaves
-        auto endK = table.getKey().end();
-        endK--;
-        for(auto k : table.getKey())
+        if(table.getKey().size() > 0)
         {
-            ofile << k->getName();
-            if(k != *endK)
+            auto endK = table.getKey().end();
+            endK--;
+            for(auto k : table.getKey())
             {
-                ofile << ",";
+                ofile << k->getName();
+                if(k != *endK)
+                {
+                    ofile << ",";
+                }
+            }
+        }
+        else
+        {
+            auto endK = table.end();
+            endK--;
+            for(auto k : table)
+            {
+                ofile << k.second->getName();
+                if(k != *endK)
+                {
+                    ofile << ",";
+                }
             }
         }
         if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
@@ -307,10 +323,10 @@ namespace octetos::apidb::generators
                 ofile << "\t\t\twhile($dt->nextRow())" << std::endl;
                 break;
             default:
-                throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
         }        
         ofile << "\t\t\t{"<< std::endl;
-         
+        //TODO: implemetar fuciones select en en caso de que no hay key
         switch(configureProject.outputLenguaje)
         {
             case OutputLenguajes::CPP:
@@ -323,7 +339,7 @@ namespace octetos::apidb::generators
                 
                 break;
             default:
-                throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
         }
         ofile << "\t\t\t\t";
         if(configureProject.outputLenguaje == OutputLenguajes::PHP)

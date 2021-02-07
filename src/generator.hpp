@@ -274,6 +274,7 @@ namespace apidb
 			void writeKeyValueCPP(const apidb::symbols::Table&,std::ofstream&);
 			bool createDatconnectHPP(std::ofstream& file,bool log);
             bool createDatconnectCPP(std::ofstream& file,bool log);
+            void writeForwardClass(std::ofstream& file,bool log,const symbols::ISpace* ispace);
             /**
             * @brief genera una llada recursiva para el componete indicado
             * @condition se debe llamar con k->symbolReferenced

@@ -308,7 +308,20 @@ namespace generators
                 }
                 else if(k->getOutType().compare(stringType()) == 0)           
                 {
-                    throw BuildException("No hay soporte para llave con string",__FILE__,__LINE__); 
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "\" . \"'\" . $this->" << k->name << " . \"'\"";
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    } 
                 }
             }
             if(it < itend) 
@@ -375,7 +388,20 @@ namespace generators
             {
                 if(k->getOutType().compare(stringType()) == 0)
                 {
-                    throw BuildException("No hay soporte para llave con string",__FILE__,__LINE__); 
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "\" . \"'\" . $this->" << k->name << " . \"'\"";
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    } 
                 }
                 else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0 or k->getOutType().compare(integerType()) == 0)
                 {
@@ -394,23 +420,25 @@ namespace generators
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
                     }
                 }
+                /*
                 else if(k->getOutType().compare(stringType()) == 0)
                 {
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:
-                            ofile << "\" + std::to_string(" << k->name << ")";
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
                             break;
                         case OutputLenguajes::JAVA:
-                            ofile << "\" + " << k->name;
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
                             break;
                         case OutputLenguajes::PHP:
-                            ofile << "\" . $this->" << k->name;
+                            ofile << "\" . \"'\" . $this->" << k->name << " + \"'\"";
                             break;
                         default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
                     }
                 }
+                */
             }
             
             if(it < itend) 
