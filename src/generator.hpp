@@ -114,7 +114,7 @@ namespace apidb
         };
         
         class Insert : public Operation
-        {          
+        {
         public:
             enum Mode
             {

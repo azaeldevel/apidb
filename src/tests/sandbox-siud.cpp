@@ -206,38 +206,29 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     
-    std::string stritem1,catalog1,brief1;
+    
+    std::string strnumber1,brief1;
     r = rand() % 100000;
-    catalog1 = "ctl-";
-    catalog1 += std::to_string(r);
-    stritem1 = "item-";
-    stritem1 += std::to_string(r);  
+    strnumber1 = "item-";
+    strnumber1 += std::to_string(r);  
     brief1 = "brief-";
     brief1 += std::to_string(r);
     muposys::db::Catalog item1;
-    if(item1.insert(connector,catalog1,stritem1,brief1))
+    if(item1.insert(connector,strnumber1,"M",brief1))
     {
-        std::cout << "insert item: " << stritem1 << " \n";
+        std::cout << "insert item: " << strnumber1 << " \n";
     }
     else
     {
-        std::cerr << "Fallo en insert" << stritem1 << " \n";
+        std::cerr << "Fallo en insert" << strnumber1 << " \n";
         return EXIT_FAILURE;
     }
     
+    
     //std::cout << "Step 2\n";
     connector.commit();
-    //std::cout << "Step 3\n";
-    /*for(muposys::db::Users* u : *userList)
-    {
-        delete u;        
-    }*/
-    delete userList;
-    /*for(muposys::db::SoftwareRQs* rq : *rqsList)
-    {
-        delete rq;        
-    }*/
-    delete rqsList;
+    //delete userList;
+    //delete rqsList;
     //std::cout << "Step 4\n";
     connector.close();    
     //std::cout << "Step 5\n";

@@ -211,8 +211,8 @@ namespace generators
             {
                 ofile << "\t\tif(" << k->name << " != NULL)\n"; 
                 ofile << "\t\t{\n";
-                ofile << "\t\t\tdelete " << k->name << ";\n";
-                ofile << "\t\t\t" << k->name << " = NULL;\n";
+                ofile << "\t\t\t//delete " << k->name << ";\n";
+                ofile << "\t\t\t//" << k->name << " = NULL;\n";
                 ofile << "\t\t}\n";
             }            
         }
