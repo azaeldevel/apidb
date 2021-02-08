@@ -203,6 +203,7 @@ namespace apidb
                 }
                 else if(strcmp(row[3],"MUL") == 0)
                 {
+                    //TODO: Implementar llave foranea compleja.
                     //campo forane pero no una llave
                     attrribute->keyType = Symbol::KeyType::NOKEY;
                 }

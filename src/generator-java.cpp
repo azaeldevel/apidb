@@ -322,17 +322,9 @@ namespace generators
 	}
     void Java::createClassAttributes(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
-        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
-        {
-            if(it->second->symbolReferenced != NULL)
-            {
-                ofile << "\t" << it->second->classReferenced->name << " " << it->second->name<<";\n";
-            }
-            else
-            {
-                ofile << "\t" << it->second->getOutType() << " " << it->second->name <<";\n";
-            }
-        }
+        Field field(configureProject,table,ofile);
+        field.setImplementation(true);
+        field.generate();
     }
     bool Java::createDatconnect(std::ofstream& file,bool log)
 	{
