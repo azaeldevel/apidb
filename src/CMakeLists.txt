@@ -250,7 +250,7 @@ set_target_properties(${CMAKE_PROJECT_NAME}-Driver-obj  PROPERTIES POSITION_INDE
 ADD_LIBRARY(${CMAKE_PROJECT_NAME}-Driver SHARED $<TARGET_OBJECTS:${CMAKE_PROJECT_NAME}-Driver-obj>)
 
 
-ADD_LIBRARY(${CMAKE_PROJECT_NAME}-obj  OBJECT apidb.cpp analyzer.cpp generator.cpp generator-cmake.cpp generator-maven.cpp generator-c++.cpp generator-java.cpp generator-java.cpp  driver.cpp common.cpp generator-php.cpp generator-insert.cpp generator-select.cpp generator-update.cpp generator-remove.cpp generator-getters.cpp generator-download.cpp)
+ADD_LIBRARY(${CMAKE_PROJECT_NAME}-obj  OBJECT apidb.cpp analyzer.cpp generator.cpp generator-cmake.cpp generator-maven.cpp generator-c++.cpp generator-java.cpp generator-java.cpp  driver.cpp common.cpp generator-php.cpp generator-insert.cpp generator-select.cpp generator-update.cpp generator-remove.cpp generator-getters.cpp generator-download.cpp generator-field.cpp )
 set_target_properties(${CMAKE_PROJECT_NAME}-obj  PROPERTIES POSITION_INDEPENDENT_CODE 1 ) 
 
 ADD_LIBRARY(${CMAKE_PROJECT_NAME} SHARED $<TARGET_OBJECTS:${CMAKE_PROJECT_NAME}-obj>)

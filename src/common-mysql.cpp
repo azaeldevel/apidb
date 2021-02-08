@@ -34,6 +34,10 @@ namespace octetos
 {
 namespace apidb
 {
+    std::string symbols::TableMySQL::primaryName(octetos::db::Connector& connect) const 
+    {
+        return "";
+    }
 	symbols::TableMySQL::TableMySQL(const std::string& s): Table(s)
 	{
 	

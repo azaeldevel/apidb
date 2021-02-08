@@ -90,6 +90,7 @@ namespace mariadb
 				prw->fullname = row[0];
 				int level = symbols::getSpaceLevel(prw->fullname);
 				//std::cout << "Presesando : "<< level  << " - " << prw->fullname << std::endl;
+                
 				if(level == 0)
 				{
 					spaceGlobal->addTable(prw);

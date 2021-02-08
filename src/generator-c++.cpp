@@ -531,18 +531,9 @@ namespace generators
     }
     void CPP::createClassAttributesH(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
-        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
-        {
-            if(it->second->getClassReferenced() != NULL && (it->second->getOutType().compare("int") == 0 || it->second->getOutType().compare("std::string") == 0))
-            {
-                ofile << "\t\t" << it->second->getClassReferenced()->getName() << "* "<< it->second->getName()<<";"<< std::endl;
-            }
-            else
-            {
-                //ofile <<"[3]"<<std::endl;
-                ofile << "\t\t" << it->second->getOutType() << " " << it->second->getName() <<";"<< std::endl;
-            }
-        }
+        Field field(configureProject,table,ofile);
+        field.setDefinition(true);
+        field.generate();
     }
     void CPP::createClassPublicH(std::ofstream& file)
     {

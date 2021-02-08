@@ -36,6 +36,7 @@ namespace symbols
     public:
         virtual bool basicSymbols(octetos::db::Connector& connect);
 		virtual bool fillKeyType(octetos::db::Connector& connect, const SymbolsTable&);
+        std::string primaryName(octetos::db::Connector& connect) const;
         TableMariaDB(const std::string& );
     };  
 }

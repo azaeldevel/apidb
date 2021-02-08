@@ -31,7 +31,7 @@ namespace octetos
 namespace apidb
 {	
 	bool Analyzer::fillKeyType(symbols::ISpace* ispace,core::ActivityProgress* progress)
-	{		
+    {
 		if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)

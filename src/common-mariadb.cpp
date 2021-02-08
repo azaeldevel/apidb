@@ -50,6 +50,23 @@ namespace octetos
 {
 namespace apidb
 {
+    std::string symbols::TableMariaDB::primaryName(octetos::db::Connector& connect) const 
+    {
+        std::string strsql = "SELECT DISTINCT TABLE_NAME,INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = '";
+        strsql +=  ((octetos::db::Datconnect*)(connect.getDatconection()))->getDatabase() + "' and TABLE_NAME = '" + getName() + "';";
+        
+        octetos::db::maria::Datresult dt;
+        bool flag = connect.execute(strsql,dt);
+        if(flag)
+        {
+            while (dt.nextRow())
+            {
+                return dt.getString(1);
+            }
+        }
+        
+        return "";
+    }
     symbols::TableMariaDB::TableMariaDB(const std::string& s) : Table(s)
     {
 
@@ -123,6 +140,7 @@ namespace apidb
 		{
 			//std::cout << "No retorno resultado la consulta" << std::endl;
 		}
+		
 
 		return true;
     }
@@ -217,8 +235,8 @@ namespace apidb
 				if(attrribute->keyType == Symbol::KeyType::PRIMARY)//primary key
 				{
 					key.push_back(attrribute);
-					attrribute->isPK = true;//attrribute->keyType = symbols::Symbol::KeyType::PRIMARY;
-                    
+					attrribute->isPK = true;//attrribute->keyType = 
+                    if(key.getName().empty()) key.setName(primaryName(connect));
 				}
 				/*
 				else if(attrribute->required && attrribute->keyType == Symbol::KeyType::PRIMARY)//unique constraing

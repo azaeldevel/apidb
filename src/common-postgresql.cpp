@@ -11,6 +11,10 @@ namespace octetos
 {
 namespace apidb
 {
+    std::string symbols::TablePostgreSQL::primaryName(octetos::db::Connector& connect) const 
+    {
+        return "";
+    }
     symbols::TablePostgreSQL::TablePostgreSQL(const std::string& s) : Table(s)
     {
 		

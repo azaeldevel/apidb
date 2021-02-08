@@ -509,7 +509,14 @@ namespace apidb
         }
 		int Symbol::counter = 0;	
 		
-        
+        void Key::setName(const std::string& n)
+        {
+            name = n;
+        }
+        const std::string& Key::getName()const
+        {
+            return name;
+        }
 		Symbol* Table::findSymbol(const std::string& str)
 		{
 			iterator it = find(str.c_str());

@@ -179,8 +179,6 @@ namespace apidb
 		class Symbol
 		{
         friend class Analyzer;
-        //friend class mysql::Analyzer;
-        //friend class postgresql::Analyzer;
         friend class Table;
 
         public:
@@ -311,6 +309,13 @@ namespace apidb
         * */
 		class Key : public std::vector<Symbol*>
 		{
+        friend class Analyzer;
+        friend class Table;
+        public:
+            const std::string& getName()const;
+            void setName(const std::string&);
+        private:
+            std::string name;
 		};
 
 		/**
@@ -356,6 +361,8 @@ namespace apidb
             * \brief Busca los campo que son foraneos y completa la informacion de la tabla de simbolos.
             * */
 			virtual bool fillKeyType(octetos::db::Connector& connect, const SymbolsTable&) = 0;
+            
+            virtual std::string primaryName(octetos::db::Connector& connect) const = 0;
 
 			short countRef;
             /**

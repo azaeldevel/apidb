@@ -200,6 +200,17 @@ namespace apidb
             bool implement();
         };
         
+        class Field : public Operation
+        {
+        public:
+            Field(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
+            virtual bool generate();
+            
+        private:
+            bool definite();
+            bool implement();
+        };
+        
 		/**
 		* \private
 		* */

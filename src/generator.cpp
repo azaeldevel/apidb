@@ -239,7 +239,7 @@ namespace generators
                             ofile << "\" . $" << k->name;
                             break;
                         default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     } 
                 }
             }
@@ -284,7 +284,20 @@ namespace generators
                 }
                 else if(k->getOutType().compare(stringType()) == 0)
                 {
-                    throw BuildException("No hay soporte para llave con string",__FILE__,__LINE__); 
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "\" . \"'\" . $this->" << k->name << " . \"'\"";
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    } 
                 }
             }
             else
@@ -357,7 +370,20 @@ namespace generators
             {
                 if(k->getOutType().compare(stringType()) == 0)
                 {
-                    throw BuildException("No hay soporte para llave con string",__FILE__,__LINE__); 
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "\" . \"'\" . $this->" << k->name << " . \"'\"";
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    } 
                 }
                 else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0  or k->getOutType().compare(integerType()) == 0 )
                 {
