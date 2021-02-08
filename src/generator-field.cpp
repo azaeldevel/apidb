@@ -33,11 +33,19 @@ namespace octetos::apidb::generators
         {
             if(it->second->symbolReferenced != NULL)
             {
-                ofile << "\t" << it->second->classReferenced->name << " " << it->second->name<<";\n";
+                ofile << "\t";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "private $";
+                if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << it->second->classReferenced->name;
+                if(configureProject.outputLenguaje != OutputLenguajes::PHP) ofile << " ";
+                ofile << it->second->name<<";\n";
             }
             else
             {
-                ofile << "\t" << it->second->getOutType() << " " << it->second->name <<";\n";
+                ofile << "\t";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "private $";
+                if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << it->second->getOutType();
+                if(configureProject.outputLenguaje != OutputLenguajes::PHP) ofile << " ";
+                ofile << it->second->name<<";\n";
             }
         }
         

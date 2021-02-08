@@ -197,26 +197,28 @@ namespace generators
                 }
             }
             ofile << ")"<<std::endl;
+            
+            ofile << "\t{\n";
+            for(auto k : table.getKey())
+            {
+                if(k->symbolReferenced != NULL)
+                {
+                    ofile << "\t\t$this->" << k->name  << " = new " << k->classReferenced->name << "();\n";
+                    ofile << "\t\t$this->" << k->name  << "->create($" << k->name << ");\n";
+                }
+                else
+                {
+                    ofile << "\t\t$this->" << k->name  << " = $" << k->name  << ";\n";
+                }
+            }
+            ofile << "\t}\n";
 		}
 		else
 		{
 			// no tiene constructor con llaves
 		}
 		
-		ofile << "\t{\n";
-        for(auto k : table.getKey())
-        {
-            if(k->symbolReferenced != NULL)
-            {
-                ofile << "\t\t$this->" << k->name  << " = new " << k->classReferenced->name << "();\n";
-                ofile << "\t\t$this->" << k->name  << "->create($" << k->name << ");\n";
-            }
-            else
-            {
-                ofile << "\t\t$this->" << k->name  << " = $" << k->name  << ";\n";
-            }
-        }
-        ofile << "\t}\n";		
+				
 	}
 	void PHP::createClassMethodes(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
@@ -362,18 +364,9 @@ namespace generators
 	}
     void PHP::createClassAttributes(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
-        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
-        {
-            if(it->second->getClassReferenced() != NULL && (it->second->getOutType().compare("int") == 0 || it->second->getOutType().compare("String") == 0))
-            {
-                ofile << "\tprivate $" << it->second->getName()<<";"<< std::endl;
-            }
-            else
-            {
-                //ofile <<"[3]"<<std::endl;
-                ofile << "\tprivate $" << it->second->getName() <<";"<< std::endl;
-            }
-        }
+        Field field(configureProject,table,ofile);
+        field.setImplementation(true);
+        field.generate();
     }
     
     bool PHP::createDatconnect(std::ofstream& file,bool log)
