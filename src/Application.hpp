@@ -128,7 +128,7 @@ namespace apidb
         class Application
         {
         public:
-                void  init(int*   argc, char **argv[]);                
+                void  init(int*   argc, char** argv[]);                
                 void create();
                 Application();
                 ~Application();
@@ -279,7 +279,8 @@ namespace apidb
                 bool isSaved;
                 bool isOpen;
                 bool isNew;
-                std::string originFilename;                
+                std::string originFilename;
+                GtkBuilder *builder;
         };
 }
 }

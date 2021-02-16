@@ -185,7 +185,7 @@ int main(int argc, char **argv)
     {
         std::cerr << "Fallo descarga (name) " << rqname3 << " \n";
         return EXIT_FAILURE;
-    }    
+    }
     if(rq3.downPriority(connector))
     {
         std::cout << "descarga de (priority): " << rqname3 << " \n";

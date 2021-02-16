@@ -203,7 +203,7 @@ namespace generators
 	}		
 	void CPP::writeDestructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
-		ofile <<"\t"<<table.getName()<< "::~" <<table.getName()<<"()"<<std::endl;
+		ofile <<"\t"<<table.getName()<< "::~" << table.getName() << "()\n";
 		ofile <<"\t{\n";
         for(symbols::Symbol* k : table.getKey())
         {
@@ -211,10 +211,10 @@ namespace generators
             {
                 ofile << "\t\tif(" << k->name << " != NULL)\n"; 
                 ofile << "\t\t{\n";
-                ofile << "\t\t\t//delete " << k->name << ";\n";
-                ofile << "\t\t\t//" << k->name << " = NULL;\n";
+                ofile << "\t\t\tdelete " << k->name << ";\n";
+                ofile << "\t\t\t" << k->name << " = NULL;\n";
                 ofile << "\t\t}\n";
-            }            
+            }
         }
 		ofile <<"\t}\n";
 	}

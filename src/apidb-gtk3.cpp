@@ -20,6 +20,7 @@
  * */
 
 
+
 #include "Application.hpp"
 
 int main (int   argc, char *argv[])
@@ -29,3 +30,27 @@ int main (int   argc, char *argv[])
         app.create();        
         return EXIT_SUCCESS;
 }
+
+/*int main (int argc, char *argv[])
+{
+    GtkWidget *wndMain;
+    GtkBuilder *builder = NULL;
+
+    gtk_init (&argc , &argv);
+
+    builder = gtk_builder_new();
+
+    if( gtk_builder_add_from_file (builder,"/home/azael/develop/octetos/apidb.pub.src/src/apidb.glade" , NULL) == 0)
+    {
+        printf("gtk_builder_add_from_file FAILED\n");
+        return(0);
+    }
+
+    wndMain  = GTK_WIDGET (gtk_builder_get_object (builder,"wndMain"));
+
+    gtk_builder_connect_signals(builder,NULL);
+
+    gtk_widget_show_all (wndMain);
+    gtk_main ();
+    return 0;
+}*/
