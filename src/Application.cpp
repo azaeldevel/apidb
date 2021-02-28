@@ -430,7 +430,7 @@ namespace apidb
         GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
         gint res;
         std::cout << "document_saveas : Step 4\n";
-
+        
         dialog = gtk_file_chooser_dialog_new ("Save File", NULL,action,"_Cancel",GTK_RESPONSE_CANCEL,"_Save",GTK_RESPONSE_ACCEPT, NULL);
         chooser = GTK_FILE_CHOOSER (dialog);
         gtk_file_chooser_set_current_name (chooser,(app->config->name + ".apidb").c_str());
@@ -464,29 +464,11 @@ namespace apidb
         }
         
 		std::cout << "document_save:Step 2" << std::endl;   
-		/*if(!app->isOpen || !app->isSaved)
-        {//no esta abierto el proyecto.                                
-            std::string msgstr;
-            if(core::Error::check())
-            {
-					msgstr = core::Error::get().what();
-            }
-            else
-            {
-					msgstr = "No hay documento abierto o pendiente de guardar";
-            }
-            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
-            gtk_dialog_run (GTK_DIALOG (msg)); 
-            gtk_widget_destroy (msg);
-            return;
-        }*/
         
 		std::cout << "document_save:Step 3" << std::endl;
         
 		if(!app->originFilename.empty() and !app->isNew) //si fue cargado simplemete usa el mismo archivo
 		{
-			//std::cout << "Step 3.1" << std::endl;
-			//escribir en la estura de configuracion del proyecto.
 			if(!app->downConf())
 			{
 				std::string msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
