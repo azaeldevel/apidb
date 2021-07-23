@@ -340,8 +340,8 @@ ENDIF()
 
 
 
-execute_process(COMMAND convert -background none -size 128x128 "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" "${CMAKE_CURRENT_BINARY_DIR}/apidb-128x128.png")
-execute_process(COMMAND convert -background none -size 256x256 "${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg" "${CMAKE_CURRENT_BINARY_DIR}/apidb-256x256.png")
+execute_process(COMMAND rsvg-convert ${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg -w 128 -h 128 -f png -o ${CMAKE_CURRENT_BINARY_DIR}/apidb-128x128.png)
+execute_process(COMMAND rsvg-convert ${CMAKE_CURRENT_SOURCE_DIR}/apidb.svg -w 256 -h 256 -f png -o ${CMAKE_CURRENT_BINARY_DIR}/apidb-256x256.png)
 
 IF(Doxygen_FOUND AND APIDB_DOC)
 	add_custom_target(
