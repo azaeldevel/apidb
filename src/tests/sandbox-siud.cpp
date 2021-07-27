@@ -104,7 +104,7 @@ int main(int argc, char **argv)
     
     
     
-    r = rand() % 100000;
+    /*r = rand() % 100000;
     projectName = "proj-";
     projectName += std::to_string(r);    
     muposys::db::SoftwareProjects proj;
@@ -133,9 +133,9 @@ int main(int argc, char **argv)
             std::cerr << "Fallo la descarga de lastRQNumber en '" << projectName << "'\n";
             return EXIT_FAILURE;
         }
-    }
+    }*/
     
-    r = rand() % 100000;
+    /*r = rand() % 100000;
     rqname1 = "rq-";
     rqname1 += std::to_string(r);    
     muposys::db::SoftwareRQs rq1;
@@ -162,9 +162,9 @@ int main(int argc, char **argv)
     {
         std::cerr << "Fallo en insert" << rqname2 << " \n";
         return EXIT_FAILURE;
-    }
+    }*/
     
-    r = rand() % 100000;
+    /*r = rand() % 100000;
     rqname3 = "rq-";
     rqname3 += std::to_string(r);    
     muposys::db::SoftwareRQs rq3;
@@ -204,10 +204,10 @@ int main(int argc, char **argv)
     {
         std::cerr << "Fallo comprobacion descarga " << rqname3 << " \n";
         return EXIT_FAILURE;
-    }
+    }*/
     
     
-    std::string strnumber1,brief1;
+    /*std::string strnumber1,brief1;
     r = rand() % 100000;
     strnumber1 = "item-";
     strnumber1 += std::to_string(r);  
@@ -222,7 +222,7 @@ int main(int argc, char **argv)
     {
         std::cerr << "Fallo en insert" << strnumber1 << " \n";
         return EXIT_FAILURE;
-    }
+    }*/
     
     
     //std::cout << "Step 2\n";

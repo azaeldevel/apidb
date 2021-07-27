@@ -5,7 +5,7 @@
 #include "../apidb.hpp"
 #include "../common.hpp"
 
-int main(int argc, char **argv)
+int main()
 {
     //std::cout << "Step 1\n";
     octetos::db::maria::Datconnect mariaSource("localhost",3306,"muposys-0.1-alpha","muposys","123456");
