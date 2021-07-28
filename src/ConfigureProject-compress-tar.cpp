@@ -21,6 +21,9 @@ namespace apidb
 	bool ConfigureProject::compress(const std::string& tarf, char * tmp_apidbDir,const std::string& filenameProj)
 	{
 		TAR *pTar;
+		std::cout << "tarf = " << tarf << "\n";
+		std::cout << "tmp_apidbDir = " << tmp_apidbDir << "\n";
+		std::cout << "filenameProj = " << filenameProj << "\n";
        	tar_open(&pTar, (char*)tarf.c_str(), NULL, O_WRONLY | O_CREAT, 0644, TAR_IGNORE_MAGIC);
        	tar_append_tree(pTar, tmp_apidbDir, (char*)filenameProj.c_str());
        	tar_append_eof(pTar);
