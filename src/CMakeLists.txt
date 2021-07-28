@@ -358,9 +358,9 @@ if(APIDB_BUILD_TEST)
     #TARGET_LINK_LIBRARIES(testing-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES})
 endif()
 
-if (${ENABLE_TESTS})
-    enable_testing()
-    add_subdirectory(tests/)
+if (APIDB_BUILD_TEST)
+    #enable_testing()
+    #add_subdirectory(tests/)
 endif()
 
 if(APIDB_EXAMPLES)
