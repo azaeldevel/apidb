@@ -358,10 +358,10 @@ if(APIDB_BUILD_TEST)
     #TARGET_LINK_LIBRARIES(testing-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES})
 endif()
 
-if (APIDB_BUILD_TEST)
-    #enable_testing()
-    #add_subdirectory(tests/)
-endif()
+#if (APIDB_BUILD_TEST)
+    
+    add_subdirectory(tests/)
+#endif()
 
 if(APIDB_EXAMPLES)
     #ADD_EXECUTABLE(capture examples/capture_v${${PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )
