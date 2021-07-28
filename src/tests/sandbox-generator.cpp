@@ -79,6 +79,7 @@ int main(int argc, char **argv)
     {
         
     }
+    configProjectCpp.saveConfig("muposys-cpp.apidb");
     //std::cout << "Step 6\n";
     
     

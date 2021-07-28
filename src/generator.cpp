@@ -186,7 +186,9 @@ namespace generators
                 }
                 else if(k->getOutType().compare(stringType()) == 0)
                 {
-                    throw BuildException("No hay soporte para llave con string",__FILE__,__LINE__); 
+                    std::string msg = "No hay soporte para llave con string : ";
+                    msg += "'" + k->classParent->name + "'";
+                    throw BuildException(msg,__FILE__,__LINE__); 
                 }
             }
             else
