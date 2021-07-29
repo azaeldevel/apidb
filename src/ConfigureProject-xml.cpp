@@ -301,10 +301,10 @@ namespace apidb
 		}
 
         //comprimiendo archivo
-        std::cout<< "Comprimiendo projecto." << std::endl;
+        //std::cout<< "Comprimiendo projecto." << std::endl;
         std::string tarFilename= "apidb";
         compress(tarFilename,tmp_dirpath,"apidb");
-        std::cout<< "Archivo comprimido" << std::endl;
+        //std::cout<< "Archivo comprimido" << std::endl;
 
         if(filename.size()>0)
         {
@@ -324,7 +324,7 @@ namespace apidb
 	void ConfigureProject::readConfig(const std::string& filename)
 	{
         //std::cout << "ConfigureProject::readConfig: Step 2\n";
-        std::cout << "ConfigureProject::readConfig Reading : 1 - > " << filename << std::endl;
+        //std::cout << "ConfigureProject::readConfig Reading : 1 - > " << filename << std::endl;
         FILE *apidbFilecheck = fopen(filename.c_str(), "r");
         if (apidbFilecheck == NULL )
         {
@@ -335,7 +335,7 @@ namespace apidb
         //std::cout << "ConfigureProject::readConfig: Step 3\n";
 
         fclose(apidbFilecheck);
-        std::cout << "ConfigureProject::readConfig Step 2.\n" << std::endl;
+        //std::cout << "ConfigureProject::readConfig Step 2.\n" << std::endl;
         char tmp_filepath[] =  "/tmp/XXXXXX";
         #if defined WINDOWS_MINGW
             int rettmp  = _mktemp_s(tmp_filepath, strlen(tmp_filepath));
@@ -346,7 +346,7 @@ namespace apidb
             }
         #endif
 
-        std::cout << "Reading : " << tmp_filepath << "\n";
+        //std::cout << "Reading : " << tmp_filepath << "\n";
 		bool retpree = unmcompress(filename,tmp_filepath);
         if(!retpree)
         {
@@ -355,7 +355,7 @@ namespace apidb
             throw core::Exception("Fallo al descomprimir con libtar.",__FILE__,__LINE__);
         }
 
-        std::cout << "ConfigureProject::readConfig: Step 3\n";
+        //std::cout << "ConfigureProject::readConfig: Step 3\n";
 		std::string tmVerFileName = tmp_filepath;
 		tmVerFileName += "/apidb/version";
 		//tmVerFileName="apidb/apidbcopy/version";
@@ -367,7 +367,7 @@ namespace apidb
 			msg += tmVerFileName + "' no indica un archivo valido.";
 			throw core::Exception(msg,__FILE__,__LINE__);
 		}
-        std::cout << "ConfigureProject::readConfig: Step 4\n";
+        //std::cout << "ConfigureProject::readConfig: Step 4\n";
         int maxlsize = 20;
 		char line_buf[maxlsize];
 		if(fgets(line_buf, maxlsize, apidbFilecheck2) == NULL)
@@ -375,12 +375,12 @@ namespace apidb
 			throw core::Exception("Fallo al leer la version del projecto.",__FILE__,__LINE__);            
         }
 		std::string strver;
-		std::cout << "ConfigureProject::readConfig: Step 5\n";
-		std::cout << "strver : '"  << line_buf << "'\n";
+		//std::cout << "ConfigureProject::readConfig: Step 5\n";
+		//std::cout << "strver : '"  << line_buf << "'\n";
 		//std::cout << "ConfigureProject::readConfig: Step 8.2\n";
 		projectVersion.set(line_buf);
 		//projectVersion.setNumbers(5,0,0);
-		std::cout << "ConfigureProject::readConfig: Step 6\n";
+		//std::cout << "ConfigureProject::readConfig: Step 6\n";
 		//std::cout << "ConfigureProject::readConfig: Step 9\n";
 
         //std::cout << "ConfigureProject::readConfig: Step 8\n";
@@ -392,7 +392,7 @@ namespace apidb
 		std::string xmlfile = tmp_filepath;
 		xmlfile += "/apidb/main.xml";
 		//std::cout << "Parseando XML " << xmlfile << std::endl;
-        std::cout << "ConfigureProject::readConfig: Step 7\n";
+        //std::cout << "ConfigureProject::readConfig: Step 7\n";
         reader = xmlReaderForFile(xmlfile.c_str(), NULL, 0);
         //std::cout << "ConfigureProject::readConfig: Step 9.2 " << xmlfile <<  "\n";
 
@@ -686,7 +686,7 @@ namespace apidb
         //std::cout << "ConfigureProject::getProjectNodes : v1.1.0 update.\n";
         if(projectVersion >= ver110)//la lectura es compatible con versiones anteriores del projecto
         {
-            std::cout << "ConfigureProject::getProjectNodes : projectVersion 1.\n";
+            //std::cout << "ConfigureProject::getProjectNodes : projectVersion 1.\n";
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
                 xmlTextReaderRead(reader);
@@ -700,7 +700,7 @@ namespace apidb
                 //std::cout << "ConfigureProject::getProjectNodes : v1.1.0 update - 2.\n";
                 if(inL.compare("MySQL") == 0 )
                 {
-                    std::cout << "ConfigureProject::getProjectNodes : projectVersion 2.\n";
+                    //std::cout << "ConfigureProject::getProjectNodes : projectVersion 2.\n";
                 	if(checkLibrary(InputLenguajes::MySQL))
                 	{
 		                setInputLenguaje(InputLenguajes::MySQL);
@@ -721,7 +721,7 @@ namespace apidb
                 }
                 else if(inL.compare("PostgreSQL") == 0)
                 {
-                    std::cout << "ConfigureProject::getProjectNodes : projectVersion 2.\n";
+                    //std::cout << "ConfigureProject::getProjectNodes : projectVersion 2.\n";
                 	if(checkLibrary(InputLenguajes::PostgreSQL))
                 	{
 		                setInputLenguaje(InputLenguajes::PostgreSQL);
@@ -736,27 +736,27 @@ namespace apidb
                 }
                 else if(inL.compare("MariaDB") == 0)
                 {
-                    std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.\n";
+                    //std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.\n";
                 	if(checkLibrary(InputLenguajes::MariaDB))
                 	{
-                        std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.1a.\n";
+                        //std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.1a.\n";
 		                setInputLenguaje(InputLenguajes::MariaDB);
 		                conectordb = createDatConnection();
 		                conectordb->set(InputLenguajes::MariaDB,host,port,database,user,password);
                     }
                     else if(checkLibrary(InputLenguajes::MySQL))
                 	{
-                        std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.1b.\n";
+                        //std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.1b.\n";
 		                setInputLenguaje(InputLenguajes::MySQL);
 		                conectordb = createDatConnection();
 		                conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);
                     }
                     else
                     {
-                        std::cout << "ConfigureProject::getProjectNodes : projectVersion 31c.\n";
+                        //std::cout << "ConfigureProject::getProjectNodes : projectVersion 31c.\n";
 		                failLoadDat = true;
                     }
-                    std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.2.\n";
+                    //std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.2.\n";
                     failLoadDat = false;
                 }
                 else

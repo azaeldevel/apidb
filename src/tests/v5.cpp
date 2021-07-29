@@ -43,19 +43,19 @@ static std::string filename;
 static std::string filename_nlst;
 static std::string fnJava;
 #ifdef APIDB_MYSQL
-static octetos::db::mysql::Datconnect mysqlSource("localhost",3306,"sysapp.alpha","sysapp","123456");
+static octetos::db::mysql::Datconnect mysqlSource("localhost",3306,"muposys-0.1-alpha","muposys","123456");
 #endif
 #ifdef APIDB_POSTGRESQL
 static octetos::db::postgresql::Datconnect postgresqlSource("localhost",5432,"sysapp_alpha","sysapp","123456"); 
 #endif
 #ifdef APIDB_MARIADB
-static octetos::db::mariadb::Datconnect mariaSource("localhost",3306,"sysapp.alpha","sysapp","123456");
+static octetos::db::maria::Datconnect mariaSource("localhost",3306,"muposys-0.1-alpha","muposys","123456");
 #endif
 //static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
-static std::string sysappv1Filename = "sysappv1-alpha.apidb";
-static std::string sysappv20Filename = "sysappv20-alpha.apidb";
-static std::string sysappv30Filename = "sysappv30-alpha.apidb";
-static std::string sysappjava = "sysapp-java-alpha.apidb";
+//static std::string sysappv1Filename = "sysappv1-alpha.apidb";
+//static std::string sysappv20Filename = "sysappv20-alpha.apidb";
+//static std::string sysappv30Filename = "sysappv30-alpha.apidb";
+//static std::string sysappjava = "sysapp-java-alpha.apidb";
 
 /* The suite initialization function.
  * Opens the temporary file used by the tests.
@@ -63,10 +63,10 @@ static std::string sysappjava = "sysapp-java-alpha.apidb";
  */
 int init_apidb(void)
 {
-        filename = random_string(50);
-        filename_nlst = random_string(50);
-		fnJava = random_string(50);
-        return 0;
+	filename = random_string(50);
+	filename_nlst = random_string(50);
+	fnJava = random_string(50);
+	return 0;
 }
 
 /* The suite cleanup function.
@@ -75,10 +75,10 @@ int init_apidb(void)
  */
 int clean_apidb(void)
 {
-        remove(filename.c_str());
-        remove(filename_nlst.c_str());
-        remove(fnJava.c_str());
-        return 0;
+	remove(filename.c_str());
+	remove(filename_nlst.c_str());
+	remove(fnJava.c_str());
+	return 0;
 }
 
 
@@ -156,8 +156,8 @@ void testCreateProject()
 	version.setNumbers(0,1,0);
 	version.setPrerelease("alpha");
 	octetos::apidb::ConfigureProject configProject;
-	configProject.name = "sysapp";
-	configProject.builDirectory  = "apidb";
+	configProject.name = "muposys";
+	configProject.builDirectory  = "muposys";
 	configProject.versionResult = version;
 #ifdef APIDB_MYSQL
 	configProject.setInputs(octetos::apidb::InputLenguajes::MySQL,mysqlSource);    
@@ -264,7 +264,7 @@ void testBuild_nlst()
     }
     octetos::apidb::Tracer tracer(0);
     //std::cout << "testBuild_nlst: Step 3\n";
-    if(!driver.driving(NULL))
+    if(!driver.driving(&tracer))
     {
         if(octetos::core::Error::check())
         {
@@ -293,7 +293,7 @@ void testBuild()
 	{
         CU_ASSERT(false);
 		std::cout << e.what() << "\n";
-        return;		
+        return;
 	}
 
     //std::cout << "testBuild: Step 2\n";
@@ -355,6 +355,7 @@ void testCompilen_nlst()
             std::cout << "Fallo al realizar la compialcion.\n";
             CU_ASSERT(false);
         }
+        system("cd ..");
 	}
 	else
 	{
@@ -379,7 +380,7 @@ void testCompilen()
 	{
         int ret = 0;
 		octetos::core::Semver ver = octetos::apidb::getPakageVersion();
-        std::string cmd = "cp ../../src/tests/developing";
+        std::string cmd = "cp ../../../src/tests/developing";
         cmd += std::to_string(ver.getMajor());
         if(configProject.getInputLenguaje() == octetos::apidb::InputLenguajes::MySQL)
         {
@@ -399,7 +400,7 @@ void testCompilen()
 		}
         
         cmd += ".cpp ";
-        cmd += " apidb/developing";
+        cmd += " muposys/developing";
         cmd += std::to_string(ver.getMajor());
         cmd += ".cpp ";
         if(system(cmd.c_str()) < 0)
@@ -408,13 +409,13 @@ void testCompilen()
             CU_ASSERT(false);
         }
 
-        cmd  = " cd apidb && cmake . &> /dev/null";
+        cmd  = " cd muposys && cmake . &> /dev/null";
         if(system(cmd.c_str()) < 0)
         {
             std::cout << "Fallo al realizar la compialcion.\n";
             CU_ASSERT(false);
         }
-        cmd  = " cd apidb &&  make &> /dev/null";
+        cmd  = " cd muposys &&  make &> /dev/null";
         if(system(cmd.c_str()) < 0)
         {
             std::cout << "Fallo al realizar la compialcion.\n";
@@ -521,26 +522,18 @@ int main(int argc, char *argv[])
 			CU_cleanup_registry();
 			return CU_get_error();
 		}	
-	}  
+	}
 	if(runTest == 2 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Creación de proyecto a partir de descripción statica.", testCreateProject)))
 		{
                 CU_cleanup_registry();
                 return CU_get_error();
-		}	
-	}   
-	/*if(runTest == 4 or runAll)
-	{
-		if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción.", testBuild)))
-		{
-			CU_cleanup_registry();
-			return CU_get_error();
 		}
-	}*/
+	}  
 	if(runTest == 4 or runAll)
 	{
-		if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción(no-lists).", testBuild_nlst)))
+		if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción.", testBuild)))
 		{
 			CU_cleanup_registry();
 			return CU_get_error();
@@ -548,7 +541,7 @@ int main(int argc, char *argv[])
 	}
 	if(runTest == 4 or runAll)
 	{
-		if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción.", testBuild)))
+		if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción(no-lists).", testBuild_nlst)))
 		{
 			CU_cleanup_registry();
 			return CU_get_error();
