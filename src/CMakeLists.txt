@@ -60,14 +60,18 @@ foreach(AINST IN LISTS APIDBINSTALL)
 	ENDIF()
 endforeach()
 
-
 if(NOT APIDB_VERSION_STAGE)
-        MESSAGE(FATAL_ERROR "Es necesario que indique una etapa de desasorrollo, use -DAPIDB_VERSION_STAGE='etapa'.\nEn donde etapa puede ser .. snapshot,alpha,beta,rc,release.\nEn términos generales acepta cualquier miembro de la enumeración toolkit::Version::Stage para mas detalles vea la información de este paquete.")
-elseif(${APIDB_VERSION_STAGE} STREQUAL "release")
-        if(NOT CMAKE_BUILD_TYPE)
-                MESSAGE(FATAL_ERROR "La etapa del proyecto, es 'release', asigne tambien CMAKE_BUILD_TYPE=Release para mejor estabilidad.")
-        endif()
+	set(APIDB_VERSION_STAGE "beta")
 endif()
+
+##if(NOT APIDB_VERSION_STAGE)
+##        MESSAGE(FATAL_ERROR "Es necesario que indique una etapa de desasorrollo, use -DAPIDB_VERSION_STAGE='etapa'.\nEn donde etapa puede ser .. snapshot,alpha,beta,rc,release.\nEn términos generales acepta cualquier miembro de la enumeración toolkit::Version::Stage para mas detalles vea la información de este paquete.")
+##elseif(${APIDB_VERSION_STAGE} STREQUAL "release")
+##if(NOT CMAKE_BUILD_TYPE)
+##                MESSAGE(FATAL_ERROR "La etapa del proyecto, es 'release', asigne tambien CMAKE_BUILD_TYPE=Release para mejor estabilidad.")
+##        endif()
+##endif()
+
 if(NOT CMAKE_BUILD_TYPE)
 
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
@@ -358,8 +362,7 @@ if(APIDB_BUILD_TEST)
     #TARGET_LINK_LIBRARIES(testing-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR} ${LIBRARIES})
 endif()
 
-#if (APIDB_BUILD_TEST)
-    
+#if(APIDB_BUILD_TEST)
     add_subdirectory(tests/)
 #endif()
 

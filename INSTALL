@@ -18,7 +18,7 @@ Firts you need install all dependencies
 	- octetos-core >= v2.2         https://github.com/azaeldevel/octetos-core
 	- octetos-db-maria >= v1.2.2   https://github.com/azaeldevel/octetos-db
 	- CMake 3.5
-	- GCC 8.2
+	- GCC
 	- libpq
 	- libxml2 2
 	- Boost 1.67
@@ -27,7 +27,7 @@ Firts you need install all dependencies
 	- GTK 3 library
 	- Tar library 1.2 (Linux) or Libzip(MINGW)
 	- Doxygen (opcional)
-	- ImageMagicK >= 7
+	- librsv
 
 apidb could by instaled y three diferents way:
 	1.- Gentoo based metode
@@ -57,7 +57,7 @@ Source base metode
         Este proyecto puede descargarlo desde https://github.com/azaeldevel/apidb.git
         1.- unzip apidb-master.zip //Descomprimir archivo
         2.- cd apidb-master/src/build // entrar en el directorio
-        3.- cmake -DCMAKE_BUILD_TYPE=Debug -DAPIDB_VERSION_STAGE=beta -DPLATFORM=LINUX_DEBIAN -DAPIDBINSTALL="CORE;MARIADB;POSTGRESQL;COMMANDS;GTK3" -DAPIDB_DEBIAN_APCKAGE=N ..
+        3.- cmake -DPLATFORM=LINUX_DEBIAN -DAPIDBINSTALL="CORE;MARIADB;POSTGRESQL;COMMANDS;GTK3" ..
         4.- make
         5.- sudo cpack --config CPackConfig.cmake
         6.- sudo ./apidb-*-Linux.sh  --prefix=/usr/local
