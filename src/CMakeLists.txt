@@ -87,6 +87,10 @@ CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/versionInfo.h.in" "${PROJECT_SOURCE_DIR}/v
 
 CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/apidb.desktop.in" "${CMAKE_CURRENT_BINARY_DIR}/apidb.desktop")
 
+find_program(CHECK_SVG "rsvg-convert")
+IF(NOT CHECK_SVG)
+	MESSAGE(FATAL_ERROR "No se encotro en comando 'rsvg-convert'")
+ENDIF()
 
 ##################################################################################################################
 ####FIND PAKAGES

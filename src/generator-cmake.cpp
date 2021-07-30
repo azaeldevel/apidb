@@ -209,10 +209,6 @@ namespace generators
 		if(!configureProject.executable_target.empty() and configureProject.executable_target.compare("¿?") != 0)//la adicion de un ejecutable es opcional
 		{
 			cmakelists<<"ADD_EXECUTABLE(" << configureProject.executable_target << "  ";
-			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
-			{
-				cmakelists <<".cpp ";
-			}
 			cmakelists<<configureProject.executable_target;
 			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
 			{
