@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 {
     std::cout << "Comenzando consultas..\n";
     
-    octetos::db::maria::Datconnect mariaSource("localhost",3306,"muposys-0.1-alpha","muposys","123456");
+    octetos::db::maria::Datconnect mariaSource("localhost",3306,"muposys-0-alpha","muposys","123456");
     octetos::db::maria::Connector connector; 
     bool flag = false;  
 	flag = connector.connect(mariaSource);
@@ -207,14 +207,14 @@ int main(int argc, char **argv)
     }*/
     
     
-    /*std::string strnumber1,brief1;
+    std::string strnumber1,brief1;
     r = rand() % 100000;
     strnumber1 = "item-";
     strnumber1 += std::to_string(r);  
     brief1 = "brief-";
     brief1 += std::to_string(r);
     muposys::db::Catalog item1;
-    if(item1.insert(connector,strnumber1,"M",brief1))
+    if(item1.insert(connector,strnumber1,"item","O",brief1))
     {
         std::cout << "insert item: " << strnumber1 << " \n";
     }
@@ -222,7 +222,7 @@ int main(int argc, char **argv)
     {
         std::cerr << "Fallo en insert" << strnumber1 << " \n";
         return EXIT_FAILURE;
-    }*/
+    }
     
     
     //std::cout << "Step 2\n";

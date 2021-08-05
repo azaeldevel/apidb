@@ -43,13 +43,13 @@ static std::string filename;
 static std::string filename_nlst;
 static std::string fnJava;
 #ifdef APIDB_MYSQL
-static octetos::db::mysql::Datconnect mysqlSource("localhost",3306,"muposys-0.1-alpha","muposys","123456");
+static octetos::db::mysql::Datconnect mysqlSource("localhost",3306,"muposys-0-alpha","muposys","123456");
 #endif
 #ifdef APIDB_POSTGRESQL
 static octetos::db::postgresql::Datconnect postgresqlSource("localhost",5432,"sysapp_alpha","sysapp","123456"); 
 #endif
 #ifdef APIDB_MARIADB
-static octetos::db::maria::Datconnect mariaSource("localhost",3306,"muposys-0.1-alpha","muposys","123456");
+static octetos::db::maria::Datconnect mariaSource("localhost",3306,"muposys-0-alpha","muposys","123456");
 #endif
 //static octetos::toolkit::clientdb::mysql::Datconnect mysqlSourcev2("192.168.0.101",3306,"sysappv2.alpha","develop","123456"); 
 //static std::string sysappv1Filename = "sysappv1-alpha.apidb";
