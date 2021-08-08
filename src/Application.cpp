@@ -38,7 +38,7 @@ namespace apidb
     }
 	bool Application::downConf()
 	{
-        std::cout << "downConf : Step 1\n";
+        //std::cout << "downConf : Step 1\n";
         if(config == NULL)
         {
                 GtkWidget *msg = gtk_message_dialog_new (NULL,
@@ -54,7 +54,7 @@ namespace apidb
         }
         
         if(isSaved and !isOpen) return true;
-        std::cout << "downConf : Step 2\n";                
+        //std::cout << "downConf : Step 2\n";                
         
         if(inInLEdited)
         {
@@ -71,7 +71,7 @@ namespace apidb
             //std::cout << "In Language : " << gcinl << "\n";
             config->setInputLenguaje(getInputLenguaje(gcinl));
         }
-        std::cout << "downConf : Step 3\n";
+        //std::cout << "downConf : Step 3\n";
         if(inNameEdited)
         {
             std::string name = gtk_entry_get_text(GTK_ENTRY(inName));
@@ -90,7 +90,7 @@ namespace apidb
             config->name = name;
         }
         
-        std::cout << "downConf : Step 4\n";
+        //std::cout << "downConf : Step 4\n";
 		
         if(inOutLEdited)
         {
@@ -104,7 +104,7 @@ namespace apidb
             }
             config->outputLenguaje =  getOutputLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inOutL)));
         }
-        std::cout << "downConf : Step 5\n";
+        //std::cout << "downConf : Step 5\n";
         if(inVerEdited)
         {
             std::string verstr = gtk_entry_get_text(GTK_ENTRY(inVer));
@@ -116,7 +116,7 @@ namespace apidb
                                 return false;
             }                                
         }
-        std::cout << "downConf : Step 6\n";
+        //std::cout << "downConf : Step 6\n";
         if(inPkLEdited)
         {
             int intpkl = gtk_combo_box_get_active(GTK_COMBO_BOX(inPkL));
@@ -131,7 +131,7 @@ namespace apidb
             //std::cout << "downConf : " << gtk_combo_box_get_active_id(GTK_COMBO_BOX(inPkL)) << "\n";
             config->packing = getPackingLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inPkL)));
         }
-        std::cout << "downConf : Step 7\n";
+        //std::cout << "downConf : Step 7\n";
         if(inCmplEdited)
         {
             int intcmpl = gtk_combo_box_get_active(GTK_COMBO_BOX(inCmpl));
@@ -145,7 +145,7 @@ namespace apidb
             }
             config->compiled = getCompiled(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inCmpl)));
         }
-		std::cout << "downConf : Step 8\n";
+		//std::cout << "downConf : Step 8\n";
 		if(inNameSpaceDetectEdited)
 		{
 			std::cout << "downConf : Step 8.1\n";
@@ -162,12 +162,12 @@ namespace apidb
 				gtk_widget_destroy (msg);
 				return false;
 			}
-			std::cout << "downConf : Step 8.3\n";
+			//std::cout << "downConf : Step 8.3\n";
 			config->namespace_detect = gtk_combo_box_get_active_id(GTK_COMBO_BOX(inNameSpaceDetect));
-			std::cout << "downConf : Step 8.4\n";
+			//std::cout << "downConf : Step 8.4\n";
 		}
 		
-        std::cout << "downConf : Step 9\n";
+        //std::cout << "downConf : Step 9\n";
 		
 		if(inExeEdited)
         {
@@ -183,10 +183,10 @@ namespace apidb
                 return false;
         }*/
         
-        std::cout << "downConf : Step 10\n";
+        //std::cout << "downConf : Step 10\n";
         if(config->getDatconnection() == NULL)
         {
-        	std::cout << "downConf : Step 10.1.1\n";
+        	//std::cout << "downConf : Step 10.1.1\n";
         	if(config->newDatConnection())
         	{
         		//std::cout << "downConf : new conection created\n";
@@ -196,12 +196,12 @@ namespace apidb
         		//::cout << "downConf : fail new conection created\n";
         	}
         }
-        std::cout << "downConf : Step 10.2\n";
+        //std::cout << "downConf : Step 10.2\n";
         if(core::Error::check())
         {
         	return false;
         }
-        std::cout << "downConf : Step 10.3\n";
+        //std::cout << "downConf : Step 10.3\n";
         if(inLocEdited)
         {
             std::string loc = gtk_entry_get_text(GTK_ENTRY(inLoc));
@@ -215,7 +215,7 @@ namespace apidb
             config->getDatconnection()->setHost(loc);
         }
         
-        std::cout << "downConf : Step 11\n";
+        //std::cout << "downConf : Step 11\n";
         if(inPortEdited)
         {
             std::string strport = gtk_entry_get_text(GTK_ENTRY(inPort));
@@ -236,7 +236,7 @@ namespace apidb
             }
             config->getDatconnection()->setPort(intport);
         }
-        std::cout << "downConf : Step 11.1\n";
+        //std::cout << "downConf : Step 11.1\n";
         if(inDBEdited) 
         {
             std::string strdb = gtk_entry_get_text(GTK_ENTRY(inDB));
@@ -249,7 +249,7 @@ namespace apidb
             }
             config->getDatconnection()->setDatabase(strdb);
         }
-        std::cout << "downConf : Step 12\n";
+        //std::cout << "downConf : Step 12\n";
         if(inUserEdited)
         {
             std::string struser = gtk_entry_get_text(GTK_ENTRY(inUser));
@@ -262,7 +262,7 @@ namespace apidb
             }
             config->getDatconnection()->setUser(struser);
         }
-        std::cout << "downConf : Step 13\n";
+        //std::cout << "downConf : Step 13\n";
         if(inPwEdited)
         {
             std::string strpw = gtk_entry_get_text(GTK_ENTRY(inPw));   
@@ -274,7 +274,7 @@ namespace apidb
             }
             config->getDatconnection()->setPassword(strpw);
         }
-        std::cout << "downConf : Step 14\n";
+        //std::cout << "downConf : Step 14\n";
         if(inWConnNameEdited)
         {
             std::string str = gtk_entry_get_text(GTK_ENTRY(inWConnName));
@@ -396,7 +396,7 @@ namespace apidb
 	}
     void Application::document_saveas(GtkWidget *widget, gpointer data) 
     {
-        //std::cout << "document_saveas : Step 1\n";
+        ///std::cout << "document_saveas : Step 1\n";
         Application* app = (Application*)data;
              
         if(app->config == NULL)
@@ -799,13 +799,13 @@ namespace apidb
     }
 	void Application::documen_open(Application* app,const std::string& filename)
 	{
-		std::cout << "Application::documen_open: Step 1 "<< std::endl;
+		//std::cout << "Application::documen_open: Step 1 "<< std::endl;
 		if(app->config == NULL)
 		{
 			app->config = new ConfigureProject();
 		}
 		
-		std::cout << "Application::documen_open : Step 2" << std::endl;
+		//std::cout << "Application::documen_open : Step 2" << std::endl;
 		try
 		{
 			app->config->readConfig(filename);   
@@ -817,14 +817,14 @@ namespace apidb
 			gtk_widget_destroy (msg);
 			return;
 		}
-		std::cout << "Application::documen_open : Step 3" << std::endl;
+		//std::cout << "Application::documen_open : Step 3" << std::endl;
 		if(app->driver != NULL) 
 		{
 			delete app->driver;
 			app->driver = NULL;
 		}
 
-		std::cout << "Application::documen_open : Step 3.6" << std::endl;
+		//std::cout << "Application::documen_open : Step 3.6" << std::endl;
 		try
 		{
             app->driver = new Driver(*(app->config));
@@ -845,14 +845,14 @@ namespace apidb
 			gtk_widget_show_all(app->window);*/
             return;
 		}
-		std::cout << "Application::documen_open : Step 4" << std::endl;
+		//std::cout << "Application::documen_open : Step 4" << std::endl;
 		if(!app->driver->analyze(NULL))
 		{
 			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Fallo la lectura del archivo de proyecto");
 			gtk_dialog_run (GTK_DIALOG (msg)); 
 			gtk_widget_destroy (msg);                                
 		}
-		std::cout << "Application::documen_open : Step 5" << std::endl;
+		//std::cout << "Application::documen_open : Step 5" << std::endl;
 		app->originFilename = filename;
 		app->createNotebook();
 		app->loadConfig();
@@ -860,7 +860,7 @@ namespace apidb
 		app->isOpen = true;
 		app->isNew = false;
 		gtk_widget_show_all(app->window);
-		std::cout << "Application::documen_open : Step 6" << std::endl;
+		//std::cout << "Application::documen_open : Step 6" << std::endl;
 	}
 	void Application::document_open (GtkWidget *widget, gpointer   data)
 	{
@@ -1541,7 +1541,10 @@ namespace apidb
 	void Application::create()
 	{
         builder = gtk_builder_new();
-        if(gtk_builder_add_from_file (builder,"/home/azael/develop/octetos/apidb.pub.src/src/apidb.glade" , NULL) == 0)
+		std::string gladefile = SHARED_APIDB_DIR;
+		gladefile += "/apidb.glade";
+		
+        if(gtk_builder_add_from_file (builder,gladefile.c_str() , NULL) == 0)
         {
             printf("gtk_builder_add_from_file FAILED\n");
             return;
