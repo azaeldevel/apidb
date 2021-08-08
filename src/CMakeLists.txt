@@ -378,7 +378,7 @@ if(APIDB_BUILD_TEST)
 endif()
 
 #if(APIDB_BUILD_TEST)
-    add_subdirectory(tests/)
+    #add_subdirectory(tests/)
 #endif()
 
 if(APIDB_EXAMPLES)
