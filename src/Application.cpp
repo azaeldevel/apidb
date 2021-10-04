@@ -316,11 +316,7 @@ namespace apidb
             }
             else
             {
-                                std::string msgstr = "";
-                                if(core::Error::check())
-                                {
-                                                msgstr = (&core::Error::get())->what();
-                                }
+                                std::string msgstr = "Fallo en applicacion.";
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                         GTK_MESSAGE_ERROR,
@@ -367,15 +363,7 @@ namespace apidb
         //std::cout << "build : Step 4\n";
 		if(!flagDriver)
 		{
-			std::string msgstr = "";
-			if(core::Error::check())
-			{
-				msgstr = (&core::Error::get())->what();
-			}
-			else
-			{
-				msgstr ="Fallo durante la construccion.";
-			}
+			std::string msgstr = "Fallo durante la construccion.";
 			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
 			gtk_dialog_run (GTK_DIALOG (msg)); 
 			gtk_widget_destroy (msg);
@@ -1455,15 +1443,7 @@ namespace apidb
                                 //std::cout << "Jump 4" << std::endl;
                                 if(!app->driver->analyze(NULL))
                                 {
-                                        std::string msgstr = "";
-                                        if(core::Error::check())
-                                        {
-                                                msgstr = (&core::Error::get())->what();
-                                        }
-                                        else
-                                        {
-                                                msgstr ="Fallo la lectura del archivo de proyecto";
-                                        }
+                                        std::string msgstr = "Fallo la lectura del archivo de proyecto";
                                         GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                         GTK_MESSAGE_ERROR,
