@@ -655,6 +655,8 @@ namespace octetos::apidb::generators
 			ofile << k->getName();
 		}
         ofile << ");"<<std::endl;
+        
+        return true;
     }
     
     bool Select::implement_rawdata()
@@ -934,6 +936,8 @@ namespace octetos::apidb::generators
                 throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
         }
         ofile << "\t}\n";
+        
+        return true;
     }
     bool Select::generate()
     {

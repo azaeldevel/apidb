@@ -120,7 +120,7 @@ namespace apidb
         /**
          * \brief Clase de manejo de errores.
          **/
-	class BuildException : public core::Exception
+	class BuildException : public oct::core::Exception
 	{
 	public:
                 /**
@@ -523,7 +523,7 @@ namespace apidb
         /**
         * \brief Requerida por toolkit::ActivityProgress
         * */
-        virtual void add(const core::Exception&);
+        virtual void add(const oct::core::Exception&);
         /**
         * \brief Requerida por toolkit::ActivityProgress
         * */

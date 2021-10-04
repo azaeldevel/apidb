@@ -45,14 +45,14 @@ namespace apidb
     	if(configureProject.getDatconnection() == NULL)
     	{
     		std::string msg = "No se ha asignado la informacionde conexio.";
-            throw core::Exception(msg,__FILE__,__LINE__);
+            throw oct::core::Exception(msg,__FILE__,__LINE__);
     	}
 
         void* handle = configureProject.getLibraryHandle();
       	if(handle == NULL)
 		{
             std::string msg = "Falla al intentar cargar la funcion de libreia 'destroyAnalyzer'";
-            throw core::Exception(msg,__FILE__,__LINE__);
+            throw oct::core::Exception(msg,__FILE__,__LINE__);
 		}
 
         createAnalyzer = (apidb::Analyzer* (*)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*))dlsym(handle, "createAnalyzer");
@@ -62,7 +62,7 @@ namespace apidb
         {
             std::string msgErr ="No se pudo cargar la funcion createAnalyzer :\n" ;
             msgErr = msgErr + "\t" + dlerror();
-            throw core::Exception(msgErr,__FILE__,__LINE__);
+            throw oct::core::Exception(msgErr,__FILE__,__LINE__);
         }
 
         return true;
@@ -75,7 +75,7 @@ namespace apidb
 		{
 			std::string msg = "No se encontro el espacio Global '";
 			msg += configureProject.name + "'";
-			throw core::Exception(msg,__FILE__,__LINE__);
+			throw oct::core::Exception(msg,__FILE__,__LINE__);
 		}
 
 		symbols::Table* tb = global->findTable(table);
@@ -102,14 +102,14 @@ namespace apidb
 			if(analyzer == NULL)
 			{
 				std::string msg = "No se ha asignado el analizador '";
-				throw core::Exception(msg,__FILE__,__LINE__);
+				throw oct::core::Exception(msg,__FILE__,__LINE__);
 			}
 			symbols::Space* global = analyzer->symbolsTable.findSpace(configureProject.name);
 			if(global == NULL)
 			{
 				std::string msg = "No se encontro el espacio Global '";
 				msg += configureProject.name + "'";
-				throw core::Exception(msg,__FILE__,__LINE__);
+				throw oct::core::Exception(msg,__FILE__,__LINE__);
 			}
 			space = global;
 		}
@@ -124,7 +124,7 @@ namespace apidb
 			{
 				if(getTablesName(ret,(symbols::Space*)ispace) == false)
 				{
-					throw core::Exception("Fallo durante la resolución de nombres de tabla.",__FILE__,__LINE__);
+					throw oct::core::Exception("Fallo durante la resolución de nombres de tabla.",__FILE__,__LINE__);
 				}
 			}
 			else if(ispace->what() == symbols::SpaceType::TABLE)
@@ -159,7 +159,7 @@ namespace apidb
         
         if(!loadLibrary())
         {
-            throw core::Exception("Fallo la carga(dinamica) de componete de basi de datos solicitado.");
+            throw oct::core::Exception("Fallo la carga(dinamica) de componete de basi de datos solicitado.");
         }
         
         if(config.build())
@@ -175,16 +175,16 @@ namespace apidb
         
         if(!createAnalyzer)
         {
-            throw core::Exception("No se ha creado el constructor de anlizador",__FILE__,__LINE__);
+            throw oct::core::Exception("No se ha creado el constructor de anlizador",__FILE__,__LINE__);
         }
         if(!destroyAnalyzer)
         {
-            throw core::Exception("No se ha creado el destructor de anlizador",__FILE__,__LINE__);
+            throw oct::core::Exception("No se ha creado el destructor de anlizador",__FILE__,__LINE__);
         }
         analyzer = createAnalyzer(&configureProject,connector,NULL);
         if(!analyzer)
         {
-            throw core::Exception("Fallo al crean el anlizador",__FILE__,__LINE__);
+            throw oct::core::Exception("Fallo al crean el anlizador",__FILE__,__LINE__);
         }
 	}
 
@@ -304,11 +304,11 @@ namespace apidb
         //std::cout << "Driver::analyze : Step 2\n";
         if(connector == NULL)
         {
-            throw core::Exception("No se ha asignado a conector.");
+            throw oct::core::Exception("No se ha asignado a conector.");
         }
         if(createAnalyzer == NULL)
         {
-            throw core::Exception("No se ha asignado a metodo contructor de driver.");
+            throw oct::core::Exception("No se ha asignado a metodo contructor de driver.");
         }
         
         //std::cout << "Driver::analyze : Step 3\n";
@@ -336,7 +336,6 @@ namespace apidb
             if(progress != NULL)
             {
                 std::string msgErr = "\tFallo al leer durante la fase de analisis.";
-                throw core::Exception(msgErr,__FILE__,__LINE__);
             }
             
             return false;

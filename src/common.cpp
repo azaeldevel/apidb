@@ -173,7 +173,7 @@ namespace apidb
         {
                 std::cout << e.describe();
         }
-        void Tracer::add(const core::Exception& e)
+        void Tracer::add(const oct::core::Exception& e)
         {
                 std::cout << e.what();
         }
@@ -199,10 +199,10 @@ namespace apidb
 	{
 		return core::Error::what();
 	}*/
-    BuildException::BuildException(const std::string &description) throw() : core::Exception(description)
+    BuildException::BuildException(const std::string &description) throw() : oct::core::Exception(description)
     {
 	}
-    BuildException::BuildException(const std::string &description,const char*  filename,int lineNumber) throw() : core::Exception(description,filename,lineNumber)
+    BuildException::BuildException(const std::string &description,const char*  filename,int lineNumber) throw() : oct::core::Exception(description,filename,lineNumber)
     {
 	}
                

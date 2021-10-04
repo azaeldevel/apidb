@@ -246,6 +246,8 @@ namespace generators
                 }
             }
         }
+        
+        return true;
     }
     bool Operation::echoKeyRawParam()const
     {
@@ -357,6 +359,7 @@ namespace generators
                 }
             }
         }
+        return true;
     }
     bool Operation::echoKey()const
     {

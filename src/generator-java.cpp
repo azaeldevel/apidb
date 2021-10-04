@@ -263,7 +263,7 @@ namespace generators
 	{
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
-            throw core::Exception("Faltas los encabazados de MySQL",__FILE__,__LINE__);
+            throw oct::core::Exception("Faltas los encabazados de MySQL",__FILE__,__LINE__);
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
         {
@@ -271,7 +271,7 @@ namespace generators
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
         {
-            throw core::Exception("Faltas los encabazados de PosrgreSQL",__FILE__,__LINE__);
+            throw oct::core::Exception("Faltas los encabazados de PosrgreSQL",__FILE__,__LINE__);
         }
         else
         {

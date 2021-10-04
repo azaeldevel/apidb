@@ -139,7 +139,7 @@ namespace apidb
                                 xmlNewChild(outL_node, NULL, (const xmlChar *)"name", (const xmlChar *)"Php");
                                 break;
                         default:
-                                throw core::Exception("Lenguaje de salida desconocido.",__FILE__,__LINE__);
+                                throw oct::core::Exception("Lenguaje de salida desconocido.",__FILE__,__LINE__);
                 }
 
                 //
@@ -156,7 +156,7 @@ namespace apidb
                                 xmlNewChild(pk_node, NULL, (const xmlChar *)"name", (const xmlChar *)"OnlyCode");
                                 break;
                         default:
-                                throw core::Exception("Opcion de enpaquetado desconocida.",__FILE__,__LINE__);
+                                throw oct::core::Exception("Opcion de enpaquetado desconocida.",__FILE__,__LINE__);
                 }
 
                 //
@@ -173,7 +173,7 @@ namespace apidb
                                 xmlNewChild(cmpl_node, NULL, (const xmlChar *)"name", (const xmlChar *)"NoCompile");
                                 break;
                         default:
-                                throw core::Exception("Opcion de compilado desconocida.",__FILE__,__LINE__);
+                                throw oct::core::Exception("Opcion de compilado desconocida.",__FILE__,__LINE__);
                 }
 
                 //
@@ -297,7 +297,7 @@ namespace apidb
 		xmlCleanupParser();
 		if( ret == -1)
 		{
-			throw core::Exception("No se confirmo el guardado de archivo.",__FILE__,__LINE__);
+			throw oct::core::Exception("No se confirmo el guardado de archivo.",__FILE__,__LINE__);
 		}
 
         //comprimiendo archivo
@@ -311,13 +311,13 @@ namespace apidb
             if(rename(tarFilename.c_str(),filename.c_str()) != 0)
             {
                 std::string msgstr = "Fallo al re-escribir el archivo de proyecto.";
-                throw core::Exception(msgstr,__FILE__,__LINE__);
+                throw oct::core::Exception(msgstr,__FILE__,__LINE__);
             }
         }
         else
         {
             std::string msgstr = "Especifique el nombre completo del archivo.";
-            throw core::Exception(msgstr,__FILE__,__LINE__);
+            throw oct::core::Exception(msgstr,__FILE__,__LINE__);
         }
 	}
 
@@ -330,7 +330,7 @@ namespace apidb
         {
             std::string msg = "La dirección especificada '";
             msg += filename + "' no indica un archivo válido.";
-            throw core::Exception(msg,__FILE__,__LINE__);
+            throw oct::core::Exception(msg,__FILE__,__LINE__);
         }
         //std::cout << "ConfigureProject::readConfig: Step 3\n";
 
@@ -342,7 +342,7 @@ namespace apidb
         #else
             if(mkdtemp(tmp_filepath) == NULL)
             {
-                throw core::Exception("Fallo al crear archivo tmporal para descomprimir",__FILE__,__LINE__);
+                throw oct::core::Exception("Fallo al crear archivo tmporal para descomprimir",__FILE__,__LINE__);
             }
         #endif
 
@@ -352,7 +352,7 @@ namespace apidb
         {
             std::string msg = "Fallo al decomprimir archivo '";
 			msg += filename + "'";
-            throw core::Exception("Fallo al descomprimir con libtar.",__FILE__,__LINE__);
+            throw oct::core::Exception("Fallo al descomprimir con libtar.",__FILE__,__LINE__);
         }
 
         //std::cout << "ConfigureProject::readConfig: Step 3\n";
@@ -365,14 +365,14 @@ namespace apidb
 		{
 			std::string msg = "La direecion especificada '";
 			msg += tmVerFileName + "' no indica un archivo valido.";
-			throw core::Exception(msg,__FILE__,__LINE__);
+			throw oct::core::Exception(msg,__FILE__,__LINE__);
 		}
         //std::cout << "ConfigureProject::readConfig: Step 4\n";
         int maxlsize = 20;
 		char line_buf[maxlsize];
 		if(fgets(line_buf, maxlsize, apidbFilecheck2) == NULL)
         {
-			throw core::Exception("Fallo al leer la version del projecto.",__FILE__,__LINE__);            
+			throw oct::core::Exception("Fallo al leer la version del projecto.",__FILE__,__LINE__);            
         }
 		std::string strver;
 		//std::cout << "ConfigureProject::readConfig: Step 5\n";
@@ -562,7 +562,7 @@ namespace apidb
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML.";
-                    throw core::Exception(msgstr,__FILE__,__LINE__);
+                    throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 name = xmlTextReaderConstName(reader);
                 host = "";
@@ -573,7 +573,7 @@ namespace apidb
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML.";
-                    throw core::Exception(msgstr,__FILE__,__LINE__);
+                    throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
 
                 xmlTextReaderRead(reader);
@@ -587,7 +587,7 @@ namespace apidb
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML.";
-                    throw core::Exception(msgstr,__FILE__,__LINE__);
+                    throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 name = xmlTextReaderConstName(reader);
                 port = 0;
@@ -598,7 +598,7 @@ namespace apidb
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML.";
-                    throw core::Exception(msgstr,__FILE__,__LINE__);
+                    throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
 
                 xmlTextReaderRead(reader);
@@ -612,7 +612,7 @@ namespace apidb
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML.";
-                    throw core::Exception(msgstr,__FILE__,__LINE__);
+                    throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 name = xmlTextReaderConstName(reader);
                 database = "";
@@ -623,7 +623,7 @@ namespace apidb
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML.";
-                    throw core::Exception(msgstr,__FILE__,__LINE__);
+                    throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
 
                 xmlTextReaderRead(reader);
@@ -637,7 +637,7 @@ namespace apidb
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML.";
-                    throw core::Exception(msgstr,__FILE__,__LINE__);
+                    throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 name = xmlTextReaderConstName(reader);
                 user = "";
@@ -648,7 +648,7 @@ namespace apidb
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML.";
-                    throw core::Exception(msgstr,__FILE__,__LINE__);
+                    throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
 
                 xmlTextReaderRead(reader);
@@ -662,7 +662,7 @@ namespace apidb
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML.";
-                    throw core::Exception(msgstr,__FILE__,__LINE__);
+                    throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 name = xmlTextReaderConstName(reader);
                 password = "";
@@ -673,7 +673,7 @@ namespace apidb
                 else
                 {
                     std::string msgstr = "Fallo durante el parseo XML.";
-                    throw core::Exception(msgstr,__FILE__,__LINE__);
+                    throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
 
         }
@@ -764,7 +764,7 @@ namespace apidb
                     std::string msgstr = "Fallo durante el parseo XML. El driver '";
                     msgstr += inL;
                     msgstr += "' solicitado no existe o no hay soporte activo para dicho driver.";
-                    core::Exception(msgstr,__FILE__,__LINE__);
+                    oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 /*if(handle == NULL)
                 {

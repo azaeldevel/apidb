@@ -24,7 +24,7 @@
 #if defined WINDOWS_MINGW
     #include <shell.hh>
 #else
-    #include <octetos/coreutils/shell.hh>
+    #include <octetos/core/shell.hh>
 #endif
 
 
@@ -70,7 +70,7 @@ namespace apidb
 			const ConfigureProject& configureProject;
 			apidb::Analyzer& analyzer;
 			const symbols::SymbolsTable& getSymbolsTable()const;
-			coreutils::Shell shell;
+			oct::core::Shell shell;
 		};
         
         class Operation

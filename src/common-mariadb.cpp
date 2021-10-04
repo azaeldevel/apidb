@@ -105,7 +105,7 @@ namespace apidb
 					std::string msg = "No se encontro la tabla '";
 					msg += row[1];
 					msg += "'";
-					throw core::Exception(__FILE__,__LINE__,msg);
+					throw oct::core::Exception(__FILE__,__LINE__,msg);
 					return false;
 				}
 				//std::cout<<"Se encontró tabla '" << table->getName() << "'" << std::endl;
@@ -115,7 +115,7 @@ namespace apidb
 					std::string msg = "No se encontro el campo '";
 					msg += row[2];
 					msg += "'";
-					throw core::Exception(__FILE__,__LINE__,msg);
+					throw oct::core::Exception(__FILE__,__LINE__,msg);
 					return false;
 				}
 				//std::cout<<"Se encontró campo de referencia '" << referenceSymbol->getName() << "'" << std::endl;
@@ -127,7 +127,7 @@ namespace apidb
 					std::string msg = "No se encontro el campo '";
 					msg += row[0];
 					msg += "'";
-					throw core::Exception(__FILE__,__LINE__,msg);
+					throw oct::core::Exception(__FILE__,__LINE__,msg);
 					return false;
 				}
 				targetSymbol->symbolReferenced = referenceSymbol;

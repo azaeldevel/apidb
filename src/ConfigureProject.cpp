@@ -338,14 +338,14 @@ namespace apidb
         {
             std::string msgErr ="dlsym fallo con parse_string:\n" ;
             msgErr = msgErr + "\t" + dlerror();
-            throw core::Exception(msgErr,__FILE__,__LINE__);
+            throw oct::core::Exception(msgErr,__FILE__,__LINE__);
         }
         destroyConnector = (void (*)(octetos::db::Connector*))dlsym(handle, "destroyConector");
         if(!destroyConnector)
         {
             std::string msgErr ="dlsym fallo con destroyConnector:\n" ;
             msgErr = msgErr + "\t" + dlerror();            
-            throw core::Exception(msgErr,__FILE__,__LINE__);
+            throw oct::core::Exception(msgErr,__FILE__,__LINE__);
         }
 
         //>>>>>>>>>>>>>>>>>
@@ -354,14 +354,14 @@ namespace apidb
         {
             std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
             msgErr = msgErr + "\t" + dlerror();            
-            throw core::Exception(msgErr,__FILE__,__LINE__);
+            throw oct::core::Exception(msgErr,__FILE__,__LINE__);
         }
         destroyDatConnection = (void (*)(octetos::db::Datconnect*))dlsym(handle, "destroyDatconnect");
         if(!createDatConnection)
         {
             std::string msgErr ="dlsym fallo con createDatconnect:\n" ;
             msgErr = msgErr + "\t" + dlerror();            
-            throw core::Exception(msgErr,__FILE__,__LINE__);
+            throw oct::core::Exception(msgErr,__FILE__,__LINE__);
         }
         
         return true;

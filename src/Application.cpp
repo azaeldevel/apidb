@@ -1197,7 +1197,7 @@ namespace apidb
 			}
 			else
 			{
-				throw core::Exception("Opción de 'Espacio virtual detectado.'",__FILE__,__LINE__);
+				throw oct::core::Exception("Opción de 'Espacio virtual detectado.'",__FILE__,__LINE__);
 			}
 		}
         gboolean Application::inLoc_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)

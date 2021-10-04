@@ -69,14 +69,14 @@ namespace mariadb
 			symbols::SymbolsTable::iterator itGlobal = symbolsTable.find(configureProject.name.c_str());
 			if(itGlobal == symbolsTable.end())
 			{
-				throw core::Exception("No se encontró Espacion Global",__FILE__,__LINE__);
+				throw oct::core::Exception("No se encontró Espacion Global",__FILE__,__LINE__);
 				return false;
 			}
 			symbols::Space* spaceGlobal = (symbols::Space*)(itGlobal->second);
 			spaceGlobal->clear();
 			if(spaceGlobal == NULL)
 			{
-				throw core::Exception("No se encontró Espacion Global",__FILE__,__LINE__);
+				throw oct::core::Exception("No se encontró Espacion Global",__FILE__,__LINE__);
 				return false;
 			}
 			MYSQL_ROW row;
@@ -113,7 +113,7 @@ namespace mariadb
 						{
 							std::string msg = "Fallo la creacion del espacion '";
 							msg += spacePath + "'";
-							throw core::Exception(msg,__FILE__,__LINE__);
+							throw oct::core::Exception(msg,__FILE__,__LINE__);
 							return false;
 						}
 					}
@@ -127,17 +127,17 @@ namespace mariadb
 				}
 				else if(level > 0 and configureProject.namespace_detect.compare("reject") == 0)
 				{
-					throw core::Exception("Usted asigno la opción 'Nombre de espcaio detectado' con el valor 'reject', está opcion impedira la contrucción del código fuente mientras haya puntos de lo nombres de tablas.",__FILE__,__LINE__);
+					throw oct::core::Exception("Usted asigno la opción 'Nombre de espcaio detectado' con el valor 'reject', está opcion impedira la contrucción del código fuente mientras haya puntos de lo nombres de tablas.",__FILE__,__LINE__);
 				}
 				else if(configureProject.namespace_detect.empty() or configureProject.namespace_detect.compare("¿?") == 0)
 				{
-					throw core::Exception("Los nombre de las tablas contiene punto, esto provocra errores de compilación.\nPara solucionar esté incoveniente APIDB le propone le emulaciónn de espacios, asignando 'Deteción de nombre de espacio' = 'Emular', de esta forma APIDB creará espacio de nombre equivalentes en su lenguaje.",__FILE__,__LINE__);
+					throw oct::core::Exception("Los nombre de las tablas contiene punto, esto provocra errores de compilación.\nPara solucionar esté incoveniente APIDB le propone le emulaciónn de espacios, asignando 'Deteción de nombre de espacio' = 'Emular', de esta forma APIDB creará espacio de nombre equivalentes en su lenguaje.",__FILE__,__LINE__);
 				}
 				else
 				{
 					std::string msg = "El valor '";
 					msg += configureProject.namespace_detect + "' no es valido para 'Nombre de espcaio detectado'.";
-					throw core::Exception(msg,__FILE__,__LINE__);
+					throw oct::core::Exception(msg,__FILE__,__LINE__);
 				}
 			}
 
@@ -150,7 +150,7 @@ namespace mariadb
 			msg = msg + std::to_string(mysql_errno((MYSQL*)connector->getConnection()));
 			msg = msg + "' ";
 			msg = msg + mysql_error((MYSQL*)connector->getConnection());
-			throw core::Exception(msg,__FILE__,__LINE__);
+			throw oct::core::Exception(msg,__FILE__,__LINE__);
 		}
 		return true;
 	}
