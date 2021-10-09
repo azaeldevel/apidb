@@ -355,7 +355,8 @@ namespace apidb
         }
         catch(BuildException e)
         {
-            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,e.what());
+			gchar* errstrmsg = strdup(e.what());
+            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s",errstrmsg);
             gtk_dialog_run (GTK_DIALOG (msg)); 
             gtk_widget_destroy (msg);
             return;
@@ -364,7 +365,7 @@ namespace apidb
 		if(!flagDriver)
 		{
 			std::string msgstr = "Fallo durante la construccion.";
-			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
+			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s",msgstr.c_str());
 			gtk_dialog_run (GTK_DIALOG (msg)); 
 			gtk_widget_destroy (msg);
 			return;
@@ -376,7 +377,7 @@ namespace apidb
                         GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                 GTK_MESSAGE_INFO,
-                                                                GTK_BUTTONS_CLOSE,
+                                                                GTK_BUTTONS_CLOSE,"%s",
                                                                 strmsg.c_str());
                                 gtk_dialog_run (GTK_DIALOG (msg)); 
                                 gtk_widget_destroy (msg);
@@ -398,8 +399,8 @@ namespace apidb
         {
             if(!app->downConf())
             {
-                std::string strmsg = "Falló la operacionde Guardar";
-                GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_CLOSE,strmsg.c_str());
+				const char* errstrmsg = "Falló la operacionde Guardar";
+                GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_CLOSE,"%s",errstrmsg);
                 gtk_dialog_run (GTK_DIALOG (msg)); 
                 gtk_widget_destroy (msg);
                 return;
@@ -407,7 +408,7 @@ namespace apidb
         }
         catch(const std::exception& ex)
         {
-            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_CLOSE,ex.what());
+            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_CLOSE,"%s",ex.what());
             gtk_dialog_run (GTK_DIALOG (msg)); 
             gtk_widget_destroy (msg);
             
@@ -463,7 +464,7 @@ namespace apidb
 			if(!app->downConf())
 			{
 				std::string msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
-				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
+				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s",msgstr.c_str());
 				gtk_dialog_run (GTK_DIALOG (msg)); 
 				gtk_widget_destroy (msg);
 				return;
@@ -476,7 +477,7 @@ namespace apidb
 			}
 			catch (std::exception e)
 			{
-				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,e.what());
+				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s",e.what());
 				gtk_dialog_run (GTK_DIALOG (msg)); 
 				gtk_widget_destroy (msg);
 				return;
@@ -800,7 +801,7 @@ namespace apidb
 		}
 		catch(const std::exception& e)
 		{
-			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE, e.what());
+			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s", e.what());
 			gtk_dialog_run (GTK_DIALOG (msg)); 
 			gtk_widget_destroy (msg);
 			return;
@@ -821,7 +822,7 @@ namespace apidb
 		{
 			std::string msgstr = e.what();			
             msgstr = msgstr + " : Erro desconocido en Driver durante la apertura del documento";
-			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,msgstr.c_str());
+			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,"%s",msgstr.c_str());
 			gtk_dialog_run (GTK_DIALOG (msg));
 			gtk_widget_destroy (msg);
 			/*app->originFilename = filename;
@@ -1425,7 +1426,7 @@ namespace apidb
 				}
 				catch(octetos::db::SQLException e)
 				{
-					GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,e.what());
+					GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s",e.what());
 					gtk_dialog_run (GTK_DIALOG (msg)); 
 					gtk_widget_destroy (msg);
 					return;
