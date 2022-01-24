@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 PROJECT(src LANGUAGES CXX)
 
-
-SET (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fno-plt -fexceptions -Wp,-D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection")
+SET (CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fno-plt -fexceptions -Wp,-D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection")
+SET (CMAKE_CXX_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_CXX_FLAGS} -Wp,-D_GLIBCXX_ASSERTIONS")
 ##SET (CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fpermissive -Wno-deprecated-declarations")
 ##set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -ggdb")
 
@@ -44,7 +44,7 @@ SET(APIDB_POSTGRESQL "N")
 SET(APIDB_MARIADB "N")
 SET(APIDB_BUILD_COMMANDS "N")
 SET(APIDB_BUILD_GTK3 "N")
-SET(APIDB_BUILD_TEST "Y")
+SET(APIDB_BUILD_TEST "N")
 SET(APIDB_INSTALL_CORE "N")
 SET(APIDB_INSTALL_COMMANDS "N")
 SET(APIDB_INSTALL_GTK3 "N")
@@ -395,8 +395,8 @@ if(APIDB_EXAMPLES)
     #ADD_EXECUTABLE(capture examples/capture_v${${PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )
     #TARGET_LINK_LIBRARIES(capture ${LIBRARIES} ${LIBREADER} ${PROJECT_NAME}-ConfigureProject-v${${PROJECT_NAME}_VERSION_MAJOR})
 
-    ADD_EXECUTABLE(createProy examples/createProy_v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )
-    TARGET_LINK_LIBRARIES(createProy ${LIBRARIES} ${LIBREADER} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR})
+    #ADD_EXECUTABLE(createProy examples/createProy_v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}.cpp ${SOURCES_BUILDING} )
+   # TARGET_LINK_LIBRARIES(createProy ${LIBRARIES} ${LIBREADER} ${CMAKE_PROJECT_NAME}-ConfigureProject-v${${CMAKE_PROJECT_NAME}_VERSION_MAJOR})
     
     #add_custom_command(examples/sysapp.apidb COMMAND ./examples/createProy WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Creación de ejemplo.." )
 	#ADD_DEPENDENCIES(examples/sysapp.apidb examples/capture examples/createProy)
