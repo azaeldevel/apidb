@@ -113,6 +113,7 @@ void testConecction()
 
 void testCreateProject_nlst()
 {
+	std::cout << "testCreateProject_nlst step 1\n";
 	octetos::apidb::ConfigureProject configProject_nls;
     configProject_nls.name = "sysapp";
     configProject_nls.builDirectory = "apidb-nlst";
@@ -125,15 +126,22 @@ void testCreateProject_nlst()
 #ifdef APIDB_MARIADB
 	configProject_nls.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);    
 #endif
+	std::cout << "testCreateProject_nlst step 2\n";
 	octetos::core::Semver version;
+	std::cout << "testCreateProject_nlst step 3\n";
 	version.setNumbers(0,1,0);
-    version.setPrerelease("alpha");    
+	std::cout << "testCreateProject_nlst step 4\n";
+    version.setPrerelease("alpha");  
+	std::cout << "testCreateProject_nlst step 5\n";
     configProject_nls.versionResult = version;
+    std::cout << "testCreateProject_nlst step 6\n";
     configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
     configProject_nls.packing = octetos::apidb::PackingLenguajes::CMake;
     configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
 	configProject_nls.writeDatconnect = "conector";
-    
+    std::cout << "testCreateProject_nlst step 7\n";
+	
+	
 	try
 	{
 		configProject_nls.saveConfig(filename_nlst);
@@ -143,9 +151,12 @@ void testCreateProject_nlst()
 	{
 		CU_ASSERT(false);
 	}
+	std::cout << "testCreateProject_nlst step 8\n";
 }
 void testCreateProject()
 {
+	std::cout << "testCreateProject: Step 1\n";
+	
 	if(octetos::core::Error::check())
 	{
 		std::cout << octetos::core::Error::get().describe() << std::endl;
@@ -159,6 +170,7 @@ void testCreateProject()
 	configProject.name = "muposys";
 	configProject.builDirectory  = "muposys";
 	configProject.versionResult = version;
+	std::cout << "testCreateProject: Step 2\n";
 #ifdef APIDB_MYSQL
 	configProject.setInputs(octetos::apidb::InputLenguajes::MySQL,mysqlSource);    
 #endif
@@ -208,9 +220,10 @@ void testCreateProject()
 		configProject.saveConfig(filename);
 		CU_ASSERT(true);
 	}
-	catch (std::exception e)
+	catch (const std::exception& e)
 	{
 		CU_ASSERT(false);
+		//std::cout << "Exception : " << e.what() << "\n";
 	}
 	
 	
@@ -241,9 +254,11 @@ void testCreateProject()
 
 void testBuild_nlst()
 {
-    //std::cout << "testBuild_nlst: Step 1\n";
+    std::cout << "testBuild_nlst: Step 1\n";
 	octetos::apidb::ConfigureProject configProject_nls;
+	
     //std::cout << "testBuild_nlst: Step 1.1\n";
+	
 	try
 	{
 		configProject_nls.readConfig(filename_nlst);
@@ -255,7 +270,7 @@ void testBuild_nlst()
 		return;
 	}
 
-    //std::cout << "testBuild_nlst: Step 2\n";
+    std::cout << "testBuild_nlst: Step 2\n";
     octetos::apidb::Driver driver(configProject_nls);
     if(octetos::core::Error::check())
     {
@@ -263,7 +278,7 @@ void testBuild_nlst()
         CU_ASSERT(false);
     }
     octetos::apidb::Tracer tracer(0);
-    //std::cout << "testBuild_nlst: Step 3\n";
+    std::cout << "testBuild_nlst: Step 3\n";
     if(!driver.driving(&tracer))
     {
         if(octetos::core::Error::check())
@@ -274,16 +289,17 @@ void testBuild_nlst()
         return;
     }
     
-    //std::cout << "testBuild_nlst: Step 4\n";
+    std::cout << "testBuild_nlst: Step 4\n";
         
     CU_ASSERT(true);
 }
 
 void testBuild()
 {
-    //std::cout << "testBuild: Step 1\n";
+    std::cout << "testBuild: Step 1\n";
 	octetos::apidb::ConfigureProject configProject;
-    //std::cout << "testBuild: Step 1.1\n";
+    std::cout << "testBuild: Step 1.1\n";
+	std::cout << "Opening .. " << filename << "\n";
 	try
 	{
 		configProject.readConfig(filename);
@@ -296,7 +312,7 @@ void testBuild()
         return;
 	}
 
-    //std::cout << "testBuild: Step 2\n";
+    std::cout << "testBuild: Step 2\n";
     octetos::apidb::Driver driver(configProject);
     if(octetos::core::Error::check())
     {
@@ -304,7 +320,7 @@ void testBuild()
         CU_ASSERT(false);
     }
     octetos::apidb::Tracer tracer(0);
-    //std::cout << "testBuild: Step 3\n";
+    std::cout << "testBuild: Step 3\n";
     if(!driver.driving(&tracer))
     {
         if(octetos::core::Error::check())
@@ -315,7 +331,7 @@ void testBuild()
         return;
     }
     
-    //std::cout << "testBuild: Step 4\n";
+    std::cout << "testBuild: Step 4\n";
         
     CU_ASSERT(true);
 }
@@ -434,6 +450,8 @@ int main(int argc, char *argv[])
     bool runAll = false, enableMySQL = false,enablePostgreSQL = false,enableMariaDB = false;
     int runTest = 0;
 	int serverscount = 0;
+	
+	std::cout << "Test Step 1\n";
     
     for(int i = 1; i < argc; i++)
     {
@@ -489,23 +507,26 @@ int main(int argc, char *argv[])
 	
 	CU_pSuite pSuite = NULL;
 	
+	std::cout << "Test Step 2\n";
+	
 	/* initialize the CUnit test registry */
 	if (CUE_SUCCESS != CU_initialize_registry()) return CU_get_error();
 
-	octetos::core::Semver ver = octetos::apidb::getPakageVersion();
-	std::string pkName = octetos::apidb::getPakageName();
-	std::string classVersionString = std::string("Probando ") + pkName + " " + ver.toString();
-	pSuite = CU_add_suite(classVersionString.c_str(), init_apidb, clean_apidb);
+	//octetos::core::Semver ver = octetos::apidb::getPakageVersion();
+	//std::string pkName = octetos::apidb::getPakageName();
+	//std::string classVersionString = std::string("Probando ") + pkName + "  " + ver.toString();
+	pSuite = CU_add_suite("APIDB", init_apidb, clean_apidb);
 	if (NULL == pSuite) 
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
     
+    std::cout << "Test Step 3\n";
 	
 	///////////////////////////////////////////////////////////CON LISTAS
 
-     
+	
 	if(runTest == 1 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Verificando la conectividad del componente.", testConecction)))
@@ -514,6 +535,7 @@ int main(int argc, char *argv[])
 			return CU_get_error();
 		}
 	}   
+	std::cout << "Test Step 4\n";
 	////////////////////////////////////////////////////////// SIN LISTAS
 	if(runTest == 2 or runAll)
 	{
@@ -523,6 +545,7 @@ int main(int argc, char *argv[])
 			return CU_get_error();
 		}	
 	}
+	std::cout << "Test Step 5\n";
 	if(runTest == 2 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Creación de proyecto a partir de descripción statica.", testCreateProject)))
@@ -531,6 +554,7 @@ int main(int argc, char *argv[])
                 return CU_get_error();
 		}
 	}  
+	std::cout << "Test Step 6\n";
 	if(runTest == 4 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción.", testBuild)))
@@ -539,6 +563,7 @@ int main(int argc, char *argv[])
 			return CU_get_error();
 		}
 	}
+	std::cout << "Test Step 7\n";
 	if(runTest == 4 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción(no-lists).", testBuild_nlst)))
@@ -547,6 +572,7 @@ int main(int argc, char *argv[])
 			return CU_get_error();
 		}
 	}
+	std::cout << "Test Step 8\n";
 	if(runTest == 5 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Compilación de proyecto generado (no-lists).", testCompilen_nlst)))
@@ -555,6 +581,7 @@ int main(int argc, char *argv[])
 			return CU_get_error();
 		}
 	}
+	std::cout << "Test Step 9\n";
 	if(runTest == 5 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Compilación de proyecto generado.", testCompilen)))
@@ -571,7 +598,10 @@ int main(int argc, char *argv[])
 			CU_cleanup_registry();
 			return CU_get_error();
 		}
-	}*/
+	}
+	*/
+	
+	std::cout << "Test Step 10\n";
 		
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);
