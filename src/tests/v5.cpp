@@ -9,6 +9,7 @@
 #include <algorithm>  //for std::generate_n
 #include <signal.h>
 #include <map>
+#include <filesystem>
 #include "../apidb.hpp"
 #include "../Errors.hpp"
 #include "../common.hpp"
@@ -380,6 +381,7 @@ void testCompilen_nlst()
 }
 void testCompilen()
 {
+	std::cout << "testCompilen Step 1\n";
 	octetos::apidb::ConfigureProject configProject;
 	try
 	{
@@ -391,57 +393,66 @@ void testCompilen()
 		CU_ASSERT(false);
 		return;
 	}
+	
+	std::cout << "testCompilen Step 2\n";
 
 	if(configProject.packing == octetos::apidb::PackingLenguajes::CMake)
 	{
+		std::cout << "testCompilen Step 2.1\n";
+		
         int ret = 0;
 		octetos::core::Semver ver = octetos::apidb::getPakageVersion();
-        std::string cmd = "cp ../../../src/tests/developing";
-        cmd += std::to_string(ver.getMajor());
+		std::filesystem::path from = "../../../src/tests" ;
+		std::filesystem::path to = "muposys/developing" + std::to_string(ver.getMajor()) + ".cpp";
+		std::string filename = "developing" + std::to_string(ver.getMajor());
         if(configProject.getInputLenguaje() == octetos::apidb::InputLenguajes::MySQL)
         {
-            cmd += "-mysql";
+            filename += "-mysql.cpp";
         }
         else if(configProject.getInputLenguaje() == octetos::apidb::InputLenguajes::PostgreSQL)
         {
-            cmd += "-postgresql";
+            filename += "-postgresql.cpp";
         }
         else if(configProject.getInputLenguaje() == octetos::apidb::InputLenguajes::MariaDB)
         {
-            cmd += "-mariadb";
+            filename += "-mariadb.cpp";
         }
         else
 		{
 			throw octetos::apidb::BuildException("Lenguaje de entrada desconocido",__FILE__,__LINE__);
 		}
+		from /= filename;
+		
+		std::cout << "testCompilen Step 2.2\n";
         
-        cmd += ".cpp ";
-        cmd += " muposys/developing";
-        cmd += std::to_string(ver.getMajor());
-        cmd += ".cpp ";
-        if(system(cmd.c_str()) < 0)
-        {
-            std::cout << "Fallo al copiar el archivo developing.cpp\n";
-            CU_ASSERT(false);
-        }
+        if(not std::filesystem::exists(to))
+		{
+			if( not std::filesystem::copy_file(from,to))
+			{
+				CU_ASSERT(false);			
+			}
+		}
 
-        cmd  = " cd muposys && cmake . &> /dev/null";
+        std::string cmd  = " cd muposys && cmake . &> /dev/null";
         if(system(cmd.c_str()) < 0)
         {
             std::cout << "Fallo al realizar la compialcion.\n";
             CU_ASSERT(false);
         }
-        cmd  = " cd muposys &&  make &> /dev/null";
+        cmd  = " cd muposys &&  make";
         if(system(cmd.c_str()) < 0)
         {
-            std::cout << "Fallo al realizar la compialcion.\n";
+            std::cout << "Fallo al realizar la compilacion.\n";
             CU_ASSERT(false);
         }
+        
+		std::cout << "testCompilen Step 2.3\n";
 	}
 	else
 	{
 		CU_ASSERT(false);
 	}
+	std::cout << "testCompilen Step 3\n";
 }
 
 

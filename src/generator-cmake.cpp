@@ -206,29 +206,6 @@ namespace generators
         std::cerr << "No hay soporte para este lenguaje en cmake" << std::endl;
     }
 		cmakelists<<std::endl;
-		if(!configureProject.executable_target.empty() and configureProject.executable_target.compare("¿?") != 0)//la adicion de un ejecutable es opcional
-		{
-			cmakelists<<"ADD_EXECUTABLE(" << configureProject.executable_target << "  ";
-			cmakelists<<configureProject.executable_target;
-			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
-			{
-				cmakelists <<".cpp ";
-			}
-			cmakelists <<")"<<std::endl;
-            cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << " ${OCTETOS_CORE_LIBRARY} ${OCTETOS_DB_ABSTRACT_LIBRARY} ";
-            if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
-            {
-                 cmakelists  << " ${OCTETOS_DB_MYSQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES}  ${MYSQL_LIBRARIES})"<<std::endl;
-            }
-            else if(configureProject.getInputLenguaje()  == InputLenguajes::MariaDB)
-            {
-                cmakelists  << " ${OCTETOS_DB_MARIA_LIBRARIES} ${OCTETOS_CORE_LIBRARIES} ${MARIADB_LIBRARIES})"<<std::endl;
-            }
-            else if(configureProject.getInputLenguaje()  == InputLenguajes::PostgreSQL)
-            {
-                cmakelists  << " ${OCTETOS_DB_POSTGRESQL_LIBRARIES} ${LIBPQ_LIBRARIES})"<<std::endl;
-            }
-		}
 		cmakelists<<"ADD_LIBRARY(${PROJECT_NAME} ";
         if(configureProject.compiled == apidb::Compiled::SHARED)
         {
@@ -252,6 +229,35 @@ namespace generators
         {
             cmakelists<<"${OCTETOS_DB_POSTGRESQL_LIBRARIES} ${LIBPQ_LIBRARIES})"<<std::endl;
         }
+        cmakelists<<std::endl;
+		cmakelists<<std::endl;
+		if(!configureProject.executable_target.empty() and configureProject.executable_target.compare("¿?") != 0)//la adicion de un ejecutable es opcional
+		{
+			cmakelists<<"ADD_EXECUTABLE(" << configureProject.executable_target << "  ";
+			cmakelists<<configureProject.executable_target;
+			if(configureProject.outputLenguaje == OutputLenguajes::CPP)
+			{
+				cmakelists <<".cpp ";
+			}
+			cmakelists <<")"<<std::endl;
+            cmakelists<<"TARGET_LINK_LIBRARIES(" << configureProject.executable_target << " ${OCTETOS_CORE_LIBRARY} ${OCTETOS_DB_ABSTRACT_LIBRARY} ";
+            if(configureProject.getInputLenguaje()  == InputLenguajes::MySQL)
+            {
+                 cmakelists  << " ${OCTETOS_DB_MYSQL_LIBRARIES} ${OCTETOS_CORE_LIBRARIES}  ${MYSQL_LIBRARIES})"<<std::endl;
+            }
+            else if(configureProject.getInputLenguaje()  == InputLenguajes::MariaDB)
+            {
+                cmakelists  << " ${PROJECT_NAME})"<<std::endl;
+            }
+            else if(configureProject.getInputLenguaje()  == InputLenguajes::PostgreSQL)
+            {
+                cmakelists  << " ${OCTETOS_DB_POSTGRESQL_LIBRARIES} ${LIBPQ_LIBRARIES})"<<std::endl;
+            }
+		}
+		
+		cmakelists<<std::endl;
+		cmakelists<<std::endl;
+		
         cmakelists<<"if(APIDBLIB)\n";
         cmakelists<<"set(APIDBLIB ${PROJECT_NAME} PARENT_SCOPE)\n";
         cmakelists<<"endif()\n";

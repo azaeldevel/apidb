@@ -1,4 +1,4 @@
-#include "sysapp.hpp"
+#include "muposys.hpp"
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
@@ -14,7 +14,7 @@ int main(int argc, char **argv)
         }
     }
         
-	octetos::db::mariadb::Datconnect mariaConnector("localhost",3306,"sysapp.alpha","sysapp","123456");
+	octetos::db::mariadb::Datconnect mariaConnector("localhost",3306,"muposys-0-alpha","muposys","123456");
     octetos::db::mariadb::Connector connector; 
     bool flag = false;  
 	flag = connector.connect(mariaConnector);
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     srand (time(NULL));
 	int random = rand() % 10000 + 1;
     
-    sysapp::Persons person1;
+    muposys::Persons person1;
     std::string n1 = "n1-";
     n1 += std::to_string(random);
     std::string country = "MEX";
@@ -63,23 +63,14 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 	
-    if(person1.shortname(connector))
-    {
-                if(verbose)   std::cout << ""<< person1.getName1() << " " << person1.getName3() << std::endl;
-    }
-    else
-    {
-        std::cout << "Fallo la descarga de person1" << std::endl;
-		return EXIT_FAILURE;
-    }
-
     if(verbose) std::cout << "Listando los que tiene 8 con 5 registro maximo." << std::endl;
-    static std::vector<sysapp::Persons*>* lst = sysapp::Persons::select(connector,"name1 like 'n1-%8'",5);
+    static std::vector<muposys::Persons*>* lst = muposys::Persons::select(connector,"name1 like 'n1-%8'",5,'D');
     if(lst != NULL)
     {
         for(auto p : *lst)
         {
-            if(p->shortname(connector) and verbose)
+            p->downName1(connector);
+            if(not p->getName1().empty() and verbose)
             {
                 if(verbose)  std::cout << ""<< p->getName1() << " " << p->getName3() << std::endl;
             }

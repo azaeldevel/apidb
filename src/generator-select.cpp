@@ -508,7 +508,9 @@ namespace octetos::apidb::generators
                     {
                         if((*fl).second->getClassReferenced() != NULL && (*fl).second->getOutType().compare("int") == 0)
                         {
-                            ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + std::to_string(" << (*fl).second->getName() << ") + \"'\"";
+                            //ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + std::to_string(" << (*fl).second->getName() << ") + \"'\"";
+                            ofile << "\t\tsqlString = sqlString + ";
+                            echoKeyRawParam();
                         }
                         else if((*fl).second->getOutType().compare("int") == 0)
                         {

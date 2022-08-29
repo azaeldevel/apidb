@@ -200,19 +200,19 @@ namespace octetos::apidb::generators
 							{
 								if((*fl).second->outType.compare("int"))
 								{
-									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getint(" << countparam << ")" << ";" << std::endl ;
+									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getint(" << countparam << "));" << std::endl ;
 								}
 								else if((*fl).second->outType.compare("long") or (*fl).second->outType.compare("long int"))
 								{
-									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getl(" << countparam << ")" << ";" << std::endl ;
+									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getl(" << countparam << "));" << std::endl ;
 								}
 								else if((*fl).second->outType.compare("std::String"))
 								{
-									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getString(" << countparam << ")" << ";" << std::endl ;
+									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getString(" << countparam << "));" << std::endl ;
 								}
 								else
 								{
-									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getString(" << countparam << ")" << ";" << std::endl ;
+									ofile << " new " << (*fl).second->getClassReferenced()->getName() << "(dt.getString(" << countparam << "));" << std::endl ;
 								}
 							}
 							else if((*fl).second->getOutType().compare("int") == 0)
