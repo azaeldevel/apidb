@@ -114,7 +114,7 @@ void testConecction()
 
 void testCreateProject_nlst()
 {
-	std::cout << "testCreateProject_nlst step 1\n";
+	//std::cout << "testCreateProject_nlst step 1\n";
 	octetos::apidb::ConfigureProject configProject_nls;
     configProject_nls.name = "sysapp";
     configProject_nls.builDirectory = "apidb-nlst";
@@ -127,20 +127,20 @@ void testCreateProject_nlst()
 #ifdef APIDB_MARIADB
 	configProject_nls.setInputs(octetos::apidb::InputLenguajes::MariaDB,mariaSource);    
 #endif
-	std::cout << "testCreateProject_nlst step 2\n";
+	//std::cout << "testCreateProject_nlst step 2\n";
 	octetos::core::Semver version;
-	std::cout << "testCreateProject_nlst step 3\n";
+	//std::cout << "testCreateProject_nlst step 3\n";
 	version.setNumbers(0,1,0);
-	std::cout << "testCreateProject_nlst step 4\n";
+	//std::cout << "testCreateProject_nlst step 4\n";
     version.setPrerelease("alpha");  
-	std::cout << "testCreateProject_nlst step 5\n";
+	//std::cout << "testCreateProject_nlst step 5\n";
     configProject_nls.versionResult = version;
-    std::cout << "testCreateProject_nlst step 6\n";
+    //std::cout << "testCreateProject_nlst step 6\n";
     configProject_nls.outputLenguaje = octetos::apidb::OutputLenguajes::CPP;	
     configProject_nls.packing = octetos::apidb::PackingLenguajes::CMake;
     configProject_nls.compiled = octetos::apidb::Compiled::STATIC;
 	configProject_nls.writeDatconnect = "conector";
-    std::cout << "testCreateProject_nlst step 7\n";
+    //std::cout << "testCreateProject_nlst step 7\n";
 	
 	
 	try
@@ -152,11 +152,11 @@ void testCreateProject_nlst()
 	{
 		CU_ASSERT(false);
 	}
-	std::cout << "testCreateProject_nlst step 8\n";
+	//std::cout << "testCreateProject_nlst step 8\n";
 }
 void testCreateProject()
 {
-	std::cout << "testCreateProject: Step 1\n";
+	//std::cout << "testCreateProject: Step 1\n";
 	
 	if(octetos::core::Error::check())
 	{
@@ -171,7 +171,7 @@ void testCreateProject()
 	configProject.name = "muposys";
 	configProject.builDirectory  = "muposys";
 	configProject.versionResult = version;
-	std::cout << "testCreateProject: Step 2\n";
+	//std::cout << "testCreateProject: Step 2\n";
 #ifdef APIDB_MYSQL
 	configProject.setInputs(octetos::apidb::InputLenguajes::MySQL,mysqlSource);    
 #endif
@@ -255,7 +255,7 @@ void testCreateProject()
 
 void testBuild_nlst()
 {
-    std::cout << "testBuild_nlst: Step 1\n";
+    //std::cout << "testBuild_nlst: Step 1\n";
 	octetos::apidb::ConfigureProject configProject_nls;
 	
     //std::cout << "testBuild_nlst: Step 1.1\n";
@@ -271,7 +271,7 @@ void testBuild_nlst()
 		return;
 	}
 
-    std::cout << "testBuild_nlst: Step 2\n";
+    //std::cout << "testBuild_nlst: Step 2\n";
     octetos::apidb::Driver driver(configProject_nls);
     if(octetos::core::Error::check())
     {
@@ -279,7 +279,7 @@ void testBuild_nlst()
         CU_ASSERT(false);
     }
     octetos::apidb::Tracer tracer(0);
-    std::cout << "testBuild_nlst: Step 3\n";
+    //std::cout << "testBuild_nlst: Step 3\n";
     if(!driver.driving(&tracer))
     {
         if(octetos::core::Error::check())
@@ -290,17 +290,17 @@ void testBuild_nlst()
         return;
     }
     
-    std::cout << "testBuild_nlst: Step 4\n";
+    //std::cout << "testBuild_nlst: Step 4\n";
         
     CU_ASSERT(true);
 }
 
 void testBuild()
 {
-    std::cout << "testBuild: Step 1\n";
+    //std::cout << "testBuild: Step 1\n";
 	octetos::apidb::ConfigureProject configProject;
-    std::cout << "testBuild: Step 1.1\n";
-	std::cout << "Opening .. " << filename << "\n";
+    //std::cout << "testBuild: Step 1.1\n";
+	//std::cout << "Opening .. " << filename << "\n";
 	try
 	{
 		configProject.readConfig(filename);
@@ -313,7 +313,7 @@ void testBuild()
         return;
 	}
 
-    std::cout << "testBuild: Step 2\n";
+    //std::cout << "testBuild: Step 2\n";
     octetos::apidb::Driver driver(configProject);
     if(octetos::core::Error::check())
     {
@@ -321,7 +321,7 @@ void testBuild()
         CU_ASSERT(false);
     }
     octetos::apidb::Tracer tracer(0);
-    std::cout << "testBuild: Step 3\n";
+    //std::cout << "testBuild: Step 3\n";
     if(!driver.driving(&tracer))
     {
         if(octetos::core::Error::check())
@@ -332,7 +332,7 @@ void testBuild()
         return;
     }
     
-    std::cout << "testBuild: Step 4\n";
+    //std::cout << "testBuild: Step 4\n";
         
     CU_ASSERT(true);
 }
@@ -381,7 +381,7 @@ void testCompilen_nlst()
 }
 void testCompilen()
 {
-	std::cout << "testCompilen Step 1\n";
+	//std::cout << "testCompilen Step 1\n";
 	octetos::apidb::ConfigureProject configProject;
 	try
 	{
@@ -394,11 +394,11 @@ void testCompilen()
 		return;
 	}
 	
-	std::cout << "testCompilen Step 2\n";
+	//std::cout << "testCompilen Step 2\n";
 
 	if(configProject.packing == octetos::apidb::PackingLenguajes::CMake)
 	{
-		std::cout << "testCompilen Step 2.1\n";
+		//std::cout << "testCompilen Step 2.1\n";
 		
         int ret = 0;
 		octetos::core::Semver ver = octetos::apidb::getPakageVersion();
@@ -423,7 +423,7 @@ void testCompilen()
 		}
 		from /= filename;
 		
-		std::cout << "testCompilen Step 2.2\n";
+		//std::cout << "testCompilen Step 2.2\n";
         
         if(not std::filesystem::exists(to))
 		{
@@ -439,20 +439,20 @@ void testCompilen()
             std::cout << "Fallo al realizar la compialcion.\n";
             CU_ASSERT(false);
         }
-        cmd  = " cd muposys &&  make";
+        cmd  = " cd muposys &&  make  &> /dev/null";
         if(system(cmd.c_str()) < 0)
         {
             std::cout << "Fallo al realizar la compilacion.\n";
             CU_ASSERT(false);
         }
         
-		std::cout << "testCompilen Step 2.3\n";
+		//std::cout << "testCompilen Step 2.3\n";
 	}
 	else
 	{
 		CU_ASSERT(false);
 	}
-	std::cout << "testCompilen Step 3\n";
+	//std::cout << "testCompilen Step 3\n";
 }
 
 
@@ -462,7 +462,7 @@ int main(int argc, char *argv[])
     int runTest = 0;
 	int serverscount = 0;
 	
-	std::cout << "Test Step 1\n";
+	//std::cout << "Test Step 1\n";
     
     for(int i = 1; i < argc; i++)
     {
@@ -518,7 +518,7 @@ int main(int argc, char *argv[])
 	
 	CU_pSuite pSuite = NULL;
 	
-	std::cout << "Test Step 2\n";
+	//std::cout << "Test Step 2\n";
 	
 	/* initialize the CUnit test registry */
 	if (CUE_SUCCESS != CU_initialize_registry()) return CU_get_error();
@@ -533,7 +533,7 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
     
-    std::cout << "Test Step 3\n";
+    //std::cout << "Test Step 3\n";
 	
 	///////////////////////////////////////////////////////////CON LISTAS
 
@@ -546,7 +546,7 @@ int main(int argc, char *argv[])
 			return CU_get_error();
 		}
 	}   
-	std::cout << "Test Step 4\n";
+	//std::cout << "Test Step 4\n";
 	////////////////////////////////////////////////////////// SIN LISTAS
 	if(runTest == 2 or runAll)
 	{
@@ -556,7 +556,7 @@ int main(int argc, char *argv[])
 			return CU_get_error();
 		}	
 	}
-	std::cout << "Test Step 5\n";
+	//std::cout << "Test Step 5\n";
 	if(runTest == 2 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Creación de proyecto a partir de descripción statica.", testCreateProject)))
@@ -565,7 +565,7 @@ int main(int argc, char *argv[])
                 return CU_get_error();
 		}
 	}  
-	std::cout << "Test Step 6\n";
+	//std::cout << "Test Step 6\n";
 	if(runTest == 4 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción.", testBuild)))
@@ -574,7 +574,7 @@ int main(int argc, char *argv[])
 			return CU_get_error();
 		}
 	}
-	std::cout << "Test Step 7\n";
+	//std::cout << "Test Step 7\n";
 	if(runTest == 4 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Verificando el proceso de contrucción(no-lists).", testBuild_nlst)))
@@ -583,7 +583,7 @@ int main(int argc, char *argv[])
 			return CU_get_error();
 		}
 	}
-	std::cout << "Test Step 8\n";
+	//std::cout << "Test Step 8\n";
 	if(runTest == 5 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Compilación de proyecto generado (no-lists).", testCompilen_nlst)))
@@ -592,7 +592,7 @@ int main(int argc, char *argv[])
 			return CU_get_error();
 		}
 	}
-	std::cout << "Test Step 9\n";
+	//std::cout << "Test Step 9\n";
 	if(runTest == 5 or runAll)
 	{
 		if ((NULL == CU_add_test(pSuite, "Compilación de proyecto generado.", testCompilen)))
@@ -612,7 +612,7 @@ int main(int argc, char *argv[])
 	}
 	*/
 	
-	std::cout << "Test Step 10\n";
+	//std::cout << "Test Step 10\n";
 		
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);
