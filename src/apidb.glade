@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 -->
+<!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.22"/>
   <object class="GtkHeaderBar" id="headerbar">
@@ -714,7 +714,7 @@
                     <property name="can-focus">False</property>
                     <child>
                       <object class="GtkCheckButton" id="inWConn">
-                        <property name="label" translatable="yes">Generar estructura de Conexión:</property>
+                        <property name="label" translatable="yes">Generar Conexion :</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>

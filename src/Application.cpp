@@ -38,7 +38,7 @@ namespace apidb
     }
 	bool Application::downConf()
 	{
-        //std::cout << "downConf : Step 1\n";
+        std::cout << "downConf : Step 1\n";
         if(config == NULL)
         {
                 GtkWidget *msg = gtk_message_dialog_new (NULL,
@@ -54,7 +54,8 @@ namespace apidb
         }
         
         if(isSaved and !isOpen) return true;
-        //std::cout << "downConf : Step 2\n";                
+        std::cout << "downConf : Step 2\n";
+                
         
         if(inInLEdited)
         {
@@ -71,7 +72,7 @@ namespace apidb
             //std::cout << "In Language : " << gcinl << "\n";
             config->setInputLenguaje(getInputLenguaje(gcinl));
         }
-        //std::cout << "downConf : Step 3\n";
+        std::cout << "downConf : Step 3\n";
         if(inNameEdited)
         {
             std::string name = gtk_entry_get_text(GTK_ENTRY(inName));
@@ -90,7 +91,8 @@ namespace apidb
             config->name = name;
         }
         
-        //std::cout << "downConf : Step 4\n";
+        std::cout << "downConf : Step 4\n";
+		
 		
         if(inOutLEdited)
         {
@@ -104,7 +106,7 @@ namespace apidb
             }
             config->outputLenguaje =  getOutputLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inOutL)));
         }
-        //std::cout << "downConf : Step 5\n";
+        std::cout << "downConf : Step 5\n";
         if(inVerEdited)
         {
             std::string verstr = gtk_entry_get_text(GTK_ENTRY(inVer));
@@ -116,7 +118,7 @@ namespace apidb
                                 return false;
             }                                
         }
-        //std::cout << "downConf : Step 6\n";
+        std::cout << "downConf : Step 6\n";
         if(inPkLEdited)
         {
             int intpkl = gtk_combo_box_get_active(GTK_COMBO_BOX(inPkL));
@@ -128,10 +130,10 @@ namespace apidb
                 return false;
                                 
             }
-            //std::cout << "downConf : " << gtk_combo_box_get_active_id(GTK_COMBO_BOX(inPkL)) << "\n";
+            std::cout << "downConf : " << gtk_combo_box_get_active_id(GTK_COMBO_BOX(inPkL)) << "\n";
             config->packing = getPackingLenguajes(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inPkL)));
         }
-        //std::cout << "downConf : Step 7\n";
+        std::cout << "downConf : Step 7\n";
         if(inCmplEdited)
         {
             int intcmpl = gtk_combo_box_get_active(GTK_COMBO_BOX(inCmpl));
@@ -145,12 +147,10 @@ namespace apidb
             }
             config->compiled = getCompiled(gtk_combo_box_get_active_id(GTK_COMBO_BOX(inCmpl)));
         }
-		//std::cout << "downConf : Step 8\n";
+        //std::cout << "downConf : Step 8\n";
 		if(inNameSpaceDetectEdited)
 		{
-			std::cout << "downConf : Step 8.1\n";
 			int intNameSpaceDetect = gtk_combo_box_get_active(GTK_COMBO_BOX(inNameSpaceDetect));
-			std::cout << "downConf : Step 8.2\n";
 			if(intNameSpaceDetect == 0)
 			{
 				GtkWidget *msg = gtk_message_dialog_new (NULL,
@@ -162,14 +162,12 @@ namespace apidb
 				gtk_widget_destroy (msg);
 				return false;
 			}
-			//std::cout << "downConf : Step 8.3\n";
 			config->namespace_detect = gtk_combo_box_get_active_id(GTK_COMBO_BOX(inNameSpaceDetect));
-			//std::cout << "downConf : Step 8.4\n";
 		}
 		
         //std::cout << "downConf : Step 9\n";
 		
-		if(inExeEdited)
+	if(inExeEdited)
         {
             std::string exe = gtk_entry_get_text(GTK_ENTRY(inExe));
             config->executable_target = exe;
@@ -236,7 +234,7 @@ namespace apidb
             }
             config->getDatconnection()->setPort(intport);
         }
-        //std::cout << "downConf : Step 11.1\n";
+        //std::cout << "downConf : Step 11\n";
         if(inDBEdited) 
         {
             std::string strdb = gtk_entry_get_text(GTK_ENTRY(inDB));
@@ -316,13 +314,11 @@ namespace apidb
             }
             else
             {
-                                std::string msgstr = "Fallo en applicacion.";
                                 GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                         GTK_MESSAGE_ERROR,
                                                                         GTK_BUTTONS_CLOSE,
-                                                                        msgstr.c_str(),
-                                                                        msgstr.c_str(), g_strerror (errno));
+                                                                        "Error desconocido al construir", g_strerror (errno));
                                         gtk_dialog_run (GTK_DIALOG (msg));    
                                         gtk_widget_destroy (msg);
                                         return;
@@ -353,10 +349,9 @@ namespace apidb
             flagDriver = app->driver->driving(&tr);
             //std::cout << "build : Step 3.5\n";
         }
-        catch(BuildException e)
+        catch(const BuildException& e)
         {
-			gchar* errstrmsg = strdup(e.what());
-            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s",errstrmsg);
+            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s",e.what());
             gtk_dialog_run (GTK_DIALOG (msg)); 
             gtk_widget_destroy (msg);
             return;
@@ -364,8 +359,7 @@ namespace apidb
         //std::cout << "build : Step 4\n";
 		if(!flagDriver)
 		{
-			std::string msgstr = "Fallo durante la construccion.";
-			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s",msgstr.c_str());
+			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Fallo durante la construccion.");
 			gtk_dialog_run (GTK_DIALOG (msg)); 
 			gtk_widget_destroy (msg);
 			return;
@@ -385,7 +379,7 @@ namespace apidb
 	}
     void Application::document_saveas(GtkWidget *widget, gpointer data) 
     {
-        ///std::cout << "document_saveas : Step 1\n";
+        std::cout << "document_saveas : Step 1\n";
         Application* app = (Application*)data;
              
         if(app->config == NULL)
@@ -399,8 +393,7 @@ namespace apidb
         {
             if(!app->downConf())
             {
-				const char* errstrmsg = "Falló la operacionde Guardar";
-                GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_CLOSE,"%s",errstrmsg);
+                GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_CLOSE,"Falló la operacionde Guardar");
                 gtk_dialog_run (GTK_DIALOG (msg)); 
                 gtk_widget_destroy (msg);
                 return;
@@ -415,19 +408,19 @@ namespace apidb
             return;
         }
         
-        //std::cout << "document_saveas : Step 3\n";       
+        std::cout << "document_saveas : Step 3\n";       
         GtkWidget *dialog;
         GtkFileChooser *chooser;
         GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
         gint res;
-        //std::cout << "document_saveas : Step 4\n";
-        
+        std::cout << "document_saveas : Step 4\n";
+
         dialog = gtk_file_chooser_dialog_new ("Save File", NULL,action,"_Cancel",GTK_RESPONSE_CANCEL,"_Save",GTK_RESPONSE_ACCEPT, NULL);
         chooser = GTK_FILE_CHOOSER (dialog);
         gtk_file_chooser_set_current_name (chooser,(app->config->name + ".apidb").c_str());
         res = gtk_dialog_run (GTK_DIALOG (dialog));
         
-        //std::cout << "document_saveas : Step 5\n";
+        std::cout << "document_saveas : Step 5\n";
         if (res == GTK_RESPONSE_ACCEPT)
         {
             char *filename;
@@ -455,36 +448,53 @@ namespace apidb
         }
         
 		std::cout << "document_save:Step 2" << std::endl;   
+		/*if(!app->isOpen || !app->isSaved)
+        {//no esta abierto el proyecto.                                
+            std::string msgstr;
+            if(core::Error::check())
+            {
+					msgstr = core::Error::get().what();
+            }
+            else
+            {
+					msgstr = "No hay documento abierto o pendiente de guardar";
+            }
+            GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,msgstr.c_str());
+            gtk_dialog_run (GTK_DIALOG (msg)); 
+            gtk_widget_destroy (msg);
+            return;
+        }*/
         
 		std::cout << "document_save:Step 3" << std::endl;
         
 		if(!app->originFilename.empty() and !app->isNew) //si fue cargado simplemete usa el mismo archivo
 		{
-			std::cout << "document_save:Step 3.1" << std::endl;
+			//std::cout << "Step 3.1" << std::endl;
+			//escribir en la estura de configuracion del proyecto.
 			if(!app->downConf())
 			{
-				std::string msgstr = "Ocurrio un erro desconocido la operacion de guardar el archivo.";
-				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s",msgstr.c_str());
+				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Ocurrio un erro desconocido la operacion de guardar el archivo.");
 				gtk_dialog_run (GTK_DIALOG (msg)); 
 				gtk_widget_destroy (msg);
 				return;
 			}
 			//Guarda los datos en disco
-			std::cout << "document_save:Step 3.2" << std::endl; 
+			//std::cout << "Step 3.2" << std::endl;
 			try
 			{
 				app->config->saveConfig(app->originFilename);
 			}
-			catch (std::exception e)
+			catch (const std::exception& e)
 			{
 				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s",e.what());
 				gtk_dialog_run (GTK_DIALOG (msg)); 
 				gtk_widget_destroy (msg);
 				return;
-			}                     
+			}
+			//std::cout << "Step 2.4" << std::endl;                      
 			app->isOpen = true;
 			app->setSaved(true);
-			std::cout << "document_save:Step 3.3" << std::endl;
+			//std::cout << "Step 2.5" << std::endl;
 			return;
 		}
 		else if(app->isNew)//ya se sabe que no fue cargado desde el disco
@@ -581,86 +591,86 @@ namespace apidb
         }
         void Application::createHeader()
         {                       
-                headerbar = GTK_WIDGET (gtk_builder_get_object (builder,"headerbar"));
+                headerbar = gtk_header_bar_new();
                 //gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (headerbar), TRUE);
                 gtk_header_bar_set_title (GTK_HEADER_BAR (headerbar), nameApp.c_str());
                 gtk_header_bar_set_has_subtitle (GTK_HEADER_BAR (headerbar), FALSE);
                 
-                btOpen = GTK_WIDGET (gtk_builder_get_object (builder,"btOpen"));
-                //icoOpen = g_themed_icon_new ("document-open");
-                //imgOpen = gtk_image_new_from_gicon (icoOpen,GTK_ICON_SIZE_BUTTON);
-                //g_object_unref (icoOpen);
-                //gtk_container_add (GTK_CONTAINER (btOpen), imgOpen);
-                //gtk_header_bar_pack_start (GTK_HEADER_BAR (headerbar), btOpen);
+                btOpen = gtk_button_new ();
+                icoOpen = g_themed_icon_new ("document-open");
+                imgOpen = gtk_image_new_from_gicon (icoOpen,GTK_ICON_SIZE_BUTTON);
+                g_object_unref (icoOpen);
+                gtk_container_add (GTK_CONTAINER (btOpen), imgOpen);
+                gtk_header_bar_pack_start (GTK_HEADER_BAR (headerbar), btOpen);
                 g_signal_connect(G_OBJECT(btOpen), "clicked", G_CALLBACK(Application::document_open), this);
                 
-                btNew = GTK_WIDGET (gtk_builder_get_object (builder,"btNew"));
-                //icoNew= g_themed_icon_new ("document-new");
-                //imgNew = gtk_image_new_from_gicon (icoNew,GTK_ICON_SIZE_BUTTON);
-                //g_object_unref (icoNew);
-                //gtk_container_add (GTK_CONTAINER (btNew), imgNew);
-                //gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btNew);
+                btNew = gtk_button_new ();
+                icoNew= g_themed_icon_new ("document-new");
+                imgNew = gtk_image_new_from_gicon (icoNew,GTK_ICON_SIZE_BUTTON);
+                g_object_unref (icoNew);
+                gtk_container_add (GTK_CONTAINER (btNew), imgNew);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btNew);
                 g_signal_connect(G_OBJECT(btNew), "clicked", G_CALLBACK(Application::document_new), this);
                 
-                sep1 = GTK_WIDGET (gtk_builder_get_object (builder,"sep1"));
-                //gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), sep1);
-                sep2 = GTK_WIDGET (gtk_builder_get_object (builder,"sep2"));
-                //gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), sep2);
+                sep1 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), sep1);
+                sep2 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), sep2);
                 
-                btBuild = GTK_WIDGET (gtk_builder_get_object (builder,"btBuild"));
-                //icoBuild = g_themed_icon_new ("system-run");
-                //imgBuild = gtk_image_new_from_gicon (icoBuild,GTK_ICON_SIZE_BUTTON);
-                //g_object_unref (icoBuild);
-                //gtk_container_add (GTK_CONTAINER (btBuild), imgBuild);
-                //gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btBuild);
+                btBuild = gtk_button_new ();
+                icoBuild = g_themed_icon_new ("system-run");
+                imgBuild = gtk_image_new_from_gicon (icoBuild,GTK_ICON_SIZE_BUTTON);
+                g_object_unref (icoBuild);
+                gtk_container_add (GTK_CONTAINER (btBuild), imgBuild);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btBuild);
                 g_signal_connect(G_OBJECT(btBuild), "clicked", G_CALLBACK(Application::build), this);
                 
-                btSave = GTK_WIDGET (gtk_builder_get_object (builder,"btSave"));
-                //icoSave= g_themed_icon_new ("document-save");
-                //imgSave = gtk_image_new_from_gicon (icoSave,GTK_ICON_SIZE_BUTTON);
-                //g_object_unref (icoSave);
-                //gtk_container_add (GTK_CONTAINER (btSave), imgSave);
-                //gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btSave);
+                btSave = gtk_button_new ();
+                icoSave= g_themed_icon_new ("document-save");
+                imgSave = gtk_image_new_from_gicon (icoSave,GTK_ICON_SIZE_BUTTON);
+                g_object_unref (icoSave);
+                gtk_container_add (GTK_CONTAINER (btSave), imgSave);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btSave);
                 g_signal_connect(G_OBJECT(btSave), "clicked", G_CALLBACK(Application::document_save), this);
                               
-                btSaveAs = GTK_WIDGET (gtk_builder_get_object (builder,"btSaveAs"));
-                //icoSaveAs= g_themed_icon_new ("document-save-as");
-                //imgSaveAs = gtk_image_new_from_gicon (icoSaveAs,GTK_ICON_SIZE_BUTTON);
-                //g_object_unref (icoSaveAs);
-                //gtk_container_add (GTK_CONTAINER (btSaveAs), imgSaveAs);
-                //gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btSaveAs);
+                btSaveAs = gtk_button_new ();
+                icoSaveAs= g_themed_icon_new ("document-save-as");
+                imgSaveAs = gtk_image_new_from_gicon (icoSaveAs,GTK_ICON_SIZE_BUTTON);
+                g_object_unref (icoSaveAs);
+                gtk_container_add (GTK_CONTAINER (btSaveAs), imgSaveAs);
+                gtk_header_bar_pack_start(GTK_HEADER_BAR (headerbar), btSaveAs);
                 g_signal_connect(G_OBJECT(btSaveAs), "clicked", G_CALLBACK(Application::document_saveas), this);
                 
                                 
-                btQuit = GTK_WIDGET (gtk_builder_get_object (builder,"btQuit"));
-                //icoQuit= g_themed_icon_new ("application-exit");
-                //imgQuit = gtk_image_new_from_gicon (icoQuit,GTK_ICON_SIZE_BUTTON);
+                btQuit = gtk_button_new ();
+                icoQuit= g_themed_icon_new ("application-exit");
+                imgQuit = gtk_image_new_from_gicon (icoQuit,GTK_ICON_SIZE_BUTTON);
                 g_signal_connect(G_OBJECT(btQuit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
-                //g_object_unref (icoQuit);
-                //gtk_container_add (GTK_CONTAINER (btQuit), imgQuit);
-                //gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btQuit);       
+                g_object_unref (icoQuit);
+                gtk_container_add (GTK_CONTAINER (btQuit), imgQuit);
+                gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btQuit);       
                 
-                //sep3 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
-                //gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), sep3);
+                sep3 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+                gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), sep3);
                 
-                btAbout = GTK_WIDGET (gtk_builder_get_object (builder,"btAbout"));
-                //icoAbout= g_themed_icon_new ("help-about");
-                //imgAbout = gtk_image_new_from_gicon (icoAbout,GTK_ICON_SIZE_BUTTON);
-                //g_signal_connect(G_OBJECT(btAbout), "clicked", G_CALLBACK(show_about), NULL);
-                //g_object_unref (icoAbout);
-                //gtk_container_add (GTK_CONTAINER (btAbout), imgAbout);
-                //gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btAbout);  
+                btAbout = gtk_button_new ();
+                icoAbout= g_themed_icon_new ("help-about");
+                imgAbout = gtk_image_new_from_gicon (icoAbout,GTK_ICON_SIZE_BUTTON);
+                g_signal_connect(G_OBJECT(btAbout), "clicked", G_CALLBACK(show_about), NULL);
+                g_object_unref (icoAbout);
+                gtk_container_add (GTK_CONTAINER (btAbout), imgAbout);
+                gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btAbout);  
                 
-                //sep4 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
-                //gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), sep4);
+                sep4 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+                gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), sep4);
                 
-                btCloseDoc = GTK_WIDGET (gtk_builder_get_object (builder,"btCloseDoc"));
-                //icoCloseDoc= g_themed_icon_new ("document-close");
-                //imgCloseDoc = gtk_image_new_from_gicon (icoCloseDoc ,GTK_ICON_SIZE_BUTTON);
+                btCloseDoc = gtk_button_new ();
+                icoCloseDoc= g_themed_icon_new ("document-close");
+                imgCloseDoc = gtk_image_new_from_gicon (icoCloseDoc ,GTK_ICON_SIZE_BUTTON);
                 g_signal_connect(G_OBJECT(btCloseDoc), "clicked", G_CALLBACK(document_close), this);
-                //g_object_unref (icoCloseDoc);
-                //gtk_container_add (GTK_CONTAINER (btCloseDoc), imgCloseDoc);
-                //gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btCloseDoc); 
+                g_object_unref (icoCloseDoc);
+                gtk_container_add (GTK_CONTAINER (btCloseDoc), imgCloseDoc);
+                gtk_header_bar_pack_end(GTK_HEADER_BAR (headerbar), btCloseDoc); 
                                 
                 gtk_window_set_titlebar (GTK_WINDOW (window), headerbar);
         }
@@ -724,52 +734,51 @@ namespace apidb
             handle = NULL;
             //createConnector = NULL;
             createDatconnect = NULL;
-            builder = NULL;
-        }
+        }   
         /**
          * 
          * 
          */
         void Application::loadConfig()
         {         
-			//std::cout << "Application::loadConfig : Step  1"<< std::endl;
+			std::cout << "Application::loadConfig : Step  1"<< std::endl;
 			gtk_entry_set_text (GTK_ENTRY(inName),config->name.c_str());
-			//std::cout << "Application::loadConfig : Step  2"<< std::endl;
+			std::cout << "Application::loadConfig : Step  2"<< std::endl;
 			gtk_entry_set_text (GTK_ENTRY(inVer),config->versionResult.toString().c_str());
-			//std::cout << "Application::loadConfig : Step  3"<< std::endl;
+			std::cout << "Application::loadConfig : Step  3"<< std::endl;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(inInL),(gint)config->getInputLenguaje());
-			//std::cout << "Application::loadConfig : Step  "<< std::endl;
+			std::cout << "Application::loadConfig : Step  "<< std::endl;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(inOutL),(gint)config->outputLenguaje);
-			//std::cout << "Application::loadConfig : Step  4"<< std::endl;
+			std::cout << "Application::loadConfig : Step  4"<< std::endl;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(inPkL),(gint)config->packing);
-			//std::cout << "Application::loadConfig : Step  5"<< std::endl;
+			std::cout << "Application::loadConfig : Step  5"<< std::endl;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(inCmpl),(gint)config->compiled);
-			//std::cout << "Application::loadConfig : Step  "<< std::endl;
+			std::cout << "Application::loadConfig : Step  "<< std::endl;
 			gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
-			//std::cout << "Application::loadConfig : Step  6"<< std::endl;
+			std::cout << "Application::loadConfig : Step  6"<< std::endl;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(inNameSpaceDetect),inNameSpaceDetect_comboxid(config->namespace_detect));
-			//std::cout << "Application::loadConfig : Step  7"<< std::endl;
+			std::cout << "Application::loadConfig : Step  7"<< std::endl;
 			if(!config->writeDatconnect.empty() and config->writeDatconnect.compare("¿?") != 0) gtk_entry_set_text(GTK_ENTRY(inWConnName),config->writeDatconnect.c_str());
-			//std::cout << "Application::loadConfig : Step  8"<< std::endl;
+			std::cout << "Application::loadConfig : Step  8"<< std::endl;
 			if(!config->executable_target.empty() and config->executable_target.compare("¿?") != 0)gtk_entry_set_text (GTK_ENTRY(inExe),config->executable_target.c_str());
-			//std::cout << "Application::loadConfig : Step  9"<< std::endl;
+			std::cout << "Application::loadConfig : Step  9"<< std::endl;
                 
 			gtk_entry_set_text(GTK_ENTRY(inLoc),config->getDatconnection()->getHost().c_str());
-			//std::cout << "Application::loadConfig : Step  10"<< std::endl;
+			std::cout << "Application::loadConfig : Step  10"<< std::endl;
 			//std::cout << "Application::loadConfig : Step  10.1 : " << strport << std::endl;
 			gtk_entry_set_text(GTK_ENTRY(inPort),std::to_string(config->getDatconnection()->getPort()).c_str());
-			//std::cout << "Application::loadConfig : Step  11"<< std::endl;
+			std::cout << "Application::loadConfig : Step  11"<< std::endl;
 			gtk_entry_set_text(GTK_ENTRY(inDB),config->getDatconnection()->getDatabase().c_str());
-			//std::cout << "Application::loadConfig : Step  12"<< std::endl;
+			std::cout << "Application::loadConfig : Step  12"<< std::endl;
 			gtk_entry_set_text(GTK_ENTRY(inUser),config->getDatconnection()->getUser().c_str());
-			//std::cout << "Application::loadConfig : Step  13"<< std::endl;
+			std::cout << "Application::loadConfig : Step  13"<< std::endl;
 			gtk_entry_set_text(GTK_ENTRY(inPw),config->getDatconnection()->getPassword().c_str());
-			//std::cout << "Application::loadConfig : Step  14"<< std::endl;
+			std::cout << "Application::loadConfig : Step  14"<< std::endl;
                                
-			//std::cout << "Application::loadConfig : Step  15"<< std::endl;
+			std::cout << "Application::loadConfig : Step  15"<< std::endl;
 			downsTree->fill();
                 
-			//std::cout << "Application::loadConfig : Step  16"<< std::endl;
+			std::cout << "Application::loadConfig : Step  16"<< std::endl;
 			selectsTree->fill();
                 
         }
@@ -777,15 +786,15 @@ namespace apidb
         {
                 
         }
-    void Application::createWindow()
-    {
-        gtk_window_set_title (GTK_WINDOW (window), nameApp.c_str());
-        gtk_window_set_default_size (GTK_WINDOW (window), 450, 300);
-        g_signal_connect (window, "destroy", G_CALLBACK (application_destroy), this);  
-        gtk_container_set_border_width (GTK_CONTAINER (window), 10);   
-        gtk_window_set_resizable(GTK_WINDOW (window),FALSE);
-        gtk_container_add (GTK_CONTAINER (window), vboxMain);       
-    }
+        void Application::createWindow()
+        {
+                gtk_window_set_title (GTK_WINDOW (window), nameApp.c_str());
+                gtk_window_set_default_size (GTK_WINDOW (window), 450, 300);
+                g_signal_connect (window, "destroy", G_CALLBACK (application_destroy), this);  
+                gtk_container_set_border_width (GTK_CONTAINER (window), 10);   
+                gtk_window_set_resizable(GTK_WINDOW (window),FALSE);
+                gtk_container_add (GTK_CONTAINER (window), vboxMain);       
+        }  
 	void Application::documen_open(Application* app,const std::string& filename)
 	{
 		//std::cout << "Application::documen_open: Step 1 "<< std::endl;
@@ -797,7 +806,29 @@ namespace apidb
 		//std::cout << "Application::documen_open : Step 2" << std::endl;
 		try
 		{
-			app->config->readConfig(filename);   
+			//std::cout << "Application::documen_open : Step 2.1" << std::endl;            
+			//std::cout << "Application::documen_open : Step 2.2" << std::endl;
+			app->config->readConfig(filename);          
+			//std::cout << "Application::documen_open : Step 2.3" << std::endl;
+			if(!app->config->checkFailLoadDat())
+			{
+				app->originFilename = filename;
+				app->createNotebook();          
+                //std::cout << "Application::documen_open : Step 2.4" << std::endl;
+				app->loadConfig();          
+                //std::cout << "Application::documen_open : Step 2.5" << std::endl;
+				app->setSaved(true);
+				app->isOpen = true;
+				app->isNew = false;
+				gtk_widget_show_all(app->window);
+				return;
+			}
+			else
+			{
+				GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,"Erro desconocido en checkFailLoadDat.");
+				gtk_dialog_run (GTK_DIALOG (msg));
+				gtk_widget_destroy (msg);
+			}			
 		}
 		catch(const std::exception& e)
 		{
@@ -806,38 +837,37 @@ namespace apidb
 			gtk_widget_destroy (msg);
 			return;
 		}
-		//std::cout << "Application::documen_open : Step 3" << std::endl;
+		std::cout << "Application::documen_open : Step 3" << std::endl;
 		if(app->driver != NULL) 
 		{
-			delete app->driver;
+			delete (app->driver);
 			app->driver = NULL;
 		}
 
-		//std::cout << "Application::documen_open : Step 3.6" << std::endl;
+		std::cout << "Application::documen_open : Step 3.6" << std::endl;
 		try
 		{
             app->driver = new Driver(*(app->config));
         }
         catch(const std::exception& e)
 		{
-			std::string msgstr = e.what();			
-            msgstr = msgstr + " : Erro desconocido en Driver durante la apertura del documento";
+			std::string msgstr = e.what();
 			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_WARNING,GTK_BUTTONS_CLOSE,"%s",msgstr.c_str());
 			gtk_dialog_run (GTK_DIALOG (msg));
 			gtk_widget_destroy (msg);
-			/*app->originFilename = filename;
+			app->originFilename = filename;
 			app->createNotebook();
 			app->loadConfig();
 			app->setSaved(true);
 			app->isOpen = true;
 			app->isNew = false;
-			gtk_widget_show_all(app->window);*/
+			gtk_widget_show_all(app->window);
             return;
 		}
 		//std::cout << "Application::documen_open : Step 4" << std::endl;
 		if(!app->driver->analyze(NULL))
 		{
-			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Fallo la lectura del archivo de proyecto");
+			GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"Erro desconocido durante el analisis");
 			gtk_dialog_run (GTK_DIALOG (msg)); 
 			gtk_widget_destroy (msg);                                
 		}
@@ -849,7 +879,7 @@ namespace apidb
 		app->isOpen = true;
 		app->isNew = false;
 		gtk_widget_show_all(app->window);
-		//std::cout << "Application::documen_open : Step 6" << std::endl;
+		std::cout << "Application::documen_open : Step 6" << std::endl;
 	}
 	void Application::document_open (GtkWidget *widget, gpointer   data)
 	{
@@ -1071,102 +1101,102 @@ namespace apidb
 	}
     void Application::createNotebookInfo(GtkWidget *boxInfo)
     {
-		//GtkWidget *boxName = GTK_WIDGET (gtk_builder_get_object (builder,"boxName"));
-		//GtkWidget * lbName = GTK_WIDGET (gtk_builder_get_object (builder,"lbName"));
-		//gtk_box_pack_start(GTK_BOX(boxName), lbName, FALSE, FALSE,0); 
-		inName = GTK_WIDGET (gtk_builder_get_object (builder,"inName"));
-		//gtk_box_pack_start(GTK_BOX(boxName), inName, FALSE, FALSE,0);   
-		//gtk_box_pack_start(GTK_BOX(boxInfo), boxName, FALSE, FALSE,0);
+		GtkWidget *boxName = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+		GtkWidget * lbName = gtk_label_new ("Nombre:");
+		gtk_box_pack_start(GTK_BOX(boxName), lbName, FALSE, FALSE,0); 
+		inName = gtk_entry_new();
+		gtk_box_pack_start(GTK_BOX(boxName), inName, FALSE, FALSE,0);   
+		gtk_box_pack_start(GTK_BOX(boxInfo), boxName, FALSE, FALSE,0);
 		gtk_widget_set_events(inName,GDK_KEY_PRESS_MASK);
 		g_signal_connect(G_OBJECT(inName), "key-press-event", G_CALLBACK(inName_keypress), this);
                 
-        //GtkWidget *boxVer = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-        //GtkWidget * lbVer = gtk_label_new ("Version: ");
-        //gtk_box_pack_start(GTK_BOX(boxVer), lbVer, FALSE, FALSE,0); 
-        inVer = GTK_WIDGET (gtk_builder_get_object (builder,"inVer"));
-        //gtk_box_pack_start(GTK_BOX(boxVer), inVer, FALSE, FALSE,0);   
-        //gtk_box_pack_start(GTK_BOX(boxInfo), boxVer, FALSE, FALSE,0);
+        GtkWidget *boxVer = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+        GtkWidget * lbVer = gtk_label_new ("Version: ");
+        gtk_box_pack_start(GTK_BOX(boxVer), lbVer, FALSE, FALSE,0); 
+        inVer = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(boxVer), inVer, FALSE, FALSE,0);   
+        gtk_box_pack_start(GTK_BOX(boxInfo), boxVer, FALSE, FALSE,0);
         g_signal_connect(G_OBJECT(inVer), "key-press-event", G_CALLBACK(inVer_keypress), this);
         
-		//GtkWidget *boxInL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-		//GtkWidget * lbInL = gtk_label_new ("Lenguaje de Entrada:");
-		//gtk_box_pack_start(GTK_BOX(boxInL), lbInL, FALSE, FALSE,0); 
-		inInL = GTK_WIDGET (gtk_builder_get_object (builder,"inInL"));
+		GtkWidget *boxInL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+		GtkWidget * lbInL = gtk_label_new ("Lenguaje de Entrada:");
+		gtk_box_pack_start(GTK_BOX(boxInL), lbInL, FALSE, FALSE,0); 
+		inInL = gtk_combo_box_text_new();
 		std::string namestr;		
 		gtk_combo_box_text_insert((GtkComboBoxText*)inInL,0,"selecione","Selecione..."); 
 		gtk_combo_box_set_active((GtkComboBox*)inInL,0);		
 		namestr = getInputLenguaje(InputLenguajes::MySQL);	gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MySQL,namestr.c_str(),namestr.c_str());
 		namestr = getInputLenguaje(InputLenguajes::PostgreSQL);		gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::PostgreSQL,namestr.c_str(),namestr.c_str());	
 		namestr = getInputLenguaje(InputLenguajes::MariaDB);	gtk_combo_box_text_insert((GtkComboBoxText*)inInL,InputLenguajes::MariaDB,namestr.c_str(),namestr.c_str());
-		//gtk_box_pack_start(GTK_BOX(boxInL), inInL, FALSE, FALSE,0);
-		//gtk_box_pack_start(GTK_BOX(boxInfo), boxInL, FALSE, FALSE,0);
+		gtk_box_pack_start(GTK_BOX(boxInL), inInL, FALSE, FALSE,0);
+		gtk_box_pack_start(GTK_BOX(boxInfo), boxInL, FALSE, FALSE,0);
 		g_signal_connect(G_OBJECT(inInL), "changed", G_CALLBACK(inInL_changed), this);
                 
-                //GtkWidget *boxOutL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                //GtkWidget * lbOutL = gtk_label_new ("Lenguaje de Salida:   ");
-                //gtk_box_pack_start(GTK_BOX(boxOutL), lbOutL, FALSE, FALSE,0); 
-                inOutL = GTK_WIDGET (gtk_builder_get_object (builder,"inOutL"));
+                GtkWidget *boxOutL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget * lbOutL = gtk_label_new ("Lenguaje de Salida:   ");
+                gtk_box_pack_start(GTK_BOX(boxOutL), lbOutL, FALSE, FALSE,0); 
+                inOutL = gtk_combo_box_text_new();
                 gtk_combo_box_text_insert((GtkComboBoxText*)inOutL,0,"selecione","Selecione..."); 
                 gtk_combo_box_set_active((GtkComboBox*)inOutL,0);
                 gtk_combo_box_text_insert((GtkComboBoxText*)inOutL,OutputLenguajes::C,getOutputLenguajes(OutputLenguajes::C).c_str(),getOutputLenguajes(OutputLenguajes::C).c_str());
                 gtk_combo_box_text_insert((GtkComboBoxText*)inOutL,OutputLenguajes::CPP,getOutputLenguajes(OutputLenguajes::CPP).c_str(),getOutputLenguajes(OutputLenguajes::CPP).c_str());
-                //gtk_box_pack_start(GTK_BOX(boxOutL), inOutL, FALSE, FALSE,0);   
-                //gtk_box_pack_start(GTK_BOX(boxInfo), boxOutL, FALSE, FALSE,0);        
+                gtk_box_pack_start(GTK_BOX(boxOutL), inOutL, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxInfo), boxOutL, FALSE, FALSE,0);        
                 g_signal_connect(G_OBJECT(inOutL), "changed", G_CALLBACK(inOutL_changed), this);
                 
-                //GtkWidget *boxPkL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                //GtkWidget * lbPkL = gtk_label_new ("Empaquetado:   ");
-                //gtk_box_pack_start(GTK_BOX(boxPkL), lbPkL, FALSE, FALSE,0); 
-                inPkL = GTK_WIDGET (gtk_builder_get_object (builder,"inPkL"));
+                GtkWidget *boxPkL = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget * lbPkL = gtk_label_new ("Empaquetado:   ");
+                gtk_box_pack_start(GTK_BOX(boxPkL), lbPkL, FALSE, FALSE,0); 
+                inPkL = gtk_combo_box_text_new();
                 gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,0,"selecione","Selecione..."); 
                 gtk_combo_box_set_active((GtkComboBox*)inPkL,0);
                 gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,PackingLenguajes::CMake,getPackingLenguajes(PackingLenguajes::CMake).c_str(),getPackingLenguajes(PackingLenguajes::CMake).c_str());
                 gtk_combo_box_text_insert((GtkComboBoxText*)inPkL,PackingLenguajes::OnlyCode,getPackingLenguajes(PackingLenguajes::OnlyCode).c_str(),"Solo Codigo");
-                //gtk_box_pack_start(GTK_BOX(boxPkL), inPkL, FALSE, FALSE,0);   
-                //gtk_box_pack_start(GTK_BOX(boxInfo), boxPkL, FALSE, FALSE,0);  
+                gtk_box_pack_start(GTK_BOX(boxPkL), inPkL, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxInfo), boxPkL, FALSE, FALSE,0);  
                 g_signal_connect(G_OBJECT(inPkL), "changed", G_CALLBACK(inPkL_changed), this);
                 
-                //GtkWidget *boxCmpl = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                //GtkWidget * lbCmpl = gtk_label_new ("Compilado:        ");
-                //gtk_box_pack_start(GTK_BOX(boxCmpl), lbCmpl, FALSE, FALSE,0); 
-                inCmpl = GTK_WIDGET (gtk_builder_get_object (builder,"inCmpl"));
+                GtkWidget *boxCmpl = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget * lbCmpl = gtk_label_new ("Compilado:        ");
+                gtk_box_pack_start(GTK_BOX(boxCmpl), lbCmpl, FALSE, FALSE,0); 
+                inCmpl = gtk_combo_box_text_new();
                 gtk_combo_box_text_insert((GtkComboBoxText*)inCmpl,0,"selecione","Selecione..."); 
                 gtk_combo_box_set_active((GtkComboBox*)inCmpl,0);
                 gtk_combo_box_text_insert((GtkComboBoxText*)inCmpl,Compiled::STATIC,getCompiled(Compiled::STATIC).c_str(),getCompiled(Compiled::STATIC).c_str());
                 gtk_combo_box_text_insert((GtkComboBoxText*)inCmpl,Compiled::SHARED,getCompiled(Compiled::SHARED).c_str(),getCompiled(Compiled::SHARED).c_str());
-                //gtk_box_pack_start(GTK_BOX(boxCmpl), inCmpl, FALSE, FALSE,0);   
-                //gtk_box_pack_start(GTK_BOX(boxInfo), boxCmpl, FALSE, FALSE,0);        
+                gtk_box_pack_start(GTK_BOX(boxCmpl), inCmpl, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxInfo), boxCmpl, FALSE, FALSE,0);        
                 g_signal_connect(G_OBJECT(inCmpl), "changed", G_CALLBACK(inCmpl_changed), this);
                 
-                //GtkWidget *boxinFileChooserBuildDirectory = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                GtkWidget * lbinFileChooserBuildDirectory = GTK_WIDGET (gtk_builder_get_object (builder,"lbinFileChooserBuildDirectory"));
-                //gtk_box_pack_start(GTK_BOX(boxinFileChooserBuildDirectory), lbinFileChooserBuildDirectory, FALSE, FALSE,0); 
-                inFileChooserBuildDirectory = GTK_WIDGET (gtk_builder_get_object (builder,"inFileChooserBuildDirectory"));
+                GtkWidget *boxinFileChooserBuildDirectory = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget * lbinFileChooserBuildDirectory = gtk_label_new ("Directory de Contrucción:");
+                gtk_box_pack_start(GTK_BOX(boxinFileChooserBuildDirectory), lbinFileChooserBuildDirectory, FALSE, FALSE,0); 
+                inFileChooserBuildDirectory = gtk_file_chooser_button_new ("Seleccionar Directorio.",GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
                 //gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (inFileChooserBuildDirectory),config->builDirectory.c_str());
-                //gtk_box_pack_start(GTK_BOX(boxinFileChooserBuildDirectory), inFileChooserBuildDirectory, FALSE, FALSE,0);   
-                //gtk_box_pack_start(GTK_BOX(boxInfo), boxinFileChooserBuildDirectory, FALSE, FALSE,0);
+                gtk_box_pack_start(GTK_BOX(boxinFileChooserBuildDirectory), inFileChooserBuildDirectory, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxInfo), boxinFileChooserBuildDirectory, FALSE, FALSE,0);
                 gtk_widget_set_events(inFileChooserBuildDirectory,GDK_KEY_PRESS_MASK);
                 g_signal_connect(G_OBJECT(inFileChooserBuildDirectory), "file-set", G_CALLBACK(buildDirectory_fileset), this);
 				
-                //GtkWidget *boxNameSpaceDetect = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                //GtkWidget * lbNameSpaceDetect = gtk_label_new ("Deteción de nombre de espacio:   ");
-                //gtk_box_pack_start(GTK_BOX(boxNameSpaceDetect), lbNameSpaceDetect, FALSE, FALSE,0); 
-                inNameSpaceDetect = GTK_WIDGET (gtk_builder_get_object (builder,"inNameSpaceDetect"));
+                GtkWidget *boxNameSpaceDetect = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget * lbNameSpaceDetect = gtk_label_new ("Deteción de nombre de espacio:   ");
+                gtk_box_pack_start(GTK_BOX(boxNameSpaceDetect), lbNameSpaceDetect, FALSE, FALSE,0); 
+                inNameSpaceDetect = gtk_combo_box_text_new();
                 gtk_combo_box_text_insert((GtkComboBoxText*)inNameSpaceDetect,inNameSpaceDetect_comboxid("selecione"),"selecione","Selecione..."); 
+                gtk_combo_box_set_active((GtkComboBox*)inNameSpaceDetect,0);
                 gtk_combo_box_text_insert((GtkComboBoxText*)inNameSpaceDetect,inNameSpaceDetect_comboxid("reject"),"reject","Rechazar");
                 gtk_combo_box_text_insert((GtkComboBoxText*)inNameSpaceDetect,inNameSpaceDetect_comboxid("emulate"),"emulate","Emular");
-                //gtk_box_pack_start(GTK_BOX(boxNameSpaceDetect), inNameSpaceDetect, FALSE, FALSE,0);   
-                //gtk_box_pack_start(GTK_BOX(boxInfo), boxNameSpaceDetect, FALSE, FALSE,0);        
+                gtk_box_pack_start(GTK_BOX(boxNameSpaceDetect), inNameSpaceDetect, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxInfo), boxNameSpaceDetect, FALSE, FALSE,0);        
                 g_signal_connect(G_OBJECT(inNameSpaceDetect), "changed", G_CALLBACK(inNameSpaceDetect_changed), this);
-                gtk_combo_box_set_active((GtkComboBox*)inNameSpaceDetect,0);
                 
                 
-                //GtkWidget *boxExe = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                //GtkWidget * lbExe = gtk_label_new ("Ejecutable:");
-                //gtk_box_pack_start(GTK_BOX(boxExe), lbExe, FALSE, FALSE,0); 
-                inExe = GTK_WIDGET (gtk_builder_get_object (builder,"inExe"));
-                //gtk_box_pack_start(GTK_BOX(boxExe), inExe, FALSE, FALSE,0);   
-                //gtk_box_pack_start(GTK_BOX(boxInfo), boxExe, FALSE, FALSE,0);
+                GtkWidget *boxExe = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget * lbExe = gtk_label_new ("Ejecutable:");
+                gtk_box_pack_start(GTK_BOX(boxExe), lbExe, FALSE, FALSE,0); 
+                inExe = gtk_entry_new();
+                gtk_box_pack_start(GTK_BOX(boxExe), inExe, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxInfo), boxExe, FALSE, FALSE,0);
                 gtk_widget_set_events(inName,GDK_KEY_PRESS_MASK);
                 g_signal_connect(G_OBJECT(inExe), "key-press-event", G_CALLBACK(inExe_keypress), this);
         }
@@ -1186,7 +1216,8 @@ namespace apidb
 			}
 			else
 			{
-				throw oct::core::Exception("Opción de 'Espacio virtual detectado.'",__FILE__,__LINE__);
+				core::Error::write(core::Error("Opción de 'Espacio virtual detectado.'",ErrorCodes::APIDB_FAIL,__FILE__,__LINE__));
+				return -1;
 			}
 		}
         gboolean Application::inLoc_keypress (GtkWidget *widget,GdkEventKey  *event,gpointer   user_data)
@@ -1338,56 +1369,56 @@ namespace apidb
 		}
         void Application::createNotebookConexion(GtkWidget *boxConex)
         {
-                //GtkWidget *boxLoc = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                //GtkWidget *lbLoc = gtk_label_new ("Host/IP:");
-                //gtk_box_pack_start(GTK_BOX(boxLoc), lbLoc, FALSE, FALSE,0); 
-                inLoc = GTK_WIDGET (gtk_builder_get_object (builder,"inLoc"));
-                //gtk_box_pack_start(GTK_BOX(boxLoc), inLoc, FALSE, FALSE,0);   
-                //gtk_box_pack_start(GTK_BOX(boxConex), boxLoc, FALSE, FALSE,0);
+                GtkWidget *boxLoc = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget *lbLoc = gtk_label_new ("Host/IP:");
+                gtk_box_pack_start(GTK_BOX(boxLoc), lbLoc, FALSE, FALSE,0); 
+                inLoc= gtk_entry_new();
+                gtk_box_pack_start(GTK_BOX(boxLoc), inLoc, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxConex), boxLoc, FALSE, FALSE,0);
                 g_signal_connect(G_OBJECT(inLoc), "key-press-event", G_CALLBACK(inLoc_keypress), this);
                 
-                //GtkWidget *boxPort = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                //GtkWidget *lbPort = gtk_label_new ("Puerto:");
-                //gtk_box_pack_start(GTK_BOX(boxPort), lbPort, FALSE, FALSE,0); 
-                inPort = GTK_WIDGET (gtk_builder_get_object (builder,"inPort"));
-                //gtk_box_pack_start(GTK_BOX(boxPort), inPort, FALSE, FALSE,0);   
-                //gtk_box_pack_start(GTK_BOX(boxConex), boxPort, FALSE, FALSE,0);
+                GtkWidget *boxPort = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget *lbPort = gtk_label_new ("Puerto:");
+                gtk_box_pack_start(GTK_BOX(boxPort), lbPort, FALSE, FALSE,0); 
+                inPort = gtk_entry_new();
+                gtk_box_pack_start(GTK_BOX(boxPort), inPort, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxConex), boxPort, FALSE, FALSE,0);
                 g_signal_connect(G_OBJECT(inPort), "key-press-event", G_CALLBACK(inPort_keypress), this);
                 
-                //GtkWidget *boxDB= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                //GtkWidget *lbDB = gtk_label_new ("Base de Datos:");
-                //gtk_box_pack_start(GTK_BOX(boxDB), lbDB, FALSE, FALSE,0); 
-                inDB = GTK_WIDGET (gtk_builder_get_object (builder,"inDB"));
-                //gtk_box_pack_start(GTK_BOX(boxDB), inDB, FALSE, FALSE,0);   
-                //gtk_box_pack_start(GTK_BOX(boxConex), boxDB, FALSE, FALSE,0);
+                GtkWidget *boxDB= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget *lbDB = gtk_label_new ("Base de Datos:");
+                gtk_box_pack_start(GTK_BOX(boxDB), lbDB, FALSE, FALSE,0); 
+                inDB = gtk_entry_new();
+                gtk_box_pack_start(GTK_BOX(boxDB), inDB, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxConex), boxDB, FALSE, FALSE,0);
                 g_signal_connect(G_OBJECT(inDB), "key-press-event", G_CALLBACK(inDB_keypress), this);
                 
-                //GtkWidget *boxUser= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                //GtkWidget *lbUser = gtk_label_new ("Usuario:");
-                //gtk_box_pack_start(GTK_BOX(boxUser), lbUser, FALSE, FALSE,0); 
-                inUser = GTK_WIDGET (gtk_builder_get_object (builder,"inUser"));
-                //gtk_box_pack_start(GTK_BOX(boxUser), inUser, FALSE, FALSE,0);   
-                //gtk_box_pack_start(GTK_BOX(boxConex), boxUser, FALSE, FALSE,0);
+                GtkWidget *boxUser= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget *lbUser = gtk_label_new ("Usuario:");
+                gtk_box_pack_start(GTK_BOX(boxUser), lbUser, FALSE, FALSE,0); 
+                inUser = gtk_entry_new();
+                gtk_box_pack_start(GTK_BOX(boxUser), inUser, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxConex), boxUser, FALSE, FALSE,0);
                 g_signal_connect(G_OBJECT(inUser), "key-press-event", G_CALLBACK(inUser_keypress), this);
                 
-                //GtkWidget *boxPw= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                //GtkWidget *lbPw = gtk_label_new ("Contraseña:");
-                //gtk_box_pack_start(GTK_BOX(boxPw), lbPw, FALSE, FALSE,0); 
-                inPw = GTK_WIDGET (gtk_builder_get_object (builder,"inPw"));
+                GtkWidget *boxPw= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                GtkWidget *lbPw = gtk_label_new ("Contraseña:");
+                gtk_box_pack_start(GTK_BOX(boxPw), lbPw, FALSE, FALSE,0); 
+                inPw = gtk_entry_new();
                 gtk_entry_set_visibility(GTK_ENTRY(inPw),FALSE);
-                //gtk_box_pack_start(GTK_BOX(boxPw), inPw, FALSE, FALSE,0);   
-                //gtk_box_pack_start(GTK_BOX(boxConex), boxPw, FALSE, FALSE,0);
+                gtk_box_pack_start(GTK_BOX(boxPw), inPw, FALSE, FALSE,0);   
+                gtk_box_pack_start(GTK_BOX(boxConex), boxPw, FALSE, FALSE,0);
                 g_signal_connect(G_OBJECT(inPw), "key-press-event", G_CALLBACK(inPw_keypress), this);
 				
-                //boxWConn= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
-                //inWConn = gtk_check_button_new_with_label("Generar estructura de Conexión:");
-                //gtk_entry_set_visibility(GTK_ENTRY(inWConn),FALSE);
-                //gtk_box_pack_start(GTK_BOX(boxWConn), inWConn, FALSE, FALSE,0);
-                //gtk_box_pack_start(GTK_BOX(boxConex), boxWConn, FALSE, FALSE,0);
+                boxWConn= gtk_box_new (GTK_ORIENTATION_HORIZONTAL,2);
+                inWConn = gtk_check_button_new_with_label("Generar estructura de Conexión:");
+                gtk_entry_set_visibility(GTK_ENTRY(inWConn),FALSE);
+                gtk_box_pack_start(GTK_BOX(boxWConn), inWConn, FALSE, FALSE,0);
+                gtk_box_pack_start(GTK_BOX(boxConex), boxWConn, FALSE, FALSE,0);
                 //g_signal_connect(G_OBJECT(inWConn), "toggled", G_CALLBACK(wConn_OnClick), this);
-				//gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (inWConn), TRUE);
-                inWConnName = GTK_WIDGET (gtk_builder_get_object (builder,"inPw"));
-                //gtk_box_pack_start(GTK_BOX(boxWConn), inWConnName, FALSE, FALSE,0);   
+				gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (inWConn), TRUE);
+                inWConnName = gtk_entry_new();
+                gtk_box_pack_start(GTK_BOX(boxWConn), inWConnName, FALSE, FALSE,0);   
                 g_signal_connect(G_OBJECT(inWConnName), "key-press-event", G_CALLBACK(inWConnName_keypress), this);
         }
 
@@ -1424,7 +1455,7 @@ namespace apidb
 						return;
 					}*/
 				}
-				catch(octetos::db::SQLException e)
+				catch(const octetos::db::SQLException& e)
 				{
 					GtkWidget *msg = gtk_message_dialog_new (NULL,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,"%s",e.what());
 					gtk_dialog_run (GTK_DIALOG (msg)); 
@@ -1444,12 +1475,11 @@ namespace apidb
                                 //std::cout << "Jump 4" << std::endl;
                                 if(!app->driver->analyze(NULL))
                                 {
-                                        std::string msgstr = "Fallo la lectura del archivo de proyecto";
                                         GtkWidget *msg = gtk_message_dialog_new (NULL,
                                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                                         GTK_MESSAGE_ERROR,
                                                                         GTK_BUTTONS_CLOSE,
-                                                                        msgstr.c_str(),
+                                                                        "Fallo la lectura del archivo de proyecto",
                                                                         filename, g_strerror (errno));
                                         gtk_dialog_run (GTK_DIALOG (msg));     
                                         gtk_widget_destroy (msg);
@@ -1477,16 +1507,16 @@ namespace apidb
                         return false;
                 }
                 
-                notebookMain = GTK_WIDGET (gtk_builder_get_object (builder,"notebookMain"));
+                notebookMain = gtk_notebook_new();
                 //g_signal_connect(G_OBJECT(notebookMain), "switch-page", G_CALLBACK(active_tab), window);
-                GtkWidget *boxInfo = GTK_WIDGET (gtk_builder_get_object (builder,"boxInfo"));
-                GtkWidget *lbInfo = GTK_WIDGET (gtk_builder_get_object (builder,"lbInfo"));
-                //gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxInfo,lbInfo);
+                GtkWidget *boxInfo = gtk_box_new (GTK_ORIENTATION_VERTICAL,8);
+                GtkWidget *lbInfo = gtk_label_new (titleInfo);
+                gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxInfo,lbInfo);
                 createNotebookInfo(boxInfo);
                 
-                boxConex = GTK_WIDGET (gtk_builder_get_object (builder,"boxConex"));
-                //GtkWidget * lbConex = gtk_label_new (titleConex);
-                //gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxConex,lbConex);
+                boxConex = gtk_box_new (GTK_ORIENTATION_VERTICAL,4);
+                GtkWidget * lbConex = gtk_label_new (titleConex);
+                gtk_notebook_append_page (GTK_NOTEBOOK (notebookMain),boxConex,lbConex);
                 g_signal_connect(GTK_NOTEBOOK (notebookMain), "switch-page", G_CALLBACK(conex_switchPage), this);
                 createNotebookConexion(boxConex);
                 
@@ -1504,7 +1534,7 @@ namespace apidb
                 
                 return true;
         }
-        void  Application::init(int*   argc, char** argv[])
+        void  Application::init(int*   argc, char **argv[])
         {
 			gtk_init (argc, argv);
 			if((*argc) == 1)
@@ -1521,34 +1551,25 @@ namespace apidb
                 
 	void Application::create()
 	{
-        builder = gtk_builder_new();
-		std::string gladefile = SHARED_APIDB_DIR;
-		gladefile += "/apidb.glade";
-		
-        if(gtk_builder_add_from_file (builder,gladefile.c_str() , NULL) == 0)
-        {
-            printf("gtk_builder_add_from_file FAILED\n");
-            return;
-        }
-        window  = GTK_WIDGET (gtk_builder_get_object (builder,"window"));
-		vboxMain = GTK_WIDGET (gtk_builder_get_object (builder,"vboxMain"));
+		window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+		vboxMain = gtk_box_new (GTK_ORIENTATION_VERTICAL,2);
 		createWindow();        
-        
+                                
 		createHeader();
                 
 		gtk_widget_show_all(window);  
-		if(originFilename.size() > 0) documen_open(this,originFilename);
+		if(originFilename.size() > 0)documen_open(this,originFilename);
         
 		gtk_main ();  
 	}
 
-    const char*  Application::titleInfo = "Información";
-    const char*  Application::titleConex = "Conexión";
-    const char*  Application::titleDowns = "Descargas";
-    const char*  Application::titleSelects = "Selecciones";
-    const char* TreeView::strNewFunct = "Agregar Funcion";
-    char* Application::filename = NULL;
-    std::string Application::nameApp = "APIDB";
+         const char*  Application::titleInfo = "Información";
+         const char*  Application::titleConex = "Conexión";
+         const char*  Application::titleDowns = "Descargas";
+         const char*  Application::titleSelects = "Selecciones";
+        const char* TreeView::strNewFunct = "Agregar Funcion";
+        char* Application::filename = NULL;
+        std::string Application::nameApp = "APIDB";
     
     
 }
