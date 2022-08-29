@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 	}
 	
     if(verbose) std::cout << "Listando los que tiene 8 con 5 registro maximo." << std::endl;
-    static std::vector<muposys::Persons*>* lst = muposys::Persons::select(connector,"name1 like 'n1-%8'",5,'D');
+    std::vector<muposys::Persons*>* lst = muposys::Persons::select(connector,"name1 like 'n1-%8'",5,'D');
     if(lst != NULL)
     {
         for(auto p : *lst)
@@ -74,6 +74,10 @@ int main(int argc, char **argv)
             {
                 if(verbose)  std::cout << ""<< p->getName1() << " " << p->getName3() << std::endl;
             }
+        }
+        for(auto p : *lst)
+        {
+            delete p;
         }
     }
     delete lst;	
