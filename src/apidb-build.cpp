@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
         std::cerr<<"Fallo la lectura del archivo."<< e.what() <<std::endl;
         return EXIT_FAILURE;
     }
-    if(retDriver)
+    if(not retDriver)
     {
         std::cerr<<"Fallo desconocido.";
         return EXIT_FAILURE;
