@@ -32,13 +32,13 @@ namespace octetos::apidb::generators
             switch(configureProject.outputLenguaje)
             {
                 case OutputLenguajes::CPP:
-                    if(s->outType.compare("std::string") == 0)
-                    {
-                        ofile <<"\t\tconst "<< s->getOutType() << "& ";
-                    }
-                    else if(s->getSymbolReferenced())
+                    if(s->getSymbolReferenced())
                     {
                         ofile <<"\t\t" << s->getClassReferenced()->getName() << "& ";
+                    }
+                    else if(s->outType.compare("std::string") == 0)
+                    {
+                        ofile <<"\t\tconst "<< s->getOutType() << "& ";
                     }
                     else 
                     {
@@ -162,24 +162,7 @@ namespace octetos::apidb::generators
     
     bool Getter::implement(const symbols::Symbol* s)
     {
-        if(s->outType.compare("std::string") == 0)
-        {
-            switch(configureProject.outputLenguaje)
-            {
-                case OutputLenguajes::CPP:
-                    ofile <<"\tconst std::string& ";
-                    break;
-                case OutputLenguajes::JAVA:
-                    ofile <<"\tpublic String ";
-                    break;
-                case OutputLenguajes::PHP:
-                    ofile <<"\tpublic function ";
-                    break;
-                default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
-            }
-        }
-        else if(s->symbolReferenced)
+        if(s->symbolReferenced)
         {
             switch(configureProject.outputLenguaje)
             {
@@ -196,7 +179,24 @@ namespace octetos::apidb::generators
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
             }
         }
-        else 
+        else if(s->outType.compare("std::string") == 0)
+        {
+            switch(configureProject.outputLenguaje)
+            {
+                case OutputLenguajes::CPP:
+                    ofile <<"\tconst std::string& ";
+                    break;
+                case OutputLenguajes::JAVA:
+                    ofile <<"\tpublic String ";
+                    break;
+                case OutputLenguajes::PHP:
+                    ofile <<"\tpublic function ";
+                    break;
+                default:
+                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+            }
+        }
+        else  
         {
             switch(configureProject.outputLenguaje)
             {
@@ -220,25 +220,7 @@ namespace octetos::apidb::generators
         
         ofile << "\n";
         ofile << "\t{"<<std::endl;
-        if(s->outType.compare("std::string") == 0)
-        {
-            
-            switch(configureProject.outputLenguaje)
-            {
-                case OutputLenguajes::CPP:
-                    ofile <<"\t\treturn "<< s->getName()  <<";"<< std::endl;
-                    break;
-                case OutputLenguajes::JAVA:
-                    ofile <<"\t\treturn "<< s->getName()  <<";"<< std::endl;
-                    break;
-                case OutputLenguajes::PHP:
-                    ofile <<"\t\treturn $this->"<< s->getName()  <<";"<< std::endl;
-                    break;
-                default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
-            }
-        }
-        else if(s->symbolReferenced)
+        if(s->symbolReferenced)
         {
             ofile <<"\t\treturn ";
             switch(configureProject.outputLenguaje)
@@ -256,6 +238,24 @@ namespace octetos::apidb::generators
                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
             }
             ofile << s->getName()  <<";"<< std::endl;
+        }
+        else if(s->outType.compare("std::string") == 0)
+        {
+            
+            switch(configureProject.outputLenguaje)
+            {
+                case OutputLenguajes::CPP:
+                    ofile <<"\t\treturn "<< s->getName()  <<";"<< std::endl;
+                    break;
+                case OutputLenguajes::JAVA:
+                    ofile <<"\t\treturn "<< s->getName()  <<";"<< std::endl;
+                    break;
+                case OutputLenguajes::PHP:
+                    ofile <<"\t\treturn $this->"<< s->getName()  <<";"<< std::endl;
+                    break;
+                default:
+                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+            }
         }
         else 
         {
