@@ -804,7 +804,47 @@ namespace octetos::apidb::generators
             ofile << ";\n";
             //std::cout << "Table : " << table.getName() << " : " << table.getKey().size() << "\n";
             //iniciar llave?
-            if(table.getKey().size() > 0)
+            if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced == NULL and (*(table.getKey().begin()))->outType.compare(integerType()) == 0)
+            {//es llave simple y no tiene campos foraneos?
+                switch(configureProject.outputLenguaje)
+                {
+                    case OutputLenguajes::CPP:
+                        ofile << "\t\tif(connector.insert(sqlString,dt))\n";
+                        break;
+                    case OutputLenguajes::JAVA:
+                        ofile << "\t\tif(connector.insert(sqlString,dt))\n";
+                        break;
+                    case OutputLenguajes::PHP:
+                        ofile << "\t\tif($connector->insert($sqlString,$dt))\n";
+                        break;
+                    default:
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                }
+                ofile << "\t\t{\n";
+                ofile << "\t\t\t";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$this->";
+                ofile << (*(table.getKey().begin()))->name;                
+                switch(configureProject.outputLenguaje)
+                {
+                    case OutputLenguajes::CPP:
+                        ofile << " = connector.last_inserted_id();\n";
+                        break;
+                    case OutputLenguajes::JAVA:
+                        ofile << " = connector.last_inserted_id();\n";
+                        break;
+                    case OutputLenguajes::PHP:
+                        ofile << " = $connector->last_inserted_id();\n";
+                        break;
+                    default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                }
+                ofile << "\t\t\tif(";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$this->";
+                ofile << (*(table.getKey().begin()))->name << " > 0) return true;\n";
+                ofile << "\t\t}\n";
+                ofile << "\t\treturn false;\n";
+            }
+            else if(table.getKey().size() > 0)
             {//es llave compuesta?
                 switch(configureProject.outputLenguaje)
                 {
@@ -853,46 +893,6 @@ namespace octetos::apidb::generators
                     default:
                             throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
                 }                
-                ofile << "\t\treturn false;\n";
-            }
-            else if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced == NULL and (*(table.getKey().begin()))->outType.compare(integerType()) == 0)
-            {//es llave simple y no tiene campos foraneos?
-                switch(configureProject.outputLenguaje)
-                {
-                    case OutputLenguajes::CPP:
-                        ofile << "\t\tif(connector.insert(sqlString,dt))\n";
-                        break;
-                    case OutputLenguajes::JAVA:
-                        ofile << "\t\tif(connector.insert(sqlString,dt))\n";
-                        break;
-                    case OutputLenguajes::PHP:
-                        ofile << "\t\tif($connector->insert($sqlString,$dt))\n";
-                        break;
-                    default:
-                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
-                }
-                ofile << "\t\t{\n";
-                ofile << "\t\t\t";
-                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$this->";
-                ofile << (*(table.getKey().begin()))->name;                
-                switch(configureProject.outputLenguaje)
-                {
-                    case OutputLenguajes::CPP:
-                        ofile << " = connector.last_inserted_id();\n";
-                        break;
-                    case OutputLenguajes::JAVA:
-                        ofile << " = connector.last_inserted_id();\n";
-                        break;
-                    case OutputLenguajes::PHP:
-                        ofile << " = $connector->last_inserted_id();\n";
-                        break;
-                    default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
-                }
-                ofile << "\t\t\tif(";
-                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$this->";
-                ofile << (*(table.getKey().begin()))->name << " > 0) return true;\n";
-                ofile << "\t\t}\n";
                 ofile << "\t\treturn false;\n";
             }
             else if(table.getKey().size() == 1 and (*table.getKey().begin())->symbolReferenced != NULL )
