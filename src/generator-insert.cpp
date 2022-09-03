@@ -683,7 +683,8 @@ namespace octetos::apidb::generators
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:
-                            ofile << " + std::to_string(";
+                            if(k->outType.compare(stringType()) == 0) ofile << " + ";
+                            else ofile << " + std::to_string(";
                             break;
                         case OutputLenguajes::JAVA:
                             ofile << " + ";
@@ -698,8 +699,8 @@ namespace octetos::apidb::generators
                     if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
                     ofile << k->name;                    
                     inheritField(ofile,k->symbolReferenced,opReference());
-                    if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << ")";                                       
                     
+                    if(configureProject.outputLenguaje == OutputLenguajes::CPP and not k->outType.compare(stringType()) == 0) ofile << ")";
                 }
                 else if(k->outType.compare(stringType()) == 0)
                 {
