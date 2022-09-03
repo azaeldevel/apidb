@@ -469,15 +469,15 @@ namespace apidb
                 {
                         return get;
                 }
-                bool Symbol::isPrimaryKey()
+                bool Symbol::isPrimaryKey() const
                 {
                 return isPK;
                 }
-                bool Symbol::isForeignKey()
+                bool Symbol::isForeignKey() const
                 {
                 return isFK;
                 }
-                bool Symbol::isAutoIncrement()
+                bool Symbol::isAutoIncrement() const
                 {
                 return isAutoInc;
                 }

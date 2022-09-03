@@ -248,15 +248,15 @@ namespace apidb
 			/**
             * \brief Indica si el compo es un llave primaria
             * */
-            bool isPrimaryKey();
+            bool isPrimaryKey() const;
 			/**
             * \brief Indica si el compo es un llave foranea
             * */
-            bool isForeignKey();
+            bool isForeignKey() const;
 			/**
             * \brief Indica si el compo es auto incremento
             * */
-            bool isAutoIncrement();
+            bool isAutoIncrement() const;
 			/**
             * \brief Inicializa los valores
             * */

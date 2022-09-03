@@ -630,7 +630,7 @@ namespace generators
             ofile << separator << "get" << k->getUpperName() << "()";
         }
     }
-    symbols::Symbol* Operation::getRootSymbol(symbols::Symbol* k)
+    const symbols::Symbol* Operation::getRootSymbol(const symbols::Symbol* k)
     {
         if(k == NULL) return NULL;
         

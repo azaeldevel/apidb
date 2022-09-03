@@ -42,7 +42,7 @@ namespace octetos::apidb::generators
             if(symbol.second->isAutoIncrement() and symbol.second->isPrimaryKey()) continue;
             else
             {
-                symbols::Symbol* symroot = getRootSymbol(symbol.second);
+                const symbols::Symbol* symroot = getRootSymbol(symbol.second);
                 if(symroot->isAutoIncrement() and symroot->isPrimaryKey()) continue;            
             }
                 
@@ -263,7 +263,7 @@ namespace octetos::apidb::generators
             if(symbol.second->isAutoIncrement() and symbol.second->isPrimaryKey()) continue;
             else
             {
-                symbols::Symbol* symroot = getRootSymbol(symbol.second);
+                const symbols::Symbol* symroot = getRootSymbol(symbol.second);
                 if(symroot->isAutoIncrement() and symroot->isPrimaryKey()) continue;            
             }
                 

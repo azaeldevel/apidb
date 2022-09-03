@@ -439,7 +439,7 @@ void testCompilen()
             std::cout << "Fallo al realizar la compialcion.\n";
             CU_ASSERT(false);
         }
-        cmd  = " cd muposys &&  make  &> /dev/null";
+        cmd  = " cd muposys &&  make  ";
         if(system(cmd.c_str()) < 0)
         {
             std::cout << "Fallo al realizar la compilacion.\n";
@@ -454,7 +454,12 @@ void testCompilen()
 	}
 	//std::cout << "testCompilen Step 3\n";
 }
-
+void developing()
+{
+	
+	
+	
+}
 
 int main(int argc, char *argv[])
 {
@@ -611,6 +616,14 @@ int main(int argc, char *argv[])
 		}
 	}
 	*/
+	if(runTest == 7 or runAll)
+	{
+		if ((NULL == CU_add_test(pSuite, "Compilación de proyecto generado.", developing)))
+		{
+			CU_cleanup_registry();
+			return CU_get_error();
+		}
+	}
 	
 	//std::cout << "Test Step 10\n";
 		

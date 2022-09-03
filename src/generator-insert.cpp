@@ -4,9 +4,153 @@
 
 namespace octetos::apidb::generators
 {
-
+    void Insert::insertCall(std::ofstream& ofile)
+    {
+        if(mode == Mode::CreateParent)
+        {
+            //para cada campo foraneo
+            for(symbols::Symbol* k : table.getRequired())
+            {
+                if(k->isPrimaryKey() && k->isAutoIncrement()) continue;
+                
+                if(k->symbolReferenced != NULL)
+                {
+                    ofile << "\t\t";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                    ofile << "this";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP or configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "->";
+                    if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << ".";
+                    ofile << k->name << " = new " << k->classReferenced->name << "();\n";
+                    ofile << "\t\tif(";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                    ofile << "this";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP or configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "->";
+                    if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << ".";
+                    ofile << k->name;
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "->";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << ".";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "->";
+                            break;
+                        default:
+                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                    ofile << "insert";
+                    if(configureProject.outputLenguaje == OutputLenguajes::PHP)
+                    {
+                        if(mode == Mode::CreateParent)
+                        {
+                            ofile << "Raw";
+                        }
+                        else if(mode == Mode::ReferencedParent)
+                        {
+                            ofile << "Object";
+                        }
+                    }
+                    ofile << "(";
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "connector";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "connector";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "$connector";
+                            break;
+                        default:
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                    if(mode == Mode::CreateParent)
+                    {
+                        for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
+                        {
+                            if(l->symbolReferenced != NULL)
+                            {
+                                for(symbols::Symbol* m : l->symbolReferenced->classParent->getRequired())
+                                {                            
+                                    const symbols::Symbol* rootS = getRootSymbol(m);
+                                    if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                                    
+                                    ofile << ",";
+                                    if(m->symbolReferenced!= NULL)
+                                    {
+                                        insertParamsRaw(ofile,m,l);
+                                    }
+                                    else if(m->outType.compare(stringType()) == 0)
+                                    {
+                                        ofile << k->name << m->upperName;
+                                    }
+                                    else
+                                    {
+                                        ofile << k->name << m->upperName;
+                                    }
+                                }
+                            }
+                            else if(l->outType.compare(stringType()) == 0)
+                            {
+                                const symbols::Symbol* rootS = getRootSymbol(l);
+                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                                
+                                ofile << ",";
+                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
+                                ofile << k->name << l->upperName;
+                            }
+                            else
+                            {
+                                const symbols::Symbol* rootS = getRootSymbol(l);
+                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                                
+                                ofile << ",";                        
+                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
+                                ofile << k->name << l->upperName;
+                            }
+                        }
+                    }
+                    else if(mode == Mode::ReferencedParent)
+                    {
+                        for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
+                        {
+                            if(l->symbolReferenced != NULL)
+                            {
+                                
+                                ofile << ","<< k->name;
+                            }
+                            else if(l->outType.compare(stringType()) == 0)
+                            {
+                                const symbols::Symbol* rootS = getRootSymbol(l);
+                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                                
+                                ofile << ",";
+                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
+                                ofile << k->name << l->upperName;
+                            }
+                            else
+                            {
+                                const symbols::Symbol* rootS = getRootSymbol(l);
+                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                                
+                                ofile << ",";                        
+                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
+                                ofile << k->name << l->upperName;
+                            }
+                        }
+                    }
+                        
+                    ofile << ") == false) return false;\n";
+                }            
+            }
+        }        
+    }
     
-	void Insert::insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
+	void Insert::insertParamsRaw(std::ofstream& ofile,const symbols::Symbol* k,const symbols::Symbol* parent)
     {
         if(k->symbolReferenced != NULL)
         {
@@ -43,7 +187,7 @@ namespace octetos::apidb::generators
             }
         }
     }  
-	void Insert::insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent)
+	void Insert::insertValueRaw(std::ofstream& ofile,const symbols::Symbol* k,const symbols::Symbol* parent)
     {
         if(k->symbolReferenced != NULL)
         {
@@ -74,14 +218,14 @@ namespace octetos::apidb::generators
     bool Insert::definite()
     {
         short countRef = 0;
-        if(mode == Mode::ReferencedParent)
+        /*if(mode == Mode::ReferencedParent)
         {
             for(symbols::Symbol* k : table.getRequired())
             {
                 if(k->symbolReferenced != NULL) countRef++;
             }
             if(countRef == 0) return false;
-        }        
+        }*/        
         
         //inser Raw data
         ofile << "\t\t" << "bool insert(";
@@ -138,17 +282,17 @@ namespace octetos::apidb::generators
         }
         else
         {
-            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
         }
         if(mode == Mode::CreateParent)
         {
-            for(symbols::Symbol* k : table.getRequired())
+            for(const symbols::Symbol* k : table.getRequired())
             {
                 if(k->symbolReferenced != NULL)
                 {
                     for(symbols::Symbol* l : k->classReferenced->getRequired())
                     {
-                        symbols::Symbol* rootS = getRootSymbol(l);
+                        const symbols::Symbol* rootS = getRootSymbol(l);
                         if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
                         
                         if(l->symbolReferenced!= NULL)
@@ -186,6 +330,9 @@ namespace octetos::apidb::generators
         {
             for(symbols::Symbol* k : table.getRequired())
             {
+                //const symbols::Symbol* rootS = getRootSymbol(k);
+                if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
+                        
                 ofile << ",";
                 if(k->symbolReferenced!= NULL)
                 {
@@ -218,14 +365,14 @@ namespace octetos::apidb::generators
     bool Insert::implement()
     {
         short countRef = 0;
-        if(mode == Mode::ReferencedParent)
+        /*if(mode == Mode::ReferencedParent)
         {
-            for(symbols::Symbol* k : table.getRequired())
+            for(const symbols::Symbol* k : table.getRequired())
             {
                 if(k->symbolReferenced != NULL) countRef++;
             }
             if(countRef == 0) return false;
-        }  
+        }  */
         
         auto penultimoReq = --table.getRequired().end();
         // Methodo insert Raw datas
@@ -292,21 +439,22 @@ namespace octetos::apidb::generators
         }
         else
         {
-            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
         }
+        
         if(mode == Mode::CreateParent)
         {
-            for(symbols::Symbol* k : table.getRequired())
+            for(const symbols::Symbol* k : table.getRequired())
             {
                 if(k->symbolReferenced!= NULL)
                 {
-                    for(symbols::Symbol* l : k->classReferenced->getRequired())
+                    for(const symbols::Symbol* l : k->classReferenced->getRequired())
                     {
-                        symbols::Symbol* rootS = getRootSymbol(l);
-                        if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
+                        //const symbols::Symbol* rootS = getRootSymbol(l);
+                        if(l->isPrimaryKey() and l->isAutoIncrement()) continue;
                         
                         if(l->symbolReferenced!= NULL)
-                        {                        
+                        {
                             ofile << ",";
                             insertParamsRaw(ofile,l,k);
                         }
@@ -358,8 +506,11 @@ namespace octetos::apidb::generators
         }
         else if(mode == Mode::ReferencedParent)
         {
-            for(symbols::Symbol* k : table.getRequired())
+            for(const symbols::Symbol* k : table.getRequired())
             {
+                //const symbols::Symbol* rootS = getRootSymbol(k);
+                if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
+                
                 ofile << ",";
                 if(k->symbolReferenced != NULL)
                 {
@@ -403,147 +554,9 @@ namespace octetos::apidb::generators
         
         if(mode == Mode::CreateParent)
         {
-            //para cada campo foraneo
-            for(symbols::Symbol* k : table.getRequired())
-            {
-                if(k->isPrimaryKey() && k->isAutoIncrement()) continue;
-                
-                if(k->symbolReferenced != NULL)
-                {
-                    ofile << "\t\t";
-                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
-                    ofile << "this";
-                    if(configureProject.outputLenguaje == OutputLenguajes::PHP or configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "->";
-                    if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << ".";
-                    ofile << k->name << " = new " << k->classReferenced->name << "();\n";
-                    ofile << "\t\tif(";
-                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
-                    ofile << "this";
-                    if(configureProject.outputLenguaje == OutputLenguajes::PHP or configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "->";
-                    if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << ".";
-                    ofile << k->name;
-                    switch(configureProject.outputLenguaje)
-                    {
-                        case OutputLenguajes::CPP:
-                            ofile << "->";
-                            break;
-                        case OutputLenguajes::JAVA:
-                            ofile << ".";
-                            break;
-                        case OutputLenguajes::PHP:
-                            ofile << "->";
-                            break;
-                        default:
-                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
-                    }
-                    ofile << "insert";
-                    if(configureProject.outputLenguaje == OutputLenguajes::PHP)
-                    {
-                        if(mode == Mode::CreateParent)
-                        {
-                            ofile << "Raw";
-                        }
-                        else if(mode == Mode::ReferencedParent)
-                        {
-                            ofile << "Object";
-                        }
-                    }
-                    ofile << "(";
-                    switch(configureProject.outputLenguaje)
-                    {
-                        case OutputLenguajes::CPP:
-                            ofile << "connector";
-                            break;
-                        case OutputLenguajes::JAVA:
-                            ofile << "connector";
-                            break;
-                        case OutputLenguajes::PHP:
-                            ofile << "$connector";
-                            break;
-                        default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
-                    }
-                    if(mode == Mode::CreateParent)
-                    {
-                        for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
-                        {
-                            if(l->symbolReferenced != NULL)
-                            {
-                                for(symbols::Symbol* m : l->symbolReferenced->classParent->getRequired())
-                                {                            
-                                    symbols::Symbol* rootS = getRootSymbol(m);
-                                    if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
-                                    
-                                    ofile << ",";
-                                    if(m->symbolReferenced!= NULL)
-                                    {
-                                        insertValueRaw(ofile,m,l);
-                                    }
-                                    else if(m->outType.compare(stringType()) == 0)
-                                    {
-                                        ofile << k->name << m->upperName;
-                                    }
-                                    else
-                                    {
-                                        ofile << k->name << m->upperName;
-                                    }
-                                }
-                            }
-                            else if(l->outType.compare(stringType()) == 0)
-                            {
-                                symbols::Symbol* rootS = getRootSymbol(l);
-                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
-                                
-                                ofile << ",";
-                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
-                                ofile << k->name << l->upperName;
-                            }
-                            else
-                            {
-                                symbols::Symbol* rootS = getRootSymbol(l);
-                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
-                                
-                                ofile << ",";                        
-                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
-                                ofile << k->name << l->upperName;
-                            }
-                        }
-                    }
-                    else if(mode == Mode::ReferencedParent)
-                    {
-                        for(symbols::Symbol* l : k->symbolReferenced->classParent->getRequired())
-                        {
-                            if(l->symbolReferenced != NULL)
-                            {
-                                
-                                ofile << ","<< k->name;
-                            }
-                            else if(l->outType.compare(stringType()) == 0)
-                            {
-                                symbols::Symbol* rootS = getRootSymbol(l);
-                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
-                                
-                                ofile << ",";
-                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
-                                ofile << k->name << l->upperName;
-                            }
-                            else
-                            {
-                                symbols::Symbol* rootS = getRootSymbol(l);
-                                if(rootS->isPrimaryKey() and rootS->isAutoIncrement()) continue;
-                                
-                                ofile << ",";                        
-                                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$" ;
-                                ofile << k->name << l->upperName;
-                            }
-                        }
-                    }
-                        
-                    ofile << ") == false) return false;\n";
-                }            
-            }
+            insertCall(ofile);
         }
-                
+        
         ofile << "\t\t";
         switch(configureProject.outputLenguaje)
         {
@@ -589,7 +602,7 @@ namespace octetos::apidb::generators
 		ofile << "\t\t" <<  getsqlString() << " = " << getsqlString() << " " << opConcat() << " \" VALUES(\"";
         if(mode == Mode::CreateParent)
         {
-            for(symbols::Symbol* k : table.getRequired())
+            for(const symbols::Symbol* k : table.getRequired())
             {
                 if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
                 
@@ -661,7 +674,7 @@ namespace octetos::apidb::generators
         }
         else if(mode == Mode::ReferencedParent)
         {
-            for(symbols::Symbol* k : table.getRequired())
+            for(const symbols::Symbol* k : table.getRequired())
             {
                 if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
                 
@@ -785,11 +798,12 @@ namespace octetos::apidb::generators
                     ofile << " = null";
                     break;
                 default:
-                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                        throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
             ofile << ";\n";
+            //std::cout << "Table : " << table.getName() << " : " << table.getKey().size() << "\n";
             //iniciar llave?
-            if(table.getKey().size() > 1)
+            if(table.getKey().size() > 0)
             {//es llave compuesta?
                 switch(configureProject.outputLenguaje)
                 {

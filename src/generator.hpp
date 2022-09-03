@@ -89,7 +89,7 @@ namespace apidb
             const char* identifier(const char*) const;
             void setDefinition(bool);
             void setImplementation(bool);
-            symbols::Symbol* getRootSymbol(symbols::Symbol* k);
+            const symbols::Symbol* getRootSymbol(const symbols::Symbol* k);
             /**
             * @brief genera una llada recursiva para el componete indicado
             * @condition se debe llamar con k->symbolReferenced
@@ -119,16 +119,17 @@ namespace apidb
             enum Mode
             {
                 NoMode,
-                CreateParent,
-                ReferencedParent
+                CreateParent,//crea el objeto al que se refiere
+                ReferencedParent,//recibe como paramtro el objeto al que se refiere
             };
             Insert(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&,Mode mode);
             virtual bool generate();
             
-            void insertParamsRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
-            void insertValueRaw(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
-            void insertParamsObject(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
-            void insertValueObject(std::ofstream& ofile,symbols::Symbol* k,symbols::Symbol* parent);
+            void insertParamsRaw(std::ofstream& ofile,const symbols::Symbol* k,const symbols::Symbol* parent);
+            void insertValueRaw(std::ofstream& ofile,const symbols::Symbol* k,const symbols::Symbol* parent);
+            void insertParamsObject(std::ofstream& ofile,const symbols::Symbol* k,const symbols::Symbol* parent);
+            void insertValueObject(std::ofstream& ofile,const symbols::Symbol* k,const symbols::Symbol* parent);
+            void insertCall(std::ofstream& ofile);
         private:
             //attributes
             Mode mode;

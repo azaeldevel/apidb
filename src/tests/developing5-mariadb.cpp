@@ -38,12 +38,19 @@ int main(int argc, char **argv)
     srand (time(NULL));
 	int random = rand() % 10000 + 1;
     
+    muposys::Entities ente1;
+    if(not ente1.insert(connector))
+    {
+		std::cerr << "Fail on insert ente.\n";
+		return EXIT_FAILURE;
+    }
+    
     muposys::Persons person1;
     std::string n1 = "n1-";
     n1 += std::to_string(random);
     std::string country = "MEX";
     //ap += std::to_string(random);
-    if(person1.insert(connector,n1))
+    if(person1.insert(connector,ente1,n1))
     {
 		if(verbose)   std::cout << "Inserted "<< n1 << " " << country << " de Mexico." << std::endl;
 	}
@@ -81,6 +88,8 @@ int main(int argc, char **argv)
         }
     }
     delete lst;	
+    
+    
 	
 	connector.close();
 	

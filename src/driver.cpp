@@ -204,7 +204,7 @@ namespace apidb
         //std::cout << "Driver::driving : Step 2\n";
 		if(analyze(progress))
 		{
-			std::cout << "Driver::analizer\n";
+			//std::cout << "Driver::analizer\n";
 			if(generate(progress))
 			{
 				//std::cout << "Driver::Generated done\n";

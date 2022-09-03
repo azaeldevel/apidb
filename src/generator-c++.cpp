@@ -181,9 +181,9 @@ namespace generators
     }
     void CPP::writeInsertCPP(const apidb::symbols::Table& table,std::ofstream& ofile)	
 	{        
-        Insert insert(configureProject,table,ofile,Insert::Mode::CreateParent);
+        /*Insert insert(configureProject,table,ofile,Insert::Mode::CreateParent);
         insert.setImplementation(true);
-        insert.generate();
+        insert.generate();*/
         Insert insert2(configureProject,table,ofile,Insert::Mode::ReferencedParent);
         insert2.setImplementation(true);
         insert2.generate();
@@ -452,9 +452,9 @@ namespace generators
         */
     void CPP::writeInsertH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
-        Insert insert(configureProject,table,ofile,Insert::Mode::CreateParent);
+        /*Insert insert(configureProject,table,ofile,Insert::Mode::CreateParent);
         insert.setDefinition(true);
-        insert.generate();
+        insert.generate();*/
         Insert insertObj(configureProject,table,ofile,Insert::Mode::ReferencedParent);
         insertObj.setDefinition(true);
         insertObj.generate();
