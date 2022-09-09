@@ -89,7 +89,7 @@ int main(int argc, char **argv)
     }
     delete lst;	
     
-    
+    std::vector<muposys::Users*>* lstUsers = muposys::Users::select(connector,"person > 0",5,'D');
 	
 	connector.close();
 	

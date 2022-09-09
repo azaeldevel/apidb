@@ -179,18 +179,18 @@ namespace octetos::apidb::generators
         }
         if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
 		{
-			ofile << " FROM \\\"" << table.getName() << "\\\" WHERE \";"<< std::endl;
+			ofile << " FROM \\\"" << table.getName() << " \";"<< std::endl;
 		}
 		else
 		{
-			ofile << " FROM " << table.getName() << " WHERE \";"<< std::endl;
+			ofile << " FROM " << table.getName() << " \";"<< std::endl;
 		}
-		ofile << "\t\t" << getsqlString();
+		ofile << "\t\t if(not where.empty())" << getsqlString();
         if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << " .";
         if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << " +";
         ofile<< "= ";        
         if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
-        ofile << "where;\n";
+        ofile << " + \" WHERE \" + where;\n";
         
         if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << "\t\tif(order == 'a' || order == 'A')\n";
         if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "\t\tif(strcmp($order,\"A\") == 0)\n";
