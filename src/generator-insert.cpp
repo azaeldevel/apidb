@@ -697,8 +697,18 @@ namespace octetos::apidb::generators
                     }
                         
                     if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
-                    ofile << k->name;                    
-                    inheritField(ofile,k->symbolReferenced,opReference());
+                     
+                    if(k->outType.compare(stringType()) == 0)
+                    {
+                        ofile << "\"'\" + " << k->name; 
+                        inheritField(ofile,k->symbolReferenced,opReference());
+                        ofile << " + \"'\""; 
+                    }
+                    else
+                    {
+                        ofile << k->name; 
+                        inheritField(ofile,k->symbolReferenced,opReference());
+                    }
                     
                     if(configureProject.outputLenguaje == OutputLenguajes::CPP and not k->outType.compare(stringType()) == 0) ofile << ")";
                 }

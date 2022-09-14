@@ -2,6 +2,9 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
+#include <random>
+#include <climits>
+
 
 int main(int argc, char **argv)
 {	
@@ -91,6 +94,28 @@ int main(int argc, char **argv)
     
     std::vector<muposys::Users*>* lstUsers = muposys::Users::select(connector,"person > 0",5,'D');
 	
+    
+	std::random_device generator;
+  	std::uniform_int_distribution<int> randInt(1,INT_MAX);
+    
+    muposys::Permissions permss;
+    int randNumber = randInt(generator);
+    std::string name_perss = "permss-" + std::to_string (randNumber);
+    std::string brief_perss = "biref-" + std::to_string (randNumber);
+    if(not permss.insert(connector,name_perss,brief_perss))
+    {
+        std::cout << "Insert fail permission.\n";
+    }
+
+    muposys::Users root(1);
+    muposys::User_Permission usr_permss;
+	if(not usr_permss.insert(connector,1,permss))
+    {
+        std::cout << "Insert fail user - permission.\n";
+    }
+    
+    
+    connector.commit();
 	connector.close();
 	
 	return EXIT_SUCCESS;

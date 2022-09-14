@@ -13,6 +13,7 @@
 #include "../apidb.hpp"
 #include "../Errors.hpp"
 #include "../common.hpp"
+#include <limits.h>
 
 #ifdef APIDB_MYSQL
     #include <octetos/db/clientdb-mysql.hh>
