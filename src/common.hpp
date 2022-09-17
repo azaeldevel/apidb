@@ -214,29 +214,30 @@ namespace apidb
             * */
 			bool required;
 			/**
-            * \brief Tipo de llave
+            *\brief Tipo de llave
             * */
             KeyType keyType;
 			/**
-            * \brief Puntero hacia la tabla referido por el campo en el caso de llaves foraneas.
+            *\brief Puntero hacia la tabla referido por el campo en el caso de llaves foraneas.
             * */
             Table* classReferenced;
 			/**
-            * \brief Clase contenedora del campo.
+            *\brief Clase contenedora del campo.
             * */
             Table* classParent;
 			/**
-            * \brief Tipo de dato en el lenguaje resultado
+            *\brief Tipo de dato en el lenguaje resultado
             * */
             std::string outType;
 			/**
-            * \brief Puntero al campo referido en el caso de campo foraneos.
+            *\brief Puntero al campo referido en el caso de campo foraneos.
             * */
             Symbol* symbolReferenced;
-            /**
-             * 
-             **/
             
+			/**
+            *\brief optiene el ordinal del campo.
+            * */
+            unsigned short ordinal;
 
 			static int counter;
 			int id;

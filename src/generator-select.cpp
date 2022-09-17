@@ -352,6 +352,7 @@ namespace octetos::apidb::generators
             ofile << "tmp = new " << table.getName() << "(";
         }
         
+        
         auto endK2 = table.getKey().end();
         endK2--;
         int count2 = 0;
@@ -364,7 +365,7 @@ namespace octetos::apidb::generators
                 ofile << "dt";
                 if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << ".";
                 if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "->";
-                ofile << "getString(\"" << k->name << "\")";
+                ofile << "getString(" << k->ordinal << ")";
             }
             else if(k->getOutType().compare(integerType()) == 0)
             {

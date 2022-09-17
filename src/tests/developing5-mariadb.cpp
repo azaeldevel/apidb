@@ -98,6 +98,25 @@ int main(int argc, char **argv)
 	std::random_device generator;
   	std::uniform_int_distribution<int> randInt(1,INT_MAX);
     
+    std::vector<muposys::Permissions*>* permsslst = muposys::Permissions::select(connector,"",5,'D');
+    if(permsslst != NULL)
+    {
+        for(auto p : *permsslst)
+        {
+            if(p->downBrief(connector) and verbose)
+            {
+                if(verbose)  std::cout << p->getName() << " " << p->getBrief() << std::endl;
+            }
+        }
+        for(auto p : *permsslst)
+        {
+            delete p;
+        }
+    }
+    delete permsslst;
+    
+    
+    
     muposys::Permissions permss;
     int randNumber = randInt(generator);
     std::string name_perss = "permss-" + std::to_string (randNumber);

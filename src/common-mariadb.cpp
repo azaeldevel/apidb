@@ -165,6 +165,7 @@ namespace apidb
 			//MYSQL_RES *result = mysql_store_result((MYSQL*)connect.getServerConnector());
 			MYSQL_ROW row;
 			bool setkey = false;
+			unsigned short ordinal = 0;
 			while ((row = mysql_fetch_row((MYSQL_RES*)(dt.getResult()))))
 			{
 				Symbol* attrribute = new Symbol();
@@ -230,6 +231,8 @@ namespace apidb
                 {
                     attrribute->isAutoInc = false;
                 }
+                
+                attrribute->ordinal = ordinal++;
                 
                 
                 
