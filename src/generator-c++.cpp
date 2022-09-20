@@ -230,7 +230,14 @@ namespace generators
         //for (auto const& [key, attr] : table)
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
 		{
-			ofile << "\t\tthis->"<< it->second->getName()  << " = obj." << it->second->getName() <<";"<<std::endl;
+            if(it->second->symbolReferenced)
+            {
+                ofile << "\t\tthis->"<< it->second->getName()  << " = new " << it->second->classReferenced->name << "(*obj." << it->second->getName() <<");"<<std::endl;
+            }
+            else
+            {
+                ofile << "\t\tthis->"<< it->second->getName()  << " = obj." << it->second->getName() <<";"<<std::endl;
+            }
 		}
 		ofile << "\t}"<<std::endl;
 	}

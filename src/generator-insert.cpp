@@ -867,7 +867,64 @@ namespace octetos::apidb::generators
                         }
                         else if(mode == Mode::ReferencedParent)
                         {
-                            echoCopyParams();
+                            for(symbols::Symbol* k : table.getKey())
+                            {
+                                if(k->symbolReferenced != NULL)
+                                {
+                                    ofile << "\t\t\t";
+                                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                                    ofile << "this";
+                                    switch(configureProject.outputLenguaje)
+                                    {
+                                        case OutputLenguajes::CPP:
+                                            ofile << "->";
+                                            break;
+                                        case OutputLenguajes::JAVA:
+                                            ofile << ".";
+                                            break;
+                                        case OutputLenguajes::PHP:
+                                            ofile << "->";
+                                            break;
+                                        default:
+                                                throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                                    }
+                                    ofile << k->name << " = new " << k->classReferenced->name;
+                                    if(configureProject.outputLenguaje == OutputLenguajes::PHP)
+                                    {
+                                        ofile << "();\n";
+                                        ofile << "\t\t\t$this->" << k->name << "->copy($" << k->name <<");\n"; 
+                                    }
+                                    else
+                                    {
+                                        ofile << "(";
+                                        ofile << k->name;
+                                        ofile <<");\n";
+                                    }
+                                }
+                                else
+                                {
+                                    ofile << "\t\t\t";
+                                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                                    ofile << "this";
+                                    switch(configureProject.outputLenguaje)
+                                    {
+                                        case OutputLenguajes::CPP:
+                                            ofile << "->";
+                                            break;
+                                        case OutputLenguajes::JAVA:
+                                            ofile << ".";
+                                            break;
+                                        case OutputLenguajes::PHP:
+                                            ofile << "->";
+                                            break;
+                                        default:
+                                                throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                                    }
+                                    ofile << k->name << " = ";
+                                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                                    ofile << k->name << ";\n";
+                                }
+                            }
                         }                        
                         ofile << "\t\t\treturn true;\n";
                         ofile << "\t\t}\n";

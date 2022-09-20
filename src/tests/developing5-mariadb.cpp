@@ -115,23 +115,33 @@ int main(int argc, char **argv)
     }
     delete permsslst;
     
-    
-    
     muposys::Permissions permss;
     int randNumber = randInt(generator);
-    std::string name_perss = "permss-" + std::to_string (randNumber);
-    std::string brief_perss = "biref-" + std::to_string (randNumber);
-    if(not permss.insert(connector,name_perss,brief_perss))
-    {
-        std::cout << "Insert fail permission.\n";
-    }
-
-    muposys::Users root(1);
-    muposys::User_Permission usr_permss;
-	if(not usr_permss.insert(connector,1,permss))
-    {
-        std::cout << "Insert fail user - permission.\n";
-    }
+    std::string name_perss = "permss-" + std::to_string(randNumber);
+    std::string brief_perss = "Prueba de muposys " + std::to_string(randNumber);
+    (permss.insert(connector,name_perss,brief_perss));
+		
+		randNumber = randInt(generator);
+		muposys::Entities ente;
+		ente.insert(connector);
+		
+		muposys::Persons person;
+		std::string name_person = "person-" + std::to_string(randNumber);
+        
+		(person.insert(connector,ente,name_person));
+		name_person = "ap-" + std::to_string(randNumber);
+		(person.upName3(connector,name_person));
+		
+		muposys::Users user;
+		randNumber = randInt(generator);
+		std::cout << "Person : " << person.getEnte().getID() << "\n";
+		std::string name_user = "user-" + std::to_string(randNumber);
+		(user.insert(connector,person,name_user));
+		
+		muposys::User_Permission usr_permss;
+		(usr_permss.insert(connector,user.getPerson().getEnte().getID(),permss));
+    
+    
     
     
     connector.commit();
