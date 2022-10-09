@@ -502,7 +502,9 @@ namespace octetos::apidb::generators
 				}
                 itParamEnd = params->end();
                 --itParamEnd;
-                for(const std::string& param : *params)
+                ofile << "\t\tsqlString = sqlString + ";
+                echoKeyRawParam();
+                /*for(const std::string& param : *params)
                 {
                     auto fl = table.find(param.c_str());
                     if(fl != table.end())
@@ -510,7 +512,7 @@ namespace octetos::apidb::generators
                         if((*fl).second->getClassReferenced() != NULL && (*fl).second->getOutType().compare("int") == 0)
                         {
                             //ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + std::to_string(" << (*fl).second->getName() << ") + \"'\"";
-                            ofile << "\t\tsqlString = sqlString + ";
+                            //ofile << "\t\tsqlString = sqlString + ";
                             echoKeyRawParam();
                         }
                         else if((*fl).second->getOutType().compare("int") == 0)
@@ -538,7 +540,7 @@ namespace octetos::apidb::generators
                     {
                         ofile << " + \" and \";"<< std::endl;
                     }
-                }
+                }*/
                 ofile << ";" << std::endl;
                 ofile << "\t\tif(leng > 0)"  << std::endl;
                 ofile << "\t\t{"  << std::endl;
@@ -802,7 +804,7 @@ namespace octetos::apidb::generators
                     ofile << " . ";
                     break;
                 default:
-                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
             ofile << "\" WHERE \"";
             switch(configureProject.outputLenguaje)
@@ -817,8 +819,9 @@ namespace octetos::apidb::generators
                     ofile << " . ";
                     break;
                 default:
-                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
+            //ofile << "\t\tsqlString = sqlString + ";
             echoKeyRawParam();
         }
 		ofile << ";\n";

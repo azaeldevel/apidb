@@ -125,7 +125,8 @@ namespace octetos::apidb::generators
 					ofile << " FROM " << table.getName() << " WHERE \";\n" ;
 				}
 				
-				auto kEnd = table.getKey().end();
+				/*
+                auto kEnd = table.getKey().end();
                 kEnd--;
                 for(auto k : table.getKey())
                 {
@@ -157,6 +158,10 @@ namespace octetos::apidb::generators
                         ofile << " + \" and \" ";
                     }          
                 }
+                */
+                ofile << "\t\tsqlString = sqlString + ";
+                echoKeyRawParam();
+                ofile << ";\n";
                 
                 if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
                 {        

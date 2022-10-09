@@ -105,6 +105,7 @@ namespace apidb
             void echoCopyParams()const;
             void echoCopyParamsRaw()const;
             void echoCopyParamsJava()const;
+            bool echoKeyCopy()const;
         protected:
             const ConfigureProject& configureProject;
             const apidb::symbols::Table& table;
@@ -138,7 +139,7 @@ namespace apidb
             bool definite();
             bool implement();
         };
-
+        
         class Select : public Operation
         {          
         public:

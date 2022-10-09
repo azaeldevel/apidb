@@ -679,7 +679,7 @@ namespace octetos::apidb::generators
                 if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
                 
                 if(k->symbolReferenced != NULL)
-                {    
+                {
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:
@@ -724,7 +724,7 @@ namespace octetos::apidb::generators
                     ofile << "\"'\"";
                 }
                 else
-                {                
+                {
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:
@@ -751,7 +751,7 @@ namespace octetos::apidb::generators
         
         //ofile << "\t\tstd::cout << sqlString << std::endl;\n";
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
-        {        
+        {
             ofile << "\t\toctetos::db::mysql::Datresult dt;" << std::endl;
             //iniciar llave?
             if(table.getKey().size() > 1)
@@ -794,7 +794,7 @@ namespace octetos::apidb::generators
                     ofile << "$";
                     break;
                 default:
-                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                        throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
             ofile << "dt";
              switch(configureProject.outputLenguaje)
@@ -867,7 +867,7 @@ namespace octetos::apidb::generators
                         }
                         else if(mode == Mode::ReferencedParent)
                         {
-                            for(symbols::Symbol* k : table.getKey())
+                            for(const symbols::Symbol* k : table.getKey())
                             {
                                 if(k->symbolReferenced != NULL)
                                 {
@@ -888,7 +888,7 @@ namespace octetos::apidb::generators
                                         default:
                                                 throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                                     }
-                                    ofile << k->name << " = new " << k->classReferenced->name;
+                                    ofile << k->symbolReferenced->name << " = new " << k->classReferenced->name;
                                     if(configureProject.outputLenguaje == OutputLenguajes::PHP)
                                     {
                                         ofile << "();\n";
@@ -896,9 +896,22 @@ namespace octetos::apidb::generators
                                     }
                                     else
                                     {
-                                        ofile << "(";
-                                        ofile << k->name;
-                                        ofile <<");\n";
+                                        if( k->classReferenced->required.size() > 0)
+                                        {
+                                            ofile << "(";
+                                            const std::list<symbols::Symbol*>::const_iterator& itE = --(k->classReferenced->required.end());
+                                            for(const symbols::Symbol* itR : k->classReferenced->required)
+                                            {
+                                                /*ofile << (*itR).name;
+                                                if(itR != (*itE) ) ofile << ",";*/
+                                                echoKeyCopy();
+                                            }
+                                            ofile <<");\n";
+                                        }
+                                        else
+                                        {
+                                            ofile << k->name;
+                                        }
                                     }
                                 }
                                 else

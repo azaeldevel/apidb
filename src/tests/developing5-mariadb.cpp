@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 	std::random_device generator;
   	std::uniform_int_distribution<int> randInt(1,INT_MAX);
     
-    std::vector<muposys::Permissions*>* permsslst = muposys::Permissions::select(connector,"",5,'D');
+    std::vector<muposys::Permissions*>* permsslst = muposys::Permissions::select(connector,"",0);
     if(permsslst != NULL)
     {
         for(auto p : *permsslst)

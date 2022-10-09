@@ -283,7 +283,7 @@ namespace generators
                             inheritField(ofile,k->symbolReferenced,opReference());
                             break;
                         default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     }
                 }
                 else if(k->getOutType().compare(stringType()) == 0)
@@ -300,7 +300,7 @@ namespace generators
                             ofile << "\" . \"'\" . $this->" << k->name << " . \"'\"";
                             break;
                         default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     } 
                 }
             }
@@ -320,7 +320,7 @@ namespace generators
                             ofile << "\" . $" << k->name;
                             break;
                         default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     }
                 }
                 else if(k->getOutType().compare(stringType()) == 0)           
@@ -337,7 +337,7 @@ namespace generators
                             ofile << "\" . \"'\" . $this->" << k->name << " . \"'\"";
                             break;
                         default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     } 
                 }
             }
@@ -346,16 +346,16 @@ namespace generators
                 switch(configureProject.outputLenguaje)
                 {
                     case OutputLenguajes::CPP:
-                        ofile << " + \" and \" + ";
+                        ofile << " + \" and  \" + ";
                         break;
                     case OutputLenguajes::JAVA:
-                        ofile << " + \" and \" + ";
+                        ofile << " + \" and  \" + ";
                         break;
                     case OutputLenguajes::PHP:
                         ofile << " . \" and \" . ";
                         break;
                     default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                 }
             }
         }
@@ -478,6 +478,116 @@ namespace generators
                 {
                     case OutputLenguajes::CPP:
                         ofile << " + \" and \" + ";
+                        break;
+                    case OutputLenguajes::JAVA:
+                        ofile << " + \" and \" + ";
+                        break;
+                    case OutputLenguajes::PHP:
+                        ofile << " . \" and \" . ";
+                        break;
+                    default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                }
+            }
+        }
+        
+        return true;
+    }
+    bool Operation::echoKeyCopy()const
+    {
+        const symbols::Key& key = table.getKey();
+        std::vector<symbols::Symbol*>::const_iterator itend = key.end();
+        itend--;
+        symbols::Symbol* endK = *itend;
+        for(std::vector<symbols::Symbol*>::const_iterator it = key.begin(); it < key.end(); it++)
+        {
+            symbols::Symbol* k = *it;
+            ofile << k->name ;
+            if(k->symbolReferenced != NULL)
+            {
+                if(k->getOutType().compare(stringType()) == 0)
+                {
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << k->name;
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "\" . \"'\" . $this->" << k->name << " . \"'\"";
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    } 
+                }
+                else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0  or k->getOutType().compare(integerType()) == 0 )
+                {
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:                           
+                            inheritField(ofile,k->symbolReferenced,opReference());
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "\" + ";
+                            ofile << k->name;
+                            inheritField(ofile,k->symbolReferenced,opReference());
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "\" . $this->";
+                            ofile << k->name;
+                            inheritField(ofile,k->symbolReferenced,opReference());
+                            break;
+                        default:
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                }
+            }
+            else
+            {
+                if(k->getOutType().compare(stringType()) == 0)
+                {
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "\" . \"'\" . $this->" << k->name << " . \"'\"";
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    } 
+                }
+                else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0 or k->getOutType().compare(integerType()) == 0)
+                {
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "\" + std::to_string(" << k->name << ")";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "\" + " << k->name;
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "\" . $this->" << k->name;
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                }
+            }
+            
+            if(it < itend) 
+            {
+                switch(configureProject.outputLenguaje)
+                {
+                    case OutputLenguajes::CPP:
+                        ofile << ",";
                         break;
                     case OutputLenguajes::JAVA:
                         ofile << " + \" and \" + ";
