@@ -29,7 +29,7 @@ namespace octetos::apidb::generators
             throw BuildException(msg,__FILE__,__LINE__);
         }
         
-        const ConfigureProject::Table* tb = configureProject.findSelectTable(table.getName());
+        /*const ConfigureProject::Table* tb = configureProject.findSelectTable(table.getName());
         if(tb != NULL) 
         {
             //std::cout << "Se encontro la tabla '" << table.getName() << std::endl;
@@ -52,7 +52,7 @@ namespace octetos::apidb::generators
                     std::string msg = "Lenguaje no soportado " ;
                     throw BuildException(msg);
                 }
-                                
+                
                 //std::cout << "Generando codigo para  : " << itT->second->getName() << std::endl;
                 const apidb::ConfigureProject::Parameters* params = itT->second->getParameters();                                
                 apidb::ConfigureProject::Parameters::const_iterator itParamEnd = params->end();
@@ -83,7 +83,7 @@ namespace octetos::apidb::generators
                 }
                 ofile << ", int leng = 0);"<<std::endl;                                
             }
-        }
+        }*/
         return true;
     }
     
@@ -104,7 +104,7 @@ namespace octetos::apidb::generators
                     ofile << "\tpublic static function select($connector,$where,$leng = -1)"<<std::endl;
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
@@ -121,7 +121,7 @@ namespace octetos::apidb::generators
                     ofile << "\tpublic static function select($connector,$where,$leng = -1, $order = \"\")"<<std::endl;
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
@@ -418,7 +418,7 @@ namespace octetos::apidb::generators
         
         //select from config
         //std::vector<apidb::ConfigureProject::Table> tbs = configureProject.selects;
-        for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT =  configureProject.selects.begin(); itT != configureProject.selects.end(); itT++)//std::vector<Table>
+        /*for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT =  configureProject.selects.begin(); itT != configureProject.selects.end(); itT++)//std::vector<Table>
         {
             if(table.getName().compare(itT->second->getName()) != 0) 
             {
@@ -504,43 +504,7 @@ namespace octetos::apidb::generators
                 --itParamEnd;
                 ofile << "\t\tsqlString = sqlString + ";
                 echoKeyRawParam();
-                /*for(const std::string& param : *params)
-                {
-                    auto fl = table.find(param.c_str());
-                    if(fl != table.end())
-                    {
-                        if((*fl).second->getClassReferenced() != NULL && (*fl).second->getOutType().compare("int") == 0)
-                        {
-                            //ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + std::to_string(" << (*fl).second->getName() << ") + \"'\"";
-                            //ofile << "\t\tsqlString = sqlString + ";
-                            echoKeyRawParam();
-                        }
-                        else if((*fl).second->getOutType().compare("int") == 0)
-                        {
-                            ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + std::to_string(" << (*fl).second->getName() << ") + \"'\"";
-                        }
-                        else if((*fl).second->getOutType().compare("std::string") == 0)
-                        {
-                            ofile << "\t\tsqlString = sqlString + \"" << param << " = \" + \"'\" + " << (*fl).second->getName() << " + \"'\"";
-                        }
-                        else
-                        {
-                            std::string strmsg = "No se encontro el campo ";
-                            strmsg = strmsg + "'" + (*fl).second->getName() + "' en la tabla '" + table.getName() + "'" + "File : generator-c++";
-                            throw BuildException(strmsg);                                
-                        }
-                    }
-                    else
-                    {
-                        std::string strmsg = "No se encontro el campo ";
-                        strmsg = strmsg + "'" + param + "' en la tabla '" + table.getName() + "'";
-                        throw BuildException(strmsg);
-                    }
-                    if(param != *itParamEnd)
-                    {
-                        ofile << " + \" and \";"<< std::endl;
-                    }
-                }*/
+                
                 ofile << ";" << std::endl;
                 ofile << "\t\tif(leng > 0)"  << std::endl;
                 ofile << "\t\t{"  << std::endl;
@@ -605,7 +569,7 @@ namespace octetos::apidb::generators
                 ofile << "\t\t}" << std::endl;
                 ofile << "\t}"<<std::endl;
             }
-        }
+        }*/
         return true;
     }
     bool Select::definite_rawdata()

@@ -34,6 +34,7 @@ namespace octetos::apidb::generators
                     std::string msg = "Lenguaje no soportado " ;
                     throw BuildException(msg);
                 }
+                
                 if(it->second->getClassReferenced() != 0)
                 {
                     ofile << " const " << it->second->getClassReferenced()->getName() << "& " << it->second->getName();

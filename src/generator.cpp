@@ -513,7 +513,7 @@ namespace generators
                             ofile << k->name;
                             break;
                         case OutputLenguajes::JAVA:
-                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            ofile << k->name;
                             break;
                         case OutputLenguajes::PHP:
                             ofile << "\" . \"'\" . $this->" << k->name << " . \"'\"";
@@ -527,7 +527,7 @@ namespace generators
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:                           
-                            inheritField(ofile,k->symbolReferenced,opReference());
+                            //inheritField(ofile,k->symbolReferenced,opReference());
                             break;
                         case OutputLenguajes::JAVA:
                             ofile << "\" + ";
@@ -551,7 +551,7 @@ namespace generators
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:
-                            ofile << "\" + \"'\" + " << k->name << " + \"'\"";
+                            ofile << k->name;
                             break;
                         case OutputLenguajes::JAVA:
                             ofile << "\" + \"'\" + " << k->name << " + \"'\"";
@@ -568,7 +568,7 @@ namespace generators
                     switch(configureProject.outputLenguaje)
                     {
                         case OutputLenguajes::CPP:
-                            ofile << "\" + std::to_string(" << k->name << ")";
+                            ofile <<k->name;
                             break;
                         case OutputLenguajes::JAVA:
                             ofile << "\" + " << k->name;

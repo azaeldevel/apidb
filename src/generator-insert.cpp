@@ -328,10 +328,10 @@ namespace octetos::apidb::generators
         }
         else if(mode == Mode::ReferencedParent)
         {
-            for(symbols::Symbol* k : table.getRequired())
+            for(symbols::Symbol* k : table.key)
             {
                 //const symbols::Symbol* rootS = getRootSymbol(k);
-                if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
+                //if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
                         
                 ofile << ",";
                 if(k->symbolReferenced!= NULL)
@@ -506,10 +506,10 @@ namespace octetos::apidb::generators
         }
         else if(mode == Mode::ReferencedParent)
         {
-            for(const symbols::Symbol* k : table.getRequired())
+            for(const symbols::Symbol* k : table.key)
             {
                 //const symbols::Symbol* rootS = getRootSymbol(k);
-                if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
+                //if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
                 
                 ofile << ",";
                 if(k->symbolReferenced != NULL)
@@ -674,9 +674,9 @@ namespace octetos::apidb::generators
         }
         else if(mode == Mode::ReferencedParent)
         {
-            for(const symbols::Symbol* k : table.getRequired())
+            for(const symbols::Symbol* k : table.key)
             {
-                if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
+                //if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
                 
                 if(k->symbolReferenced != NULL)
                 {
@@ -871,33 +871,10 @@ namespace octetos::apidb::generators
                             {
                                 if(k->symbolReferenced != NULL)
                                 {
-                                    ofile << "\t\t\t";
-                                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
-                                    ofile << "this";
-                                    switch(configureProject.outputLenguaje)
+                                    ofile << "\t\t\tthis->";
+                                    ofile << k->name << " = new " << k->classReferenced->name;
+                                    if( k->classReferenced->required.size() > 0)
                                     {
-                                        case OutputLenguajes::CPP:
-                                            ofile << "->";
-                                            break;
-                                        case OutputLenguajes::JAVA:
-                                            ofile << ".";
-                                            break;
-                                        case OutputLenguajes::PHP:
-                                            ofile << "->";
-                                            break;
-                                        default:
-                                                throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
-                                    }
-                                    ofile << k->symbolReferenced->name << " = new " << k->classReferenced->name;
-                                    if(configureProject.outputLenguaje == OutputLenguajes::PHP)
-                                    {
-                                        ofile << "();\n";
-                                        ofile << "\t\t\t$this->" << k->name << "->copy($" << k->name <<");\n"; 
-                                    }
-                                    else
-                                    {
-                                        if( k->classReferenced->required.size() > 0)
-                                        {
                                             ofile << "(";
                                             const std::list<symbols::Symbol*>::const_iterator& itE = --(k->classReferenced->required.end());
                                             for(const symbols::Symbol* itR : k->classReferenced->required)
@@ -907,34 +884,17 @@ namespace octetos::apidb::generators
                                                 echoKeyCopy();
                                             }
                                             ofile <<");\n";
-                                        }
-                                        else
-                                        {
+                                    }
+                                    else
+                                    {
                                             ofile << k->name;
-                                        }
                                     }
                                 }
                                 else
                                 {
                                     ofile << "\t\t\t";
-                                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
-                                    ofile << "this";
-                                    switch(configureProject.outputLenguaje)
-                                    {
-                                        case OutputLenguajes::CPP:
-                                            ofile << "->";
-                                            break;
-                                        case OutputLenguajes::JAVA:
-                                            ofile << ".";
-                                            break;
-                                        case OutputLenguajes::PHP:
-                                            ofile << "->";
-                                            break;
-                                        default:
-                                                throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
-                                    }
+                                    ofile << "this->";
                                     ofile << k->name << " = ";
-                                    if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
                                     ofile << k->name << ";\n";
                                 }
                             }
