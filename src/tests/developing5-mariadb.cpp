@@ -118,8 +118,7 @@ int main(int argc, char **argv)
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
-    }
-    
+    }    
     if(not permss.insert(connector,ente2,name_perss,brief_perss))
     {
 		std::cerr << "Fail on insert permision.\n";
@@ -150,22 +149,34 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
     }		
     
+    muposys::Entities ente_user;
+    if(not ente_user.insert(connector))
+    {
+		std::cerr << "Fail on insert ente.\n";
+		return EXIT_FAILURE;
+    }
     muposys::Users user;
     randNumber = randInt(generator);
     std::cout << "Person : " << person.getEnte().getID() << "\n";
     std::string name_user = "user-" + std::to_string(randNumber);
-    if(not user.insert(connector,person,name_user))
+    if(not user.insert(connector,ente_user,person,name_user))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;        
     }
-		
-    /*muposys::User_Permission usr_permss;
-    if(not usr_permss.insert(connector,user,permss))
+    		
+    muposys::Entities ente_up;
+    if(not ente_up.insert(connector))
+    {
+		std::cerr << "Fail on insert ente.\n";
+		return EXIT_FAILURE;
+    }
+    muposys::User_Permission usr_permss;
+    if(not usr_permss.insert(connector,ente_up,user,permss))
     {
 		std::cerr << "Fail on insert person.\n";
 		return EXIT_FAILURE;
-    }*/
+    }
     
     connector.commit();
 	connector.close();

@@ -671,9 +671,8 @@ namespace octetos::apidb::generators
         }
         else if(mode == Mode::ReferencedParent)
         {
-            std::list<symbols::Symbol*>::const_iterator itE = table.required.end();
-            itE--;
-            //itE--;
+            const std::list<symbols::Symbol*>::const_iterator itE = --table.required.end();
+            const symbols::Symbol* pEnd = *itE;
             for(const symbols::Symbol* k : table.required)
             {
                 if(k->isPK and not k->symbolReferenced) continue;
@@ -741,7 +740,7 @@ namespace octetos::apidb::generators
                     }
                 }
                 
-                if((*itE) != k)
+                if( pEnd != k)
                 {
                     ofile << " " << opConcat() << "  \",\" ";
                 }
