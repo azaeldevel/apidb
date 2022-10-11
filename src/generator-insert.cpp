@@ -143,7 +143,7 @@ namespace octetos::apidb::generators
                             }
                         }
                     }
-                        
+                    
                     ofile << ") == false) return false;\n";
                 }            
             }
@@ -243,7 +243,7 @@ namespace octetos::apidb::generators
                     ofile << "$connector";
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
@@ -260,7 +260,7 @@ namespace octetos::apidb::generators
                     ofile << "$connector";
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
@@ -277,7 +277,7 @@ namespace octetos::apidb::generators
                     ofile << "$connector";
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else
@@ -328,11 +328,10 @@ namespace octetos::apidb::generators
         }
         else if(mode == Mode::ReferencedParent)
         {
-            for(symbols::Symbol* k : table.key)
+            for(const symbols::Symbol* k : table.required)
             {
-                //const symbols::Symbol* rootS = getRootSymbol(k);
-                //if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
-                        
+                if(k->isPK and not k->symbolReferenced) continue;
+                
                 ofile << ",";
                 if(k->symbolReferenced!= NULL)
                 {
@@ -347,7 +346,6 @@ namespace octetos::apidb::generators
                 }
                 else if(k->outType.compare(integerType()) == 0)
                 {
-                    
                     if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << integerType();
                     ofile << " " << k->name;
                 }
@@ -506,10 +504,9 @@ namespace octetos::apidb::generators
         }
         else if(mode == Mode::ReferencedParent)
         {
-            for(const symbols::Symbol* k : table.key)
+            for(const symbols::Symbol* k : table.required)
             {
-                //const symbols::Symbol* rootS = getRootSymbol(k);
-                //if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
+                if(k->isPK and not k->symbolReferenced) continue;
                 
                 ofile << ",";
                 if(k->symbolReferenced != NULL)
@@ -674,9 +671,12 @@ namespace octetos::apidb::generators
         }
         else if(mode == Mode::ReferencedParent)
         {
-            for(const symbols::Symbol* k : table.key)
+            std::list<symbols::Symbol*>::const_iterator itE = table.required.end();
+            itE--;
+            //itE--;
+            for(const symbols::Symbol* k : table.required)
             {
-                //if(k->isPrimaryKey() and k->isAutoIncrement()) continue;
+                if(k->isPK and not k->symbolReferenced) continue;
                 
                 if(k->symbolReferenced != NULL)
                 {
@@ -684,7 +684,7 @@ namespace octetos::apidb::generators
                     {
                         case OutputLenguajes::CPP:
                             if(k->outType.compare(stringType()) == 0) ofile << " + ";
-                            else ofile << " + std::to_string(";
+                            else ofile << " +  std::to_string(";
                             break;
                         case OutputLenguajes::JAVA:
                             ofile << " + ";
@@ -693,7 +693,7 @@ namespace octetos::apidb::generators
                             ofile << " " << opConcat() << " ";
                             break;
                         default:
-                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado : ",__FILE__,__LINE__);            
                     }
                         
                     if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
@@ -740,13 +740,14 @@ namespace octetos::apidb::generators
                             throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     }
                 }
-                if(*penultimoReq != k)
+                
+                if((*itE) != k)
                 {
-                    ofile << " " << opConcat() << " \",\" ";
+                    ofile << " " << opConcat() << "  \",\" ";
                 }
             }
         }
-		ofile << " " << opConcat() << "  \")\";"<< std::endl;
+		ofile << " " << opConcat() << " \")\";"<< std::endl;
 		
         
         //ofile << "\t\tstd::cout << sqlString << std::endl;\n";
@@ -876,13 +877,7 @@ namespace octetos::apidb::generators
                                     if( k->classReferenced->required.size() > 0)
                                     {
                                             ofile << "(";
-                                            const std::list<symbols::Symbol*>::const_iterator& itE = --(k->classReferenced->required.end());
-                                            for(const symbols::Symbol* itR : k->classReferenced->required)
-                                            {
-                                                /*ofile << (*itR).name;
-                                                if(itR != (*itE) ) ofile << ",";*/
-                                                echoKeyCopy();
-                                            }
+                                            ofile << k->name;
                                             ofile <<");\n";
                                     }
                                     else
@@ -931,7 +926,7 @@ namespace octetos::apidb::generators
                         ofile << "\t\t}\n";
                         break;
                     default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                 }                
                 ofile << "\t\treturn false;\n";
             }

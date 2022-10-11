@@ -12,7 +12,7 @@ namespace octetos::apidb::generators
         
     bool Download::definite()
     {
-        const ConfigureProject::Table* tb = configureProject.findDownloadTable(table.getName());
+        /*const ConfigureProject::Table* tb = configureProject.findDownloadTable(table.getName());
         if(tb != NULL)
         {
             for(std::map<const char*, const apidb::ConfigureProject::Function*>::const_iterator itF = tb->begin(); itF != tb->end(); itF++)
@@ -35,7 +35,7 @@ namespace octetos::apidb::generators
                     throw BuildException(msg);
                 }
             }
-        }
+        }*/
         
         for(auto symbol : table)
         {
@@ -73,7 +73,7 @@ namespace octetos::apidb::generators
     {
         if(table.getKey().size() == 0) return false;
         
-        for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
+        /*for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
         {
             if(table.getName().compare(itT->second->getName()) != 0) 
             {
@@ -125,40 +125,6 @@ namespace octetos::apidb::generators
 					ofile << " FROM " << table.getName() << " WHERE \";\n" ;
 				}
 				
-				/*
-                auto kEnd = table.getKey().end();
-                kEnd--;
-                for(auto k : table.getKey())
-                {
-                    ofile << "\t\tsqlString = sqlString + \"" << k->getName()  << " = \" + ";  
-                    if(k->classReferenced != NULL) //es un objeto
-                    {
-                        if(k->outType.compare("std::string") == 0)
-                        {
-                            ofile << "'" << k->getName() << " + \"'\";\n";
-                        }
-                        else
-                        {
-                            ofile << " \"'\" + std::to_string((*" << k->getName() << ")";
-                            inheritField(ofile,k->symbolReferenced,opReference());
-                            ofile<< ") + \"'\";\n";
-                        }
-                    }
-                    else if(k->outType.compare("std::string") == 0)
-                    {
-                        ofile << " '\" + " <<  k->getName()  << " + \"'\";\n";
-                    }
-                    else
-                    {
-                        ofile << "std::to_string(" << k->getName()  <<");\n";
-                    }
-                    
-                    if(k != *kEnd)
-                    {
-                        ofile << " + \" and \" ";
-                    }          
-                }
-                */
                 ofile << "\t\tsqlString = sqlString + ";
                 echoKeyRawParam();
                 ofile << ";\n";
@@ -259,7 +225,7 @@ namespace octetos::apidb::generators
 				}
 			ofile << "\t} " << std::endl;
 			}         
-		}    
+		}    */
           
 		
 		

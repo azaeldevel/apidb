@@ -29,7 +29,8 @@ namespace octetos::apidb::generators
             throw BuildException(msg,__FILE__,__LINE__);
         }
         
-        /*const ConfigureProject::Table* tb = configureProject.findSelectTable(table.getName());
+        /*
+        const ConfigureProject::Table* tb = configureProject.findSelectTable(table.getName());
         if(tb != NULL) 
         {
             //std::cout << "Se encontro la tabla '" << table.getName() << std::endl;
@@ -83,7 +84,8 @@ namespace octetos::apidb::generators
                 }
                 ofile << ", int leng = 0);"<<std::endl;                                
             }
-        }*/
+        }
+        */
         return true;
     }
     
@@ -418,7 +420,8 @@ namespace octetos::apidb::generators
         
         //select from config
         //std::vector<apidb::ConfigureProject::Table> tbs = configureProject.selects;
-        /*for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT =  configureProject.selects.begin(); itT != configureProject.selects.end(); itT++)//std::vector<Table>
+        /*
+        for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT =  configureProject.selects.begin(); itT != configureProject.selects.end(); itT++)//std::vector<Table>
         {
             if(table.getName().compare(itT->second->getName()) != 0) 
             {

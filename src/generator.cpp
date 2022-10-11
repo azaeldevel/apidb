@@ -519,7 +519,7 @@ namespace generators
                             ofile << "\" . \"'\" . $this->" << k->name << " . \"'\"";
                             break;
                         default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     } 
                 }
                 else if(k->getOutType().compare("int") == 0 or k->getOutType().compare("long")  == 0  or k->getOutType().compare(integerType()) == 0 )
