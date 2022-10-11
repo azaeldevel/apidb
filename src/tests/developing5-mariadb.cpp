@@ -178,6 +178,53 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
     }
     
+    randNumber = randInt(generator);
+    muposys::Entities ente_catalog;
+    if(not ente_catalog.insert(connector))
+    {
+		std::cerr << "Fail on insert ente.\n";
+		return EXIT_FAILURE;
+    }
+    muposys::Catalogs catalog1;
+    std::string catalog_name = "catalog-" + std::to_string(randNumber);
+    if(not catalog1.insert(connector,ente_catalog,catalog_name))
+    {
+		std::cerr << "Fail on insert catalog.\n";
+		return EXIT_FAILURE;      
+    }
+    
+     randNumber = randInt(generator);
+    muposys::Entities ente_cataloging;
+    if(not ente_cataloging.insert(connector))
+    {
+		std::cerr << "Fail on insert ente.\n";
+		return EXIT_FAILURE;
+    }
+    muposys::Catalog_Items catItems1;
+    std::string item_number = "item-" + std::to_string(randNumber);
+    std::string item_name = "name-" + std::to_string(randNumber);
+    if(not catItems1.insert(connector,ente_cataloging,catalog1,item_number,item_name))
+    {
+		std::cerr << "Fail on insert catalog.\n";
+		return EXIT_FAILURE;      
+    }
+    
+    randNumber = randInt(generator);
+    muposys::Entities ente_cataloging2;
+    if(not ente_cataloging2.insert(connector))
+    {
+		std::cerr << "Fail on insert ente.\n";
+		return EXIT_FAILURE;
+    }
+    muposys::Catalog_Items catItems2;
+    std::string item_number2 = "item-" + std::to_string(randNumber);
+    std::string item_name2 = "name-" + std::to_string(randNumber);
+    if(not catItems2.insert(connector,ente_cataloging2,catalog1,item_number2,item_name2))
+    {
+		std::cerr << "Fail on insert catalog.\n";
+		return EXIT_FAILURE;      
+    }
+    
     connector.commit();
 	connector.close();
 	
