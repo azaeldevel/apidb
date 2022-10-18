@@ -14,7 +14,7 @@ namespace octetos::apidb::generators
         
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
-            if(not it->second->isPrimaryKey())
+            if(not it->second->isPK)
             {
                 ofile << "\t\t";
                 if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
@@ -35,7 +35,7 @@ namespace octetos::apidb::generators
                     throw BuildException(msg);
                 }
                 
-                if(it->second->getClassReferenced() != 0)
+                if(it->second->getClassReferenced())
                 {
                     ofile << " const " << it->second->getClassReferenced()->getName() << "& " << it->second->getName();
                 }

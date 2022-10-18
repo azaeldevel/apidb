@@ -67,23 +67,21 @@ int main(int argc, char **argv)
 	}
 	
     if(verbose) std::cout << "Listando los que tiene 8 con 5 registro maximo." << std::endl;
-    std::vector<muposys::Persons*>* lst = muposys::Persons::select(connector,"name1 like 'n1-%8'",5,'D');
-    if(lst != NULL)
+    std::vector<muposys::Persons*>* lstPersons = muposys::Persons::select(connector,"name1 like 'n1-%8%'",5,'D');
+    if(lstPersons)
     {
-        for(auto p : *lst)
-        {
+      for(auto p : *lstPersons)
+      {
             p->downName1(connector);
-            if(not p->getName1().empty() and verbose)
-            {
-                if(verbose)  std::cout << ""<< p->getName1() << " " << p->getName3() << std::endl;
-            }
-        }
-        for(auto p : *lst)
-        {
+            p->downName3(connector);
+            if(verbose) std::cout << p->getName1() << " " << p->getName3() << std::endl;
+      }
+      for(auto p : *lstPersons)
+      {
             delete p;
-        }
+      }
+      delete lstPersons;
     }
-    delete lst;	
     
     std::vector<muposys::Users*>* lstUsers = muposys::Users::select(connector,"person > 0",5,'D');
 	
@@ -91,52 +89,49 @@ int main(int argc, char **argv)
 	std::random_device generator;
   	std::uniform_int_distribution<int> randInt(1,INT_MAX);
     
-    std::vector<muposys::Permissions*>* permsslst = muposys::Permissions::select(connector,"",0);
-    if(permsslst != NULL)
+  std::vector<muposys::Permissions*>* permsslst = muposys::Permissions::select(connector,"",0);
+  if(permsslst)
+  {
+    for(auto p : *permsslst)
     {
-        for(auto p : *permsslst)
-        {
-            if(p->downBrief(connector) and verbose)
-            {
-                //if(verbose)  std::cout << p->getName() << " " << p->getBrief() << std::endl;
-            }
-        }
-        for(auto p : *permsslst)
-        {
-            delete p;
-        }
+      p->downName(connector);
+      p->downBrief(connector);
+      if(verbose) std::cout << p->getName() << " | " << p->getBrief() << std::endl;
     }
-    delete permsslst;
+    /*for(auto p : *permsslst)
+    {
+      delete p;
+    }
+    delete permsslst;*/
+  }
     
+    if(verbose)  std::cout << "Adding Permissions.\n";
     muposys::Permissions permss;
     int randNumber = randInt(generator);
     std::string name_perss = "permss-" + std::to_string(randNumber);
     std::string brief_perss = "Prueba de muposys " + std::to_string(randNumber);
-    
     muposys::Entities ente2;
     if(not ente2.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
-    }    
+    }
     if(not permss.insert(connector,ente2,name_perss,brief_perss))
     {
 		std::cerr << "Fail on insert permision.\n";
 		return EXIT_FAILURE;        
     }
 		
-    randNumber = randInt(generator);
-    
+    randNumber = randInt(generator);    
     muposys::Entities ente3;
     if(not ente3.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
-    }
-		
+    }    
+    if(verbose)  std::cout << "Adding Persons.\n";
     muposys::Persons person;
-    std::string name_person = "person-" + std::to_string(randNumber);
-        
+    std::string name_person = "person-" + std::to_string(randNumber);        
     if(not person.insert(connector,ente3,name_person))
     {
 		std::cerr << "Fail on insert person.\n";
@@ -149,6 +144,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
     }		
     
+    if(verbose)  std::cout << "Adding Users.\n";
     muposys::Entities ente_user;
     if(not ente_user.insert(connector))
     {
@@ -164,7 +160,8 @@ int main(int argc, char **argv)
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;        
     }
-    		
+    
+    if(verbose)  std::cout << "Adding User_Permission.\n";
     muposys::Entities ente_up;
     if(not ente_up.insert(connector))
     {
@@ -178,6 +175,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
     }
     
+    if(verbose)  std::cout << "Adding Catalog.\n";
     randNumber = randInt(generator);
     muposys::Entities ente_catalog;
     if(not ente_catalog.insert(connector))
@@ -193,7 +191,8 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;      
     }
     
-     randNumber = randInt(generator);
+    if(verbose) std::cout << "Adding Catalog_Items.\n";
+    randNumber = randInt(generator);
     muposys::Entities ente_cataloging;
     if(not ente_cataloging.insert(connector))
     {
@@ -209,6 +208,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;      
     }
     
+    if(verbose)  std::cout << "Adding Catalog_Items.\n";
     randNumber = randInt(generator);
     muposys::Entities ente_cataloging2;
     if(not ente_cataloging2.insert(connector))
@@ -224,7 +224,111 @@ int main(int argc, char **argv)
 		std::cerr << "Fail on insert catalog.\n";
 		return EXIT_FAILURE;      
     }
+        
+    if(verbose) std::cout << "Adding Stock.\n";
+    if(verbose) std::cout << "Step 1\n";
+    randNumber = randInt(generator);
+    if(verbose) std::cout << "Step 2\n";
+    muposys::Entities ente_stock1;
+    if(verbose) std::cout << "Step 3\n";
+	if(not ente_stock1.insert(connector))
+    {
+		std::cerr << "Fail on insert Stock.id.\n";
+		return EXIT_FAILURE;            
+    }
+    if(verbose) std::cout << "Step 4\n";
+	muposys::Stock stock1;
+    if(verbose) std::cout << "Step 5\n";
+	if(not stock1.insert(connector,ente_stock1))
+    {
+		std::cerr << "Fail on insert Stock.\n";
+		return EXIT_FAILURE;
+    }
+    if(verbose) std::cout << "Step 6\n";
+    std::string stock1_name = "stock-" + std::to_string(randNumber);
+    if(verbose) std::cout << "Step 7\n";
+    std::string stock1_label = "Stock " + std::to_string(randNumber);
+    if(verbose) std::cout << "Step 8\n";
+	if(not stock1.upName(connector,stock1_name))
+    {
+		std::cerr << "Fail on update Stock.name.\n";
+		return EXIT_FAILURE;       
+    }
+    if(verbose) std::cout << "Step 9\n";
+	if(not stock1.upLabel(connector,stock1_label))
+    {
+		std::cerr << "Fail on update Stock.label.\n";
+		return EXIT_FAILURE;       
+    }
+    if(verbose) std::cout << "Step 10\n";
     
+    if(verbose) std::cout << "Adding Stock.\n";
+    randNumber = randInt(generator);
+    muposys::Entities ente_stock2;
+	if(not ente_stock2.insert(connector))
+    {
+		std::cerr << "Fail on insert Stock.id.\n";
+		return EXIT_FAILURE;            
+    }
+	muposys::Stock stock2;
+	if(not stock2.insert(connector,ente_stock2))
+    {
+		std::cerr << "Fail on insert Stock.\n";
+		return EXIT_FAILURE;
+    }
+    std::string stock2_name = "stock-" + std::to_string(randNumber);
+    std::string stock2_label = "Stock " + std::to_string(randNumber);
+	if(not stock2.upName(connector,stock2_name))
+    {
+		std::cerr << "Fail on update Stock.name.\n";
+		return EXIT_FAILURE;       
+    }
+	if(not stock2.upLabel(connector,stock2_label))
+    {
+		std::cerr << "Fail on update Stock.label.\n";
+		return EXIT_FAILURE;       
+    }
+    
+    if(verbose) std::cout << "Adding Stocking.\n";
+    randNumber = randInt(generator);
+    muposys::Entities ente_stocking1;
+	if(not ente_stocking1.insert(connector))
+    {
+		std::cerr << "Fail on update Stocking.id.\n";
+		return EXIT_FAILURE;      
+    }
+	muposys::Stocking stoking1;
+	if(not stoking1.insert(connector,ente_stocking1,stock1,catItems1,3))
+    {
+		std::cerr << "Fail on update Stocking.\n";
+		return EXIT_FAILURE;      
+    }
+    
+    if(verbose) std::cout << "Adding Stocking.\n";
+    randNumber = randInt(generator);
+    muposys::Entities ente_stocking2;
+	if(not ente_stocking2.insert(connector))
+    {
+		std::cerr << "Fail on update Stocking.id.\n";
+		return EXIT_FAILURE;      
+    }
+	muposys::Stocking stoking2;
+	if(not stoking2.insert(connector,ente_stocking2,stock2,catItems2,1))
+    {
+		std::cerr << "Fail on update Stocking.\n";
+		return EXIT_FAILURE;      
+    }
+    
+    muposys::Stocking_Production stoking_prod1s;
+	if(not stoking_prod1s.insert(connector,stoking1))
+    {
+		std::cerr << "Fail on update Stocking_Production.\n";
+		return EXIT_FAILURE;       
+    }
+    
+    
+    
+    std::cout << "Ending operations..\n";
     connector.commit();
 	connector.close();
 	

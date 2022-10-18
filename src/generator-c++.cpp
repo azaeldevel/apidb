@@ -192,12 +192,12 @@ namespace generators
     {
 		ofile <<"\t"<<table.getName()<< "::" <<table.getName()<<"()"<<std::endl;
 		ofile <<"\t{\n";
-        for(symbols::Symbol* k : table.getKey())
+        for(const std::pair<const char*,symbols::Symbol*>& it : table)
         {
-            if(k->symbolReferenced != NULL)
+            if(it.second->symbolReferenced)
             {
-                ofile << "\t\t" << k->name << " = NULL;\n";
-            }            
+                ofile << "\t\t" << it.second->name << " = NULL;\n";
+            }
         }
 		ofile <<"\t}\n";
 	}		
@@ -205,15 +205,12 @@ namespace generators
     {
 		ofile <<"\t"<<table.getName()<< "::~" << table.getName() << "()\n";
 		ofile <<"\t{\n";
-        for(symbols::Symbol* k : table.getKey())
+        for(const std::pair<const char*,symbols::Symbol*>& it : table)
         {
-            if(k->symbolReferenced != NULL)
+            if(it.second->symbolReferenced != NULL)
             {
-                ofile << "\t\tif(" << k->name << " != NULL)\n"; 
-                ofile << "\t\t{\n";
-                ofile << "\t\t\tdelete " << k->name << ";\n";
-                //ofile << "\t\t\t" << k->name << " = NULL;\n";
-                ofile << "\t\t}\n";
+                ofile << "\t\tif(" << it.second->name << ") "; 
+                ofile << "delete " << it.second->name << ";\n";
             }
         }
 		ofile <<"\t}\n";
