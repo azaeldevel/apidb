@@ -36,6 +36,53 @@ namespace apidb
 {
 namespace generators
 {
+    void CPP::init_data(const apidb::symbols::Table& table,std::ofstream& ofile)const
+    {
+        bool active_inits = true,lamost_one = false;
+        unsigned int  i = 0;
+        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
+        {
+            if(it->second->symbolReferenced)
+            {                
+                if(lamost_one) 
+                {
+                    ofile << ",";
+                }
+                else
+                {
+                    lamost_one = true;                    
+                }
+                if(active_inits) 
+                {
+                    active_inits = false;
+                    ofile << " : ";
+                }
+                ofile << it->second->name << "(NULL)";
+            }
+            else if(it->second->outType.compare("std::string") == 0)
+            {
+                continue;
+            }
+            else
+            {
+                if(lamost_one) 
+                {
+                    ofile << ",";
+                }
+                else
+                {
+                    lamost_one = true;                    
+                }
+                if(active_inits) 
+                {
+                    active_inits = false;
+                    ofile << " : ";
+                }
+                ofile << it->second->name << "(0)";
+            }
+            
+        }
+    }
     void CPP::writeForwardClass(std::ofstream& file,bool log,const symbols::ISpace* ispace)
     {
         if(ispace->what() == symbols::SpaceType::TABLE)
@@ -191,16 +238,10 @@ namespace generators
 	void CPP::writeDefaultContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
 		ofile <<"\t"<<table.getName()<< "::" <<table.getName()<<"()";
-        if(not table.references.empty())
-            {
-                ofile << " : ";
-                for(unsigned int i = 0; i < table.references.size(); i++)
-                {
-                    ofile << table.references[i]->name << "(NULL)";
-                    if(i < table.references.size() - 1) ofile << ",";
-                }
-            }
-            ofile << "\n";
+        
+         init_data(table,ofile);
+         
+        ofile << "\n";
 		ofile <<"\t{\n";
         /*for(const std::pair<const char*,symbols::Symbol*>& it : table)
         {
@@ -235,8 +276,20 @@ namespace generators
 	void CPP::writeCopyContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
 		//constructor de copias 
-		ofile << "\t" << table.getName() << "::" << table.getName() <<"(const " << table.getName() <<"& obj)"<<std::endl;
-		ofile << "\t{"<<std::endl;                
+		ofile << "\t" << table.getName() << "::" << table.getName() <<"(const " << table.getName() <<"& obj)";        
+        /*if(not table.references.empty())
+        {
+            ofile << " : ";
+            for(unsigned int i = 0; i < table.references.size(); i++)
+            {
+                ofile << table.references[i]->name << "(NULL)";
+                if(i < table.references.size() - 1) ofile << ",";
+            }
+        }*/
+        
+        init_data(table,ofile);
+        
+		ofile << "\n\t{"<<std::endl;                
         //for (auto const& [key, attr] : table)
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
 		{
@@ -275,15 +328,9 @@ namespace generators
                 }
             }
             ofile << ")";
-            if(not table.references.empty())
-            {
-                ofile << " : ";
-                for(unsigned int i = 0; i < table.references.size(); i++)
-                {
-                    ofile << table.references[i]->name << "(NULL)";
-                    if(i < table.references.size() - 1) ofile << ",";
-                }
-            }
+           
+             init_data(table,ofile);
+             
             ofile << "\n";
 		}
 		else
@@ -489,7 +536,7 @@ namespace generators
 	void CPP::writeDefaultContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
         //contructor default
-		//ofile <<"\t\t"<<table.getName()<<"();"<<std::endl;
+		ofile <<"\t\t"<<table.getName()<<"();"<<std::endl;
         
         /*Constructor objCons(configureProject,table,ofile);
         objCons.setDefinition(true);

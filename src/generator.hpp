@@ -308,6 +308,10 @@ namespace apidb
 			bool createDatconnectHPP(std::ofstream& file,bool log);
             bool createDatconnectCPP(std::ofstream& file,bool log);
             void writeForwardClass(std::ofstream& file,bool log,const symbols::ISpace* ispace);
+            
+            //
+            void init_data(const apidb::symbols::Table&,std::ofstream&)const;
+            
             /**
             * @brief genera una llada recursiva para el componete indicado
             * @condition se debe llamar con k->symbolReferenced
