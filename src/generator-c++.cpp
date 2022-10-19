@@ -489,8 +489,11 @@ namespace generators
 	void CPP::writeDefaultContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{
         //contructor default
-		ofile <<"\t\t"<<table.getName()<<"();"<<std::endl;
+		//ofile <<"\t\t"<<table.getName()<<"();"<<std::endl;
         
+        /*Constructor objCons(configureProject,table,ofile);
+        objCons.setDefinition(true);
+        objCons.generate();*/
 	}
 	void CPP::writeCopyContructorH(const apidb::symbols::Table& table,std::ofstream& ofile)
 	{

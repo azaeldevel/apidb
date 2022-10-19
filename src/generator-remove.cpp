@@ -8,9 +8,9 @@ namespace octetos::apidb::generators
     {
     }
     
-    bool Remove::definite()
+    void Remove::definite()
     {
-        if(table.getKey().size() == 0) return false;
+        if(table.getKey().size() == 0) return;
         
         //for actual object
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
@@ -69,14 +69,12 @@ namespace octetos::apidb::generators
             std::string msg = "Lenguaje no soportado " ;
             throw BuildException(msg,__FILE__,__LINE__);
         }
-        
-        return true;
     }
     
     
-    bool Remove::implement()
+    void Remove::implement()
     {
-        if(table.getKey().size() == 0) return false;
+        if(table.getKey().size() == 0) return;
         
         //for actual object
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
@@ -161,20 +159,20 @@ namespace octetos::apidb::generators
         if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA ) ofile << "\t\treturn connector.remove(sqlString,dt);\n";
         if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "\t\treturn $connector->remove($sqlString,$dt);\n";
         ofile << "\t}\n";
-        
-        return true;
     }
     
     bool Remove::generate()
     {
         if(definition)
         {
-            return definite();
+            definite();
+            return true;
         }
         
         if(implementation)
         {
-            return implement();
+            implement();
+            return true;
         }
         
         throw BuildException("Deve especificar si es definicion o implemtacion.",__FILE__,__LINE__);

@@ -78,6 +78,8 @@ namespace apidb
         public:
             Operation(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
             virtual bool generate() = 0;   
+            virtual void definite();
+            virtual void implement();
             const char* opConcat() const;
             const char* opReference() const;
             const char* stringType() const;
@@ -133,13 +135,13 @@ namespace apidb
             void insertParamsObject(std::ofstream& ofile,const symbols::Symbol* k,const symbols::Symbol* parent);
             void insertValueObject(std::ofstream& ofile,const symbols::Symbol* k,const symbols::Symbol* parent);
             void insertCall(std::ofstream& ofile);
+            virtual void definite();
+            virtual void implement();
         private:
             //attributes
             Mode mode;
             short countFuns;
             //operations
-            bool definite();
-            bool implement();
         };
         
         class Select : public Operation
@@ -161,10 +163,10 @@ namespace apidb
         public:
             Update(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
             virtual bool generate();
+            virtual void definite();
+            virtual void implement();
             
         private:
-            bool definite();
-            bool implement();
         };
         
         class Remove : public Operation
@@ -172,10 +174,10 @@ namespace apidb
         public:
             Remove(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
             virtual bool generate();
+            virtual void definite();
+            virtual void implement();
             
         private:
-            bool definite();
-            bool implement();
         };
         
         class Getter : public Operation
@@ -183,15 +185,15 @@ namespace apidb
         public:
             Getter(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
             virtual bool generate();
+            virtual void definite();
+            virtual void implement();
             
         private:
-            bool definite();
-            bool definite(const symbols::Symbol* s);
+            void definite(const symbols::Symbol* s);
             bool definite_cpp(const symbols::Symbol* s,bool cpp_conts);
             void cpp_return(const symbols::Symbol* s,bool cpp_conts);
             bool definiteKey(const symbols::Symbol* s);
-            bool implement();
-            bool implement(const symbols::Symbol* s);
+            void implement(const symbols::Symbol* s);
             bool implement_cpp(const symbols::Symbol* s,bool cpp_conts);
             bool implementKey(const symbols::Symbol* s);
         };
@@ -203,8 +205,8 @@ namespace apidb
             virtual bool generate();
             
         private:
-            bool definite();
-            bool implement();
+            virtual void definite();
+            virtual void implement();
         };
         
         class Field : public Operation
@@ -212,10 +214,23 @@ namespace apidb
         public:
             Field(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
             virtual bool generate();
+            virtual void definite();
+            virtual void implement();
             
         private:
-            bool definite();
-            bool implement();
+        };
+        
+        class Constructor : public Operation
+        {
+        public:
+            Constructor(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
+            virtual bool generate();
+            virtual void definite();
+            virtual void implement();
+            
+        private:
+            void definite_default();
+            void implement_default();
         };
         
 		/**

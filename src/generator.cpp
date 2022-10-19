@@ -36,6 +36,12 @@ namespace apidb
 {
 namespace generators
 { 
+    void Operation::definite()
+    {
+    }
+    void Operation::implement()
+    {
+    }
     bool Operation::is_cpp_oct()
     {
          if(configureProject.outputLenguaje != OutputLenguajes::CPP) return false;

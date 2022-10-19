@@ -8,9 +8,9 @@ namespace octetos::apidb::generators
     {
     }
     
-    bool Update::definite()
+    void Update::definite()
     {
-        if(table.getKey().size() == 0) return false;
+        if(table.getKey().size() == 0) return;
         
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
@@ -54,13 +54,12 @@ namespace octetos::apidb::generators
                 ofile << ");"<< std::endl;
             }
         }
-        return true;
     }
     
     
-    bool Update::implement()
+    void Update::implement()
     {
-        if(table.getKey().size() == 0) return false;
+        if(table.getKey().size() == 0) return;
         
         for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
         {
@@ -397,19 +396,20 @@ namespace octetos::apidb::generators
 				ofile << "\t}"<<std::endl;	
             }
         }
-        return true;
     }
     
     bool Update::generate()
     {
         if(definition)
         {
-            return definite();
+            definite();
+            return true;
         }
         
         if(implementation)
         {
-            return implement();
+            implement();
+            return true;
         }
         
         throw BuildException("Deve especificar si es definicion o implemtacion.",__FILE__,__LINE__);

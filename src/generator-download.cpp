@@ -10,7 +10,7 @@ namespace octetos::apidb::generators
         
     }
         
-    bool Download::definite()
+    void Download::definite()
     {
         /*const ConfigureProject::Table* tb = configureProject.findDownloadTable(table.getName());
         if(tb != NULL)
@@ -59,14 +59,12 @@ namespace octetos::apidb::generators
                 throw BuildException(msg);
             }
         }
-        
-        return true;
     }
     
     
-    bool Download::implement()
+    void Download::implement()
     {
-        if(table.getKey().size() == 0) return false;
+        if(table.getKey().size() == 0) return;
         
         /*for( std::map<const char*,ConfigureProject::Table*>::const_iterator itT = configureProject.downloads.begin(); itT != configureProject.downloads.end(); itT++)//std::vector<Table>
         {
@@ -525,8 +523,6 @@ namespace octetos::apidb::generators
             ofile << "\t\treturn false;\n";
             ofile << "\t}\n";            
         }
-        
-        return true;
     }
 
 
@@ -534,12 +530,14 @@ namespace octetos::apidb::generators
     {
         if(definition)
         {
-            return definite();
+            definite();
+            return true;
         }
         
         if(implementation)
         {
-            return implement();
+            implement();
+            return true;
         }
         
         throw BuildException("Deve especificar si es definicion o implemtacion.",__FILE__,__LINE__);

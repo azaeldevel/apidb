@@ -223,10 +223,10 @@ namespace octetos::apidb::generators
     
     
     
-    bool Getter::implement(const symbols::Symbol* s)
+    void Getter::implement(const symbols::Symbol* s)
     {
         //omitir si no es un cmapo referido y es un campo basico
-         if((configureProject.getInputLenguaje() == InputLenguajes::MariaDB or configureProject.getInputLenguaje() == InputLenguajes::MySQL) and configureProject.outputLenguaje == OutputLenguajes::CPP and not s->symbolReferenced and s->outType.compare("std::string") != 0 and not s->isPK and not s->isAutoInc) return true;
+         if((configureProject.getInputLenguaje() == InputLenguajes::MariaDB or configureProject.getInputLenguaje() == InputLenguajes::MySQL) and configureProject.outputLenguaje == OutputLenguajes::CPP and not s->symbolReferenced and s->outType.compare("std::string") != 0 and not s->isPK and not s->isAutoInc) return;
          
         //
         if(s->symbolReferenced)
@@ -345,7 +345,7 @@ namespace octetos::apidb::generators
         
         
         //not consti
-        if(not s->symbolReferenced) return true;
+        if(not s->symbolReferenced) return;
         
         if(s->symbolReferenced)
         {
@@ -460,9 +460,6 @@ namespace octetos::apidb::generators
             }
         }
         ofile << "\t}\n"<<std::endl;
-        
-        
-        return true;
     }
     /*bool Getter::implementKey(const symbols::Symbol* s)
     {
@@ -613,15 +610,15 @@ namespace octetos::apidb::generators
     
     
     
-    bool Getter::definite()
+    void Getter::definite()
     {
         switch(configureProject.outputLenguaje)
         {
         case OutputLenguajes::CPP:
             for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
             {
-                if(definite_cpp(it->second,true) == false) return false;
-                if(it->second->symbolReferenced)if(definite_cpp(it->second,false) == false) return false;
+                definite_cpp(it->second,true);
+                if(it->second->symbolReferenced) definite_cpp(it->second,false);
             }
             break;
         case OutputLenguajes::JAVA:
@@ -630,18 +627,17 @@ namespace octetos::apidb::generators
             break;
         default:
             throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
-        }        
-        return true;
+        }
     }
-    bool Getter::implement()
+    void Getter::implement()
     {        
         switch(configureProject.outputLenguaje)
         {
         case OutputLenguajes::CPP:
             for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
             {
-                if(implement_cpp(it->second,true) == false) return false;
-                if(it->second->symbolReferenced)if(implement_cpp(it->second,false) == false) return false;
+                if(implement_cpp(it->second,true) == false) return;
+                if(it->second->symbolReferenced)if(implement_cpp(it->second,false) == false) return;
             }
             break;
         case OutputLenguajes::JAVA:
@@ -652,21 +648,20 @@ namespace octetos::apidb::generators
         default:          
             throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);  
         }        
-        return true;
     }
     bool Getter::generate()
     {
         if(definition)
         {
-            return definite();
+            definite();
+            return true;
         }
         
         if(implementation)
         {
-            return implement();
+            implement();
+            return true;
         }
-                
-        return true;
     }
     
 }

@@ -215,7 +215,7 @@ namespace octetos::apidb::generators
     {
     }
     
-    bool Insert::definite()
+    void Insert::definite()
     {
         short countRef = 0;
         /*if(mode == Mode::ReferencedParent)
@@ -355,12 +355,11 @@ namespace octetos::apidb::generators
                 }
             }
         }
-        ofile << ");"<<std::endl;    
-        return true;
+        ofile << ");"<<std::endl;  
     }
     
     
-    bool Insert::implement()
+    void Insert::implement()
     {
         short countRef = 0;
         /*if(mode == Mode::ReferencedParent)
@@ -1017,20 +1016,20 @@ namespace octetos::apidb::generators
         }   
         
         ofile << "\t}"<<std::endl;
-        
-        return true;
     }    
     
     bool Insert::generate()
     {
         if(definition)
         {
-            return definite();
+            definite();
+            return true;
         }
         
         if(implementation)
         {
-            return implement();
+            implement();
+            return true;
         }
         
         throw BuildException("Deve especificar si es definicion o implemtacion.",__FILE__,__LINE__);
