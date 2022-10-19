@@ -36,6 +36,13 @@ namespace apidb
 {
 namespace generators
 { 
+    bool Operation::is_cpp_oct()
+    {
+         if(configureProject.outputLenguaje != OutputLenguajes::CPP) return false;
+         
+         
+         return true;
+    }
     void Operation::echoCopyParamsJava()const
     {
         for(symbols::Symbol* k : table.getKey())

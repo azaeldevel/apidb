@@ -8,31 +8,82 @@ namespace octetos::apidb::generators
     {
     }
     
-    bool Getter::definite(const symbols::Symbol* s)
+    
+    void Getter::cpp_return(const symbols::Symbol* s,bool cpp_conts)
     {
-        if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
+        switch(configureProject.outputLenguaje)
         {
-            switch(configureProject.outputLenguaje)
+        case OutputLenguajes::CPP:
+            if(s->symbolReferenced)
             {
-                case OutputLenguajes::CPP:
-                    
+                if(cpp_conts) ofile <<"const ";
+                ofile << s->getClassReferenced()->getName() << "&";
+            }
+            else if(s->outType.compare("std::string") == 0)
+            {
+                if(cpp_conts) ofile <<"const ";
+                ofile << s->getOutType() << "&";
+            }
+            else if(s->isPK)
+            {
+                if(cpp_conts) ofile <<"const ";
+                ofile << s->getOutType();
+            }
+            else
+            {
+                ofile << s->getOutType();
+            }
+            break;
+        case OutputLenguajes::JAVA:
+                     
                     break;
-                case OutputLenguajes::JAVA:
-                    
-                    break;
-                case OutputLenguajes::PHP:
+        case OutputLenguajes::PHP:
                     
                     break;
                 default:
                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
-            }
         }
-        else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-        {
-            switch(configureProject.outputLenguaje)
+    }
+    bool Getter::definite_cpp(const symbols::Symbol* s,bool cpp_conts)
+    {        
+        ofile <<"\t\t";
+        cpp_return(s,cpp_conts);
+        ofile << " get" << s->getUpperName() << "()";
+        if(cpp_conts) ofile <<"const";
+        ofile << ";\n";
+        
+        return true;
+    }
+    bool Getter::implement_cpp(const symbols::Symbol* s,bool cpp_conts)
+    {
+        ofile <<"\t";
+        cpp_return(s,cpp_conts);    
+        
+        ofile << " " << table.getName() << "::get" << s->getUpperName() << "()";
+        if(cpp_conts) ofile <<" const";
+        ofile << "\n";        
+        ofile << "\t{\n";
             {
-                case OutputLenguajes::CPP:
-                    if(s->getSymbolReferenced())
+                if(s->symbolReferenced)
+                {
+                    ofile <<"\t\treturn *";
+                }
+                else 
+                {
+                    ofile <<"\t\treturn ";
+                }
+                ofile << s->getName()  <<";\n";
+            }        
+        ofile << "\t}\n";
+        return true;
+    }
+    /*bool Getter::definite(const symbols::Symbol* s)
+    {
+        //const section
+        switch(configureProject.outputLenguaje)
+        {
+        case OutputLenguajes::CPP:
+                    if(s->symbolReferenced)
                     {
                         ofile <<"\t\tconst " << s->getClassReferenced()->getName() << "& ";
                     }
@@ -40,72 +91,34 @@ namespace octetos::apidb::generators
                     {
                         ofile <<"\t\tconst "<< s->getOutType() << "& ";
                     }
+                    else if(s->isPK)
+                    {
+                        ofile <<"\t\tconst "<< s->getOutType() << " ";
+                    }
                     else 
                     {
-                        ofile <<"\t\t"<< s->getOutType() << " ";
+                        goto const_section;
                     }
                     break;
-                case OutputLenguajes::JAVA:
+        case OutputLenguajes::JAVA:
                      
                     break;
-                case OutputLenguajes::PHP:
+        case OutputLenguajes::PHP:
                     
                     break;
                 default:
                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
-            }
-        }
-        else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-        {
-            switch(configureProject.outputLenguaje)
-            {
-                case OutputLenguajes::CPP:
-                    
-                    break;
-                case OutputLenguajes::JAVA:
-                    
-                    break;
-                case OutputLenguajes::PHP:
-                    
-                    break;
-                default:
-                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
-            }
-        }
-        else
-        {
-            std::string msg = "Lenguaje no soportado " ;
-            throw BuildException(msg,__FILE__,__LINE__);
         }
         ofile << "get" << s->getUpperName() << "() const; \n";
         
-        
-        if(not s->isFK) return true;
+        const_section:
+        if(not s->symbolReferenced or not s->isPK) return true;
         
         //not const 
-        if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
+        switch(configureProject.outputLenguaje)
         {
-            switch(configureProject.outputLenguaje)
-            {
-                case OutputLenguajes::CPP:
-                    
-                    break;
-                case OutputLenguajes::JAVA:
-                    
-                    break;
-                case OutputLenguajes::PHP:
-                    
-                    break;
-                default:
-                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
-            }
-        }
-        else if(configureProject.getInputLenguaje() == InputLenguajes::MariaDB)
-        {
-            switch(configureProject.outputLenguaje)
-            {
-                case OutputLenguajes::CPP:
-                    if(s->getSymbolReferenced())
+        case OutputLenguajes::CPP:
+            if(s->symbolReferenced)
                     {
                         ofile <<"\t\t" << s->getClassReferenced()->getName() << "& ";
                     }
@@ -118,43 +131,20 @@ namespace octetos::apidb::generators
                         ofile <<"\t\t"<< s->getOutType() << " ";
                     }
                     break;
-                case OutputLenguajes::JAVA:
+        case OutputLenguajes::JAVA:
                      
                     break;
-                case OutputLenguajes::PHP:
+        case OutputLenguajes::PHP:
                     
                     break;
-                default:
+        default:
                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
-            }
-        }
-        else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
-        {
-            switch(configureProject.outputLenguaje)
-            {
-                case OutputLenguajes::CPP:
-                    
-                    break;
-                case OutputLenguajes::JAVA:
-                    
-                    break;
-                case OutputLenguajes::PHP:
-                    
-                    break;
-                default:
-                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
-            }
-        }
-        else
-        {
-            std::string msg = "Lenguaje no soportado " ;
-            throw BuildException(msg,__FILE__,__LINE__);
         }
         ofile << "get" << s->getUpperName() << "(); \n";
         
         return true;
-    }    
-    bool Getter::definiteKey(const symbols::Symbol* s)
+    }*/
+    /*bool Getter::definiteKey(const symbols::Symbol* s)
     {
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
         {
@@ -226,7 +216,7 @@ namespace octetos::apidb::generators
         ofile << "get" << s->getUpperName() << "Value() const; \n";
         
         return true;
-    }
+    }*/
     
     
     
@@ -235,6 +225,10 @@ namespace octetos::apidb::generators
     
     bool Getter::implement(const symbols::Symbol* s)
     {
+        //omitir si no es un cmapo referido y es un campo basico
+         if((configureProject.getInputLenguaje() == InputLenguajes::MariaDB or configureProject.getInputLenguaje() == InputLenguajes::MySQL) and configureProject.outputLenguaje == OutputLenguajes::CPP and not s->symbolReferenced and s->outType.compare("std::string") != 0 and not s->isPK and not s->isAutoInc) return true;
+         
+        //
         if(s->symbolReferenced)
         {
             switch(configureProject.outputLenguaje)
@@ -344,13 +338,14 @@ namespace octetos::apidb::generators
                     ofile <<"\t\treturn $this->"<< s->getName() <<";"<< std::endl;
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         ofile << "\t}\n"<<std::endl; 
         
         
-        //not const
+        //not consti
+        if(not s->symbolReferenced) return true;
         
         if(s->symbolReferenced)
         {
@@ -444,7 +439,7 @@ namespace octetos::apidb::generators
                     ofile <<"\t\treturn $this->"<< s->getName()  <<";"<< std::endl;
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else 
@@ -469,7 +464,7 @@ namespace octetos::apidb::generators
         
         return true;
     }
-    bool Getter::implementKey(const symbols::Symbol* s)
+    /*bool Getter::implementKey(const symbols::Symbol* s)
     {
         if(s->outType.compare("std::string") == 0)
         {
@@ -611,7 +606,7 @@ namespace octetos::apidb::generators
         ofile << "\t}"<<std::endl;
         
         return true;
-    }
+    }*/
     
     
     
@@ -620,30 +615,43 @@ namespace octetos::apidb::generators
     
     bool Getter::definite()
     {
-        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
+        switch(configureProject.outputLenguaje)
         {
-            if(definite(it->second) == false) return false;
-        }
-        
-        for(symbols::Symbol* k : table.getKey())
-        {
-            if(definiteKey(k) == false) return false;
-        }
-        
+        case OutputLenguajes::CPP:
+            for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
+            {
+                if(definite_cpp(it->second,true) == false) return false;
+                if(it->second->symbolReferenced)if(definite_cpp(it->second,false) == false) return false;
+            }
+            break;
+        case OutputLenguajes::JAVA:
+            break;
+        case OutputLenguajes::PHP:
+            break;
+        default:
+            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+        }        
         return true;
     }
     bool Getter::implement()
-    {
-        for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
+    {        
+        switch(configureProject.outputLenguaje)
         {
-            if(implement(it->second) == false) return false;
-        }
-        
-        for(symbols::Symbol* k : table.getKey())
-        {
-            if(implementKey(k) == false) return false;
-        }
-        
+        case OutputLenguajes::CPP:
+            for(std::map<const char*,symbols::Symbol*,symbols::cmp_str>::const_iterator it = table.begin(); it != table.end(); it++)
+            {
+                if(implement_cpp(it->second,true) == false) return false;
+                if(it->second->symbolReferenced)if(implement_cpp(it->second,false) == false) return false;
+            }
+            break;
+        case OutputLenguajes::JAVA:
+            throw BuildException("No soportado aun",__FILE__,__LINE__);
+            break;
+        case OutputLenguajes::PHP:
+            throw BuildException("No soportado aun",__FILE__,__LINE__);
+        default:          
+            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);  
+        }        
         return true;
     }
     bool Getter::generate()
@@ -657,8 +665,8 @@ namespace octetos::apidb::generators
         {
             return implement();
         }
-        
-        throw BuildException("Deve especificar si es definicion o implemtacion.",__FILE__,__LINE__);
+                
+        return true;
     }
     
 }

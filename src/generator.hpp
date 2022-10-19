@@ -106,6 +106,8 @@ namespace apidb
             void echoCopyParamsRaw()const;
             void echoCopyParamsJava()const;
             bool echoKeyCopy()const;
+            
+            bool is_cpp_oct();
         protected:
             const ConfigureProject& configureProject;
             const apidb::symbols::Table& table;
@@ -146,6 +148,7 @@ namespace apidb
             Select(const ConfigureProject&,const apidb::symbols::Table&,std::ofstream&);
             virtual bool generate();
             
+            
         private:
             bool definite_static();
             bool implement_static();
@@ -184,9 +187,12 @@ namespace apidb
         private:
             bool definite();
             bool definite(const symbols::Symbol* s);
+            bool definite_cpp(const symbols::Symbol* s,bool cpp_conts);
+            void cpp_return(const symbols::Symbol* s,bool cpp_conts);
             bool definiteKey(const symbols::Symbol* s);
             bool implement();
             bool implement(const symbols::Symbol* s);
+            bool implement_cpp(const symbols::Symbol* s,bool cpp_conts);
             bool implementKey(const symbols::Symbol* s);
         };
                 
