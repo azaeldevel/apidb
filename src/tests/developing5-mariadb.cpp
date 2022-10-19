@@ -329,16 +329,27 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;       
     }
     if(verbose) std::cout << "Step 3\n";
+    stoking_prod1s.getItem().downItem(connector);
+    stoking1.downItem(connector);
     if(verbose)
     {
       std::cout << "catItems1.id " << catItems1.getID().getID() << "\n";
-      std::cout << "stoking_prod1s.id : " << &stoking_prod1s.getItem() << "\n";
-      std::cout << "stoking_prod1s.id : " << &stoking_prod1s.getItem().getItem() << "\n";
-      std::cout << "stoking_prod1s.id : " << &stoking_prod1s.getItem().getItem().getID() << "\n";
-      std::cout << "stoking_prod1s.id : " << stoking_prod1s.getItem().getItem().getID().getID() << "\n";
+      
+      std::cout << "stoking1.item " << stoking1.getItem().getID().getID() << "\n";
+      
+      std::cout << "stoking_prod1s.item - Stocking* : " << &stoking_prod1s.getItem() << "\n";
+      std::cout << "stoking_prod1s.item.item - Catalog_Items* : " << &stoking_prod1s.getItem().getItem() << "\n";
+      std::cout << "stoking_prod1s.item.item - Entities* : " << &stoking_prod1s.getItem().getItem().getID() << "\n";
+      std::cout << "stoking_prod1s.item.item.id : " << stoking_prod1s.getItem().getItem().getID().getID() << "\n";
       
     }
-     
+    if(stoking1.getItem().getID().getID() != stoking_prod1s.getItem().getItem().getID().getID())
+    {
+		std::cerr << "Fail on gettting ids.\n";
+		return EXIT_FAILURE;        
+    }
+    
+    //if()
     
     
     std::cout << "Ending operations..\n";

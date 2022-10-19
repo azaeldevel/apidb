@@ -380,6 +380,10 @@ namespace octetos::apidb::generators
                 {
                     ofile << symbol.second->getName();
                 }
+                else if(symbol.second->outType.compare("int") == 0)
+                {
+                    ofile << "dt.getint(0)";
+                }
                 else
                 {
                     ofile << "(*" << symbol.second->getName() << ")";
