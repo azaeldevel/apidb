@@ -190,15 +190,25 @@ namespace generators
 	}
 	void CPP::writeDefaultContructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
     {
-		ofile <<"\t"<<table.getName()<< "::" <<table.getName()<<"()"<<std::endl;
+		ofile <<"\t"<<table.getName()<< "::" <<table.getName()<<"()";
+        if(not table.references.empty())
+            {
+                ofile << " : ";
+                for(unsigned int i = 0; i < table.references.size(); i++)
+                {
+                    ofile << table.references[i]->name << "(NULL)";
+                    if(i < table.references.size() - 1) ofile << ",";
+                }
+            }
+            ofile << "\n";
 		ofile <<"\t{\n";
-        for(const std::pair<const char*,symbols::Symbol*>& it : table)
+        /*for(const std::pair<const char*,symbols::Symbol*>& it : table)
         {
             if(it.second->symbolReferenced)
             {
                 ofile << "\t\t" << it.second->name << " = NULL;\n";
             }
-        }
+        }*/
 		ofile <<"\t}\n";
 	}		
 	void CPP::writeDestructorCPP(const apidb::symbols::Table& table,std::ofstream& ofile)
@@ -209,8 +219,11 @@ namespace generators
         {
             if(it.second->symbolReferenced != NULL)
             {
-                ofile << "\t\tif(" << it.second->name << ") "; 
-                ofile << "delete " << it.second->name << ";\n";
+                ofile << "\t\tif(" << it.second->name << ")\n"; 
+                ofile << "\t\t{\n"; 
+                ofile << "\t\t\tdelete " << it.second->name << ";\n"; 
+                ofile << "\t\t\t" << it.second->name << " = NULL;\n";
+                ofile << "\t\t}\n"; 
             }
         }
 		ofile <<"\t}\n";
@@ -229,7 +242,7 @@ namespace generators
 		{
             if(it->second->symbolReferenced)
             {
-                ofile << "\t\tthis->"<< it->second->getName()  << " = new " << it->second->classReferenced->name << "(*obj." << it->second->getName() <<");"<<std::endl;
+                ofile << "\t\tif(obj." << it->second->getName() << ") this->"<< it->second->getName()  << " = new " << it->second->classReferenced->name << "(*(obj." << it->second->getName() <<"));"<<std::endl;
             }
             else
             {
@@ -261,7 +274,17 @@ namespace generators
                     ofile << ",";
                 }
             }
-            ofile << ")"<<std::endl;
+            ofile << ")";
+            if(not table.references.empty())
+            {
+                ofile << " : ";
+                for(unsigned int i = 0; i < table.references.size(); i++)
+                {
+                    ofile << table.references[i]->name << "(NULL)";
+                    if(i < table.references.size() - 1) ofile << ",";
+                }
+            }
+            ofile << "\n";
 		}
 		else
 		{

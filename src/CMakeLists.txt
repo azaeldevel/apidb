@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 PROJECT(src LANGUAGES CXX)
 
-SET (CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fno-plt -fexceptions -Wp,-D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection")
-SET (CMAKE_CXX_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_CXX_FLAGS} -Wp,-D_GLIBCXX_ASSERTIONS")
+SET (CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fno-plt -fexceptions -Wp,-D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection -g")
+SET (CMAKE_CXX_FLAGS  "${CMAKE_C_FLAGS} ${CMAKE_CXX_FLAGS} -Wp,-D_GLIBCXX_ASSERTIONS -g")
 ##SET (CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fpermissive -Wno-deprecated-declarations")
 ##set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -ggdb")
 

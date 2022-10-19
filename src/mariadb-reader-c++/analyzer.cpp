@@ -25,7 +25,7 @@ namespace mariadb
 		{
 			if(ispace->what() == symbols::SpaceType::TABLE)
 			{
-				symbols::Table* tb = (symbols::Table*) ispace;
+			symbols::Table* tb = (symbols::Table*) ispace;				
 				for(symbols::Table::iterator it = tb->begin(); it != tb->end(); it++)
 				{
 					if(parse(it->second) == false) return false;
@@ -65,7 +65,7 @@ namespace mariadb
 		bool flag = listing();		
 		if(flag == false) return false;
 		
-		for(symbols::SymbolsTable::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
+		/*for(symbols::SymbolsTable::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{
 			if(it->second->what() == symbols::SpaceType::SPACE)
 			{
@@ -83,7 +83,7 @@ namespace mariadb
 					}
 				}
 			}
-		}
+		}*/
 		
 		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{
@@ -98,6 +98,27 @@ namespace mariadb
 		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
 		{
 			parse(it->second);
+		}
+		
+		symbols::Table* table;
+		symbols::Symbol* symbol;
+		for(std::map<const char*,symbols::ISpace*,symbols::cmp_str>::iterator it = symbolsTable.begin(); it != symbolsTable.end(); it++)
+		{
+			
+			std::cout << "Space : ";
+			std::cout << ((const symbols::Space*)it->second)->getName();
+			std::cout << "\n";
+				
+			for(auto itTable : *((symbols::Space*)it->second))
+			{
+				table = (symbols::Table*)itTable.second;
+				std::cout << "\tTable : " << table->name << "\n";				
+				for(auto field : *table)
+				{
+					symbol = (symbols::Symbol*)field.second;
+					if(symbol->symbolReferenced) table->references.push_back(symbol);
+				}
+			}
 		}
 		
 		return true;

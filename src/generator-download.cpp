@@ -39,12 +39,7 @@ namespace octetos::apidb::generators
         
         for(auto symbol : table)
         {
-            if(symbol.second->isAutoIncrement() and symbol.second->isPrimaryKey()) continue;
-            else
-            {
-                const symbols::Symbol* symroot = getRootSymbol(symbol.second);
-                if(symroot->isAutoIncrement() and symroot->isPrimaryKey()) continue;            
-            }
+            if(symbol.second->isPK) continue;
                 
             if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
             {        
@@ -231,13 +226,8 @@ namespace octetos::apidb::generators
 		
         for(auto symbol : table)
         {
-            if(symbol.second->isAutoIncrement() and symbol.second->isPrimaryKey()) continue;
-            else
-            {
-                const symbols::Symbol* symroot = getRootSymbol(symbol.second);
-                if(symroot->isAutoIncrement() and symroot->isPrimaryKey()) continue;            
-            }
-                
+            if(symbol.second->isPK) continue;
+            
             if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)
             {
                 ofile << "\tbool " << table.name << "::down" << symbol.second->upperName << "(octetos::db::mysql::Connector& connector)";
@@ -535,7 +525,7 @@ namespace octetos::apidb::generators
             ofile << "\t\treturn false;\n";
             ofile << "\t}\n";            
         }
-			
+        
         return true;
     }
 

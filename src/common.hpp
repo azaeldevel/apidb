@@ -329,6 +329,11 @@ namespace apidb
             //friend class octetos::apidb::mysql::Analyzer;
             //friend class octetos::apidb::postgresql::Analyzer;
             /**
+            * Lista los campos cuyo valor para symbolReferenced no es NULL
+            * */
+            std::vector<Symbol*> references;
+            
+            /**
             * \brief Nombre de la tabla
             * */
 			std::string name;

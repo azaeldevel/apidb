@@ -319,13 +319,26 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;      
     }
     
+    if(verbose) std::cout << "Adding Stocking_Production.\n";
+    if(verbose) std::cout << "Step 1\n";
     muposys::Stocking_Production stoking_prod1s;
+    if(verbose) std::cout << "Step 2\n";
 	if(not stoking_prod1s.insert(connector,stoking1))
     {
 		std::cerr << "Fail on update Stocking_Production.\n";
 		return EXIT_FAILURE;       
     }
-    
+    if(verbose) std::cout << "Step 3\n";
+    if(verbose)
+    {
+      std::cout << "catItems1.id " << catItems1.getID().getID() << "\n";
+      std::cout << "stoking_prod1s.id : " << &stoking_prod1s.getItem() << "\n";
+      std::cout << "stoking_prod1s.id : " << &stoking_prod1s.getItem().getItem() << "\n";
+      std::cout << "stoking_prod1s.id : " << &stoking_prod1s.getItem().getItem().getID() << "\n";
+      std::cout << "stoking_prod1s.id : " << stoking_prod1s.getItem().getItem().getID().getID() << "\n";
+      
+    }
+     
     
     
     std::cout << "Ending operations..\n";
