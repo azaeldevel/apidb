@@ -28,14 +28,14 @@
 #include <cstdlib>
 #include "common.hpp"
 
-
+using namespace octetos::apidb;
 int main(int argc, char *argv[])
 {
     std::string copyright = "APIDB  Copyright (C) 2018  Azael Reyes \nThis program comes with ABSOLUTELY NO WARRANTY.\n    Contacto: azael.devel@gmail.com";
         
     const char* file = NULL;
     const char* dir = NULL;
-    bool open_project = false, open_create = false;
+    bool open_project = false, open_create = false, quite_input = false;
     octetos::apidb::ConfigureProject* config = new octetos::apidb::ConfigureProject;
     octetos::db::Datconnect* datconn = NULL;
     octetos::db::Connector* conn = NULL;
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	{
 		if(strcmp(argv[i],"-v") == 0 || strcmp(argv[i],"--version") == 0)
 		{
-			std::cout<<"Version: " << octetos::apidb::getPakageVersion().toString()<<std::endl;
+			std::cout<<"Version: " << getPakageVersion().toString()<<std::endl;
             std::cout<<std::endl;
             std::cout<< copyright<<std::endl;                        
 			return EXIT_SUCCESS;
@@ -97,8 +97,10 @@ int main(int argc, char *argv[])
             }
         }
 		else if(strcmp(argv[i],"-c") == 0 || strcmp(argv[i],"--create-project") == 0)
-        {           
+        {
                 open_project = true;
+                if(not quite_input)
+                {
                 std::cout << "Captura de parámetros de conexión\n";
                 
                 std::cout << "\tTipo de Base de Datos (MariaDB,MySQL,):\n";
@@ -107,27 +109,52 @@ int main(int argc, char *argv[])
                 std::cout << "\t\t2 : PostgreSQL\n";
                 std::cout << "\t\t3 : MariaDB\n";
                 std::cout << "\tSelección : ";
+                }
                 int dbtype = 0;
                 std::cin >> dbtype;
+                if(not quite_input)
+                {
+                std::cout << "\n ";
                 std::cout << "\tHost : ";
+                }
                 std::string dbhost;
                 std::cin >> dbhost;
+                if(not quite_input)
+                {
+                std::cout << "\n ";
                 std::cout << "\tNombre : ";
+                }
                 std::string dbname;
                 std::cin >> dbname;
+                if(not quite_input)
+                {
+                std::cout << "\n ";
                 std::cout << "\tPuerto : ";
+                }
                 int dbport;
                 std::cin >> dbport;
+                if(not quite_input)
+                {
+                std::cout << "\n ";
                 std::cout << "\tUsuario : ";
+                }
                 std::string dbuser;
                 std::cin >> dbuser;
+                if(not quite_input)
+                {
+                std::cout << "\n ";
                 std::cout << "\tContrseña : ";
+                }
                 std::string dbpassw;
                 std::cin >> dbpassw;
-                                
-                datconn = octetos::apidb::create_dc((octetos::apidb::InputLenguajes)dbtype);
+                {
+                std::cout << "\n ";
+                }
+                
+                datconn = create_dc((InputLenguajes)dbtype);
                 datconn->set(dbhost,dbport,dbname,dbuser,dbpassw);
-                std::cout << "\tprobando conexion .. ";
+                if(not quite_input) std::cout << "\t";
+                std::cout << "Probando conexion .. ";
                 conn = octetos::apidb::create_c((octetos::apidb::InputLenguajes)dbtype);
                 if(conn->connect(*datconn)) 
                 {
@@ -137,10 +164,74 @@ int main(int argc, char *argv[])
                 {
                     std::cout << "fallida\n";
                 }
+                config->setInputs((InputLenguajes)dbtype,*datconn);
                 
+                if(not quite_input)
+                {
+                std::cout << "Captura de parámetros de proyecto\n";
                 std::cout << "\tNombre del projecto: ";
+                }
                 std::cin >> config->name;
+                if(not quite_input) std::cout << "\n ";
                 
+                if(not quite_input)
+                {
+                std::cout << "\tLenguaje de Salida : \n";
+                std::cout << "\t\t0 : Desconocida\n";
+                std::cout << "\t\t1 : C\n";
+                std::cout << "\t\t2 : C++\n";
+                std::cout << "\t\t3 : Java\n";
+                std::cout << "\t\t4 : PHP\n";
+                }
+                int proyLang = 0;
+                std::cin >> proyLang;
+                if(not quite_input) std::cout << "\n ";
+                config->outputLenguaje = (OutputLenguajes)proyLang;
+                
+                if(not quite_input)
+                {
+                std::cout << "\tCompilable : \n";
+                std::cout << "\t\t0 : Ninguna\n";
+                std::cout << "\t\t1 : Libreria estatica\n";
+                std::cout << "\t\t2 : Libreria dinamica\n";
+                }
+                int proyCompile= 0;
+                std::cin >> proyCompile;
+                if(not quite_input)std::cout << "\n ";
+                config->compiled = (Compiled)proyCompile;
+                
+                if(not quite_input)
+                {
+                std::cout << "\tEmpquetado : \n";
+                std::cout << "\t\t0 : Ninguna\n";
+                std::cout << "\t\t1 : CMake\n";
+                std::cout << "\t\t2 : Solo Código\n";
+                std::cout << "\t\t3 : Maven\n";
+                std::cout << "\t\t4 : Autotools\n";
+                }
+                int proyPack= 0;
+                std::cin >> proyPack;
+                std::cout << "\n ";
+                config->packing = (PackingLenguajes)proyPack;
+                
+                 if(not quite_input)std::cout << "\tVersion de Base de Datos : ";               
+                std::string strver;
+                std::cin >> strver;
+                 if(not quite_input) std::cout << "\n ";
+                octetos::core::Semver version;
+                version.set(strver);
+                config->versionResult =  version;
+                
+                
+                if(not quite_input)std::cout << "\tNombre del conector : ";  
+                std::string nameconn;
+                std::cin >> nameconn;
+                if(not quite_input)std::cout << "\n ";
+                config->writeDatconnect =  nameconn;
+        }
+        else if(strcmp(argv[i],"--quite-input") == 0)
+        {
+            quite_input = true;
         }
         else
         {

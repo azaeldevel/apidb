@@ -458,8 +458,26 @@ void testCompilen()
 void developing()
 {
 	
+	CU_ASSERT(octetos::apidb::InputLenguajes::Unknow == 0);
+	CU_ASSERT(octetos::apidb::InputLenguajes::MySQL == 1);
+	CU_ASSERT(octetos::apidb::InputLenguajes::PostgreSQL == 2);
+	CU_ASSERT(octetos::apidb::InputLenguajes::MariaDB == 3);
+		
+	CU_ASSERT(octetos::apidb::OutputLenguajes::NoLang == 0);
+	CU_ASSERT(octetos::apidb::OutputLenguajes::C == 1);
+	CU_ASSERT(octetos::apidb::OutputLenguajes::CPP == 2);
+	CU_ASSERT(octetos::apidb::OutputLenguajes::JAVA == 3);
+	CU_ASSERT(octetos::apidb::OutputLenguajes::PHP == 4);
+		
+	CU_ASSERT(octetos::apidb::PackingLenguajes::NoPack == 0);
+	CU_ASSERT(octetos::apidb::PackingLenguajes::CMake == 1);
+	CU_ASSERT(octetos::apidb::PackingLenguajes::OnlyCode == 2);
+	CU_ASSERT(octetos::apidb::PackingLenguajes::Maven == 3);
+	CU_ASSERT(octetos::apidb::PackingLenguajes::Autotools == 4);
 	
-	
+	CU_ASSERT(octetos::apidb::Compiled::NoCompile == 0);
+	CU_ASSERT(octetos::apidb::Compiled::STATIC == 1);
+	CU_ASSERT(octetos::apidb::Compiled::SHARED == 2);
 }
 
 int main(int argc, char *argv[])

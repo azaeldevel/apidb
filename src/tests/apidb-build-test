@@ -1,0 +1,11 @@
+#!/bin/bash
+
+BUILDER=$1
+RESULT=$2
+DATA=$3
+
+echo "BUILDER : $BUILDER"
+echo "RESULT : $RESULT"
+echo "DATA : $DATA"
+
+$BUILDER --quite-input -c -o $RESULT < $DATA

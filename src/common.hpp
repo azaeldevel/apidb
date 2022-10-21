@@ -107,6 +107,7 @@ namespace apidb
             CMake,
             OnlyCode,
             Maven,
+            Autotools
         };
         std::string getPackingLenguajes(PackingLenguajes);
         PackingLenguajes getPackingLenguajes(const std::string&);
