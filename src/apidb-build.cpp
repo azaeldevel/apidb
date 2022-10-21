@@ -26,6 +26,8 @@
 #include <regex>
 #include <string>
 #include <cstdlib>
+#include "common.hpp"
+
 
 int main(int argc, char *argv[])
 {
@@ -33,6 +35,10 @@ int main(int argc, char *argv[])
         
     const char* file = NULL;
     const char* dir = NULL;
+    bool open_project = false, open_create = false;
+    octetos::apidb::ConfigureProject* config = new octetos::apidb::ConfigureProject;
+    octetos::db::Datconnect* datconn = NULL;
+    octetos::db::Connector* conn = NULL;
 	for(int i = 1; i < argc; i++)
 	{
 		if(strcmp(argv[i],"-v") == 0 || strcmp(argv[i],"--version") == 0)
@@ -50,6 +56,25 @@ int main(int argc, char *argv[])
                 i++;
                 //std::cout<<"Detectando valor -p = " << argv[i] << "\n";                
                 file = argv[i]; 
+                /*FILE *tmpfile = fopen(file, "r");
+                if (tmpfile) 
+                {
+                    fclose(tmpfile);
+                } 
+                else 
+                {
+                    std::cerr<<"No existe el archivo : " << file  <<std::endl;
+                    return EXIT_FAILURE;
+                }*/
+                try
+                {
+                    config->readConfig(file);
+                }
+                catch(const std::exception& e)
+                {
+                    std::cerr<<"Fallo la lectura del archivo."<< e.what() <<std::endl;
+                    return EXIT_FAILURE;                        
+                }
             }
             else
             {
@@ -71,51 +96,70 @@ int main(int argc, char *argv[])
                 return EXIT_FAILURE;
             }
         }
+		else if(strcmp(argv[i],"-c") == 0 || strcmp(argv[i],"--create-project") == 0)
+        {           
+                open_project = true;
+                std::cout << "Captura de parámetros de conexión\n";
+                
+                std::cout << "\tTipo de Base de Datos (MariaDB,MySQL,):\n";
+                std::cout << "\t\t0 : Desconocida\n";
+                std::cout << "\t\t1 : MySQL\n";
+                std::cout << "\t\t2 : PostgreSQL\n";
+                std::cout << "\t\t3 : MariaDB\n";
+                std::cout << "\tSelección : ";
+                int dbtype = 0;
+                std::cin >> dbtype;
+                std::cout << "\tHost : ";
+                std::string dbhost;
+                std::cin >> dbhost;
+                std::cout << "\tNombre : ";
+                std::string dbname;
+                std::cin >> dbname;
+                std::cout << "\tPuerto : ";
+                int dbport;
+                std::cin >> dbport;
+                std::cout << "\tUsuario : ";
+                std::string dbuser;
+                std::cin >> dbuser;
+                std::cout << "\tContrseña : ";
+                std::string dbpassw;
+                std::cin >> dbpassw;
+                                
+                datconn = octetos::apidb::create_dc((octetos::apidb::InputLenguajes)dbtype);
+                datconn->set(dbhost,dbport,dbname,dbuser,dbpassw);
+                std::cout << "\tprobando conexion .. ";
+                conn = octetos::apidb::create_c((octetos::apidb::InputLenguajes)dbtype);
+                if(conn->connect(*datconn)) 
+                {
+                    std::cout << "completada.\n";
+                }
+                else
+                {
+                    std::cout << "fallida\n";
+                }
+                
+                std::cout << "\tNombre del projecto: ";
+                std::cin >> config->name;
+                
+        }
         else
         {
             std::cerr<<"Opcion desconocida '" << argv[i] << "'.\n";
         }
 	}
-	
-	if(file == NULL)
+        
+    if(dir != NULL)
     {
-        std::cerr<<"Indique el archivo de projecto mediente la opcion '-p'.\n";
-        return EXIT_FAILURE;
+        config->builDirectory = dir;
+        std::cout<<"Generando en '" << config->builDirectory << "' ..." <<std::endl;
     }
     
-		std::cout<<"Cargando '" << file << "' ..." <<std::endl;
-		octetos::apidb::ConfigureProject config;
-		try
-		{
-			config.readConfig(file);
-		}
-        catch(const std::exception& e)
-        {
-			std::cerr<<"Fallo la lectura del archivo."<< e.what() <<std::endl;
-			return EXIT_FAILURE;                        
-        }
-        if(dir != NULL)
-        {
-            config.builDirectory = dir;
-            std::cout<<"Generando en '" << config.builDirectory << "' ..." <<std::endl;
-        }
-        //verificar si exite el archivo de projecto
-        FILE *tmpfile = fopen(file, "r");
-        if (tmpfile) 
-        {
-            fclose(tmpfile);
-        } 
-        else 
-        {
-            std::cerr<<"No existe el archivo : " << file  <<std::endl;
-			return EXIT_FAILURE;
-        } 
-    octetos::apidb::Driver driver(config);
+    octetos::apidb::Driver driver(*config);
     octetos::apidb::Tracer tr(0);
     bool retDriver;
     try
     {
-            retDriver = driver.driving(&tr);
+        retDriver = driver.driving(&tr);
     }
     catch(const std::exception& e)
     {
@@ -127,6 +171,9 @@ int main(int argc, char *argv[])
         std::cerr<<"Fallo desconocido.";
         return EXIT_FAILURE;
     }
+    delete config;
+    if(datconn) delete datconn;
+    if(conn) delete conn;
 	
 	return EXIT_SUCCESS;	
 }

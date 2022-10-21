@@ -40,6 +40,19 @@
 #include <iostream>
 #include <cstring>
 
+#ifdef LINUX_ARCH 
+    #ifdef APIDB_MYSQL
+        #include <octetos/db/clientdb-mysql.hh>
+    #endif
+    #ifdef APIDB_POSTGRESQL
+        #include <octetos/db/clientdb-postgresql.hh>
+    #endif
+    #ifdef APIDB_MARIADB
+        #include <octetos/db/clientdb-maria.hh>
+    #endif
+#else
+    #error "Unknow Platform"
+#endif
 
 namespace octetos
 {
@@ -73,7 +86,15 @@ namespace apidb
     bool createDatconnect(octetos::db::Datconnect**);
     bool createConnector(octetos::db::Connector**);*/
 
-    typedef octetos::db::Driver InputLenguajes;
+    enum EngineDB
+	{
+		Unknow,
+		MySQL,
+		PostgreSQL,
+		MariaDB
+	};
+    typedef EngineDB InputLenguajes;//typedef octetos::db::Driver InputLenguajes;
+    
     std::string getInputLenguaje(InputLenguajes);
     InputLenguajes getInputLenguaje(const std::string&);
 
@@ -539,6 +560,10 @@ namespace apidb
         * */
         virtual void add(const core::Warning&);
     };
+    
+    
+    octetos::db::Datconnect* create_dc(InputLenguajes);
+    octetos::db::Connector* create_c(InputLenguajes);
 }
 }
 #endif

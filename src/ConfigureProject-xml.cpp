@@ -705,13 +705,13 @@ namespace apidb
                 	{
 		                setInputLenguaje(InputLenguajes::MySQL);
 		                conectordb = createDatConnection();
-		                conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);
+		                conectordb->set(host,port,database,user,password);
                     }
                     else if(checkLibrary(InputLenguajes::MariaDB))
                 	{
 		                setInputLenguaje(InputLenguajes::MariaDB);
 		                conectordb = createDatConnection();
-		                conectordb->set(InputLenguajes::MariaDB,host,port,database,user,password);
+		                conectordb->set(host,port,database,user,password);
                     }
                     else
                     {
@@ -726,7 +726,7 @@ namespace apidb
                 	{
 		                setInputLenguaje(InputLenguajes::PostgreSQL);
 		                conectordb = createDatConnection();
-		                conectordb->set(InputLenguajes::PostgreSQL,host,port,database,user,password);
+		                conectordb->set(host,port,database,user,password);
                     }
                     else
                     {
@@ -742,14 +742,14 @@ namespace apidb
                         //std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.1a.\n";
 		                setInputLenguaje(InputLenguajes::MariaDB);
 		                conectordb = createDatConnection();
-		                conectordb->set(InputLenguajes::MariaDB,host,port,database,user,password);
+		                conectordb->set(host,port,database,user,password);
                     }
                     else if(checkLibrary(InputLenguajes::MySQL))
                 	{
                         //std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.1b.\n";
 		                setInputLenguaje(InputLenguajes::MySQL);
 		                conectordb = createDatConnection();
-		                conectordb->set(InputLenguajes::MySQL,host,port,database,user,password);
+		                conectordb->set(host,port,database,user,password);
                     }
                     else
                     {

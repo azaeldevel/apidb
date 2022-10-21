@@ -794,5 +794,45 @@ namespace apidb
 			return last;
 		}*/		
 	}
+	
+	octetos::db::Datconnect* create_dc(InputLenguajes in)
+	{
+		switch((int)in)
+		{
+   #ifdef APIDB_MYSQL
+			case InputLenguajes::MySQL:
+				return new octetos::db::mysql::Datconnect;				
+    #endif
+    #ifdef APIDB_POSTGRESQL
+			case InputLenguajes::PostgreSQL:
+				return new octetos::db::postgresql::Datconnect;        
+    #endif
+    #ifdef APIDB_MARIADB
+			case InputLenguajes::MariaDB:
+				return new octetos::db::maria::Datconnect;        
+    #endif
+		}
+		return NULL;
+	}
+	
+	octetos::db::Connector* create_c(InputLenguajes in)
+	{
+		switch((int)in)
+		{
+   #ifdef APIDB_MYSQL
+			case InputLenguajes::MySQL:
+				return new octetos::db::mysql::Connector;				
+    #endif
+    #ifdef APIDB_POSTGRESQL
+			case InputLenguajes::PostgreSQL:
+				return new octetos::db::postgresql::Connector;        
+    #endif
+    #ifdef APIDB_MARIADB
+			case InputLenguajes::MariaDB:
+				return new octetos::db::maria::Connector;        
+    #endif
+		}
+		return NULL;
+	}
 }
 }
