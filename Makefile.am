@@ -1,5 +1,8 @@
 
-SUBDIRS = src po
+SUBDIRS = src
+if OCTETOS_APIDB_ENABLE_TDD
+SUBDIRS += tests
+endif
 
 dist_doc_DATA = \
 	README \

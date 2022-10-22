@@ -707,17 +707,7 @@ int main(int argc, char *argv[])
 			CU_cleanup_registry();
 			return CU_get_error();
 	}
-	if(runTransforme)
-	{
-		if(enableMariaDB)
-		{
-			if ((NULL == CU_add_test(pSuite, "Transforme model para MariaDB", transforme_maria)))
-			{
-				CU_cleanup_registry();
-				return CU_get_error();
-			}
-		}
-	}
+
 	//std::cout << "Test Step 10\n";
 		
 	/* Run all tests using the CUnit Basic interface */

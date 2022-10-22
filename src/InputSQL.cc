@@ -1,11 +1,9 @@
 
-#include "driver.hpp"
+#include "Inputs.hh"
 
 
 
-namespace octetos
-{
-namespace apidb
+namespace oct::api
 {
 
 const char* InputSQL::schema_name = "INFORMATION_SCHEMA";
@@ -53,5 +51,5 @@ void InputSQL::listing_tables(const char* s)
 		std::cout << "Consulta fallida\n";
 	}
 }
-}
+
 }

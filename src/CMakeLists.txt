@@ -274,7 +274,7 @@ IF(APIDB_POSTGRESQL STREQUAL "Y")
 ENDIF()
 
 
-ADD_LIBRARY(${CMAKE_PROJECT_NAME}-Driver-obj OBJECT driver.cpp driver-InputSQL.cpp driver-InputMM.cpp driver-InputMaria.cpp)
+ADD_LIBRARY(${CMAKE_PROJECT_NAME}-Driver-obj OBJECT driver.cpp)
 set_target_properties(${CMAKE_PROJECT_NAME}-Driver-obj  PROPERTIES POSITION_INDEPENDENT_CODE 1 ) 
 ADD_LIBRARY(${CMAKE_PROJECT_NAME}-Driver SHARED $<TARGET_OBJECTS:${CMAKE_PROJECT_NAME}-Driver-obj>)
 

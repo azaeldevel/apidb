@@ -1,11 +1,9 @@
 
-#include "driver.hpp"
+#include "Inputs.hh"
 
 
 
-namespace octetos
-{
-namespace apidb
+namespace oct::api
 {
 
 
@@ -24,4 +22,4 @@ void InputMaria::read(const char* s)
 }
 
 }
-}
+

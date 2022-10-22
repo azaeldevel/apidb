@@ -1,19 +1,9 @@
 
-AM_CPPFLAGS = \
-	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
-	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
-	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\"
+check_PROGRAMS = v6
+TESTS= $(check_PROGRAMS)
 
-AM_CFLAGS =\
-	 -Wall\
-	 -g
-
-
-lib_LTLIBRARIES = libapidb.la
-
-
-LIB = 
-FLAGS = $(OCTETOS_DB_FLAGS)
+LIB = $(TDD_LIBS)
+FLAGS = $(OCTETOS_CFLAGS) $(OCTETOS_DB_CFLAGS) $(TDD_CFLAGS)
 if OCTETOS_APIDB_ENABLE_TDD
 FLAGS += -DOCTETOS_APIDB_ENABLE_TDD -DOCTETOS_APIDB_ENABLE_TDD_V6 -DOCTETOS_APIDB_ENABLE_TDD_V5
 endif
@@ -28,10 +18,7 @@ if OCTETOS_APIDB_ARCH_LINUX_ARCH
 FLAGS += -DOCTETOS_APIDB_ARCH_LINUX_ARCH -DLINUX_ARCH
 endif
 
-libapidb_la_CXXFLAGS = $(FLAGS)
-libapidb_la_SOURCES = InputSQL.cc InputMM.cc InputMaria.cc Inputs.cc
-libapidb_la_LIBADD =  $(LIB)
-
-
-
-
+v6_LDFLAGS =
+v6_LDADD = $(LIB) $(top_builddir)/src/libapidb.la
+v6_CXXFLAGS = $(FLAGS) -I$(top_srcdir)/src
+v6_SOURCES = main.cc v6.cc

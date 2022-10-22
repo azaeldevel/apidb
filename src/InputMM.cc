@@ -1,11 +1,9 @@
 
-#include "driver.hpp"
+#include "Inputs.hh"
 
 
 
-namespace octetos
-{
-namespace apidb
+namespace oct::api
 {
 
 
@@ -23,4 +21,4 @@ void InputMM::read(const char* space)
 }
 
 }
-}
+
