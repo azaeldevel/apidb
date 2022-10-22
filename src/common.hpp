@@ -91,7 +91,8 @@ namespace apidb
 		Unknow,
 		MySQL,
 		PostgreSQL,
-		MariaDB
+		MariaDB,
+        Octetos,
 	};
     typedef EngineDB InputLenguajes;//typedef octetos::db::Driver InputLenguajes;
     

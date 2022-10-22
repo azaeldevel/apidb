@@ -479,17 +479,71 @@ void developing()
 	CU_ASSERT(octetos::apidb::Compiled::STATIC == 1);
 	CU_ASSERT(octetos::apidb::Compiled::SHARED == 2);
 }
-
+void constans()
+{
+	
+	CU_ASSERT(octetos::apidb::InputLenguajes::Unknow == 0);
+	CU_ASSERT(octetos::apidb::InputLenguajes::MySQL == 1);
+	CU_ASSERT(octetos::apidb::InputLenguajes::PostgreSQL == 2);
+	CU_ASSERT(octetos::apidb::InputLenguajes::MariaDB == 3);
+		
+	CU_ASSERT(octetos::apidb::OutputLenguajes::NoLang == 0);
+	CU_ASSERT(octetos::apidb::OutputLenguajes::C == 1);
+	CU_ASSERT(octetos::apidb::OutputLenguajes::CPP == 2);
+	CU_ASSERT(octetos::apidb::OutputLenguajes::JAVA == 3);
+	CU_ASSERT(octetos::apidb::OutputLenguajes::PHP == 4);
+		
+	CU_ASSERT(octetos::apidb::PackingLenguajes::NoPack == 0);
+	CU_ASSERT(octetos::apidb::PackingLenguajes::CMake == 1);
+	CU_ASSERT(octetos::apidb::PackingLenguajes::OnlyCode == 2);
+	CU_ASSERT(octetos::apidb::PackingLenguajes::Maven == 3);
+	CU_ASSERT(octetos::apidb::PackingLenguajes::Autotools == 4);
+	
+	CU_ASSERT(octetos::apidb::Compiled::NoCompile == 0);
+	CU_ASSERT(octetos::apidb::Compiled::STATIC == 1);
+	CU_ASSERT(octetos::apidb::Compiled::SHARED == 2);
+}
+void transforme_maria()
+{
+	octetos::db::maria::Datconnect dat_conn(mariaSource);
+	dat_conn.setDatabase(octetos::apidb::InputMaria::schema_name);
+	octetos::db::maria::Connector conn;
+	bool conn_conected = conn.connect(dat_conn);
+	if(not conn_conected)
+	{
+		std::cout << "Falló la conexion al servidor : Linea " << __LINE__ << "\n";
+		return;
+	}
+	CU_ASSERT(conn_conected);
+	
+	octetos::apidb::InputMaria input(conn);
+	try
+	{
+		input.read(mariaSource.getDatabase().c_str());
+	}
+	catch(const std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Falló : " << __LINE__ << "\n\t" << e.what() << "\n";
+	}
+	
+	conn.close();
+}
 int main(int argc, char *argv[])
 {
-    bool runAll = false, enableMySQL = false,enablePostgreSQL = false,enableMariaDB = false;
+    bool runAll = false, enableMySQL = false,enablePostgreSQL = false,enableMariaDB = false, enableOctetos = false;
     int runTest = 0;
 	int serverscount = 0;
+	bool runTransforme = false;
 	
 	//std::cout << "Test Step 1\n";
     
     for(int i = 1; i < argc; i++)
     {
+        if(strcmp(argv[i],"--transforme") == 0)
+        {
+            runTransforme = true;
+        }
         if(strcmp(argv[i],"--run") == 0)
         {
             //std::cout << argv[i] << ";\n";
@@ -532,9 +586,14 @@ int main(int argc, char *argv[])
             enableMariaDB = true;
 			serverscount++;
         } 
+        if(strcmp(argv[i],"--enable-octetos") == 0)
+        {
+            enableOctetos = true;
+			serverscount++;
+        } 
     }
     
-    if(serverscount > 1)
+    if(serverscount > 1 and not runTransforme)
 	{
 		std::cerr << "Solo se puer ejecutar un servidor a la vez.";
 		return EXIT_FAILURE;
@@ -643,7 +702,22 @@ int main(int argc, char *argv[])
 			return CU_get_error();
 		}
 	}
-	
+	if ((NULL == CU_add_test(pSuite, "Verificaciond de Constantes fijas", constans)))
+	{
+			CU_cleanup_registry();
+			return CU_get_error();
+	}
+	if(runTransforme)
+	{
+		if(enableMariaDB)
+		{
+			if ((NULL == CU_add_test(pSuite, "Transforme model para MariaDB", transforme_maria)))
+			{
+				CU_cleanup_registry();
+				return CU_get_error();
+			}
+		}
+	}
 	//std::cout << "Test Step 10\n";
 		
 	/* Run all tests using the CUnit Basic interface */

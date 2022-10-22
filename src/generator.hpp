@@ -156,6 +156,14 @@ namespace apidb
             bool implement_static();
             bool definite_rawdata();
             bool implement_rawdata();
+            
+            bool define_selects();
+            bool define_return_type();
+            bool define_connector_param();
+            bool define_param_function_raw_param(const symbols::Symbol&);
+            bool define_param_function_raw_key(const symbols::Key&);
+            bool define_param_function(const symbols::Symbol&);
+            bool define_firsts_params();
         };
         
         class Update : public Operation

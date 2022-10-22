@@ -514,6 +514,10 @@ namespace octetos::apidb::generators
                 {
                     ofile << "getuchar(0)";
                 }
+                else if(symbol.second->outType.compare("short") == 0)
+                {
+                    ofile << "getuchar(0)";
+                }
                 else
                 {
                     std::string msg = "El tipo de dato '";

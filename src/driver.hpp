@@ -25,10 +25,107 @@
 #include "analyzer.hpp"
 #include "generator.hpp"
 
+//On INFORMATION_SCHEMA
+//select TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME,ORDINAL_POSITION,REFERENCED_TABLE_SCHEMA from KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='muposys-0-alpha';
+//select TABLE_CATALOG,TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME,ORDINAL_POSITION,DATA_TYPE,COLUMN_KEY  from COLUMNS WHERE TABLE_SCHEMA='muposys-0-alpha';
+
 namespace octetos
 {
 namespace apidb
 {
+
+struct Field
+{
+        const char* name;        
+};
+struct Table : public std::vector<Field>
+{
+        const char* name;
+};
+struct Space : public std::vector<Table>
+{
+        const char* name;
+};
+
+class Input
+{
+public:
+        virtual void read(const char* space) = 0;
+        
+protected:
+        std::vector<Space> space;
+};
+/**
+* \brief SQL estandar
+* */
+class InputSQL: public Input
+{
+public:
+        InputSQL(octetos::db::Connector&);
+        InputSQL(const octetos::db::Datconnect&);
+        InputSQL(const char* server,unsigned int port, const char* user,const char* password);        
+        virtual ~InputSQL();
+        virtual void read(const char* space);
+        virtual void listing_tables(const char* space);
+        
+        static const char* schema_name;
+        
+protected:
+        octetos::db::Connector* conn;
+        bool conn_free;
+        
+};
+/**
+* \brief Es un analizador compatible en lo posible con MariaDB/MySQL, su funcion es servir como base para los analizadores especificos correspondientes.
+* */
+class InputMM: public InputSQL
+{
+public:
+        InputMM(octetos::db::Connector&);
+        InputMM(const octetos::db::Datconnect&);
+        InputMM(const char* server,unsigned int port, const char* user,const char* password);
+        virtual void read(const char* space);
+};
+class InputMySQL: public InputMM
+{
+public:
+        InputMySQL(octetos::db::Connector&);
+        virtual void read(const char* space);
+};
+class InputMaria: public InputMM
+{
+public:
+        InputMaria(octetos::db::Connector&);
+        InputMaria(const octetos::db::Datconnect&);
+        InputMaria(const char* server,unsigned int port, const char* user,const char* password);
+        virtual void read(const char* space);
+};
+
+
+class Output
+{
+public:
+        Output(const Input&);
+        virtual void write(std::ofstream&) = 0;
+protected:
+        const Input& in;
+};
+class OutputAPIAcces : public Output
+{
+public:
+        OutputAPIAcces(const Input&);
+        virtual void write(std::ofstream&);
+protected:
+};
+class OutputGtkmm : public Output
+{
+public:
+        OutputGtkmm(const Input&);
+        virtual void write(std::ofstream&);
+protected:
+};
+
+        
         /**
          * \brief Responsable de manejar todos el proceso desde el analisis hasta la generacion de los archivos fuentes
          * */
@@ -75,7 +172,8 @@ namespace apidb
                 /**
                  * \brief Unico contructor 
                  * */
-        Driver(ConfigureProject&);
+        [[deprecated("Working in new modele")]]Driver(ConfigureProject&);
+        Driver(const ConfigureProject&,const octetos::db::Datconnect&,apidb::Input&,apidb::Output&);
         /**
         * \brief Retorna el obejeto Analyzer utilizado.
         * */
@@ -89,13 +187,18 @@ namespace apidb
 	private:
 		octetos::db::Connector* connector;		
         apidb::Analyzer* analyzer;
-		ConfigureProject& configureProject;
+		const ConfigureProject& configureProject;
         //void* handle;
         octetos::db::Connector* (*createConnector)();
         
         //>>>>
         void (*destroyAnalyzer)(octetos::apidb::Analyzer*);
         apidb::Analyzer* (*createAnalyzer)(const octetos::apidb::ConfigureProject*,octetos::db::Connector*,octetos::core::ActivityProgress*);
+        
+        //new model
+        bool backward;
+        apidb::Input* in;
+        apidb::Output* out;
 	};
 }
 }

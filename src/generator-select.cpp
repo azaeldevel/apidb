@@ -9,6 +9,177 @@ namespace octetos::apidb::generators
     {
     }
     
+    
+    bool Select::define_return_type()
+    {
+        switch(configureProject.outputLenguaje)
+        {
+        case OutputLenguajes::CPP:
+            ofile << "bool";
+            break;
+        case OutputLenguajes::JAVA:
+            ofile << "Boolean";                     
+                    break;
+        case OutputLenguajes::PHP:
+                    
+                    break;
+                default:
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+        }
+        
+        return true;
+    }
+    bool Select::define_connector_param()
+    {
+        switch(configureProject.getInputLenguaje())
+        {
+        case InputLenguajes::MySQL:
+            switch(configureProject.outputLenguaje)
+            {
+            case OutputLenguajes::CPP:
+                ofile << "octetos::db::mysql::Connector& connector";
+                break;
+                default:
+                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+            }
+            break;
+        case InputLenguajes::MariaDB:  
+            switch(configureProject.outputLenguaje)
+            {
+            case OutputLenguajes::CPP:
+                ofile << "octetos::db::maria::Connector& connector";
+                break;
+            default:
+                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+            }
+            break;
+        case InputLenguajes::Octetos:  
+            switch(configureProject.outputLenguaje)
+            {
+            case OutputLenguajes::CPP:
+                ofile << "octetos::db::Connector& connector";
+                break;
+            default:
+                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+            }
+            break;
+            default:
+                throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+        }
+        
+        return true;
+    }
+    bool Select::define_param_function(const symbols::Symbol& symbol)
+    {
+        switch(configureProject.getInputLenguaje())
+        {
+        case InputLenguajes::MySQL:
+        case InputLenguajes::MariaDB:  
+        case InputLenguajes::Octetos:  
+            switch(configureProject.outputLenguaje)
+            {
+            case OutputLenguajes::CPP:
+                 ofile <<  symbol.getOutType() << " " << symbol.name;
+                break;
+            default:
+                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+            }
+            break;
+        default:
+            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+        }
+        
+        return true;
+    }    
+    bool Select::define_param_function_raw_param(const symbols::Symbol& key)
+    {
+        switch(configureProject.getInputLenguaje())
+        {
+        case InputLenguajes::MySQL:
+        case InputLenguajes::MariaDB:  
+        case InputLenguajes::Octetos:  
+            switch(configureProject.outputLenguaje)
+            {
+            case OutputLenguajes::CPP:
+                
+                break;
+            default:
+                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+            }
+            break;
+        default:
+            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+        }
+        
+        return true;
+    }
+    bool Select::define_param_function_raw_key(const symbols::Key& key)
+    {
+        switch(configureProject.getInputLenguaje())
+        {
+        case InputLenguajes::MySQL:
+        case InputLenguajes::MariaDB:  
+        case InputLenguajes::Octetos:  
+            switch(configureProject.outputLenguaje)
+            {
+            case OutputLenguajes::CPP:
+                bool all_same_table = true;
+                symbols::Table* classReferenced = NULL;
+                for(auto field : key)
+                {
+                    if(field->classReferenced)
+                    {
+                        if(classReferenced)
+                        {
+                            if(classReferenced != field->classReferenced) 
+                            {
+                                all_same_table = false;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        
+                    }
+                }
+            break;         
+            }
+            break;
+        default:
+            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
+        }
+        
+        return true;
+    }
+    bool Select::define_selects()
+    {
+        //meber functions
+        ofile << "\t\t";
+        define_return_type();
+        ofile << " ";
+        
+        ofile << "select";
+        ofile << "(";
+        {
+            define_connector_param();
+            if(not table.key.empty())
+            {
+                define_param_function_raw_key(table.key);
+            }
+        }
+        ofile << ");";
+        
+        
+        //static funtion
+        
+        //static backward compatible
+        
+        
+        
+        return true;
+    }
+    
     bool Select::definite_static()
     {
         if(configureProject.getInputLenguaje() == InputLenguajes::MySQL)

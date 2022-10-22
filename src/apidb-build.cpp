@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
         
     const char* file = NULL;
     const char* dir = NULL;
-    bool open_project = false, open_create = false, quite_input = false;
+    bool open_project = false, open_create = false, quite_input = false,  quite_input_muposys = false;
     octetos::apidb::ConfigureProject* config = new octetos::apidb::ConfigureProject;
     octetos::db::Datconnect* datconn = NULL;
     octetos::db::Connector* conn = NULL;
@@ -209,6 +209,10 @@ int main(int argc, char *argv[])
                     std::cout << "\n";
                     std::cout << "\tContrseña : ";
                 }
+                if(quite_input_muposys)
+                {
+                    std::cout << "MUPOSYS : Intoroduca la contrseña para la Base de Datos : ";
+                }
                 std::string dbpassw;
                 std::cin >> dbpassw;
                 if(not quite_input) std::cout << "\n";
@@ -217,7 +221,7 @@ int main(int argc, char *argv[])
                 datconn->set(dbhost,dbport,dbname,dbuser,dbpassw);
                 if(not quite_input) std::cout << "\t";
                 std::cout << "Probando conexion .. ";
-                conn = octetos::apidb::create_c((octetos::apidb::InputLenguajes)dbtype);
+                conn = create_c((InputLenguajes)dbtype);
                 if(conn->connect(*datconn)) 
                 {
                     std::cout << "completada.\n";
@@ -231,6 +235,10 @@ int main(int argc, char *argv[])
         else if(strcmp(argv[i],"--quite-input") == 0)
         {
             quite_input = true;
+        }
+        else if(strcmp(argv[i],"--quite-input-muposys") == 0)
+        {
+            quite_input_muposys = true;
         }
         else
         {
