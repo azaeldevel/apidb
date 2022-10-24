@@ -503,32 +503,7 @@ void constans()
 	CU_ASSERT(octetos::apidb::Compiled::STATIC == 1);
 	CU_ASSERT(octetos::apidb::Compiled::SHARED == 2);
 }
-void transforme_maria()
-{
-	octetos::db::maria::Datconnect dat_conn(mariaSource);
-	dat_conn.setDatabase(octetos::apidb::InputMaria::schema_name);
-	octetos::db::maria::Connector conn;
-	bool conn_conected = conn.connect(dat_conn);
-	if(not conn_conected)
-	{
-		std::cout << "Falló la conexion al servidor : Linea " << __LINE__ << "\n";
-		return;
-	}
-	CU_ASSERT(conn_conected);
-	
-	octetos::apidb::InputMaria input(conn);
-	try
-	{
-		input.read(mariaSource.getDatabase().c_str());
-	}
-	catch(const std::exception& e)
-	{
-		CU_ASSERT(false);
-		std::cout << "Falló : " << __LINE__ << "\n\t" << e.what() << "\n";
-	}
-	
-	conn.close();
-}
+
 int main(int argc, char *argv[])
 {
     bool runAll = false, enableMySQL = false,enablePostgreSQL = false,enableMariaDB = false, enableOctetos = false;

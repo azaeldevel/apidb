@@ -887,8 +887,7 @@ namespace octetos::apidb::generators
                                 {
                                     ofile << "\t\t\t";
                                     ofile << "this->";
-                                    ofile << k->name << " = ";
-                                    ofile << k->name << ";\n";
+                                    ofile << k->name << " = connector.last_inserted_id();\n";
                                 }
                             }
                         }                        

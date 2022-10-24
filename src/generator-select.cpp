@@ -311,7 +311,7 @@ namespace octetos::apidb::generators
                     ofile << "\tpublic static function select($connector,$where,$leng = -1)"<<std::endl;
                     break;
                 default:
-                   throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                   throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else
@@ -549,6 +549,16 @@ namespace octetos::apidb::generators
                 if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "getint(" << count2 << ")";
                 if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << "getInt(" << count2 << ")";
                 if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "getInteger(\"" << k->name << "\")";
+            }
+            else if(k->getOutType().compare("long") == 0)
+            {
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "$";
+                ofile << "dt";
+                if(configureProject.outputLenguaje == OutputLenguajes::CPP or configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << ".";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "->";
+                if(configureProject.outputLenguaje == OutputLenguajes::CPP) ofile << "getl(" << count2 << ")";
+                if(configureProject.outputLenguaje == OutputLenguajes::JAVA) ofile << "getl(" << count2 << ")";
+                if(configureProject.outputLenguaje == OutputLenguajes::PHP) ofile << "getl(\"" << k->name << "\")";
             }
             else
             {
@@ -839,7 +849,7 @@ namespace octetos::apidb::generators
                     ofile << "selectRaw($connector";
                     break;
                 default:
-                    throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
             }
         }
         else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)

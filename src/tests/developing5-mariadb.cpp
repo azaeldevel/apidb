@@ -16,7 +16,9 @@ int main(int argc, char **argv)
             verbose = true;
         }
     }
-        
+    
+    std::cout << "Step 1.\n";
+    
 	octetos::db::maria::Datconnect mariaConnector("localhost",3306,"muposys-0-alpha","muposys","123456");
     octetos::db::maria::Connector connector; 
     bool flag = false;  
@@ -66,6 +68,8 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 	
+	std::cout << "Step 2.\n";
+	
     if(verbose) std::cout << "Listando los que tiene 8 con 5 registro maximo." << std::endl;
     std::vector<muposys::Person*>* lstPerson = muposys::Person::select(connector,"name1 like 'n1-%8%'",5,'D');
     if(lstPerson)
@@ -84,26 +88,27 @@ int main(int argc, char **argv)
     }
     
     std::vector<muposys::User*>* lstUser = muposys::User::select(connector,"person > 0",5,'D');
-	
     
 	std::random_device generator;
   	std::uniform_int_distribution<int> randInt(1,INT_MAX);
     
-  std::vector<muposys::Permission*>* permsslst = muposys::Permission::select(connector,"",0);
-  if(permsslst)
-  {
-    for(auto p : *permsslst)
+    std::cout << "Step 3.\n";
+    
+    std::vector<muposys::Permission*>* permsslst = muposys::Permission::select(connector,"",0);
+    if(permsslst)
     {
-      p->downName(connector);
-      p->downBrief(connector);
-      if(verbose) std::cout << p->getName() << " | " << p->getBrief() << std::endl;
+      for(auto p : *permsslst)
+      {
+        p->downName(connector);
+        p->downBrief(connector);
+        if(verbose) std::cout << p->getName() << " | " << p->getBrief() << std::endl;
+      }
+      /*for(auto p : *permsslst)
+      {
+        delete p;
+      }
+      delete permsslst;*/
     }
-    /*for(auto p : *permsslst)
-    {
-      delete p;
-    }
-    delete permsslst;*/
-  }
     
     if(verbose)  std::cout << "Adding Permissions.\n";
     muposys::Permission permss;
@@ -128,6 +133,8 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;        
     }
 		
+      std::cout << "Step 4.\n";
+        
     randNumber = randInt(generator);    
     muposys::Ente ente3;
     if(not ente3.insert(connector))
@@ -152,6 +159,7 @@ int main(int argc, char **argv)
     
     if(verbose)  std::cout << "Adding User.\n";
     muposys::Ente ente_user;
+    std::string name_user = "user-" + std::to_string(randNumber);
     if(not ente_user.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
@@ -166,13 +174,15 @@ int main(int argc, char **argv)
     muposys::User user;
     randNumber = randInt(generator);
     std::cout << "Person : " << person.getEnte().getID() << "\n";
-    std::string name_user = "user-" + std::to_string(randNumber);
+    name_user = "user-" + std::to_string(randNumber);
     if(not user.insert(connector,um,person,name_user))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;        
     }
     
+    std::cout << "Step 5.\n";
+  
     if(verbose)  std::cout << "Adding UserPermission.\n";
     muposys::Ente ente_up;
     if(not ente_up.insert(connector))

@@ -49,7 +49,28 @@ struct DataSourcePostgreSQL : public DataSource
 
 struct Field
 {
-        const char* name;        
+	enum Out_Type
+	{
+		UNKNOW,
+		INT,
+		SHORT,
+		LONG,
+		CHAR,
+		UINT,
+		USHORT,
+		ULONG,
+		FLOAT,
+		DOUBLE,
+		CSTRING,
+	};
+	
+	const char* name;
+	const char* in_str;
+	const char* out_str;
+	Out_Type out_type;
+
+	bool isPK;
+	bool isFK;
 };
 struct Table : public std::vector<Field>
 {
@@ -98,6 +119,7 @@ public:
         InputMM(const octetos::db::Datconnect&);
         InputMM(const char* server,unsigned int port, const char* user,const char* password);
         virtual void read(const char* space);
+
 };
 class InputMySQL: public InputMM
 {
