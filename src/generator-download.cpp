@@ -244,7 +244,7 @@ namespace octetos::apidb::generators
                         ofile << "\tpublic function down" << symbol.second->upperName << "($connector)";
                         break;
                     default:
-                        throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                        throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                 }
             }
             else if(configureProject.getInputLenguaje() == InputLenguajes::PostgreSQL)
@@ -384,10 +384,21 @@ namespace octetos::apidb::generators
                 {
                     ofile << "dt.getint(0)";
                 }
+                else if(symbol.second->outType.compare("long") == 0)
+                {
+                    ofile << "dt.getl(0)";
+                }
                 else
                 {
-                    ofile << "(*" << symbol.second->getName() << ")";
-                    inheritField(ofile,symbol.second->symbolReferenced,opReference());
+                    if((*table.key.begin())->symbolReferenced)
+                    {
+                        ofile << "(*" << (*table.key.begin())->name << ")";
+                        inheritField(ofile,(*table.key.begin())->symbolReferenced,opReference());
+                    }
+                    else
+                    {
+                        ofile << "(" << (*table.key.begin())->name << ")";                        
+                    }
                 }
                 ofile << ");\n";
             }
@@ -427,7 +438,7 @@ namespace octetos::apidb::generators
                             ofile << "getString(\"" << symbol.second->name << "\")";
                             break;
                         default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     }
                 }
                 else if(symbol.second->outType.compare(integerType()) == 0)
@@ -436,6 +447,23 @@ namespace octetos::apidb::generators
                     {
                         case OutputLenguajes::CPP:
                             ofile << "getint(" << fielNumber << ")";
+                            break;
+                        case OutputLenguajes::JAVA:
+                            ofile << "getInt(" << fielNumber << ")";
+                            break;
+                        case OutputLenguajes::PHP:
+                            ofile << "getString(\"" << symbol.second->name << "\")";
+                            break;
+                        default:
+                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                    }
+                }
+                else if(symbol.second->outType.compare("long") == 0)
+                {
+                    switch(configureProject.outputLenguaje)
+                    {
+                        case OutputLenguajes::CPP:
+                            ofile << "getl(" << fielNumber << ")";
                             break;
                         case OutputLenguajes::JAVA:
                             ofile << "getInt(" << fielNumber << ")";

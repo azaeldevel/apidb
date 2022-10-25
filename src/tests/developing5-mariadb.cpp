@@ -173,13 +173,28 @@ int main(int argc, char **argv)
     }
     muposys::User user;
     randNumber = randInt(generator);
-    std::cout << "Person : " << person.getEnte().getID() << "\n";
+    //std::cout << "Person : " << person.getEnte().getID() << "\n";
     name_user = "user-" + std::to_string(randNumber);
     if(not user.insert(connector,um,person,name_user))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;        
     }
+    if(not user.downName(connector))
+    {
+		std::cerr << "Fail on download.\n";
+		return EXIT_FAILURE;        
+    }
+    if(not user.downPerson(connector))
+    {
+		std::cerr << "Fail on download.\n";
+		return EXIT_FAILURE;        
+    }
+    else
+    {
+      std::cout << "Person User : " << user.getPerson().getEnte().getID() << "\n";
+    }
+    
     
     std::cout << "Step 5.\n";
   
