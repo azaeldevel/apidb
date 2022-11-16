@@ -103,7 +103,7 @@ data_type: BIT opt_length end
 		{
 			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje== OutputLenguajes::C) |  (driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA))
 			{
-				driver.oneLine = "short";
+				driver.oneLine = "unsigned char";
 			}
 			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
 			{
@@ -120,7 +120,7 @@ data_type: BIT opt_length end
 		{
 			if((driver.getConfigureProject().outputLenguaje== OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje== OutputLenguajes::C))
 			{
-				driver.oneLine = "unsigned char";
+				driver.oneLine = "short";
 			}
 			else if(driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA)
 			{

@@ -74,20 +74,21 @@ struct Field
 };
 struct Table : public std::vector<Field>
 {
-        const char* name;
+	const char* name;
 };
 struct Space : public std::vector<Table>
 {
-        const char* name;
+	const char* name;
 };
 
 class Input
 {
 public:
-        virtual void read(const char* space) = 0;
+	virtual void read(const char* space) = 0;
         
+	const Space& operator[](unsigned int i) const;
 protected:
-        std::vector<Space> space;
+	std::vector<Space> space;
 };
 /**
 * \brief SQL estandar

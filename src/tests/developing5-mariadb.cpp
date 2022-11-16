@@ -194,7 +194,26 @@ int main(int argc, char **argv)
     {
       std::cout << "Person User : " << user.getPerson().getEnte().getID() << "\n";
     }
-    
+    muposys::User user4(user);
+    if(not user4.downName(connector))
+    {
+		std::cerr << "Fail on download.\n";
+		return EXIT_FAILURE;        
+    }
+    if(not user4.downPerson(connector))
+    {
+		std::cerr << "Fail on download.\n";
+		return EXIT_FAILURE;        
+    }
+    else
+    {
+      std::cout << "Person User copy : " << user4.getPerson().getEnte().getID() << "\n";
+    }
+    if(user4.getPerson().getEnte().getID() != user.getPerson().getEnte().getID())
+    {
+		std::cerr << "Fail on download.\n";
+		return EXIT_FAILURE;      
+    }
     
     std::cout << "Step 5.\n";
   
