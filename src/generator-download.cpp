@@ -535,8 +535,12 @@ namespace octetos::apidb::generators
                             ofile << "getString(\"" << symbol.second->name << "\")";
                             break;
                         default:
-                            throw BuildException("Lgenguaje no soportado",__FILE__,__LINE__);            
+                            throw BuildException("Lenguaje no soportado",__FILE__,__LINE__);            
                     }
+                }
+                else if(symbol.second->outType.compare("signed char") == 0)
+                {
+                    ofile << "getschar(0)";
                 }
                 else if(symbol.second->outType.compare("unsigned char") == 0)
                 {

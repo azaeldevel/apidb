@@ -343,6 +343,28 @@ int main(int argc, char **argv)
 		std::cerr << "Fail on update Stocking.id.\n";
 		return EXIT_FAILURE;      
     }
+    
+    muposys::Version ver1(3);
+	if(not ver1.downName(connector))
+    {
+		std::cerr << "Fail on download\n";
+		return EXIT_FAILURE;      
+    }
+	if(not ver1.downMajor(connector))
+    {
+		std::cerr << "Fail on down.\n";
+		return EXIT_FAILURE;      
+    }
+	if(not ver1.downMinor(connector))
+    {
+		std::cerr << "Fail on down.\n";
+		return EXIT_FAILURE;      
+    }
+	//CU_ASSERT(ver1.getName().compare("database") == 0);
+	std::cout << "Major : " << ver1.getMajor() << "\n";
+	std::cout << "Minor : " << ver1.getMinor() << "\n";
+	//CU_ASSERT(ver1.getMajor() == 3);
+    
 	/*muposys::Stocking stoking1;
 	if(not stoking1.insert(connector,ente_stocking1,stock1,catItems1,3))
     {
