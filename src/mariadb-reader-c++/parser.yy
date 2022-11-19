@@ -103,7 +103,7 @@ data_type: BIT opt_length end
 		{
 			if((driver.getConfigureProject().outputLenguaje == OutputLenguajes::CPP) | (driver.getConfigureProject().outputLenguaje== OutputLenguajes::C) |  (driver.getConfigureProject().outputLenguaje== OutputLenguajes::JAVA))
 			{
-				driver.oneLine = "unsigend char";
+				driver.oneLine = "sigend char";
 			}
 			else if(driver.getConfigureProject().outputLenguaje == OutputLenguajes::PHP)
 			{
