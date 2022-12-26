@@ -36,19 +36,19 @@ int main(int argc, char **argv)
     srand (time(NULL));
 	int random = rand() % 10000 + 1;
     
-    muposys::Ente ente1;
+    /*muposys::Ente ente1;
     if(not ente1.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
-    }
+    }*/
     
     muposys::Person person1;
     std::string n1 = "n1-";
     n1 += std::to_string(random);
     std::string country = "MEX";
     //ap += std::to_string(random);
-    if(person1.insert(connector,ente1,n1))
+    if(person1.insert(connector,n1))
     {
 		if(verbose)   std::cout << "Inserted "<< n1 << " " << country << " de Mexico." << std::endl;
 	}
@@ -115,19 +115,19 @@ int main(int argc, char **argv)
     int randNumber = randInt(generator);
     std::string name_perss = "permss-" + std::to_string(randNumber);
     std::string brief_perss = "Prueba de muposys " + std::to_string(randNumber);
-    muposys::Ente ente2;
+    /*muposys::Ente ente2;
     if(not ente2.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
-    }
+    }*/
     muposys::UserManagement um2;
-    if(not um2.insert(connector,ente2))
+    if(not um2.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
     }
-    if(not permss.insert(connector,um2,name_perss,brief_perss))
+    if(not permss.insert(connector,name_perss,brief_perss))
     {
 		std::cerr << "Fail on insert permision.\n";
 		return EXIT_FAILURE;        
@@ -136,16 +136,16 @@ int main(int argc, char **argv)
       std::cout << "Step 4.\n";
         
     randNumber = randInt(generator);    
-    muposys::Ente ente3;
+    /*muposys::Ente ente3;
     if(not ente3.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
-    }    
+    }    */
     if(verbose)  std::cout << "Adding Person.\n";
     muposys::Person person;
     std::string name_person = "person-" + std::to_string(randNumber);        
-    if(not person.insert(connector,ente3,name_person))
+    if(not person.insert(connector,name_person))
     {
 		std::cerr << "Fail on insert person.\n";
 		return EXIT_FAILURE;
@@ -158,15 +158,15 @@ int main(int argc, char **argv)
     }		
     
     if(verbose)  std::cout << "Adding User.\n";
-    muposys::Ente ente_user;
-    std::string name_user = "user-" + std::to_string(randNumber);
+    /*muposys::Ente ente_user;
     if(not ente_user.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
-    }
+    }*/
+    std::string name_user = "user-" + std::to_string(randNumber);
     muposys::UserManagement um;
-    if(not um.insert(connector,ente_user))
+    if(not um.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
@@ -192,7 +192,7 @@ int main(int argc, char **argv)
     }
     else
     {
-      std::cout << "Person User : " << user.getPerson().getEnte().getID() << "\n";
+      //std::cout << "Person User : " << user.getPerson().getEnte().getID() << "\n";
     }
     muposys::User user4(user);
     if(not user4.downName(connector))
@@ -207,9 +207,9 @@ int main(int argc, char **argv)
     }
     else
     {
-      std::cout << "Person User copy : " << user4.getPerson().getEnte().getID() << "\n";
+      std::cout << "Person User copy : " << user4.getPerson().getID() << "\n";
     }
-    if(user4.getPerson().getEnte().getID() != user.getPerson().getEnte().getID())
+    if(user4.getPerson().getID() != user.getPerson().getID())
     {
 		std::cerr << "Fail on download.\n";
 		return EXIT_FAILURE;      
@@ -218,12 +218,12 @@ int main(int argc, char **argv)
     std::cout << "Step 5.\n";
   
     if(verbose)  std::cout << "Adding UserPermission.\n";
-    muposys::Ente ente_up;
+    /*muposys::Ente ente_up;
     if(not ente_up.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
-    }
+    }*/
     muposys::UserPermission usr_permss;
     if(not usr_permss.insert(connector,user,permss))
     {
@@ -233,15 +233,15 @@ int main(int argc, char **argv)
     
     if(verbose)  std::cout << "Adding Catalog.\n";
     randNumber = randInt(generator);
-    muposys::Ente ente_catalog;
+    /*muposys::Ente ente_catalog;
     if(not ente_catalog.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
-    }
+    }*/
     muposys::Catalog catalog1;
     std::string catalog_name = "catalog-" + std::to_string(randNumber);
-    if(not catalog1.insert(connector,ente_catalog,catalog_name))
+    if(not catalog1.insert(connector,catalog_name))
     {
 		std::cerr << "Fail on insert catalog.\n";
 		return EXIT_FAILURE;      
@@ -249,16 +249,16 @@ int main(int argc, char **argv)
     
     if(verbose) std::cout << "Adding CatalogItem.\n";
     randNumber = randInt(generator);
-    muposys::Ente ente_cataloging;
+    /*muposys::Ente ente_cataloging;
     if(not ente_cataloging.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
-    }
+    }*/
     muposys::CatalogItem catItems1;
     std::string item_number = "item-" + std::to_string(randNumber);
     std::string item_name = "name-" + std::to_string(randNumber);
-    if(not catItems1.insert(connector,ente_cataloging,catalog1,item_number,item_name))
+    if(not catItems1.insert(connector,catalog1,item_number,item_name))
     {
 		std::cerr << "Fail on insert catalog.\n";
 		return EXIT_FAILURE;      
@@ -266,16 +266,16 @@ int main(int argc, char **argv)
     
     if(verbose)  std::cout << "Adding CatalogItem.\n";
     randNumber = randInt(generator);
-    muposys::Ente ente_cataloging2;
+    /*muposys::Ente ente_cataloging2;
     if(not ente_cataloging2.insert(connector))
     {
 		std::cerr << "Fail on insert ente.\n";
 		return EXIT_FAILURE;
-    }
+    }*/
     muposys::CatalogItem catItems2;
     std::string item_number2 = "item-" + std::to_string(randNumber);
     std::string item_name2 = "name-" + std::to_string(randNumber);
-    if(not catItems2.insert(connector,ente_cataloging2,catalog1,item_number2,item_name2))
+    if(not catItems2.insert(connector,catalog1,item_number2,item_name2))
     {
 		std::cerr << "Fail on insert catalog.\n";
 		return EXIT_FAILURE;      
@@ -285,17 +285,17 @@ int main(int argc, char **argv)
     if(verbose) std::cout << "Step 1\n";
     randNumber = randInt(generator);
     if(verbose) std::cout << "Step 2\n";
-    muposys::Ente ente_stock1;
+    /*muposys::Ente ente_stock1;
     if(verbose) std::cout << "Step 3\n";
 	if(not ente_stock1.insert(connector))
     {
 		std::cerr << "Fail on insert Stock.id.\n";
 		return EXIT_FAILURE;            
-    }
+    }*/
     if(verbose) std::cout << "Step 4\n";
 	muposys::Stock stock1;
     if(verbose) std::cout << "Step 5\n";
-	if(not stock1.insert(connector,ente_stock1))
+	if(not stock1.insert(connector))
     {
 		std::cerr << "Fail on insert Stock.\n";
 		return EXIT_FAILURE;
@@ -315,14 +315,14 @@ int main(int argc, char **argv)
     
     if(verbose) std::cout << "Adding Stock.\n";
     randNumber = randInt(generator);
-    muposys::Ente ente_stock2;
+    /*muposys::Ente ente_stock2;
 	if(not ente_stock2.insert(connector))
     {
 		std::cerr << "Fail on insert Stock.id.\n";
 		return EXIT_FAILURE;            
-    }
+    }*/
 	muposys::Stock stock2;
-	if(not stock2.insert(connector,ente_stock2))
+	if(not stock2.insert(connector))
     {
 		std::cerr << "Fail on insert Stock.\n";
 		return EXIT_FAILURE;
@@ -337,17 +337,17 @@ int main(int argc, char **argv)
     
     if(verbose) std::cout << "Adding Stocking.\n";
     randNumber = randInt(generator);
-    muposys::Ente ente_stocking1;
+    /*muposys::Ente ente_stocking1;
 	if(not ente_stocking1.insert(connector))
     {
 		std::cerr << "Fail on update Stocking.id.\n";
 		return EXIT_FAILURE;      
-    }
+    }*/
     
-    muposys::Version ver1(3);
+    muposys::Version ver1(1);
 	if(not ver1.downName(connector))
     {
-		std::cerr << "Fail on download\n";
+		std::cerr << "Fail on download version\n";
 		return EXIT_FAILURE;      
     }
 	if(not ver1.downMajor(connector))

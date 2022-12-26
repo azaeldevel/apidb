@@ -548,7 +548,15 @@ namespace octetos::apidb::generators
                 }
                 else if(symbol.second->outType.compare("short") == 0)
                 {
-                    ofile << "getuchar(0)";
+                    ofile << "getshort(0)";
+                }
+                else if(symbol.second->outType.compare("signed short") == 0)
+                {
+                    ofile << "getshort(0)";
+                }
+                else if(symbol.second->outType.compare("unsigned short") == 0)
+                {
+                    ofile << "getushort(0)";
                 }
                 else
                 {
