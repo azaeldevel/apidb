@@ -7,11 +7,11 @@
 
 
 int main(int argc, char **argv)
-{	
+{
     bool verbose = false;
     if(argc >1 )
     {
-        if(strcmp(argv[1],"--verbose")==0)
+        if(strcmp(argv[1],"--vebrose")==0)
         {
             verbose = true;
         }

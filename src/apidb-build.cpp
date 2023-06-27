@@ -50,12 +50,9 @@ int main(int argc, char *argv[])
 		}
 		else if(strcmp(argv[i],"-p") == 0 || strcmp(argv[i],"--project-file") == 0)
         {
-            //std::cout<<"Detectando opcion -p\n";
-            if(argc >= i + 1)
-            {
-                i++;
                 //std::cout<<"Detectando valor -p = " << argv[i] << "\n";                
-                file = argv[i]; 
+                file = argv[++i];
+                std::cout<<"Leyendo configuracion desde " << file << "\n";
                 /*FILE *tmpfile = fopen(file, "r");
                 if (tmpfile) 
                 {
@@ -75,12 +72,6 @@ int main(int argc, char *argv[])
                     std::cerr<<"Fallo la lectura del archivo."<< e.what() <<std::endl;
                     return EXIT_FAILURE;                        
                 }
-            }
-            else
-            {
-                std::cerr<<"Deve especificar la ruta del archivo.\n";
-                return EXIT_FAILURE;
-            }
         }
         else if(strcmp(argv[i],"-o") == 0 || strcmp(argv[i],"--out-build") == 0)
         {
