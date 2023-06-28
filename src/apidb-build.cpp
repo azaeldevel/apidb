@@ -72,14 +72,18 @@ int main(int argc, char *argv[])
                     std::cerr<<"Fallo la lectura del archivo."<< e.what() <<std::endl;
                     return EXIT_FAILURE;                        
                 }
+                catch(...)
+                {
+                    std::cerr<<"Fallo la lectura del archivo." <<std::endl;
+                    return EXIT_FAILURE;
+                }
         }
         else if(strcmp(argv[i],"-o") == 0 || strcmp(argv[i],"--out-build") == 0)
         {
             if(argc >= i + 1)
             {
-                i++;
-                //std::cout<<"Detectando valor -p = " << argv[i] << "\n";                
-                dir = argv[i]; 
+                //std::cout<<"Detectando valor -p = " << argv[i] << "\n";
+                dir = argv[++i];
             }
             else
             {
@@ -237,7 +241,7 @@ int main(int argc, char *argv[])
         }
 	}
         
-    if(dir != NULL)
+    if(dir)
     {
         config->builDirectory = dir;
         std::cout<<"Generando en '" << config->builDirectory << "' ..." <<std::endl;
@@ -252,9 +256,15 @@ int main(int argc, char *argv[])
     }
     catch(const std::exception& e)
     {
-        std::cerr<<"Fallo la lectura del archivo."<< e.what() <<std::endl;
+        std::cerr<<"Fallo la generacion." << std::endl;
         return EXIT_FAILURE;
     }
+    catch(...)
+    {
+        std::cerr<<"Fallo la generacion." << std::endl;
+        return EXIT_FAILURE;
+    }
+
     if(not retDriver)
     {
         std::cerr<<"Fallo desconocido.";

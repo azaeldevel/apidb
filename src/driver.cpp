@@ -44,7 +44,7 @@ namespace apidb
     {
     	if(configureProject.getDatconnection() == NULL)
     	{
-    		std::string msg = "No se ha asignado la informacionde conexio.";
+    		std::string msg = "No se ha asignado la informacionde conexion.";
             throw oct::core::Exception(msg,__FILE__,__LINE__);
     	}
 
