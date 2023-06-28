@@ -324,8 +324,7 @@ namespace apidb
             std::string msgErr ="dlopen fallo con '" ;
             msgErr += libname + "' : ";
             msgErr += + dlerror();
-            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
-            core::Error::write(err);
+            throw oct::core::Exception(msgErr,__FILE__,__LINE__);
             return false;
         }
         //std::cout << "Step 2\n";

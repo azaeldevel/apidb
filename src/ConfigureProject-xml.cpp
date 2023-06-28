@@ -755,6 +755,10 @@ namespace apidb
                     {
                         //std::cout << "ConfigureProject::getProjectNodes : projectVersion 31c.\n";
 		                failLoadDat = true;
+                        std::string msgstr = "Fallo durante el parseo XML. El driver '";
+                        msgstr += inL;
+                        msgstr += "' solicitado no existe o no hay soporte activo para dicho driver.";
+                        throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                     }
                     //std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.2.\n";
                     failLoadDat = false;
@@ -764,7 +768,7 @@ namespace apidb
                     std::string msgstr = "Fallo durante el parseo XML. El driver '";
                     msgstr += inL;
                     msgstr += "' solicitado no existe o no hay soporte activo para dicho driver.";
-                    oct::core::Exception(msgstr,__FILE__,__LINE__);
+                    throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                 }
                 /*if(handle == NULL)
                 {
