@@ -737,12 +737,13 @@ namespace apidb
                 else if(inL.compare("MariaDB") == 0)
                 {
                     //std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.\n";
-                	if(checkLibrary(InputLenguajes::MariaDB))
+                    setInputLenguaje(InputLenguajes::MariaDB);
+                    conectordb = createDatConnection();
+                    conectordb->set(host,port,database,user,password);
+                	/*
+                    if(checkLibrary(InputLenguajes::MariaDB))
                 	{
                         //std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.1a.\n";
-		                setInputLenguaje(InputLenguajes::MariaDB);
-		                conectordb = createDatConnection();
-		                conectordb->set(host,port,database,user,password);
                     }
                     else if(checkLibrary(InputLenguajes::MySQL))
                 	{
@@ -760,6 +761,7 @@ namespace apidb
                         msgstr += "' solicitado no existe o no hay soporte activo para dicho driver.";
                         throw oct::core::Exception(msgstr,__FILE__,__LINE__);
                     }
+                    */
                     //std::cout << "ConfigureProject::getProjectNodes : projectVersion 3.2.\n";
                     failLoadDat = false;
                 }

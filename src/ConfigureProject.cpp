@@ -275,9 +275,9 @@ namespace apidb
         }
         else
         {
-            std::string msgErr ="No se reconoce el driver solicitado :\n" ;
+            /*std::string msgErr ="No se reconoce el driver solicitado :\n" ;
             msgErr = msgErr + "\t" + dlerror();
-            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);
+            core::Error err(msgErr,core::Error::ERROR_UNKNOW,__FILE__,__LINE__);*/
             return false;
         }
 
