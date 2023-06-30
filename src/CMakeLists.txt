@@ -414,6 +414,8 @@ IF(APIDB_INSTALL_CORE STREQUAL "Y")
 	INSTALL(FILES driver.hpp DESTINATION include/octetos/apidb)
 	INSTALL(FILES analyzer.hpp DESTINATION include/octetos/apidb)
 	INSTALL(FILES generator.hpp DESTINATION include/octetos/apidb)
+	INSTALL(FILES ConfigureProject.hpp DESTINATION include/octetos/apidb)
+	INSTALL(FILES Errors.hpp DESTINATION include/octetos/apidb)
 
 ENDIF()
 IF(APIDB_INSTALL_COMMANDS STREQUAL "Y" AND APIDB_BUILD_COMMANDS STREQUAL "Y")
